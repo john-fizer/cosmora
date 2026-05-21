@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local sqlite database
+cosmora.db
+cosmora.db-shm
+cosmora.db-wal
+
+# claude personal memory (not project code)
+.claude/projects/
+.claude/jobs/

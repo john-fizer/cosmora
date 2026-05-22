@@ -25,6 +25,12 @@ interface Message {
 
 type OrbState = "idle" | "thinking" | "speaking";
 
+interface ToolCallEvent {
+  id: string;
+  name: string;
+  done: boolean;
+}
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
@@ -95,7 +101,7 @@ function InsightCard({ planet, sign, house, color, delay, onClick }: {
     >
       <span className="text-base" style={{ color }}>{PLANET_SYMBOLS[planet as PlanetName] ?? "✦"}</span>
       <div className="flex-1">
-        <p className="text-[8px] font-bold tracking-widest" style={{ color: "#334155" }}>{planet.toUpperCase()}</p>
+        <p className="text-[8px] font-bold tracking-widest" style={{ color: "#64748b" }}>{planet.toUpperCase()}</p>
         <p className="text-[10px] font-medium" style={{ color }}>
           {SIGN_SYMBOLS[sign as keyof typeof SIGN_SYMBOLS] ?? ""} {sign} · H{house}
         </p>
@@ -104,6 +110,74 @@ function InsightCard({ planet, sign, house, color, delay, onClick }: {
         <path d="M3 8h10M9 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </motion.button>
+  );
+}
+
+// ─── Tool call card ───────────────────────────────────────────────────────────
+
+const TOOL_LABELS: Record<string, { label: string; icon: string }> = {
+  check_planet_placement: { label: "Scanning planet placement", icon: "⊕" },
+  identify_aspects:       { label: "Mapping aspect patterns",   icon: "⚷" },
+  calculate_timing:       { label: "Reading profection timing", icon: "⏳" },
+  assess_chart_pattern:   { label: "Analyzing chart geometry",  icon: "✦" },
+};
+
+function ToolCallCard({ toolCall }: { toolCall: ToolCallEvent }) {
+  const meta = TOOL_LABELS[toolCall.name] ?? { label: toolCall.name, icon: "⊕" };
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="flex items-center gap-3 ml-10 px-3 py-2 rounded-xl"
+      style={{
+        background: "rgba(6,182,212,0.04)",
+        border: `1px solid ${toolCall.done ? "rgba(0,229,255,0.2)" : "rgba(6,182,212,0.18)"}`,
+        maxWidth: 340,
+      }}
+    >
+      <div style={{ flexShrink: 0 }}>
+        {toolCall.done ? (
+          <motion.span
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            style={{ fontSize: 10, color: "#00e5ff" }}
+          >
+            ✓
+          </motion.span>
+        ) : (
+          <motion.span
+            animate={{ opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 1.2, repeat: Infinity }}
+            style={{ fontSize: 10, color: "#06b6d4" }}
+          >
+            {meta.icon}
+          </motion.span>
+        )}
+      </div>
+      <span style={{
+        fontSize: 9,
+        letterSpacing: 1.5,
+        fontFamily: "'Share Tech Mono', monospace",
+        color: toolCall.done ? "rgba(0,229,255,0.6)" : "rgba(6,182,212,0.7)",
+        textTransform: "uppercase",
+      }}>
+        {meta.label}
+      </span>
+      {!toolCall.done && (
+        <motion.div
+          animate={{ x: ["-100%", "200%"] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+          style={{
+            position: "absolute",
+            left: 0, top: 0, bottom: 0,
+            width: "40%",
+            background: "linear-gradient(90deg, transparent, rgba(6,182,212,0.06), transparent)",
+            borderRadius: "inherit",
+            pointerEvents: "none",
+          }}
+        />
+      )}
+    </motion.div>
   );
 }
 
@@ -185,7 +259,7 @@ function FollowUpSuggestions({ suggestions, onSelect }: {
       transition={{ duration: 0.3, delay: 0.15 }}
       className="flex flex-col gap-2 ml-10"
     >
-      <p className="text-[8px] font-bold tracking-[0.2em]" style={{ color: "#1e293b" }}>
+      <p className="text-[8px] font-bold tracking-[0.2em]" style={{ color: "#475569" }}>
         CONTINUE THE READING
       </p>
       {suggestions.map((s, i) => (
@@ -206,7 +280,7 @@ function FollowUpSuggestions({ suggestions, onSelect }: {
           >
             {labels[i]}
           </span>
-          <span className="text-[10px] leading-snug" style={{ color: "#64748b" }}>{s}</span>
+          <span className="text-[10px] leading-snug" style={{ color: "#94a3b8" }}>{s}</span>
         </motion.button>
       ))}
     </motion.div>
@@ -285,14 +359,14 @@ function ModelSelector({ currentModelId, availability, onChange }: {
                               style={{ background: `${model.color}20`, color: model.color }}>ACTIVE</span>
                           )}
                         </div>
-                        <p className="text-[8px] mt-0.5" style={{ color: "#334155" }}>{model.tagline}</p>
-                        <p className="text-[8px] mt-0.5 leading-snug" style={{ color: "#1e293b" }}>{model.description}</p>
+                        <p className="text-[8px] mt-0.5" style={{ color: "#64748b" }}>{model.tagline}</p>
+                        <p className="text-[8px] mt-0.5 leading-snug" style={{ color: "#475569" }}>{model.description}</p>
                       </div>
                     </motion.button>
                   );
                 })}
                 <div className="px-3 pt-2 pb-1 mt-1" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                  <p className="text-[7px] leading-relaxed" style={{ color: "#1e293b" }}>
+                  <p className="text-[7px] leading-relaxed" style={{ color: "#475569" }}>
                     OpenAI & Google models require API keys in .env.local (OPENAI_API_KEY, GOOGLE_AI_KEY).
                   </p>
                 </div>
@@ -319,6 +393,7 @@ export default function OraclePage() {
   const [modelId, setModelId] = useState("claude-opus-4-7");
   const [modelAvailability, setModelAvailability] = useState<Record<string, { available: boolean }>>({});
   const [pendingAutoSeed, setPendingAutoSeed] = useState<string | null>(null);
+  const [toolCalls, setToolCalls] = useState<ToolCallEvent[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const lastUserMsgRef = useRef("");
@@ -394,6 +469,7 @@ export default function OraclePage() {
 
     setOrbState("thinking");
     setStreamText("");
+    setToolCalls([]);
 
     try {
       const res = await fetch("/api/chat", {
@@ -426,13 +502,27 @@ export default function OraclePage() {
             setMessages(prev => [...prev, assistantMsg]);
             if (profileId) pushChatMessage(profileId, { role: "assistant", content: accumulated });
             setStreamText("");
+            setToolCalls([]);
             setOrbState("idle");
             fetchSuggestions(lastUserMsgRef.current, accumulated);
             return;
           }
           try {
-            const parsed = JSON.parse(data);
-            if (parsed.text) { accumulated += parsed.text; setStreamText(accumulated); }
+            const parsed = JSON.parse(data) as {
+              text?: string;
+              tool_call?: { id: string; name: string };
+              tool_result?: { id: string; name: string };
+            };
+            if (parsed.text) {
+              accumulated += parsed.text;
+              setStreamText(accumulated);
+            } else if (parsed.tool_call) {
+              setToolCalls(prev => [...prev, { ...parsed.tool_call!, done: false }]);
+            } else if (parsed.tool_result) {
+              setToolCalls(prev =>
+                prev.map(tc => tc.id === parsed.tool_result!.id ? { ...tc, done: true } : tc)
+              );
+            }
           } catch { /* ignore */ }
         }
       }
@@ -539,10 +629,10 @@ export default function OraclePage() {
             <div className="flex flex-col items-center gap-3">
               <LiquidMetalOrb state={orbState} size={240} />
               <div className="text-center">
-                <p className="text-[10px] font-bold tracking-[0.25em]" style={{ color: "#475569" }}>COSMORA ORACLE</p>
+                <p className="text-[10px] font-bold tracking-[0.25em]" style={{ color: "#64748b" }}>COSMORA ORACLE</p>
                 <motion.p key={orbState} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                   className="text-[8px] tracking-widest mt-0.5"
-                  style={{ color: orbState === "idle" ? "#1e293b" : orbState === "thinking" ? "#f59e0b" : "#06b6d4" }}>
+                  style={{ color: orbState === "idle" ? "#475569" : orbState === "thinking" ? "#f59e0b" : "#06b6d4" }}>
                   {orbState === "idle" ? "AWAITING QUERY" : orbState === "thinking" ? "READING THE COSMOS" : "CHANNELING INSIGHT"}
                 </motion.p>
               </div>
@@ -576,7 +666,7 @@ export default function OraclePage() {
 
             {keyPlanets.length > 0 && (
               <div className="w-full">
-                <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>KEY PLACEMENTS · click to ask</p>
+                <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>KEY PLACEMENTS · click to ask</p>
                 <div className="flex flex-col gap-2">
                   {keyPlanets.map((p, i) => (
                     <InsightCard key={p.name} planet={p.name} sign={p.sign} house={p.house}
@@ -595,7 +685,7 @@ export default function OraclePage() {
                     <motion.button key={i} whileHover={{ x: 3 }} whileTap={{ scale: 0.97 }}
                       onClick={() => sendMessage(p)} disabled={orbState !== "idle"}
                       className="text-left text-[10px] leading-snug px-3 py-1.5 rounded-lg cursor-pointer disabled:opacity-40"
-                      style={{ color: "#475569", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
+                      style={{ color: "#64748b", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
                       {p}
                     </motion.button>
                   ))}
@@ -611,8 +701,8 @@ export default function OraclePage() {
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
                   className="h-full flex flex-col items-center justify-center text-center gap-4">
                   <div className="md:hidden mb-4"><LiquidMetalOrb state={orbState} size={160} /></div>
-                  <p className="text-2xl font-light" style={{ color: "#1e293b" }}>The cosmos awaits.</p>
-                  <p className="text-sm max-w-sm" style={{ color: "#334155" }}>
+                  <p className="text-2xl font-light" style={{ color: "#475569" }}>The cosmos awaits.</p>
+                  <p className="text-sm max-w-sm" style={{ color: "#64748b" }}>
                     Ask the Oracle anything about your chart, transits, or the cosmic forces shaping your path.
                   </p>
                   <div className="flex flex-wrap justify-center gap-2 mt-2">
@@ -641,6 +731,14 @@ export default function OraclePage() {
                   {allMessages.map((m, i) => (
                     <div key={m.id}>
                       <OracleBubble message={m} isStreaming={m.id === -1 && orbState === "speaking"} />
+                      {/* Tool call cards shown after the streaming assistant message */}
+                      {m.id === -1 && toolCalls.length > 0 && (
+                        <div className="mt-2 flex flex-col gap-1.5">
+                          {toolCalls.map(tc => (
+                            <ToolCallCard key={tc.id} toolCall={tc} />
+                          ))}
+                        </div>
+                      )}
                       {m.role === "assistant" && m.id !== -1 && i === allMessages.length - 1 && orbState === "idle" && (
                         <AnimatePresence>
                           {suggestions.length > 0 && (

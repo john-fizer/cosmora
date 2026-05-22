@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
 
 const NAV_ITEMS = [
   {
@@ -232,11 +233,16 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
       {/* Bottom divider */}
       <div style={{ width: 32, height: 1, background: "linear-gradient(90deg, transparent, rgba(168,85,247,0.2), transparent)", marginTop: 8 }} />
 
+      {/* Skin switcher */}
+      <div style={{ marginTop: 10 }}>
+        <ThemeSwitcher />
+      </div>
+
       {/* ⌘K hint */}
       <div
         title="Command Palette (⌘K)"
         style={{
-          marginTop: 10, marginBottom: 4,
+          marginTop: 8, marginBottom: 4,
           display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
         }}
       >

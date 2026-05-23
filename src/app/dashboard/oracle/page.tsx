@@ -14,6 +14,9 @@ import {
   getOracleModel, setOracleModel,
 } from "@/lib/storage";
 import { ORACLE_MODELS, getModelById } from "@/lib/oracle/models";
+import { VoiceOracle } from "@/components/oracle/VoiceOracle";
+import { InsightPlayer } from "@/components/oracle/InsightPlayer";
+import { type VoicePlanet } from "@/lib/oracle/voice";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -183,7 +186,13 @@ function ToolCallCard({ toolCall }: { toolCall: ToolCallEvent }) {
 
 // ─── Oracle message bubble ────────────────────────────────────────────────────
 
-function OracleBubble({ message, isStreaming }: { message: Message; isStreaming?: boolean }) {
+function OracleBubble({ message, isStreaming, voicePlanet, chartAspects, autoPlay }: {
+  message: Message;
+  isStreaming?: boolean;
+  voicePlanet?: VoicePlanet;
+  chartAspects?: import("@/lib/astrology/types").Aspect[];
+  autoPlay?: boolean;
+}) {
   const isOracle = message.role === "assistant";
   return (
     <motion.div
@@ -198,45 +207,57 @@ function OracleBubble({ message, isStreaming }: { message: Message; isStreaming?
           ✦
         </div>
       )}
-      <div
-        className="relative max-w-lg px-4 py-3 rounded-2xl text-sm leading-relaxed"
-        style={isOracle ? {
-          background: "rgba(4,4,28,0.9)",
-          border: "1px solid rgba(124,58,237,0.25)",
-          backdropFilter: "blur(20px)",
-          color: "#cbd5e1",
-          borderTopLeftRadius: 4,
-          boxShadow: "0 0 20px rgba(124,58,237,0.06)",
-        } : {
-          background: "rgba(124,58,237,0.18)",
-          border: "1px solid rgba(168,85,247,0.35)",
-          color: "#e2d9f3",
-          borderTopRightRadius: 4,
-        }}
-      >
-        {isOracle && isStreaming && (
-          <motion.div
-            animate={{ x: ["-100%", "100%"] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-            style={{
-              position: "absolute", inset: 0,
-              background: "linear-gradient(90deg, transparent, rgba(6,182,212,0.05), transparent)",
-              borderRadius: "inherit", pointerEvents: "none",
-            }}
+      <div className="flex flex-col gap-0">
+        <div
+          className="relative max-w-lg px-4 py-3 rounded-2xl text-sm leading-relaxed"
+          style={isOracle ? {
+            background: "rgba(4,4,28,0.9)",
+            border: "1px solid rgba(124,58,237,0.25)",
+            backdropFilter: "blur(20px)",
+            color: "#cbd5e1",
+            borderTopLeftRadius: 4,
+            boxShadow: "0 0 20px rgba(124,58,237,0.06)",
+          } : {
+            background: "rgba(124,58,237,0.18)",
+            border: "1px solid rgba(168,85,247,0.35)",
+            color: "#e2d9f3",
+            borderTopRightRadius: 4,
+          }}
+        >
+          {isOracle && isStreaming && (
+            <motion.div
+              animate={{ x: ["-100%", "100%"] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+              style={{
+                position: "absolute", inset: 0,
+                background: "linear-gradient(90deg, transparent, rgba(6,182,212,0.05), transparent)",
+                borderRadius: "inherit", pointerEvents: "none",
+              }}
+            />
+          )}
+          <span style={{ whiteSpace: "pre-wrap" }}>{message.content}</span>
+          {isOracle && isStreaming && (
+            <motion.span
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ duration: 0.7, repeat: Infinity }}
+              className="inline-block ml-1 w-0.5 h-3.5 align-middle rounded-full"
+              style={{ background: "#7c3aed" }}
+            />
+          )}
+          {isOracle && (
+            <div style={{ position: "absolute", top: 0, right: 0, width: 8, height: 8,
+              borderTop: "1.5px solid rgba(6,182,212,0.5)", borderRight: "1.5px solid rgba(6,182,212,0.5)" }} />
+          )}
+        </div>
+        {/* Per-message playback — only on completed assistant messages */}
+        {isOracle && !isStreaming && message.content && voicePlanet && (
+          <InsightPlayer
+            text={message.content}
+            messageId={message.id}
+            planet={voicePlanet}
+            aspects={chartAspects}
+            autoPlay={autoPlay}
           />
-        )}
-        <span style={{ whiteSpace: "pre-wrap" }}>{message.content}</span>
-        {isOracle && isStreaming && (
-          <motion.span
-            animate={{ opacity: [1, 0, 1] }}
-            transition={{ duration: 0.7, repeat: Infinity }}
-            className="inline-block ml-1 w-0.5 h-3.5 align-middle rounded-full"
-            style={{ background: "#7c3aed" }}
-          />
-        )}
-        {isOracle && (
-          <div style={{ position: "absolute", top: 0, right: 0, width: 8, height: 8,
-            borderTop: "1.5px solid rgba(6,182,212,0.5)", borderRight: "1.5px solid rgba(6,182,212,0.5)" }} />
         )}
       </div>
     </motion.div>
@@ -394,6 +415,17 @@ export default function OraclePage() {
   const [modelAvailability, setModelAvailability] = useState<Record<string, { available: boolean }>>({});
   const [pendingAutoSeed, setPendingAutoSeed] = useState<string | null>(null);
   const [toolCalls, setToolCalls] = useState<ToolCallEvent[]>([]);
+  const [voicePlanet, setVoicePlanet]   = useState<VoicePlanet>("Moon");
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [autoPlayId, setAutoPlayId]     = useState<number | null>(null);
+  const [dualMode, setDualMode] = useState(false);
+  const [dualAgents, setDualAgents] = useState<{
+    claudeStatus: "idle" | "thinking" | "done";
+    llamaStatus: "idle" | "thinking" | "done";
+    claudeText: string;
+    llamaText: string;
+    synthesizing: boolean;
+  }>({ claudeStatus: "idle", llamaStatus: "idle", claudeText: "", llamaText: "", synthesizing: false });
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const lastUserMsgRef = useRef("");
@@ -453,6 +485,97 @@ export default function OraclePage() {
     } catch { /* silently fail */ }
   };
 
+  const sendDualMessage = async (text?: string) => {
+    const content = (text ?? query).trim();
+    if (!content || orbState !== "idle") return;
+    setQuery("");
+    setSuggestions([]);
+    lastUserMsgRef.current = content;
+
+    const userMsg: Message = { role: "user", content, id: msgId };
+    setMsgId(n => n + 1);
+    setMessages(prev => [...prev, userMsg]);
+
+    const profileId = getActiveProfileId();
+    if (profileId) pushChatMessage(profileId, { role: "user", content });
+
+    setOrbState("thinking");
+    setStreamText("");
+    setDualAgents({ claudeStatus: "idle", llamaStatus: "idle", claudeText: "", llamaText: "", synthesizing: false });
+
+    try {
+      const res = await fetch("/api/dual-oracle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: content,
+          chart: chart ?? undefined,
+          history: messages.slice(-8).map(m => ({ role: m.role, content: m.content })),
+        }),
+      });
+
+      if (!res.body) throw new Error("No stream");
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = "";
+      setOrbState("speaking");
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        for (const line of chunk.split("\n")) {
+          if (!line.startsWith("data: ")) continue;
+          const data = line.slice(6);
+          if (data === "[DONE]") {
+            const newId = msgId + 1;
+            const assistantMsg: Message = { role: "assistant", content: accumulated, id: newId };
+            setMsgId(n => n + 1);
+            setMessages(prev => [...prev, assistantMsg]);
+            if (profileId) pushChatMessage(profileId, { role: "assistant", content: accumulated });
+            setStreamText("");
+            setOrbState("idle");
+            if (voiceEnabled) setAutoPlayId(newId);
+            setDualAgents(prev => ({ ...prev, synthesizing: false }));
+            fetchSuggestions(lastUserMsgRef.current, accumulated);
+            return;
+          }
+          try {
+            const parsed = JSON.parse(data) as {
+              type?: string; agent?: string; text?: string;
+            };
+            if (parsed.type === "agent_start") {
+              setDualAgents(prev => ({
+                ...prev,
+                claudeStatus: parsed.agent === "claude" ? "thinking" : prev.claudeStatus,
+                llamaStatus:  parsed.agent === "llama"  ? "thinking" : prev.llamaStatus,
+              }));
+            } else if (parsed.type === "agent_done") {
+              setDualAgents(prev => ({
+                ...prev,
+                claudeStatus: parsed.agent === "claude" ? "done" : prev.claudeStatus,
+                llamaStatus:  parsed.agent === "llama"  ? "done" : prev.llamaStatus,
+                claudeText:   parsed.agent === "claude" ? (parsed.text ?? "") : prev.claudeText,
+                llamaText:    parsed.agent === "llama"  ? (parsed.text ?? "") : prev.llamaText,
+              }));
+            } else if (parsed.type === "synthesizing") {
+              setDualAgents(prev => ({ ...prev, synthesizing: true }));
+            } else if (parsed.text) {
+              accumulated += parsed.text;
+              setStreamText(accumulated);
+            }
+          } catch { /* ignore */ }
+        }
+      }
+    } catch (e) {
+      const errMsg: Message = { role: "assistant", content: `Signal lost: ${String(e)}`, id: msgId + 1 };
+      setMsgId(n => n + 1);
+      setMessages(prev => [...prev, errMsg]);
+      setStreamText("");
+      setOrbState("idle");
+    }
+  };
+
   const sendMessage = async (text?: string) => {
     const content = (text ?? query).trim();
     if (!content || orbState !== "idle") return;
@@ -497,13 +620,15 @@ export default function OraclePage() {
           if (!line.startsWith("data: ")) continue;
           const data = line.slice(6);
           if (data === "[DONE]") {
-            const assistantMsg: Message = { role: "assistant", content: accumulated, id: msgId + 1 };
+            const newId2 = msgId + 1;
+            const assistantMsg: Message = { role: "assistant", content: accumulated, id: newId2 };
             setMsgId(n => n + 1);
             setMessages(prev => [...prev, assistantMsg]);
             if (profileId) pushChatMessage(profileId, { role: "assistant", content: accumulated });
             setStreamText("");
             setToolCalls([]);
             setOrbState("idle");
+            if (voiceEnabled) setAutoPlayId(newId2);
             fetchSuggestions(lastUserMsgRef.current, accumulated);
             return;
           }
@@ -607,6 +732,31 @@ export default function OraclePage() {
                 {orbState === "idle" ? "STANDBY" : orbState === "thinking" ? "PROCESSING" : "TRANSMITTING"}
               </span>
             </div>
+            {/* Voice Oracle — planet selector */}
+            <VoiceOracle
+              planet={voicePlanet}
+              enabled={voiceEnabled}
+              onPlanetChange={setVoicePlanet}
+              onToggle={() => setVoiceEnabled(v => !v)}
+            />
+
+            {/* Dual Oracle toggle */}
+            <motion.button
+              whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+              onClick={() => setDualMode(v => !v)}
+              className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[8px] font-bold tracking-wider cursor-pointer"
+              style={{
+                background: dualMode ? "rgba(124,58,237,0.2)" : "rgba(255,255,255,0.03)",
+                border: dualMode ? "1px solid rgba(124,58,237,0.5)" : "1px solid rgba(255,255,255,0.08)",
+                color: dualMode ? "#a78bfa" : "#475569",
+                boxShadow: dualMode ? "0 0 12px rgba(124,58,237,0.3)" : "none",
+              }}
+              title="Run Claude + Llama in parallel, synthesize results"
+            >
+              <span style={{ fontSize: 10 }}>⚡</span>
+              <span className="hidden sm:inline">DUAL ORACLE</span>
+            </motion.button>
+
             <ModelSelector currentModelId={modelId} availability={modelAvailability} onChange={handleModelChange} />
             {messages.length > 0 && orbState === "idle" && (
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={clearHistory}
@@ -730,9 +880,76 @@ export default function OraclePage() {
                 <>
                   {allMessages.map((m, i) => (
                     <div key={m.id}>
-                      <OracleBubble message={m} isStreaming={m.id === -1 && orbState === "speaking"} />
+                      <OracleBubble
+                        message={m}
+                        isStreaming={m.id === -1 && orbState === "speaking"}
+                        voicePlanet={voiceEnabled ? voicePlanet : undefined}
+                        chartAspects={chart?.aspects}
+                        autoPlay={voiceEnabled && autoPlayId === m.id}
+                      />
+                      {/* Dual agent research panels */}
+                      {m.id === -1 && dualMode && (dualAgents.claudeStatus !== "idle" || dualAgents.llamaStatus !== "idle") && (
+                        <div className="mt-3 flex flex-col gap-2">
+                          {/* Agent status row */}
+                          <div className="flex gap-2 ml-10">
+                            {(["claude", "llama"] as const).map(agent => {
+                              const status = agent === "claude" ? dualAgents.claudeStatus : dualAgents.llamaStatus;
+                              const color = agent === "claude" ? "#a78bfa" : "#f97316";
+                              const label = agent === "claude" ? "✦ CLAUDE · Hellenistic" : "⬡ LLAMA · Psychological";
+                              return (
+                                <motion.div
+                                  key={agent}
+                                  initial={{ opacity: 0, y: 6 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg flex-1"
+                                  style={{
+                                    background: status === "done" ? `${color}10` : "rgba(255,255,255,0.03)",
+                                    border: `1px solid ${status === "done" ? color + "33" : "rgba(255,255,255,0.07)"}`,
+                                  }}
+                                >
+                                  {status === "thinking" ? (
+                                    <motion.div
+                                      animate={{ rotate: 360 }}
+                                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                      className="w-3 h-3 rounded-full border border-t-transparent flex-shrink-0"
+                                      style={{ borderColor: color }}
+                                    />
+                                  ) : status === "done" ? (
+                                    <span style={{ color, fontSize: 10 }}>✓</span>
+                                  ) : (
+                                    <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: "rgba(255,255,255,0.05)" }} />
+                                  )}
+                                  <span style={{ fontSize: 9, letterSpacing: 1, fontFamily: "'Share Tech Mono', monospace", color: status === "done" ? color : "#475569" }}>
+                                    {label}
+                                  </span>
+                                </motion.div>
+                              );
+                            })}
+                          </div>
+
+                          {/* Synthesis indicator */}
+                          {dualAgents.synthesizing && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              className="ml-10 flex items-center gap-2 px-3 py-1.5 rounded-lg"
+                              style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)" }}
+                            >
+                              <motion.div
+                                animate={{ opacity: [0.4, 1, 0.4] }}
+                                transition={{ duration: 1.2, repeat: Infinity }}
+                                style={{ width: 6, height: 6, borderRadius: "50%", background: "#a78bfa", flexShrink: 0 }}
+                              />
+                              <span style={{ fontSize: 9, letterSpacing: 1.5, fontFamily: "'Share Tech Mono', monospace", color: "#a78bfa" }}>
+                                SYNTHESIZING · FINDING CONSENSUS
+                              </span>
+                            </motion.div>
+                          )}
+                        </div>
+                      )}
+
                       {/* Tool call cards shown after the streaming assistant message */}
-                      {m.id === -1 && toolCalls.length > 0 && (
+                      {m.id === -1 && !dualMode && toolCalls.length > 0 && (
                         <div className="mt-2 flex flex-col gap-1.5">
                           {toolCalls.map(tc => (
                             <ToolCallCard key={tc.id} toolCall={tc} />
@@ -768,8 +985,8 @@ export default function OraclePage() {
                 </motion.div>
                 <input ref={inputRef} type="text" value={query}
                   onChange={e => { setQuery(e.target.value); if (e.target.value) setSuggestions([]); }}
-                  onKeyDown={e => e.key === "Enter" && sendMessage()}
-                  placeholder={chart ? "Ask the Oracle about your chart…" : "Ask the Oracle anything…"}
+                  onKeyDown={e => e.key === "Enter" && (dualMode ? sendDualMessage() : sendMessage())}
+                  placeholder={dualMode ? "Ask both oracles — consensus awaits…" : chart ? "Ask the Oracle about your chart…" : "Ask the Oracle anything…"}
                   disabled={orbState !== "idle"}
                   className="flex-1 bg-transparent text-sm outline-none disabled:opacity-40"
                   style={{ color: "#e2e8f0", fontFamily: "'DM Sans', sans-serif" }} />
@@ -782,7 +999,7 @@ export default function OraclePage() {
                     </motion.div>
                   ) : (
                     <motion.button key="send" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
-                      whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.9 }} onClick={() => sendMessage()}
+                      whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.9 }} onClick={() => dualMode ? sendDualMessage() : sendMessage()}
                       disabled={!query.trim()} className="flex-shrink-0 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                       style={{ color: "#7c3aed" }}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">

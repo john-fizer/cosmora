@@ -354,6 +354,42 @@ async function streamOpenAIResponse(
   }
 }
 
+// ─── Groq stream (OpenAI-compatible, free tier) ───────────────────────────────
+
+async function streamGroqResponse(
+  model: string,
+  system: string,
+  messages: Anthropic.MessageParam[],
+  maxTokens: number,
+  controller: ReadableStreamDefaultController,
+  encoder: TextEncoder
+) {
+  if (!process.env.GROQ_API_KEY) throw new Error("GROQ_API_KEY not configured");
+
+  const { default: OpenAI } = await import("openai");
+  const groq = new OpenAI({
+    apiKey: process.env.GROQ_API_KEY,
+    baseURL: "https://api.groq.com/openai/v1",
+  });
+
+  const stream = await groq.chat.completions.create({
+    model,
+    max_tokens: maxTokens,
+    stream: true,
+    messages: [
+      { role: "system", content: system },
+      ...messages.map(m => ({ role: m.role as "user" | "assistant", content: m.content as string })),
+    ],
+  });
+
+  for await (const chunk of stream) {
+    const text = chunk.choices[0]?.delta?.content ?? "";
+    if (text) {
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
+    }
+  }
+}
+
 // ─── Google stream (unchanged) ────────────────────────────────────────────────
 
 async function streamGoogleResponse(
@@ -450,6 +486,8 @@ export async function POST(req: NextRequest) {
             await streamOpenAIResponse(modelConfig.id, systemContent, apiMessages, modelConfig.tokens, controller, encoder);
           } else if (modelConfig.provider === "google") {
             await streamGoogleResponse(modelConfig.id, systemContent, apiMessages, modelConfig.tokens, controller, encoder);
+          } else if (modelConfig.provider === "groq") {
+            await streamGroqResponse(modelConfig.id, systemContent, apiMessages, modelConfig.tokens, controller, encoder);
           }
 
           controller.enqueue(encoder.encode("data: [DONE]\n\n"));

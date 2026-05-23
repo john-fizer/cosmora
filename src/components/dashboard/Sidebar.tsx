@@ -137,8 +137,8 @@ const NAV_ITEMS = [
 function DesktopSidebar({ pathname }: { pathname: string }) {
   return (
     <motion.aside
-      initial={{ x: -60, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="fixed left-0 top-0 h-full flex-col items-center py-5 z-50 hidden md:flex overflow-hidden"
       style={{

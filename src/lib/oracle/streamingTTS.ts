@@ -4,13 +4,24 @@ import { useRef, useState, useCallback } from "react";
 import type { VoicePlanet } from "./voice";
 import type { Aspect } from "@/lib/astrology/types";
 
-// Sentence boundary: .  ?  !  followed by whitespace or end of string.
-// Min 12 chars to skip "Dr." / "e.g." fragments.
 const SENTENCE_RE = /[.!?]+(?=\s|$)/g;
-const MAX_BUFFER = 160; // force-flush long sentences that never end
+const MAX_BUFFER = 160;
 
-// Silent 44-byte WAV — plays to unlock browser autoplay policy inside a user gesture
+// Silent 44-byte WAV — unlocks browser autoplay policy inside a user gesture
 const SILENT_WAV = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAEBAAEAQBwAAEAcAAABAAgAZGF0YQQAAAAAAA==";
+
+// Per-planet Web Speech tuning (fallback when ElevenLabs quota is exhausted)
+const WEB_SPEECH_TUNING: Record<VoicePlanet, { rate: number; pitch: number; gender: "male" | "female" | "neutral" }> = {
+  Sun:     { rate: 0.92, pitch: 0.85, gender: "male" },
+  Moon:    { rate: 0.88, pitch: 1.10, gender: "female" },
+  Mercury: { rate: 1.05, pitch: 1.05, gender: "neutral" },
+  Venus:   { rate: 0.90, pitch: 1.15, gender: "female" },
+  Mars:    { rate: 1.00, pitch: 0.80, gender: "male" },
+  Jupiter: { rate: 0.85, pitch: 0.90, gender: "male" },
+  Saturn:  { rate: 0.80, pitch: 0.75, gender: "male" },
+  Uranus:  { rate: 0.95, pitch: 1.00, gender: "neutral" },
+  Neptune: { rate: 0.82, pitch: 1.20, gender: "female" },
+};
 
 function extractComplete(buf: string): { sentences: string[]; remainder: string } {
   const sentences: string[] = [];
@@ -23,11 +34,9 @@ function extractComplete(buf: string): { sentences: string[]; remainder: string 
     const s = buf.slice(last, end).trim();
     if (s.length >= 12) sentences.push(s);
     last = end;
-    // skip leading whitespace for next sentence
     while (last < buf.length && buf[last] === " ") last++;
   }
 
-  // Force-flush if remainder is very long (no sentence ender arrived)
   let remainder = buf.slice(last);
   if (remainder.length > MAX_BUFFER) {
     const cutAt = remainder.lastIndexOf(" ", MAX_BUFFER);
@@ -47,14 +56,62 @@ interface QueueItem {
 
 export function useStreamingTTS(planet: VoicePlanet, aspects: Aspect[] = []) {
   const [isActive, setIsActive] = useState(false);
+  const [usingFallback, setUsingFallback] = useState(false);
 
-  const queue     = useRef<QueueItem[]>([]);
-  const playIdx   = useRef(0);
-  const audio     = useRef<HTMLAudioElement | null>(null);
-  const textBuf   = useRef("");
-  const stopped   = useRef(false);
-  const fetching  = useRef(0); // in-flight TTS requests
-  const unlocked  = useRef(false);
+  const queue          = useRef<QueueItem[]>([]);
+  const playIdx        = useRef(0);
+  const audio          = useRef<HTMLAudioElement | null>(null);
+  const textBuf        = useRef("");
+  const stopped        = useRef(false);
+  const fetching       = useRef(0);
+  const unlocked       = useRef(false);
+  const webSpeechMode  = useRef(false); // latched true after first ElevenLabs failure
+  const webSpeechCount = useRef(0);     // in-flight Web Speech utterances
+
+  // ── Web Speech fallback ──────────────────────────────────────────────────────
+
+  const speakWithBrowser = useCallback((text: string) => {
+    if (stopped.current) return;
+    const synth = typeof window !== "undefined" ? window.speechSynthesis : null;
+    if (!synth) return;
+
+    const tuning = WEB_SPEECH_TUNING[planet];
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.rate   = tuning.rate;
+    utt.pitch  = tuning.pitch;
+    utt.volume = 1;
+
+    // Try to pick a voice matching the planet's gender
+    const voices = synth.getVoices();
+    if (voices.length > 0) {
+      const lang = voices.filter(v => v.lang.startsWith("en"));
+      const gendered = lang.filter(v => {
+        const n = v.name.toLowerCase();
+        if (tuning.gender === "female") return n.includes("female") || n.includes("woman") || ["samantha","karen","victoria","moira","tessa","fiona"].some(x => n.includes(x));
+        if (tuning.gender === "male")   return n.includes("male")   || n.includes("man")   || ["daniel","alex","fred","tom","oliver","rishi","aaron"].some(x => n.includes(x));
+        return true;
+      });
+      utt.voice = (gendered[0] ?? lang[0]) ?? null;
+    }
+
+    setIsActive(true);
+    webSpeechCount.current++;
+
+    utt.onend = () => {
+      webSpeechCount.current--;
+      if (webSpeechCount.current === 0 && fetching.current === 0 && !stopped.current) {
+        setIsActive(false);
+      }
+    };
+    utt.onerror = (e) => {
+      if (e.error !== "interrupted") console.warn("[StreamTTS] SpeechSynthesis error:", e.error);
+      webSpeechCount.current = Math.max(0, webSpeechCount.current - 1);
+    };
+
+    synth.speak(utt);
+  }, [planet]);
+
+  // ── ElevenLabs queue player ──────────────────────────────────────────────────
 
   const tryPlay = useCallback((fromIdx: number) => {
     if (stopped.current) return;
@@ -62,26 +119,34 @@ export function useStreamingTTS(planet: VoicePlanet, aspects: Aspect[] = []) {
     const item = queue.current[fromIdx];
 
     if (!item) {
-      // Nothing queued yet — wait for next fetch to resolve
       if (fetching.current === 0) setIsActive(false);
       return;
     }
 
     if (item.failed) { tryPlay(fromIdx + 1); return; }
-    if (!item.blobUrl) return; // still loading — resolve callback will call tryPlay
+    if (!item.blobUrl) return;
 
     if (!audio.current) audio.current = new Audio();
     audio.current.src = item.blobUrl;
-    audio.current.onended  = () => tryPlay(fromIdx + 1);
-    audio.current.onerror  = () => tryPlay(fromIdx + 1);
+    audio.current.onended = () => tryPlay(fromIdx + 1);
+    audio.current.onerror = () => tryPlay(fromIdx + 1);
     audio.current.play().catch(err => {
-      console.warn("[StreamTTS] play() blocked:", err?.name, err?.message);
+      console.warn("[StreamTTS] play() blocked:", err?.name);
       tryPlay(fromIdx + 1);
     });
   }, []);
 
+  // ── Sentence dispatch ────────────────────────────────────────────────────────
+
   const enqueueSentence = useCallback((sentence: string) => {
     if (stopped.current || !sentence.trim()) return;
+
+    // Already in fallback mode — go straight to browser TTS
+    if (webSpeechMode.current) {
+      speakWithBrowser(sentence);
+      return;
+    }
+
     const idx = queue.current.length;
     queue.current.push({ blobUrl: null, failed: false });
     fetching.current++;
@@ -97,27 +162,38 @@ export function useStreamingTTS(planet: VoicePlanet, aspects: Aspect[] = []) {
           throw new Error(`TTS ${res.status}: ${msg}`);
         }
         const blob = await res.blob();
-        const url  = URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
         queue.current[idx].blobUrl = url;
         fetching.current--;
-        // If playhead is waiting on this exact item, start playing
         if (playIdx.current === idx && !stopped.current) tryPlay(idx);
       })
       .catch(err => {
-        console.error("[StreamTTS] fetch failed:", err?.message ?? err);
+        const msg: string = err?.message ?? String(err);
+        const isQuota = msg.includes("quota_exceeded") || msg.includes("401") || msg.includes("402");
+        if (isQuota && !webSpeechMode.current) {
+          console.info("[StreamTTS] ElevenLabs quota exhausted — switching to Web Speech API");
+          webSpeechMode.current = true;
+          setUsingFallback(true);
+        } else if (!isQuota) {
+          console.warn("[StreamTTS] TTS error:", msg);
+        }
         queue.current[idx].failed = true;
         fetching.current--;
-        if (playIdx.current === idx && !stopped.current) tryPlay(idx + 1);
+        if (webSpeechMode.current) {
+          // Replay via browser TTS since ElevenLabs failed
+          speakWithBrowser(sentence);
+        } else if (playIdx.current === idx && !stopped.current) {
+          tryPlay(idx + 1);
+        }
       });
 
-    // Start playhead if nothing is playing yet
     if (playIdx.current === idx && idx === 0) {
       setIsActive(true);
-      // playhead will start once blobUrl resolves
     }
-  }, [planet, aspects, tryPlay]);
+  }, [planet, aspects, tryPlay, speakWithBrowser]);
 
-  /** Feed a text token as it arrives from the LLM stream */
+  // ── Public API ───────────────────────────────────────────────────────────────
+
   const feed = useCallback((token: string) => {
     if (stopped.current) return;
     textBuf.current += token;
@@ -126,38 +202,31 @@ export function useStreamingTTS(planet: VoicePlanet, aspects: Aspect[] = []) {
     for (const s of sentences) enqueueSentence(s);
   }, [enqueueSentence]);
 
-  /** Call when the LLM stream ends — flushes any remaining buffer */
   const flush = useCallback(() => {
     const leftover = textBuf.current.trim();
     if (leftover.length >= 4) enqueueSentence(leftover);
     textBuf.current = "";
   }, [enqueueSentence]);
 
-  /**
-   * Call inside a user-gesture handler (button click, form submit) to unlock
-   * the browser's autoplay policy for this session. Safe to call multiple times.
-   */
   const unlock = useCallback(() => {
     if (unlocked.current) return;
     const a = new Audio(SILENT_WAV);
     a.volume = 0;
-    a.play()
-      .then(() => { unlocked.current = true; })
-      .catch(() => {});
+    a.play().then(() => { unlocked.current = true; }).catch(() => {});
   }, []);
 
-  /** Stop playback and clear queue (call when user sends a new message) */
   const stop = useCallback(() => {
     stopped.current = true;
     audio.current?.pause();
+    typeof window !== "undefined" && window.speechSynthesis?.cancel();
     queue.current = [];
     playIdx.current = 0;
     fetching.current = 0;
+    webSpeechCount.current = 0;
     textBuf.current = "";
     setIsActive(false);
-    // Reset for next use
     stopped.current = false;
   }, []);
 
-  return { feed, flush, stop, unlock, isActive };
+  return { feed, flush, stop, unlock, isActive, usingFallback };
 }

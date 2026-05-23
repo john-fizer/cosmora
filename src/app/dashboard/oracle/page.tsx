@@ -742,15 +742,22 @@ export default function OraclePage() {
               </span>
             </div>
             {/* Voice Oracle — planet selector */}
-            <VoiceOracle
-              planet={voicePlanet}
-              enabled={voiceEnabled}
-              onPlanetChange={setVoicePlanet}
-              onToggle={() => {
-                streamTTS.unlock(); // unlock autoplay policy inside this user gesture
-                setVoiceEnabled(v => !v);
-              }}
-            />
+            <div className="flex flex-col items-end gap-0.5">
+              <VoiceOracle
+                planet={voicePlanet}
+                enabled={voiceEnabled}
+                onPlanetChange={setVoicePlanet}
+                onToggle={() => {
+                  streamTTS.unlock();
+                  setVoiceEnabled(v => !v);
+                }}
+              />
+              {voiceEnabled && streamTTS.usingFallback && (
+                <span style={{ fontSize: 7, color: "#64748b", letterSpacing: 0.5 }}>
+                  browser tts · elevenlabs quota exceeded
+                </span>
+              )}
+            </div>
 
             {/* Dual Oracle toggle */}
             <motion.button

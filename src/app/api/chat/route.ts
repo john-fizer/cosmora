@@ -14,9 +14,10 @@ function buildChartContext(chart: ChartData): string {
   const p = chart.planets;
   const ascSign = chart.houses[0]?.sign ?? "Unknown";
 
-  const planetSummary = p.map(pl =>
-    `${PLANET_SYMBOLS[pl.name] ?? pl.name} ${pl.name}: ${pl.signDegree.toFixed(1)}° ${pl.sign} (House ${pl.house})${pl.retrograde ? " Rx" : ""}${pl.dignity ? ` [${pl.dignity}]` : ""}`
-  ).join("\n");
+  const planetSummary = p.map(pl => {
+    const decanStr = pl.decan ? ` decan ${pl.decan} (${pl.decanLord} face)` : "";
+    return `${PLANET_SYMBOLS[pl.name] ?? pl.name} ${pl.name}: ${pl.signDegree.toFixed(1)}° ${pl.sign}${decanStr} (House ${pl.house})${pl.retrograde ? " Rx" : ""}${pl.dignity ? ` [${pl.dignity}]` : ""}`;
+  }).join("\n");
 
   const aspects = chart.aspects.slice(0, 12).map(a =>
     `${a.planet1} ${a.type} ${a.planet2} (orb ${a.orb.toFixed(1)}°${a.exact ? ", exact" : ""}${a.applying ? ", applying" : ""})`

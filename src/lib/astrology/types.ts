@@ -19,6 +19,8 @@ export interface PlanetPosition {
   retrograde: boolean;
   speed: number;           // degrees per day
   dignity?: string;        // domicile | exaltation | detriment | fall | peregrine
+  decan?: number;          // 1 | 2 | 3 (Ptolemaic face/decan)
+  decanLord?: PlanetName;  // Chaldean decan ruler
 }
 
 export interface HouseCusp {

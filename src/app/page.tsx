@@ -344,9 +344,9 @@ function FAQAccordion() {
 
 export default function LandingPage() {
   const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef });
-  const textOpacity = useTransform(scrollYProgress, [0, 0.45], [1, 0]);
-  const textY = useTransform(scrollYProgress, [0, 0.45], [0, -40]);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const textY = useTransform(scrollYProgress, [0, 0.5], [0, -40]);
 
   return (
     <div className="min-h-screen relative" style={{ background: "var(--void-black)" }}>

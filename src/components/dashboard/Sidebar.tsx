@@ -143,8 +143,8 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
       className="fixed left-0 top-0 h-full flex-col items-center py-5 z-50 hidden md:flex overflow-hidden"
       style={{
         width: 68,
-        background: "rgba(1,1,14,0.92)",
-        borderRight: "1px solid rgba(6,182,212,0.12)",
+        background: "var(--sidebar-bg)",
+        borderRight: "1px solid var(--sidebar-border)",
         backdropFilter: "blur(28px)",
       }}
     >
@@ -158,7 +158,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
           top: 0,
           width: 1,
           height: "18%",
-          background: "linear-gradient(180deg, transparent, #06b6d4, #a855f7, transparent)",
+          background: "var(--scan-gradient)",
           opacity: 0.7,
           pointerEvents: "none",
         }}
@@ -176,7 +176,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
           transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
           className="w-10 h-10 rounded-xl flex items-center justify-center"
           style={{
-            background: "linear-gradient(135deg, #7c3aed, #06b6d4)",
+            background: "var(--logo-gradient)",
           }}
         >
           <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="white" strokeWidth="1.5">
@@ -199,10 +199,10 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                 whileTap={{ scale: 0.94 }}
                 className="relative flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl cursor-pointer transition-all duration-200"
                 style={{
-                  background: active ? "rgba(124,58,237,0.22)" : "transparent",
-                  color: active ? "#c4b5fd" : "rgba(100,116,139,0.8)",
-                  border: active ? "1px solid rgba(168,85,247,0.4)" : "1px solid transparent",
-                  boxShadow: active ? "0 0 18px rgba(124,58,237,0.2), inset 0 0 12px rgba(124,58,237,0.06)" : "none",
+                  background: active ? "var(--nav-active-bg)" : "transparent",
+                  color: active ? "var(--nav-active-text)" : "var(--nav-inactive-text)",
+                  border: active ? "1px solid var(--nav-active-border)" : "1px solid transparent",
+                  boxShadow: active ? "var(--nav-active-shadow)" : "none",
                 }}
               >
                 {/* Active indicator — left glow bar */}
@@ -217,8 +217,8 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                       width: 3,
                       height: "60%",
                       borderRadius: 2,
-                      background: "linear-gradient(180deg, #a855f7, #06b6d4)",
-                      boxShadow: "0 0 8px #a855f7",
+                      background: "var(--scan-gradient)",
+                      boxShadow: "0 0 8px var(--hud-corner-b)",
                     }}
                   />
                 )}

@@ -23,7 +23,7 @@ export default function RootLayout({
           } catch(e) {}
         ` }} />
       </head>
-      <body className="min-h-full bg-[#00000f] text-slate-100 antialiased">
+      <body className="min-h-full text-slate-100 antialiased" style={{ background: "var(--bg-void)" }}>
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -9,6 +9,9 @@ import type { Aspect } from "@/lib/astrology/types";
 const SENTENCE_RE = /[.!?]+(?=\s|$)/g;
 const MAX_BUFFER = 160; // force-flush long sentences that never end
 
+// Silent 44-byte WAV — plays to unlock browser autoplay policy inside a user gesture
+const SILENT_WAV = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAEBAAEAQBwAAEAcAAABAAgAZGF0YQQAAAAAAA==";
+
 function extractComplete(buf: string): { sentences: string[]; remainder: string } {
   const sentences: string[] = [];
   let last = 0;
@@ -51,6 +54,7 @@ export function useStreamingTTS(planet: VoicePlanet, aspects: Aspect[] = []) {
   const textBuf   = useRef("");
   const stopped   = useRef(false);
   const fetching  = useRef(0); // in-flight TTS requests
+  const unlocked  = useRef(false);
 
   const tryPlay = useCallback((fromIdx: number) => {
     if (stopped.current) return;
@@ -70,7 +74,10 @@ export function useStreamingTTS(planet: VoicePlanet, aspects: Aspect[] = []) {
     audio.current.src = item.blobUrl;
     audio.current.onended  = () => tryPlay(fromIdx + 1);
     audio.current.onerror  = () => tryPlay(fromIdx + 1);
-    audio.current.play().catch(() => tryPlay(fromIdx + 1));
+    audio.current.play().catch(err => {
+      console.warn("[StreamTTS] play() blocked:", err?.name, err?.message);
+      tryPlay(fromIdx + 1);
+    });
   }, []);
 
   const enqueueSentence = useCallback((sentence: string) => {
@@ -85,7 +92,10 @@ export function useStreamingTTS(planet: VoicePlanet, aspects: Aspect[] = []) {
       body: JSON.stringify({ text: sentence, planet, aspects }),
     })
       .then(async res => {
-        if (!res.ok) throw new Error(`TTS ${res.status}`);
+        if (!res.ok) {
+          const msg = await res.text().catch(() => res.status.toString());
+          throw new Error(`TTS ${res.status}: ${msg}`);
+        }
         const blob = await res.blob();
         const url  = URL.createObjectURL(blob);
         queue.current[idx].blobUrl = url;
@@ -93,7 +103,8 @@ export function useStreamingTTS(planet: VoicePlanet, aspects: Aspect[] = []) {
         // If playhead is waiting on this exact item, start playing
         if (playIdx.current === idx && !stopped.current) tryPlay(idx);
       })
-      .catch(() => {
+      .catch(err => {
+        console.error("[StreamTTS] fetch failed:", err?.message ?? err);
         queue.current[idx].failed = true;
         fetching.current--;
         if (playIdx.current === idx && !stopped.current) tryPlay(idx + 1);
@@ -122,6 +133,19 @@ export function useStreamingTTS(planet: VoicePlanet, aspects: Aspect[] = []) {
     textBuf.current = "";
   }, [enqueueSentence]);
 
+  /**
+   * Call inside a user-gesture handler (button click, form submit) to unlock
+   * the browser's autoplay policy for this session. Safe to call multiple times.
+   */
+  const unlock = useCallback(() => {
+    if (unlocked.current) return;
+    const a = new Audio(SILENT_WAV);
+    a.volume = 0;
+    a.play()
+      .then(() => { unlocked.current = true; })
+      .catch(() => {});
+  }, []);
+
   /** Stop playback and clear queue (call when user sends a new message) */
   const stop = useCallback(() => {
     stopped.current = true;
@@ -135,5 +159,5 @@ export function useStreamingTTS(planet: VoicePlanet, aspects: Aspect[] = []) {
     stopped.current = false;
   }, []);
 
-  return { feed, flush, stop, isActive };
+  return { feed, flush, stop, unlock, isActive };
 }

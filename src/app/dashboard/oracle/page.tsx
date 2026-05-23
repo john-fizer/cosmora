@@ -595,6 +595,7 @@ export default function OraclePage() {
     setOrbState("thinking");
     setStreamText("");
     setToolCalls([]);
+    streamTTS.unlock(); // ensure autoplay is unlocked before async work begins
     streamTTS.stop();
 
     try {
@@ -745,7 +746,10 @@ export default function OraclePage() {
               planet={voicePlanet}
               enabled={voiceEnabled}
               onPlanetChange={setVoicePlanet}
-              onToggle={() => setVoiceEnabled(v => !v)}
+              onToggle={() => {
+                streamTTS.unlock(); // unlock autoplay policy inside this user gesture
+                setVoiceEnabled(v => !v);
+              }}
             />
 
             {/* Dual Oracle toggle */}

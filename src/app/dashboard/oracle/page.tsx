@@ -752,9 +752,9 @@ export default function OraclePage() {
                   setVoiceEnabled(v => !v);
                 }}
               />
-              {voiceEnabled && streamTTS.usingFallback && (
-                <span style={{ fontSize: 7, color: "#64748b", letterSpacing: 0.5 }}>
-                  browser tts · elevenlabs quota exceeded
+              {voiceEnabled && streamTTS.activeProvider && (
+                <span style={{ fontSize: 7, color: "#475569", letterSpacing: 0.5 }}>
+                  via {streamTTS.activeProvider}
                 </span>
               )}
             </div>

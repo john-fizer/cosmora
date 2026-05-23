@@ -17,6 +17,7 @@ import { ORACLE_MODELS, getModelById } from "@/lib/oracle/models";
 import { VoiceOracle } from "@/components/oracle/VoiceOracle";
 import { InsightPlayer } from "@/components/oracle/InsightPlayer";
 import { type VoicePlanet } from "@/lib/oracle/voice";
+import { useStreamingTTS } from "@/lib/oracle/streamingTTS";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -418,6 +419,7 @@ export default function OraclePage() {
   const [voicePlanet, setVoicePlanet]   = useState<VoicePlanet>("Moon");
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [autoPlayId, setAutoPlayId]     = useState<number | null>(null);
+  const streamTTS = useStreamingTTS(voicePlanet, chart?.aspects ?? []);
   const [dualMode, setDualMode] = useState(false);
   const [dualAgents, setDualAgents] = useState<{
     claudeStatus: "idle" | "thinking" | "done";
@@ -593,6 +595,7 @@ export default function OraclePage() {
     setOrbState("thinking");
     setStreamText("");
     setToolCalls([]);
+    streamTTS.stop();
 
     try {
       const res = await fetch("/api/chat", {
@@ -628,7 +631,11 @@ export default function OraclePage() {
             setStreamText("");
             setToolCalls([]);
             setOrbState("idle");
-            if (voiceEnabled) setAutoPlayId(newId2);
+            if (voiceEnabled) {
+              streamTTS.flush();       // flush any remaining buffer
+            } else {
+              setAutoPlayId(newId2);   // fallback: post-message InsightPlayer autoplay
+            }
             fetchSuggestions(lastUserMsgRef.current, accumulated);
             return;
           }
@@ -641,6 +648,7 @@ export default function OraclePage() {
             if (parsed.text) {
               accumulated += parsed.text;
               setStreamText(accumulated);
+              if (voiceEnabled) streamTTS.feed(parsed.text);
             } else if (parsed.tool_call) {
               setToolCalls(prev => [...prev, { ...parsed.tool_call!, done: false }]);
             } else if (parsed.tool_result) {

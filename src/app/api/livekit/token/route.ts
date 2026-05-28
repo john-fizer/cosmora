@@ -14,33 +14,42 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const body = await req.json() as { planet?: string; chartContext?: string };
-  const planet       = body.planet ?? "Moon";
-  const chartContext = body.chartContext ?? null;
+  try {
+    const body = await req.json() as { planet?: string; chartContext?: string };
+    const planet       = body.planet ?? "Moon";
+    const chartContext = body.chartContext ?? null;
 
-  const roomName = `oracle-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-  const identity = `user-${Date.now()}`;
+    const roomName = `oracle-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const identity = `user-${Date.now()}`;
 
-  // Create room with metadata so the Python agent can read planet + context
-  const svc = new RoomServiceClient(url, apiKey, apiSecret);
-  await svc.createRoom({
-    name: roomName,
-    metadata: JSON.stringify({ planet, chartContext }),
-    emptyTimeout: 300,
-    maxParticipants: 10,
-  });
+    // Create room with metadata so the Python agent can read planet + context
+    const svc = new RoomServiceClient(url, apiKey, apiSecret);
+    await svc.createRoom({
+      name: roomName,
+      metadata: JSON.stringify({ planet, chartContext }),
+      emptyTimeout: 300,
+      maxParticipants: 10,
+    });
 
-  const at = new AccessToken(apiKey, apiSecret, { identity });
-  at.addGrant({
-    roomJoin: true,
-    room: roomName,
-    canPublish: true,
-    canSubscribe: true,
-    canPublishData: true,
-  });
-  const token = await at.toJwt();
+    const at = new AccessToken(apiKey, apiSecret, { identity });
+    at.addGrant({
+      roomJoin: true,
+      room: roomName,
+      canPublish: true,
+      canSubscribe: true,
+      canPublishData: true,
+    });
+    const token = await at.toJwt();
 
-  return new Response(JSON.stringify({ token, url, roomName }), {
-    headers: { "Content-Type": "application/json" },
-  });
+    return new Response(JSON.stringify({ token, url, roomName }), {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (e) {
+    const msg = (e as Error).message ?? String(e);
+    console.error("[livekit/token] failed:", msg);
+    return new Response(JSON.stringify({ error: msg }), {
+      status: 503,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 }

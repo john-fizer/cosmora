@@ -418,6 +418,7 @@ export default function OraclePage() {
   const [toolCalls, setToolCalls] = useState<ToolCallEvent[]>([]);
   const [voicePlanet, setVoicePlanet]   = useState<VoicePlanet>("Moon");
   const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [liveVoiceActive, setLiveVoiceActive] = useState(false);
   const [autoPlayId, setAutoPlayId]     = useState<number | null>(null);
   const streamTTS = useStreamingTTS(voicePlanet, chart?.aspects ?? []);
   const [dualMode, setDualMode] = useState(false);
@@ -537,7 +538,7 @@ export default function OraclePage() {
             if (profileId) pushChatMessage(profileId, { role: "assistant", content: accumulated });
             setStreamText("");
             setOrbState("idle");
-            if (voiceEnabled) setAutoPlayId(newId);
+            if (voiceEnabled && !liveVoiceActive) setAutoPlayId(newId);
             setDualAgents(prev => ({ ...prev, synthesizing: false }));
             fetchSuggestions(lastUserMsgRef.current, accumulated);
             return;
@@ -649,7 +650,7 @@ export default function OraclePage() {
             if (parsed.text) {
               accumulated += parsed.text;
               setStreamText(accumulated);
-              if (voiceEnabled) streamTTS.feed(parsed.text);
+              if (voiceEnabled && !liveVoiceActive) streamTTS.feed(parsed.text);
             } else if (parsed.tool_call) {
               setToolCalls(prev => [...prev, { ...parsed.tool_call!, done: false }]);
             } else if (parsed.tool_result) {
@@ -751,6 +752,7 @@ export default function OraclePage() {
                   streamTTS.unlock();
                   setVoiceEnabled(v => !v);
                 }}
+                onLiveVoice={setLiveVoiceActive}
               />
               {voiceEnabled && streamTTS.activeProvider && (
                 <span style={{ fontSize: 7, color: "#475569", letterSpacing: 0.5 }}>

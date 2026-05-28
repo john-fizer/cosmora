@@ -1,25 +1,64 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PLANET_VOICES, VOICE_PLANET_ORDER, type VoicePlanet } from "@/lib/oracle/voice";
+import { useOracleSession } from "@/lib/oracle/useOracleSession";
+import { AgentHaloRing } from "@/components/oracle/AgentHaloRing";
 
 interface VoiceOracleProps {
   planet: VoicePlanet;
   enabled: boolean;
   onPlanetChange: (p: VoicePlanet) => void;
   onToggle: () => void;
+  onLiveVoice?: (active: boolean) => void;
 }
 
-export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle }: VoiceOracleProps) {
+export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle, onLiveVoice }: VoiceOracleProps) {
   const [panelOpen, setPanelOpen] = useState(false);
   const profile = PLANET_VOICES[planet];
+
+  const { connect, disconnect, isConnected, agentState, agentVolume, userVolume } = useOracleSession();
+
+  // Connect when enabled, disconnect when disabled
+  useEffect(() => {
+    if (enabled) {
+      void connect(planet);
+    } else {
+      void disconnect();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled]);
+
+  // When planet changes while enabled and connected: reconnect
+  useEffect(() => {
+    if (enabled && isConnected) {
+      void disconnect().then(() => connect(planet));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [planet]);
+
+  // Notify parent when connection state changes
+  useEffect(() => {
+    onLiveVoice?.(isConnected);
+  }, [isConnected, onLiveVoice]);
 
   const handleToggle = () => {
     if (!enabled) setPanelOpen(true);
     else setPanelOpen(false);
     onToggle();
   };
+
+  // Determine label text
+  const buttonLabel = !enabled ? "VOICE" : isConnected ? "LIVE" : "CONNECTING…";
+
+  // Determine provider label in panel header
+  const providerLabel = isConnected ? "VOICE CHANNEL · LIVEKIT" : "VOICE CHANNEL · ELEVENLABS";
+
+  // Determine footer note
+  const footerNote = isConnected
+    ? "Live voice · bidirectional · LiveKit"
+    : "Voice stability & style shift with your chart aspects · ElevenLabs TTS";
 
   return (
     <div className="relative">
@@ -31,15 +70,26 @@ export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle }: Voice
         className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[8px] font-bold tracking-wider cursor-pointer"
         style={{
           background: enabled ? `${profile.color}18` : "rgba(255,255,255,0.03)",
-          border: `1px solid ${enabled ? profile.color + "55" : "rgba(255,255,255,0.08)"}`,
+          border: `1px solid ${enabled ? (isConnected ? profile.color + "88" : profile.color + "55") : "rgba(255,255,255,0.08)"}`,
           color: enabled ? profile.color : "#475569",
-          boxShadow: enabled ? `0 0 10px ${profile.color}28` : "none",
+          boxShadow: enabled ? (isConnected ? `0 0 14px ${profile.color}44` : `0 0 10px ${profile.color}28`) : "none",
           transition: "all 0.2s",
         }}
       >
-        <span style={{ fontSize: 11, lineHeight: 1 }}>{enabled ? profile.symbol : "◎"}</span>
+        {enabled ? (
+          <AgentHaloRing
+            width={48}
+            height={32}
+            state={agentState}
+            color={profile.color}
+            agentVolume={agentVolume}
+            userVolume={userVolume}
+          />
+        ) : (
+          <span style={{ fontSize: 11, lineHeight: 1 }}>◎</span>
+        )}
         <span className="hidden sm:inline">
-          {enabled ? planet.toUpperCase() : "VOICE"}
+          {buttonLabel}
         </span>
         {enabled && (
           <motion.button
@@ -79,7 +129,7 @@ export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle }: Voice
                 <div className="flex items-center gap-2">
                   <span style={{ fontSize: 16, color: profile.color }}>{profile.symbol}</span>
                   <div>
-                    <p style={{ fontSize: 8, letterSpacing: 2, color: "#475569", fontWeight: 700 }}>VOICE CHANNEL · ELEVENLABS</p>
+                    <p style={{ fontSize: 8, letterSpacing: 2, color: "#475569", fontWeight: 700 }}>{providerLabel}</p>
                     <p style={{ fontSize: 7, color: profile.color + "99" }}>{profile.voiceName} · {profile.archetype}</p>
                   </div>
                 </div>
@@ -139,7 +189,7 @@ export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle }: Voice
                 </div>
 
                 <p style={{ fontSize: 7, color: "#1e293b", letterSpacing: 0.3, textAlign: "center" }}>
-                  Voice stability &amp; style shift with your chart aspects · ElevenLabs TTS
+                  {footerNote}
                 </p>
               </div>
             </motion.div>

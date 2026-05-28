@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Room,
   RoomEvent,
@@ -27,6 +27,7 @@ export function useOracleSession(): OracleSession {
   const [userVolume, setUserVolume] = useState(0);
 
   const roomRef = useRef<Room | null>(null);
+  const isConnectingRef = useRef(false);
   const agentCleanupRef = useRef<(() => void) | null>(null);
   const userCleanupRef = useRef<(() => void) | null>(null);
   const agentIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -49,97 +50,104 @@ export function useOracleSession(): OracleSession {
 
   const connect = useCallback(
     async (planet: string, chartContext?: string) => {
-      if (roomRef.current) {
-        await roomRef.current.disconnect();
-        roomRef.current = null;
-      }
-
-      const res = await fetch("/api/livekit/token", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planet, chartContext: chartContext ?? null }),
-      });
-      if (!res.ok) throw new Error(`Token fetch failed: ${res.status}`);
-      const { token, url } = (await res.json()) as {
-        token: string;
-        url: string;
-        roomName: string;
-      };
-
-      const room = new Room();
-      roomRef.current = room;
-
-      // DataReceived: (payload: NonSharedUint8Array, participant?, kind?, topic?, encryptionType?) => void
-      room.on(RoomEvent.DataReceived, (data: Uint8Array) => {
-        try {
-          const msg = JSON.parse(new TextDecoder().decode(data)) as {
-            state?: AgentState;
-          };
-          if (msg.state) setAgentState(msg.state);
-        } catch {
-          // non-JSON data messages — ignore
+      if (isConnectingRef.current) return;
+      isConnectingRef.current = true;
+      try {
+        if (roomRef.current) {
+          await roomRef.current.disconnect();
+          roomRef.current = null;
         }
-      });
 
-      // TrackSubscribed: (track: RemoteTrack, publication, participant) => void
-      room.on(RoomEvent.TrackSubscribed, (track) => {
-        if (!(track instanceof RemoteAudioTrack)) return;
-        const { calculateVolume, cleanup } = createAudioAnalyser(track, {
-          fftSize: 256,
+        const res = await fetch("/api/livekit/token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ planet, chartContext: chartContext ?? null }),
         });
-        // cleanup returns a Promise — wrap in a sync function for the ref
-        agentCleanupRef.current = () => {
-          void cleanup();
+        if (!res.ok) throw new Error(`Token fetch failed: ${res.status}`);
+        const { token, url } = (await res.json()) as {
+          token: string;
+          url: string;
+          roomName: string;
         };
-        agentIntervalRef.current = setInterval(
-          () => setAgentVolume(calculateVolume()),
-          50,
-        );
-      });
 
-      // TrackUnsubscribed: (track: RemoteTrack, publication, participant) => void
-      room.on(RoomEvent.TrackUnsubscribed, (track) => {
-        if (!(track instanceof RemoteAudioTrack)) return;
-        if (agentIntervalRef.current) {
-          clearInterval(agentIntervalRef.current);
-          agentIntervalRef.current = null;
+        const room = new Room();
+        roomRef.current = room;
+
+        // DataReceived: (payload: NonSharedUint8Array, participant?, kind?, topic?, encryptionType?) => void
+        room.on(RoomEvent.DataReceived, (data: Uint8Array) => {
+          try {
+            const msg = JSON.parse(new TextDecoder().decode(data)) as {
+              state?: AgentState;
+            };
+            if (msg.state) setAgentState(msg.state);
+          } catch {
+            // non-JSON data messages — ignore
+          }
+        });
+
+        // TrackSubscribed: (track: RemoteTrack, publication, participant) => void
+        room.on(RoomEvent.TrackSubscribed, (track) => {
+          if (!(track instanceof RemoteAudioTrack)) return;
+          const { calculateVolume, cleanup } = createAudioAnalyser(track, {
+            fftSize: 256,
+          });
+          // cleanup returns a Promise — wrap in a sync function for the ref
+          agentCleanupRef.current = () => {
+            void cleanup();
+          };
+          agentIntervalRef.current = setInterval(
+            () => setAgentVolume(calculateVolume()),
+            50,
+          );
+        });
+
+        // TrackUnsubscribed: (track: RemoteTrack, publication, participant) => void
+        room.on(RoomEvent.TrackUnsubscribed, (track) => {
+          if (!(track instanceof RemoteAudioTrack)) return;
+          if (agentIntervalRef.current) {
+            clearInterval(agentIntervalRef.current);
+            agentIntervalRef.current = null;
+          }
+          agentCleanupRef.current?.();
+          agentCleanupRef.current = null;
+          setAgentVolume(0);
+        });
+
+        room.on(RoomEvent.Disconnected, () => {
+          stopAnalysers();
+          setIsConnected(false);
+          setAgentState("idle");
+          setAgentVolume(0);
+          setUserVolume(0);
+        });
+
+        await room.connect(url, token);
+        await room.localParticipant.setMicrophoneEnabled(true);
+
+        const micPub = room.localParticipant.getTrackPublication(
+          Track.Source.Microphone,
+        );
+        if (micPub?.audioTrack) {
+          const { calculateVolume, cleanup } = createAudioAnalyser(
+            micPub.audioTrack,
+            { fftSize: 256 },
+          );
+          // cleanup returns a Promise — wrap in a sync function for the ref
+          userCleanupRef.current = () => {
+            void cleanup();
+          };
+          userIntervalRef.current = setInterval(
+            () => setUserVolume(calculateVolume()),
+            50,
+          );
         }
-        agentCleanupRef.current?.();
-        agentCleanupRef.current = null;
-        setAgentVolume(0);
-      });
 
-      room.on(RoomEvent.Disconnected, () => {
-        stopAnalysers();
-        setIsConnected(false);
+        isConnectingRef.current = false;
+        setIsConnected(true);
         setAgentState("idle");
-        setAgentVolume(0);
-        setUserVolume(0);
-      });
-
-      await room.connect(url, token);
-      await room.localParticipant.setMicrophoneEnabled(true);
-
-      const micPub = room.localParticipant.getTrackPublication(
-        Track.Source.Microphone,
-      );
-      if (micPub?.audioTrack) {
-        const { calculateVolume, cleanup } = createAudioAnalyser(
-          micPub.audioTrack,
-          { fftSize: 256 },
-        );
-        // cleanup returns a Promise — wrap in a sync function for the ref
-        userCleanupRef.current = () => {
-          void cleanup();
-        };
-        userIntervalRef.current = setInterval(
-          () => setUserVolume(calculateVolume()),
-          50,
-        );
+      } finally {
+        isConnectingRef.current = false;
       }
-
-      setIsConnected(true);
-      setAgentState("idle");
     },
     [stopAnalysers],
   );
@@ -154,6 +162,14 @@ export function useOracleSession(): OracleSession {
     setAgentState("idle");
     setAgentVolume(0);
     setUserVolume(0);
+  }, [stopAnalysers]);
+
+  // disconnect and stop analysers if the component unmounts while connected
+  useEffect(() => {
+    return () => {
+      stopAnalysers();
+      void roomRef.current?.disconnect();
+    };
   }, [stopAnalysers]);
 
   return { connect, disconnect, isConnected, agentState, agentVolume, userVolume };

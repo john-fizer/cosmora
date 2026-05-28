@@ -72,22 +72,36 @@ export function AgentHaloRing({
   const colorRef   = useRef(color);
   const agentRef   = useRef(agentVolume);
   const userRef    = useRef(userVolume);
+  // HSL cache — recomputed only when colorRef changes (Issue 3)
+  const hslRef     = useRef<[number, number, number]>(hexToHsl(color));
 
   // keep refs in sync without restarting the loop
   stateRef.current  = state;
-  colorRef.current  = color;
+  if (colorRef.current !== color) {
+    colorRef.current = color;
+    hslRef.current   = hexToHsl(color);
+  }
   agentRef.current  = agentVolume;
   userRef.current   = userVolume;
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d")!;
+    const ctxRaw = canvas.getContext("2d");
+    if (!ctxRaw) return;
+    const ctx: CanvasRenderingContext2D = ctxRaw;
+
+    // DPR scaling — retina displays (Issue 1)
+    const dpr = window.devicePixelRatio ?? 1;
+    canvas.width  = width  * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
 
     let ax = Math.random() * 6, ay = Math.random() * 6, az = Math.random() * 6;
 
     function frame() {
-      const W = canvas!.width, H = canvas!.height;
+      // Use CSS-pixel dimensions for layout calculations (canvas is DPR-scaled via ctx.scale)
+      const W = width, H = height;
       const cfg = STATE_CONFIGS[stateRef.current] ?? STATE_CONFIGS.idle;
 
       ax += 0.016 * cfg.axS;
@@ -96,13 +110,16 @@ export function AgentHaloRing({
 
       ctx.clearRect(0, 0, W, H);
 
-      const [baseH, baseS, baseL] = hexToHsl(colorRef.current || "#7B6FD4");
+      // Use cached HSL — recomputed only on color change (Issue 3)
+      const [baseH, baseS, baseL] = hslRef.current;
       const cx = W * 0.5, cy = H * 0.5;
       const R   = Math.min(W, H) * 0.36;
       const tubeR = 9 * (Math.min(W, H) / 80);
       const fov = Math.max(W, H) * 2.2;
       const SEG = 140;
-      const distAmp = tubeR * cfg.distMult * agentRef.current;
+      // Clamp agentVolume to [0, 1] (Issue 4)
+      const aVol = Math.min(1, Math.max(0, agentRef.current));
+      const distAmp = tubeR * cfg.distMult * aVol;
       const pulse   = 1 + userRef.current * 0.18;
 
       STRIPES.forEach(({ tubeA, lOffset, sOffset, alphaBase, lw }, si) => {
@@ -124,7 +141,7 @@ export function AgentHaloRing({
           p = rotX(p, ax);
           p = rotY(p, ay);
           p = rotZ(p, az);
-          const sc = fov / (fov + p.z);
+          const sc = fov / Math.max(0.001, fov + p.z);
           const sx = cx + p.x * sc, sy = cy + p.y * sc;
           i === 0 ? ctx.moveTo(sx, sy) : ctx.lineTo(sx, sy);
         }

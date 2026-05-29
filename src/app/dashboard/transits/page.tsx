@@ -882,15 +882,47 @@ export default function TransitsPage() {
 
   if (!loading && (!profileId || !natal)) {
     return (
-      <div className="h-screen flex items-center justify-center" style={{ background: "#00000f" }}>
-        <div className="text-center space-y-4">
-          <p className="text-lg font-bold" style={{ color: "#f1f5f9" }}>No birth profile found</p>
-          <Link href="/onboarding">
-            <button className="px-6 py-3 rounded-xl text-sm font-bold cursor-pointer"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white" }}>
-              Create Profile →
-            </button>
-          </Link>
+      <div className="h-screen flex overflow-hidden" style={{ background: "#00000f" }}>
+        <DashboardBg />
+        <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "10%", background: "rgba(6,182,212,0.05)", filter: "blur(120px)" }} />
+        <div className="nebula-orb" style={{ width: 400, height: 400, right: "10%", bottom: "5%", background: "rgba(124,58,237,0.06)", filter: "blur(80px)" }} />
+        <Sidebar />
+        <div className="flex-1 flex items-center justify-center md:ml-[68px] relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col items-center gap-6 text-center px-8"
+          >
+            <motion.div
+              animate={{ boxShadow: ["0 0 30px rgba(6,182,212,0.3)", "0 0 60px rgba(6,182,212,0.6)", "0 0 30px rgba(6,182,212,0.3)"] }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="w-20 h-20 rounded-3xl flex items-center justify-center"
+              style={{ background: "linear-gradient(135deg, #0891b2, #06b6d4)" }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" className="w-10 h-10">
+                <path d="M12 2L12 6M12 18L12 22M4.93 4.93L7.76 7.76M16.24 16.24L19.07 19.07M2 12H6M18 12H22M4.93 19.07L7.76 16.24M16.24 7.76L19.07 4.93" />
+                <circle cx="12" cy="12" r="4" />
+              </svg>
+            </motion.div>
+            <div>
+              <p className="text-[10px] font-bold tracking-[0.3em] mb-2" style={{ color: "#06b6d4" }}>NO CHART DATA</p>
+              <h2 className="text-3xl font-bold mb-3 font-title" style={{ color: "#f0f4ff" }}>Transit Radar Offline</h2>
+              <p className="text-sm max-w-sm leading-relaxed" style={{ color: "#64748b" }}>
+                Enter your birth data to activate planetary transit tracking and real-time cosmic alerts.
+              </p>
+            </div>
+            <Link href="/onboarding">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.96 }}
+                className="px-8 py-3 rounded-2xl text-sm font-bold tracking-wider cursor-pointer"
+                style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", boxShadow: "0 0 30px rgba(124,58,237,0.4)" }}
+              >
+                Begin Setup →
+              </motion.button>
+            </Link>
+          </motion.div>
         </div>
       </div>
     );

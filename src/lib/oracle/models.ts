@@ -3,7 +3,7 @@
  * Client-safe: no API keys. Server routing handles provider selection.
  */
 
-export type OracleProvider = "anthropic" | "openai" | "google";
+export type OracleProvider = "anthropic" | "openai" | "google" | "groq";
 
 export interface OracleModel {
   id: string;
@@ -71,13 +71,25 @@ export const ORACLE_MODELS: OracleModel[] = [
     id: "gemini-2.0-flash",
     provider: "google",
     name: "Gemini Oracle",
-    tagline: "Google · Experimental",
-    description: "Gemini 2.0 Flash with the Cosmora framework. Fast multimodal intelligence for experimental use.",
+    tagline: "Google · Free tier available",
+    description: "Gemini 2.0 Flash via Google AI Studio. Free API key at aistudio.google.com — no credit card needed.",
     speed: "fast",
     tokens: 1200,
     icon: "◑",
     color: "#ef4444",
     envKey: "GOOGLE_AI_KEY",
+  },
+  {
+    id: "llama-3.3-70b-versatile",
+    provider: "groq",
+    name: "Llama Oracle",
+    tagline: "Free · Fast · Open Source",
+    description: "Meta Llama 3.3 70B via Groq. Completely free API key at console.groq.com — no credit card needed.",
+    speed: "fast",
+    tokens: 1200,
+    icon: "⬡",
+    color: "#f97316",
+    envKey: "GROQ_API_KEY",
   },
 ];
 

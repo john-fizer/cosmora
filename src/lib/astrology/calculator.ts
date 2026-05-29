@@ -305,6 +305,23 @@ function localBirthToUTC(
   return approx;
 }
 
+// ─── Chaldean decans (Ptolemaic faces) ────────────────────────────────────
+// Sequence starting at Aries 0°: Mars Sun Venus Mercury Moon Saturn Jupiter (repeating)
+// Each sign has 3 decans (0–9°, 10–19°, 20–29°).
+
+const CHALDEAN_DECAN_ORDER: PlanetName[] = ["Mars", "Sun", "Venus", "Mercury", "Moon", "Saturn", "Jupiter"];
+
+function getDecan(lon: number): { decan: number; decanLord: PlanetName } {
+  const signIdx = Math.floor(lon / 30);
+  const degWithin = lon % 30;
+  const decanWithin = Math.floor(degWithin / 10);  // 0, 1, or 2
+  const absoluteDecan = signIdx * 3 + decanWithin;
+  return {
+    decan: decanWithin + 1,
+    decanLord: CHALDEAN_DECAN_ORDER[absoluteDecan % 7],
+  };
+}
+
 // ─── Planet list order ─────────────────────────────────────────────────────
 
 const CHART_PLANETS: PlanetName[] = [
@@ -339,10 +356,11 @@ export function calculateChart(
   const buildPlanet = (name: PlanetName, lon: number, spd: number, retro: boolean): PlanetPosition => {
     const signIdx = Math.floor(lon / 30);
     const sign = ZODIAC_SIGNS[signIdx];
+    const { decan, decanLord } = getDecan(lon);
     return {
       name, longitude: lon, sign, signDegree: lon % 30,
       house: houseOf(lon, houses), retrograde: retro, speed: spd,
-      dignity: dignity(name, sign),
+      dignity: dignity(name, sign), decan, decanLord,
     };
   };
 

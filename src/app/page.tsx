@@ -84,10 +84,10 @@ const HOUSE_SYSTEMS = ["Whole Sign", "Placidus", "Equal", "Porphyry", "Regiomont
 const TIMING_SYSTEMS = ["Annual Profections", "Zodiacal Releasing", "Solar Returns", "Firdaria", "Secondary Progressions", "Solar Arc Directions"];
 
 const STATS = [
-  { value: 6200,  suffix: "+", label: "Charts Calculated",   color: "#a855f7" },
-  { value: 12,    suffix: "",  label: "Timing Systems",       color: "#06b6d4" },
-  { value: 98,    suffix: "%", label: "Calculation Accuracy", color: "#22c55e" },
-  { value: 2070,  suffix: "",  label: "Version Year",         color: "#f59e0b" },
+  { value: 6200,  suffix: "+", label: "Charts Calculated",   color: "#7B6FD4" },
+  { value: 12,    suffix: "",  label: "Timing Systems",       color: "#4ECDC4" },
+  { value: 98,    suffix: "%", label: "Calculation Accuracy", color: "#C8A55B" },
+  { value: 2070,  suffix: "",  label: "Version Year",         color: "#A8B4D0" },
 ];
 
 const PRICING = [
@@ -158,16 +158,16 @@ function AnimatedStat({ value, suffix, label, color, delay }: {
 
   return (
     <div ref={ref} className="flex flex-col items-center gap-1">
-      <span className="font-bold tabular-nums" style={{
-        fontFamily: "'Space Grotesk', sans-serif",
-        fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
+      <span className="tabular-nums" style={{
+        fontFamily: "'Fragment Mono', monospace",
+        fontSize: "clamp(1.6rem, 3.5vw, 2.4rem)",
         color,
-        textShadow: `0 0 20px ${color}60`,
-        letterSpacing: "-0.02em",
+        fontWeight: 400,
+        letterSpacing: "-0.01em",
       }}>
         {count.toLocaleString()}{suffix}
       </span>
-      <span className="text-[10px] font-bold tracking-widest" style={{ color: "#334155" }}>{label}</span>
+      <span style={{ fontSize: 8, letterSpacing: "0.18em", color: "var(--text-3)", fontFamily: "'Fragment Mono', monospace", textTransform: "uppercase" }}>{label}</span>
     </div>
   );
 }
@@ -218,12 +218,12 @@ function ZodiacRing() {
         style={{ position: "absolute", width: OUTER * 2, height: OUTER * 2 }}
       >
         <svg width={OUTER * 2} height={OUTER * 2} viewBox={`0 0 ${OUTER * 2} ${OUTER * 2}`}>
-          <circle cx={OUTER} cy={OUTER} r={OUTER} fill="none" stroke="rgba(124,58,237,0.14)" strokeWidth="0.75"/>
+          <circle cx={OUTER} cy={OUTER} r={OUTER} fill="none" stroke="rgba(200,165,91,0.12)" strokeWidth="0.75"/>
           {ticks.map(({ rad, major }, i) => (
             <line key={i}
               x1={OUTER + Math.cos(rad) * TICK_INNER} y1={OUTER + Math.sin(rad) * TICK_INNER}
               x2={OUTER + Math.cos(rad) * OUTER} y2={OUTER + Math.sin(rad) * OUTER}
-              stroke={major ? "rgba(124,58,237,0.5)" : "rgba(124,58,237,0.14)"}
+              stroke={major ? "rgba(200,165,91,0.38)" : "rgba(200,165,91,0.12)"}
               strokeWidth={major ? 0.75 : 0.4}
             />
           ))}
@@ -236,7 +236,7 @@ function ZodiacRing() {
         style={{ position: "absolute", width: GLYPH_R * 2, height: GLYPH_R * 2 }}
       >
         <svg width={GLYPH_R * 2} height={GLYPH_R * 2} viewBox={`0 0 ${GLYPH_R * 2} ${GLYPH_R * 2}`}>
-          <circle cx={GLYPH_R} cy={GLYPH_R} r={GLYPH_R} fill="none" stroke="rgba(6,182,212,0.07)" strokeWidth="0.5"/>
+          <circle cx={GLYPH_R} cy={GLYPH_R} r={GLYPH_R} fill="none" stroke="rgba(123,111,212,0.07)" strokeWidth="0.5"/>
           {SIGNS.map((g, i) => {
             const rad = glyphAngles[i];
             const gR = GLYPH_R - 28;
@@ -244,7 +244,7 @@ function ZodiacRing() {
               <text key={i}
                 x={GLYPH_R + Math.cos(rad) * gR} y={GLYPH_R + Math.sin(rad) * gR}
                 textAnchor="middle" dominantBaseline="central"
-                fontSize="15" fill="rgba(168,85,247,0.42)"
+                fontSize="15" fill="rgba(123,111,212,0.35)"
               >{g}</text>
             );
           })}
@@ -264,24 +264,24 @@ function HudViewportOverlay() {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 10, pointerEvents: "none" }}>
       <div style={{ position: "absolute", top: 72, left: 20 }}>
-        <div style={{ width: 28, height: 28, borderTop: "1px solid rgba(6,182,212,0.35)", borderLeft: "1px solid rgba(6,182,212,0.35)" }} />
+        <div style={{ width: 24, height: 24, borderTop: "1px solid rgba(200,165,91,0.30)", borderLeft: "1px solid rgba(200,165,91,0.30)" }} />
       </div>
-      <div style={{ position: "absolute", top: 76, left: 52 }}>
-        <p style={{ fontSize: 9, color: "rgba(6,182,212,0.55)", fontFamily: "monospace", letterSpacing: "0.1em", margin: 0 }}>COSMORA OS</p>
-        <p style={{ fontSize: 8, color: "rgba(100,116,139,0.6)", fontFamily: "monospace", margin: 0 }}>v2070.01</p>
+      <div style={{ position: "absolute", top: 76, left: 48 }}>
+        <p style={{ fontSize: 8, color: "rgba(200,165,91,0.45)", fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em", margin: 0 }}>COSMORA OS</p>
+        <p style={{ fontSize: 7, color: "rgba(122,118,144,0.45)", fontFamily: "'Fragment Mono', monospace", margin: 0 }}>v2070.01</p>
       </div>
       <div style={{ position: "absolute", top: 72, right: 20 }}>
-        <div style={{ width: 28, height: 28, borderTop: "1px solid rgba(6,182,212,0.35)", borderRight: "1px solid rgba(6,182,212,0.35)" }} />
+        <div style={{ width: 24, height: 24, borderTop: "1px solid rgba(200,165,91,0.30)", borderRight: "1px solid rgba(200,165,91,0.30)" }} />
       </div>
-      <div style={{ position: "absolute", top: 76, right: 52, textAlign: "right" }}>
-        <p style={{ fontSize: 9, color: "rgba(6,182,212,0.55)", fontFamily: "monospace", letterSpacing: "0.1em", margin: 0 }}>{utc} UTC</p>
-        <p style={{ fontSize: 8, color: "rgba(100,116,139,0.6)", fontFamily: "monospace", margin: 0 }}>SYSTEM ACTIVE</p>
+      <div style={{ position: "absolute", top: 76, right: 48, textAlign: "right" }}>
+        <p style={{ fontSize: 8, color: "rgba(200,165,91,0.45)", fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em", margin: 0 }}>{utc} UTC</p>
+        <p style={{ fontSize: 7, color: "rgba(122,118,144,0.45)", fontFamily: "'Fragment Mono', monospace", margin: 0 }}>SYSTEM ACTIVE</p>
       </div>
       <div style={{ position: "absolute", bottom: 24, left: 20 }}>
-        <div style={{ width: 28, height: 28, borderBottom: "1px solid rgba(6,182,212,0.2)", borderLeft: "1px solid rgba(6,182,212,0.2)" }} />
+        <div style={{ width: 24, height: 24, borderBottom: "1px solid rgba(123,111,212,0.18)", borderLeft: "1px solid rgba(123,111,212,0.18)" }} />
       </div>
       <div style={{ position: "absolute", bottom: 24, right: 20 }}>
-        <div style={{ width: 28, height: 28, borderBottom: "1px solid rgba(6,182,212,0.2)", borderRight: "1px solid rgba(6,182,212,0.2)" }} />
+        <div style={{ width: 24, height: 24, borderBottom: "1px solid rgba(123,111,212,0.18)", borderRight: "1px solid rgba(123,111,212,0.18)" }} />
       </div>
     </div>
   );
@@ -300,8 +300,8 @@ function FAQAccordion() {
           transition={{ delay: i * 0.07 }}
           className="rounded-2xl overflow-hidden"
           style={{
-            background: open === i ? "rgba(99,102,241,0.07)" : "rgba(255,255,255,0.02)",
-            border: `1px solid ${open === i ? "rgba(99,102,241,0.25)" : "rgba(255,255,255,0.06)"}`,
+            background: open === i ? "rgba(123,111,212,0.06)" : "rgba(255,255,255,0.02)",
+            border: `1px solid ${open === i ? "rgba(123,111,212,0.20)" : "var(--border)"}`,
             transition: "background 0.2s, border-color 0.2s",
           }}
         >
@@ -309,14 +309,14 @@ function FAQAccordion() {
             onClick={() => setOpen(open === i ? null : i)}
             className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left cursor-pointer"
           >
-            <span className="text-sm font-semibold" style={{ color: open === i ? "#c4b5fd" : "#94a3b8" }}>
+            <span className="text-sm" style={{ color: open === i ? "var(--text-1)" : "var(--text-2)", fontFamily: "'Outfit', sans-serif", fontWeight: open === i ? 500 : 400 }}>
               {item.q}
             </span>
             <motion.span
               animate={{ rotate: open === i ? 45 : 0 }}
               transition={{ duration: 0.2 }}
               className="flex-shrink-0 text-lg font-light"
-              style={{ color: open === i ? "#a78bfa" : "#334155", lineHeight: 1 }}
+              style={{ color: open === i ? "var(--solar)" : "var(--text-3)", lineHeight: 1 }}
             >
               +
             </motion.span>
@@ -344,9 +344,9 @@ function FAQAccordion() {
 
 export default function LandingPage() {
   const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef });
-  const textOpacity = useTransform(scrollYProgress, [0, 0.45], [1, 0]);
-  const textY = useTransform(scrollYProgress, [0, 0.45], [0, -40]);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const textY = useTransform(scrollYProgress, [0, 0.5], [0, -40]);
 
   return (
     <div className="min-h-screen relative" style={{ background: "var(--void-black)" }}>
@@ -368,7 +368,7 @@ export default function LandingPage() {
         className="fixed pointer-events-none rounded-full"
         style={{
           width: 900, height: 900, left: "25%", top: "-25%",
-          background: "radial-gradient(ellipse, rgba(124,58,237,0.10), transparent 70%)",
+          background: "radial-gradient(ellipse, rgba(123,111,212,0.08), transparent 70%)",
           filter: "blur(50px)", zIndex: 1,
         }}
       />
@@ -378,7 +378,7 @@ export default function LandingPage() {
         className="fixed pointer-events-none rounded-full"
         style={{
           width: 700, height: 700, right: "-12%", top: "15%",
-          background: "radial-gradient(ellipse, rgba(6,182,212,0.07), transparent 70%)",
+          background: "radial-gradient(ellipse, rgba(78,205,196,0.06), transparent 70%)",
           filter: "blur(50px)", zIndex: 1,
         }}
       />
@@ -399,17 +399,22 @@ export default function LandingPage() {
           <div
             className="w-9 h-9 rounded-xl flex items-center justify-center"
             style={{
-              background: "linear-gradient(135deg, #7c3aed, #06b6d4)",
-              boxShadow: "0 0 24px rgba(124,58,237,0.55)",
+              background: "linear-gradient(135deg, #C8A55B, #A8852B)",
+              boxShadow: "0 4px 16px rgba(200,165,91,0.22)",
             }}
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" className="w-5 h-5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#08080F" strokeWidth="1.8" className="w-5 h-5">
               <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
               <line x1="12" y1="3" x2="12" y2="9" /><line x1="12" y1="15" x2="12" y2="21" />
               <line x1="3" y1="12" x2="9" y2="12" /><line x1="15" y1="12" x2="21" y2="12" />
             </svg>
           </div>
-          <span className="font-bold text-lg tracking-widest gradient-text">COSMORA</span>
+          <span
+          className="font-semibold tracking-[0.22em] uppercase"
+          style={{ fontFamily: "'Fragment Mono', monospace", fontSize: 12, color: "var(--solar)" }}
+        >
+          COSMORA
+        </span>
         </div>
 
         <div className="hidden md:flex items-center gap-8">
@@ -417,9 +422,9 @@ export default function LandingPage() {
             <motion.a
               key={item}
               href={`#${item.toLowerCase()}`}
-              whileHover={{ color: "#c4b5fd" }}
-              className="text-sm font-medium tracking-wide cursor-pointer"
-              style={{ color: "#64748b", transition: "color 0.2s" }}
+              whileHover={{ color: "var(--text-1)" }}
+              className="text-sm tracking-wide cursor-pointer"
+              style={{ color: "var(--text-2)", fontFamily: "'Outfit', sans-serif", fontWeight: 400, transition: "color 0.2s" }}
             >
               {item}
             </motion.a>
@@ -427,20 +432,19 @@ export default function LandingPage() {
         </div>
 
         <Link href="/dashboard">
-          <MetalFx preset="chromatic" variant="button">
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              className="px-5 py-2 rounded-xl text-sm font-bold tracking-wider cursor-pointer"
-              style={{
-                background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
-                color: "white",
-                border: "1px solid rgba(124,58,237,0.5)",
-              }}
-            >
-              Enter App
-            </motion.button>
-          </MetalFx>
+          <motion.button
+            whileHover={{ opacity: 0.88, y: -1 }}
+            whileTap={{ scale: 0.96 }}
+            className="px-5 py-2 rounded-xl text-sm font-semibold tracking-wider cursor-pointer"
+            style={{
+              background: "linear-gradient(135deg, #C8A55B, #A8852B)",
+              color: "#08080F",
+              border: "none",
+              fontFamily: "'Outfit', sans-serif",
+            }}
+          >
+            Enter App
+          </motion.button>
         </Link>
       </motion.nav>
 
@@ -489,52 +493,55 @@ export default function LandingPage() {
         {/* Text content — centered in upper 55% of hero */}
         <motion.div
           style={{ opacity: textOpacity, y: textY, position: "relative", zIndex: 2 }}
-          className="flex flex-col items-center justify-center px-6 pt-32 pb-24"
+          className="flex flex-col items-center justify-center px-6 pt-32 pb-24 w-full max-w-full overflow-hidden"
         >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mb-6 px-4 py-2 rounded-full text-[11px] font-bold tracking-widest"
+            className="mb-8 px-4 py-1.5 rounded-full text-[9px] tracking-[0.22em] uppercase"
             style={{
-              background: "rgba(124,58,237,0.14)",
-              border: "1px solid rgba(124,58,237,0.32)",
-              color: "#a78bfa",
-              backdropFilter: "blur(12px)",
+              background: "rgba(200,165,91,0.08)",
+              border: "1px solid rgba(200,165,91,0.24)",
+              color: "var(--solar)",
+              fontFamily: "'Fragment Mono', monospace",
             }}
           >
-            ✦ THE ASTROLOGER&apos;S OPERATING SYSTEM
+            The Cosmic Intelligence System
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-center font-bold mb-6 leading-tight"
+            transition={{ delay: 0.3, duration: 0.9, ease: [0.25,0.1,0.25,1] as [number,number,number,number] }}
+            className="text-center mb-6 px-4"
             style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: "clamp(2.5rem, 7vw, 5.5rem)",
-              letterSpacing: "-0.02em",
-              textShadow: "0 2px 40px rgba(0,0,0,0.8)",
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontWeight: 500,
+              fontSize: "clamp(2.4rem, 6vw, 5.5rem)",
+              lineHeight: 1.12,
+              letterSpacing: "-0.01em",
+              textShadow: "0 2px 60px rgba(0,0,0,0.9)",
+              color: "var(--text-1)",
+              overflowWrap: "break-word",
+              wordBreak: "break-word",
+              maxWidth: "100%",
             }}
           >
-            <span style={{ color: "#f1f5f9" }}>Your Birth Chart</span>
+            The cosmos has always held the map.
             <br />
-            <span className="gradient-text">Was Never Flat.</span>
-            <br />
-            <span style={{ color: "#f1f5f9" }}>Enter the Living Cosmos.</span>
+            <em style={{ color: "var(--solar)", fontStyle: "italic", fontWeight: 400 }}>Cosmora reads it.</em>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="text-center max-w-2xl mb-12 text-lg leading-relaxed"
-            style={{ color: "#94a3b8", textShadow: "0 1px 20px rgba(0,0,0,0.9)" }}
+            className="text-center max-w-xl mb-12 leading-relaxed"
+            style={{ color: "var(--text-2)", textShadow: "0 1px 20px rgba(0,0,0,0.9)", fontSize: "1.05rem", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
           >
-            A personal astrology intelligence system that calculates, interprets, and explains
-            your life timing using ancient techniques and modern AI reasoning.
-            Not your daily horoscope — your symbolic operating system.
+            A professional-grade astrology instrument. Ancient Hellenistic techniques,
+            modern AI reasoning, and a precision chart engine — unified.
           </motion.p>
 
           <motion.div
@@ -546,9 +553,9 @@ export default function LandingPage() {
             <motion.div
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ duration: 1.4, repeat: Infinity }}
-              style={{ width: 5, height: 5, borderRadius: "50%", background: "#06b6d4", boxShadow: "0 0 6px rgba(6,182,212,0.8)", flexShrink: 0 }}
+              style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--data)", boxShadow: "0 0 6px rgba(78,205,196,0.6)", flexShrink: 0 }}
             />
-            <span style={{ fontSize: 9, color: "rgba(6,182,212,0.6)", fontFamily: "monospace", letterSpacing: "0.15em" }}>
+            <span style={{ fontSize: 8, color: "rgba(78,205,196,0.55)", fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.15em" }}>
               CHART ENGINE READY · SWISS EPHEMERIS v2.10
             </span>
           </motion.div>
@@ -560,33 +567,34 @@ export default function LandingPage() {
             className="flex flex-col sm:flex-row gap-3"
           >
             <Link href="/dashboard">
-              <MetalFx preset="chromatic" variant="button">
-                <motion.button
-                  whileHover={{ scale: 1.05, boxShadow: "0 0 48px rgba(124,58,237,0.65)" }}
-                  whileTap={{ scale: 0.96 }}
-                  className="px-7 py-3.5 rounded-2xl text-sm font-bold tracking-wider cursor-pointer"
-                  style={{
-                    background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
-                    color: "white",
-                    border: "1px solid rgba(124,58,237,0.5)",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  Decode Your Chart →
-                </motion.button>
-              </MetalFx>
+              <motion.button
+                whileHover={{ opacity: 0.88, y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                className="px-8 py-3.5 rounded-2xl text-sm font-semibold tracking-wider cursor-pointer"
+                style={{
+                  background: "linear-gradient(135deg, #C8A55B, #A8852B)",
+                  color: "#08080F",
+                  border: "none",
+                  fontFamily: "'Outfit', sans-serif",
+                  whiteSpace: "nowrap",
+                  boxShadow: "0 8px 32px rgba(200,165,91,0.25)",
+                }}
+              >
+                Begin →
+              </motion.button>
             </Link>
             <motion.button
-              whileHover={{ scale: 1.02, borderColor: "rgba(124,58,237,0.4)" }}
+              whileHover={{ borderColor: "var(--border-md)" }}
               whileTap={{ scale: 0.98 }}
               onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}
-              className="px-7 py-3.5 rounded-2xl text-sm font-medium tracking-wide cursor-pointer"
+              className="px-8 py-3.5 rounded-2xl text-sm font-medium tracking-wide cursor-pointer"
               style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                color: "#94a3b8",
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid var(--border)",
+                color: "var(--text-2)",
                 whiteSpace: "nowrap",
                 backdropFilter: "blur(12px)",
+                fontFamily: "'Outfit', sans-serif",
                 transition: "all 0.2s",
               }}
             >
@@ -619,9 +627,9 @@ export default function LandingPage() {
           <div
             className="grid grid-cols-2 md:grid-cols-4 gap-8 rounded-2xl px-8 py-10"
             style={{
-              background: "rgba(4,4,28,0.6)",
-              border: "1px solid rgba(124,58,237,0.14)",
-              backdropFilter: "blur(20px)",
+              background: "var(--bg-card)",
+              border: "1px solid var(--border)",
+              backdropFilter: "blur(24px)",
             }}
           >
             {STATS.map((s, i) => (
@@ -640,11 +648,11 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-14"
           >
-            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "#06b6d4" }}>HOW IT WORKS</p>
+            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "var(--solar)", fontFamily: "'Fragment Mono', monospace" }}>HOW IT WORKS</p>
             <h2
               className="font-bold"
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: "clamp(2rem, 4vw, 3rem)",
                 color: "#f1f5f9",
                 letterSpacing: "-0.02em",
@@ -673,21 +681,21 @@ export default function LandingPage() {
                   num: "01",
                   title: "Enter Your Birth Data",
                   desc: "Date, time, and place of birth. Cosmora calculates your natal chart using Swiss Ephemeris precision — accurate to the arc minute.",
-                  color: "#7c3aed",
+                  color: "#C8A55B",
                   icon: "⊕",
                 },
                 {
                   num: "02",
                   title: "Cosmos Calculates",
                   desc: "Planets, houses, aspects, dignities, fixed stars, Arabic lots, sect, annual profections — every layer of the tradition, computed instantly.",
-                  color: "#a855f7",
+                  color: "#7B6FD4",
                   icon: "◎",
                 },
                 {
                   num: "03",
                   title: "Explore & Understand",
                   desc: "3D orrery, AI oracle, timing dashboards, live transit alerts — your chart becomes an interactive living system, not a static PDF.",
-                  color: "#06b6d4",
+                  color: "#4ECDC4",
                   icon: "✦",
                 },
               ].map((step, i) => (
@@ -734,11 +742,11 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "#06b6d4" }}>LIVE INTERFACE</p>
+            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "var(--solar)", fontFamily: "'Fragment Mono', monospace" }}>LIVE INTERFACE</p>
             <h2
               className="font-bold mb-4"
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: "clamp(1.8rem, 3.5vw, 3rem)",
                 color: "#f1f5f9",
                 letterSpacing: "-0.02em",
@@ -759,11 +767,11 @@ export default function LandingPage() {
             transition={{ duration: 0.7, ease: "easeOut" }}
             style={{
               borderRadius: "1rem",
-              border: "1px solid rgba(99,102,241,0.25)",
-              background: "rgba(7,7,18,0.92)",
+              border: "1px solid var(--border-md)",
+              background: "var(--bg-card)",
               overflow: "hidden",
-              boxShadow: "0 0 80px rgba(99,102,241,0.12), 0 0 0 1px rgba(99,102,241,0.1)",
-              backdropFilter: "blur(20px)",
+              boxShadow: "0 0 80px rgba(123,111,212,0.08)",
+              backdropFilter: "blur(24px)",
             }}
           >
             {/* Top Bar */}
@@ -972,11 +980,11 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "#7c3aed" }}>THE SYSTEM</p>
+            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "var(--oracle)", fontFamily: "'Fragment Mono', monospace" }}>THE SYSTEM</p>
             <h2
               className="font-bold mb-4"
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: "clamp(2rem, 4vw, 3.5rem)",
                 color: "#f1f5f9",
                 letterSpacing: "-0.02em",
@@ -1028,7 +1036,7 @@ export default function LandingPage() {
             <h2
               className="font-bold"
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: "clamp(1.8rem, 4vw, 3rem)",
                 color: "#f1f5f9",
                 letterSpacing: "-0.02em",
@@ -1110,7 +1118,7 @@ export default function LandingPage() {
             <h2
               className="font-bold mb-4"
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: "clamp(2rem, 4vw, 3.5rem)",
                 color: "#f1f5f9",
                 letterSpacing: "-0.02em",
@@ -1136,9 +1144,10 @@ export default function LandingPage() {
                       transition={{ delay: i * 0.05 }}
                       className="px-3 py-1.5 rounded-xl text-xs font-medium"
                       style={{
-                        background: "rgba(124,58,237,0.1)",
-                        border: "1px solid rgba(124,58,237,0.2)",
-                        color: "#a78bfa",
+                        background: "rgba(123,111,212,0.08)",
+                        border: "1px solid rgba(123,111,212,0.18)",
+                        color: "#9B91E0",
+                        fontFamily: "'Fragment Mono', monospace",
                       }}
                     >
                       {hs}
@@ -1158,9 +1167,10 @@ export default function LandingPage() {
                       transition={{ delay: i * 0.05 + 0.3 }}
                       className="px-3 py-1.5 rounded-xl text-xs font-medium"
                       style={{
-                        background: "rgba(245,158,11,0.1)",
-                        border: "1px solid rgba(245,158,11,0.2)",
-                        color: "#fbbf24",
+                        background: "rgba(200,165,91,0.08)",
+                        border: "1px solid rgba(200,165,91,0.18)",
+                        color: "#C8A55B",
+                        fontFamily: "'Fragment Mono', monospace",
                       }}
                     >
                       {ts}
@@ -1229,11 +1239,11 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-14"
           >
-            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "#a855f7" }}>PRICING</p>
+            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "var(--solar)", fontFamily: "'Fragment Mono', monospace" }}>PRICING</p>
             <h2
               className="font-bold mb-4"
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: "clamp(2rem, 4vw, 3rem)",
                 color: "#f1f5f9",
                 letterSpacing: "-0.02em",
@@ -1254,7 +1264,7 @@ export default function LandingPage() {
                       <p className="text-[9px] font-bold tracking-widest mb-1" style={{ color: plan.color }}>{plan.name}</p>
                       <div className="flex items-end gap-1">
                         <span className="font-bold" style={{
-                          fontFamily: "'Space Grotesk', sans-serif",
+                          fontFamily: "'Cormorant Garamond', Georgia, serif",
                           fontSize: "2.2rem",
                           color: "#f1f5f9",
                           lineHeight: 1,
@@ -1268,8 +1278,8 @@ export default function LandingPage() {
                       </div>
                     </div>
                     {plan.accent && (
-                      <span className="text-[9px] font-bold px-2.5 py-1 rounded-lg"
-                        style={{ background: "rgba(168,85,247,0.18)", border: "1px solid rgba(168,85,247,0.35)", color: "#c4b5fd", flexShrink: 0, whiteSpace: "nowrap" }}>
+                      <span className="text-[8px] tracking-widest px-2.5 py-1 rounded-lg"
+                        style={{ background: "rgba(200,165,91,0.12)", border: "1px solid rgba(200,165,91,0.28)", color: "var(--solar)", flexShrink: 0, whiteSpace: "nowrap", fontFamily: "'Fragment Mono', monospace" }}>
                         MOST DEPTH
                       </span>
                     )}
@@ -1285,20 +1295,20 @@ export default function LandingPage() {
                   </ul>
                   <Link href={plan.href}>
                     {plan.accent ? (
-                      <MetalFx preset="chromatic" variant="button">
-                        <motion.button
-                          whileHover={{ scale: 1.03, boxShadow: `0 0 40px ${plan.color}50` }}
-                          whileTap={{ scale: 0.97 }}
-                          className="w-full py-3.5 rounded-xl font-bold tracking-wider cursor-pointer text-sm"
-                          style={{
-                            background: `linear-gradient(135deg, #7c3aed, #4f46e5)`,
-                            color: "white",
-                            border: `1px solid ${plan.color}50`,
-                          }}
-                        >
-                          {plan.cta} →
-                        </motion.button>
-                      </MetalFx>
+                      <motion.button
+                        whileHover={{ opacity: 0.88, y: -1 }}
+                        whileTap={{ scale: 0.97 }}
+                        className="w-full py-3.5 rounded-xl font-semibold tracking-wider cursor-pointer text-sm"
+                        style={{
+                          background: "linear-gradient(135deg, #C8A55B, #A8852B)",
+                          color: "#08080F",
+                          border: "none",
+                          fontFamily: "'Outfit', sans-serif",
+                          boxShadow: "0 6px 24px rgba(200,165,91,0.22)",
+                        }}
+                      >
+                        {plan.cta} →
+                      </motion.button>
                     ) : (
                       <motion.button
                         whileHover={{ scale: 1.03, borderColor: `${plan.color}60` }}
@@ -1331,11 +1341,11 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "#06b6d4" }}>FAQ</p>
+            <p className="text-xs tracking-[0.22em] mb-4" style={{ color: "var(--text-2)", fontFamily: "'Fragment Mono', monospace" }}>FAQ</p>
             <h2
               className="font-bold"
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
                 color: "#f1f5f9",
                 letterSpacing: "-0.02em",
@@ -1354,7 +1364,7 @@ export default function LandingPage() {
         <div style={{ width: "100%", maxWidth: "48rem" }} className="text-center relative">
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse at center, rgba(124,58,237,0.13) 0%, transparent 70%)" }}
+            style={{ background: "radial-gradient(ellipse at center, rgba(200,165,91,0.08) 0%, transparent 70%)" }}
           />
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -1362,11 +1372,11 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="relative"
           >
-            <p className="text-xs font-bold tracking-widest mb-6" style={{ color: "#7c3aed" }}>BEGIN YOUR READING</p>
+            <p className="text-xs tracking-[0.22em] mb-6" style={{ color: "var(--solar)", fontFamily: "'Fragment Mono', monospace" }}>BEGIN YOUR READING</p>
             <h2
               className="font-bold mb-6"
               style={{
-                fontFamily: "'Space Grotesk', sans-serif",
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: "clamp(2rem, 5vw, 4rem)",
                 color: "#f1f5f9",
                 letterSpacing: "-0.02em",
@@ -1380,20 +1390,20 @@ export default function LandingPage() {
               Enter your birth data. Let Cosmora calculate, interpret, and illuminate the timing of your life — past, present, and future windows.
             </p>
             <Link href="/dashboard">
-              <MetalFx preset="chromatic" variant="button">
-                <motion.button
-                  whileHover={{ scale: 1.05, boxShadow: "0 0 70px rgba(124,58,237,0.65)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-10 py-5 rounded-2xl text-lg font-bold tracking-wider cursor-pointer"
-                  style={{
-                    background: "linear-gradient(135deg, #7c3aed, #4f46e5, #06b6d4)",
-                    color: "white",
-                    border: "1px solid rgba(124,58,237,0.5)",
-                  }}
-                >
-                  Enter Cosmora →
-                </motion.button>
-              </MetalFx>
+              <motion.button
+                whileHover={{ opacity: 0.88, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-10 py-5 rounded-2xl text-base font-semibold tracking-wider cursor-pointer"
+                style={{
+                  background: "linear-gradient(135deg, #C8A55B, #A8852B)",
+                  color: "#08080F",
+                  border: "none",
+                  fontFamily: "'Outfit', sans-serif",
+                  boxShadow: "0 10px 48px rgba(200,165,91,0.28)",
+                }}
+              >
+                Enter Cosmora →
+              </motion.button>
             </Link>
           </motion.div>
         </div>
@@ -1404,9 +1414,9 @@ export default function LandingPage() {
         className="relative py-5 overflow-hidden"
         style={{
           zIndex: 2,
-          borderTop: "1px solid rgba(124,58,237,0.1)",
-          borderBottom: "1px solid rgba(124,58,237,0.1)",
-          background: "rgba(4,4,28,0.4)",
+          borderTop: "1px solid var(--border)",
+          borderBottom: "1px solid var(--border)",
+          background: "var(--bg-card)",
         }}
       >
         <motion.div
@@ -1424,8 +1434,8 @@ export default function LandingPage() {
                 "Dignities & Debilities", "3D Orrery", "Aspect Patterns", "Dispositor Trees",
               ].map((item, i) => (
                 <span key={i} className="flex items-center gap-4">
-                  <span className="text-xs font-bold tracking-widest" style={{ color: "#334155" }}>{item}</span>
-                  <span style={{ color: "#1e293b", fontSize: "0.5rem" }}>◆</span>
+                  <span style={{ fontSize: 9, letterSpacing: "0.16em", color: "var(--text-3)", fontFamily: "'Fragment Mono', monospace" }}>{item}</span>
+                  <span style={{ color: "var(--text-3)", fontSize: "0.4rem", opacity: 0.5 }}>◆</span>
                 </span>
               ))}
             </div>
@@ -1434,23 +1444,23 @@ export default function LandingPage() {
       </div>
 
       {/* ── Footer ── */}
-      <footer className="py-8 px-6 relative flex flex-col items-center" style={{ borderTop: "1px solid rgba(99,102,241,0.1)", zIndex: 2 }}>
+      <footer className="py-8 px-6 relative flex flex-col items-center" style={{ borderTop: "1px solid var(--border)", zIndex: 2 }}>
         <div style={{ width: "100%", maxWidth: "72rem" }} className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)" }}
+              style={{ background: "linear-gradient(135deg, #C8A55B, #A8852B)" }}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" className="w-4 h-4">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#08080F" strokeWidth="1.8" className="w-4 h-4">
                 <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
               </svg>
             </div>
-            <span className="font-bold tracking-widest text-sm gradient-text">COSMORA</span>
+            <span style={{ fontFamily: "'Fragment Mono', monospace", fontSize: 11, letterSpacing: "0.18em", color: "var(--solar)" }}>COSMORA</span>
           </div>
-          <p className="text-xs text-center" style={{ color: "#334155" }}>
-            Astrology as symbolic intelligence — not prediction, not fate. A mirror for self-understanding.
+          <p className="text-xs text-center" style={{ color: "var(--text-3)", fontFamily: "'Outfit', sans-serif" }}>
+            Astrology as symbolic intelligence — not prediction, not fate.
           </p>
-          <p className="text-xs" style={{ color: "#334155" }}>© 2026 Cosmora</p>
+          <p style={{ fontSize: 10, color: "var(--text-3)", fontFamily: "'Fragment Mono', monospace" }}>© 2026 Cosmora</p>
         </div>
       </footer>
     </div>

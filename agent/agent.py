@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import os
@@ -110,18 +111,6 @@ class CosmicOracle(Agent):
     def __init__(self, planet: str, chart_context: str | None = None):
         super().__init__(instructions=build_instructions(planet, chart_context))
 
-    async def on_user_speech_started(self, session: AgentSession) -> None:
-        await publish_state(session, "listening")
-
-    async def on_user_speech_committed(self, session: AgentSession, user_msg) -> None:
-        await publish_state(session, "thinking")
-
-    async def on_agent_speech_started(self, session: AgentSession) -> None:
-        await publish_state(session, "speaking")
-
-    async def on_agent_speech_committed(self, session: AgentSession, agent_msg) -> None:
-        await publish_state(session, "idle")
-
 
 # ── Entrypoint ───────────────────────────────────────────────────────────────────
 
@@ -149,6 +138,28 @@ async def entrypoint(ctx: JobContext):
         tts="cartesia/sonic-3",
         turn_detection=MultilingualModel(),
     )
+
+    # Register state signal handlers before starting the session.
+    # AgentState values: "initializing" | "idle" | "listening" | "thinking" | "speaking"
+    # UserState values:  "speaking" | "listening" | "away"
+    @session.on("agent_state_changed")
+    def _on_agent_state(ev) -> None:
+        state_map = {
+            "thinking": "thinking",
+            "speaking": "speaking",
+            "idle": "idle",
+            "listening": "idle",
+            "initializing": "idle",
+        }
+        cosmora_state = state_map.get(ev.new_state)
+        if cosmora_state is not None:
+            asyncio.create_task(publish_state(session, cosmora_state))
+
+    @session.on("user_state_changed")
+    def _on_user_state(ev) -> None:
+        # When the user starts speaking, signal that the agent is listening
+        if ev.new_state == "speaking":
+            asyncio.create_task(publish_state(session, "listening"))
 
     await session.start(
         room=ctx.room,

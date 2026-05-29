@@ -3,31 +3,45 @@ import { PLANET_VOICES, aspectAwareSettings } from "./voice";
 import type { Aspect } from "@/lib/astrology/types";
 
 // ─── Provider chain per planet ────────────────────────────────────────────────
-// Distributes load across free tiers. First provider with a valid key wins.
-// Web Speech (browser) is the client-side last resort — not listed here.
+// Cartesia is primary for all — best latency + you already have a key.
+// Falls back through other providers in order; Web Speech is client-side last resort.
 export const PLANET_PROVIDER_CHAIN: Record<VoicePlanet, string[]> = {
-  Sun:     ["azure",      "google",     "elevenlabs", "openai"],
-  Moon:    ["openai",     "elevenlabs", "azure",      "google"],
-  Mercury: ["elevenlabs", "openai",     "google",     "azure" ],
-  Venus:   ["google",     "azure",      "elevenlabs", "openai"],
-  Mars:    ["azure",      "elevenlabs", "google",     "openai"],
-  Jupiter: ["openai",     "google",     "azure",      "elevenlabs"],
-  Saturn:  ["google",     "elevenlabs", "azure",      "openai"],
-  Uranus:  ["elevenlabs", "azure",      "openai",     "google"],
-  Neptune: ["openai",     "google",     "elevenlabs", "azure" ],
+  Sun:     ["cartesia", "azure",      "google",     "elevenlabs", "openai"],
+  Moon:    ["cartesia", "openai",     "elevenlabs", "azure",      "google"],
+  Mercury: ["cartesia", "elevenlabs", "openai",     "google",     "azure" ],
+  Venus:   ["cartesia", "google",     "azure",      "elevenlabs", "openai"],
+  Mars:    ["cartesia", "azure",      "elevenlabs", "google",     "openai"],
+  Jupiter: ["cartesia", "openai",     "google",     "azure",      "elevenlabs"],
+  Saturn:  ["cartesia", "google",     "elevenlabs", "azure",      "openai"],
+  Uranus:  ["cartesia", "elevenlabs", "azure",      "openai",     "google"],
+  Neptune: ["cartesia", "openai",     "google",     "elevenlabs", "azure" ],
+};
+
+// ─── Cartesia voice map ───────────────────────────────────────────────────────
+// Voices chosen for archetypal fit from the live voice library
+const CARTESIA_VOICES: Record<VoicePlanet, string> = {
+  Sun:     "79f8b5fb-2cc8-479a-80df-29f7a7cf1a3e", // Theo — steady, confident narrator
+  Moon:    "2f251ac3-89a9-4a77-a452-704b474ccd01", // Lucy — reassuring British female
+  Mercury: "47c38ca4-5f35-497b-b1a3-415245fb35e1", // Daniel — clear, crisp, precise
+  Venus:   "62ae83ad-4f6a-430b-af41-a9bede9286ca", // Gemma — emotive British female
+  Mars:    "5ee9feff-1265-424a-9d7f-8e4d431a12c7", // Ronald — intense, deep male
+  Jupiter: "ef191366-f52f-447a-a398-ed8c0f2943a1", // Archie — warm British conversationalist
+  Saturn:  "a5136bf9-224c-4d76-b823-52bd5efcffcc", // Jameson — measured, laid-back male
+  Uranus:  "86e30c1d-714b-4074-a1f2-1cb6b552fb49", // Carson — curious, detached young male
+  Neptune: "a33f7a4c-100f-41cf-a1fd-5822e8fc253f", // Lauren — expressive storytelling female
 };
 
 // ─── OpenAI voice map ─────────────────────────────────────────────────────────
 const OPENAI_VOICES: Record<VoicePlanet, string> = {
-  Sun:     "onyx",    // deep, authoritative
-  Moon:    "shimmer", // gentle, ethereal
-  Mercury: "alloy",   // neutral, precise
-  Venus:   "nova",    // warm, feminine
-  Mars:    "echo",    // intense, driven
-  Jupiter: "fable",   // warm, expansive
-  Saturn:  "onyx",    // measured, deep
-  Uranus:  "alloy",   // detached, neutral
-  Neptune: "shimmer", // dreamy, dissolving
+  Sun:     "onyx",
+  Moon:    "shimmer",
+  Mercury: "alloy",
+  Venus:   "nova",
+  Mars:    "echo",
+  Jupiter: "fable",
+  Saturn:  "onyx",
+  Uranus:  "alloy",
+  Neptune: "shimmer",
 };
 
 // ─── Azure Neural voice map ───────────────────────────────────────────────────
@@ -58,9 +72,34 @@ const GOOGLE_VOICES: Record<VoicePlanet, GoogleVoice> = {
 };
 
 const ELEVENLABS_BASE = "https://api.elevenlabs.io/v1";
-const ELEVENLABS_MODEL = "eleven_turbo_v2_5"; // fastest + cheapest ElevenLabs model
+const ELEVENLABS_MODEL = "eleven_turbo_v2_5";
 
 // ─── Provider synthesizers ────────────────────────────────────────────────────
+
+async function synthesizeCartesia(text: string, planet: VoicePlanet): Promise<Blob> {
+  const key = process.env.CARTESIA_API_KEY;
+  if (!key) throw new Error("no CARTESIA_API_KEY");
+
+  const res = await fetch("https://api.cartesia.ai/tts/bytes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-Key": key,
+      "Cartesia-Version": "2026-03-01",
+    },
+    body: JSON.stringify({
+      model_id: "sonic-3.5",
+      transcript: text.slice(0, 4000),
+      voice: { mode: "id", id: CARTESIA_VOICES[planet] },
+      output_format: { container: "mp3", bit_rate: 128000, sample_rate: 44100 },
+    }),
+  });
+  if (!res.ok) {
+    const msg = await res.text().catch(() => res.status.toString());
+    throw new Error(`Cartesia ${res.status}: ${msg}`);
+  }
+  return res.blob();
+}
 
 async function synthesizeElevenLabs(text: string, planet: VoicePlanet, aspects: Aspect[]): Promise<Blob> {
   const key = process.env.ELEVENLABS_API_KEY;
@@ -88,12 +127,7 @@ async function synthesizeOpenAI(text: string, planet: VoicePlanet): Promise<Blob
   const res = await fetch("https://api.openai.com/v1/audio/speech", {
     method: "POST",
     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${key}` },
-    body: JSON.stringify({
-      model: "tts-1",
-      input: text.slice(0, 4096),
-      voice: OPENAI_VOICES[planet],
-      speed: 1.0,
-    }),
+    body: JSON.stringify({ model: "tts-1", input: text.slice(0, 4096), voice: OPENAI_VOICES[planet], speed: 1.0 }),
   });
   if (!res.ok) {
     const msg = await res.text().catch(() => res.status.toString());
@@ -108,7 +142,8 @@ async function synthesizeAzure(text: string, planet: VoicePlanet): Promise<Blob>
   if (!key) throw new Error("no AZURE_TTS_KEY");
 
   const voice = AZURE_VOICES[planet];
-  const ssml = `<speak version='1.0' xml:lang='en-US'><voice xml:lang='en-US' xml:gender='${voice.gender}' name='${voice.name}'>${text.replace(/[<>&'"]/g, c => ({ "<":"&lt;",">":"&gt;","&":"&amp;","'":"&apos;",'"':"&quot;" }[c]!))}</voice></speak>`;
+  const escaped = text.replace(/[<>&'"]/g, c => ({"<":"&lt;",">":"&gt;","&":"&amp;","'":"&apos;",'"':"&quot;"}[c]!));
+  const ssml = `<speak version='1.0' xml:lang='en-US'><voice xml:lang='en-US' xml:gender='${voice.gender}' name='${voice.name}'>${escaped}</voice></speak>`;
 
   const res = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
     method: "POST",
@@ -153,6 +188,7 @@ async function synthesizeGoogle(text: string, planet: VoicePlanet): Promise<Blob
 // ─── Waterfall ────────────────────────────────────────────────────────────────
 
 const SYNTHESIZERS: Record<string, (text: string, planet: VoicePlanet, aspects: Aspect[]) => Promise<Blob>> = {
+  cartesia:   (t, p)    => synthesizeCartesia(t, p),
   elevenlabs: (t, p, a) => synthesizeElevenLabs(t, p, a),
   openai:     (t, p)    => synthesizeOpenAI(t, p),
   azure:      (t, p)    => synthesizeAzure(t, p),

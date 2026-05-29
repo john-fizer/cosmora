@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "src/app/api/chat/route.ts": { "maxDuration": 60 },
+    "src/app/api/dual-oracle/route.ts": { "maxDuration": 60 },
+    "src/app/api/tts/route.ts": { "maxDuration": 30 },
+    "src/app/api/suggest/route.ts": { "maxDuration": 30 },
+    "src/app/api/chart/route.ts": { "maxDuration": 30 },
+    "src/app/api/transits/route.ts": { "maxDuration": 30 },
+    "src/app/api/solar-return/route.ts": { "maxDuration": 30 }
+  }
+}

@@ -583,7 +583,7 @@ export default function AstrocartographyPage() {
       const scores = scoreLocation(lines, s.lat, s.lon);
       const power  = scores.reduce((acc, sc) => acc + sc.influence * 100, 0);
       return { city: s.city, lat: s.lat, lon: s.lon, scores, power: Math.min(99, Math.round(power)) };
-    }).sort((a, b) => b.power - a.power).slice(0, 5);
+    }).sort((a, b) => b.power - a.power); // all cities scored — globe shows all, panel shows top 5
     setTopSpots(spots);
   }, [lines]);
 
@@ -792,7 +792,7 @@ export default function AstrocartographyPage() {
             </p>
           </div>
           <div className="flex flex-col gap-2">
-            {topSpots.map((spot, i) => (
+            {topSpots.slice(0, 5).map((spot, i) => (
               <motion.div
                 key={spot.city}
                 initial={{ opacity: 0, x: 12 }}

@@ -13,10 +13,9 @@ import {
 import type { VortexNodePublic } from "./GlobeCanvas";
 
 const GlobeCanvas = dynamic(() => import("./GlobeCanvas"), { ssr: false });
+import type { GlobeMode } from "./GlobeCanvas";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
-type GlobeMode = "globe" | "vortex" | "lines" | "planets" | "energy";
-
 const MODES: { id: GlobeMode; icon: string; label: string }[] = [
   { id: "globe",   icon: "⊕",  label: "GLOBE"    },
   { id: "vortex",  icon: "◈",  label: "VORTEX"   },
@@ -617,8 +616,6 @@ export default function AstrocartographyPage() {
     });
   };
 
-  const showVortexes = globeMode === "vortex";
-
   // ─── Active line summary for left panel ──────────────────────────────────────
   const activeLine = lines.find(
     l => l.planet === "Sun" && l.angle === "MC" && activePlanets.has(l.planet)
@@ -668,7 +665,7 @@ export default function AstrocartographyPage() {
             lines={lines}
             activePlanets={activePlanets}
             activeAngles={activeAngles}
-            showVortexes={showVortexes}
+            globeMode={globeMode}
             onLocationClick={handleLocationClick}
             onVortexClick={handleVortexClick}
           />

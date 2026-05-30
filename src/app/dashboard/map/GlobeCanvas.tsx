@@ -1,15 +1,16 @@
 "use client";
 
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
-import { OrbitControls, Html, Sphere as DreiSphere } from "@react-three/drei";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { OrbitControls, Html } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import { useRef, useMemo, useCallback, useState, useEffect } from "react";
 import * as THREE from "three";
-import type { AstroLine, AstroLinePlanet, AstroLineAngle, LatLon } from "@/lib/astrology/astrocartography";
-import { PLANET_COLORS, PLANET_SYMBOLS, ASTRO_PLANETS } from "@/lib/astrology/astrocartography";
+import type { AstroLine, AstroLinePlanet, AstroLineAngle } from "@/lib/astrology/astrocartography";
+import { PLANET_COLORS, PLANET_SYMBOLS } from "@/lib/astrology/astrocartography";
 
-// ─── Constants ─────────────────────────────────────────────────────────────────
+export type GlobeMode = "globe" | "vortex" | "lines" | "planets" | "energy";
+
 const GLOBE_R = 2.0;
 const ATMO_R  = 2.12;
 
@@ -20,7 +21,7 @@ const ANGLE_DASH: Record<AstroLineAngle, boolean> = {
 // ─── Lat/Lon → 3D ─────────────────────────────────────────────────────────────
 function ll2xyz(lat: number, lon: number, r = GLOBE_R): THREE.Vector3 {
   const φ = (lat  * Math.PI) / 180;
-  const λ = (-lon * Math.PI) / 180; // flip lon so east is east
+  const λ = (-lon * Math.PI) / 180;
   return new THREE.Vector3(
     r * Math.cos(φ) * Math.cos(λ),
     r * Math.sin(φ),
@@ -42,179 +43,196 @@ function buildLineGeo(lines: number[][][], r: number): THREE.BufferGeometry {
   return new THREE.BufferGeometry().setFromPoints(pts);
 }
 
-// ─── Globe body ────────────────────────────────────────────────────────────────
+// ─── Globe body — no self-rotation (parent group handles it) ──────────────────
 function GlobeBody() {
-  const groupRef = useRef<THREE.Group>(null);
-  useFrame((_, dt) => { if (groupRef.current) groupRef.current.rotation.y += dt * 0.015; });
-
-  const [coastGeo,   setCoastGeo]   = useState<THREE.BufferGeometry | null>(null);
-  const [borderGeo,  setBorderGeo]  = useState<THREE.BufferGeometry | null>(null);
-  const [stateGeo,   setStateGeo]   = useState<THREE.BufferGeometry | null>(null);
-  const [riverGeo,   setRiverGeo]   = useState<THREE.BufferGeometry | null>(null);
+  const [coastGeo,  setCoastGeo]  = useState<THREE.BufferGeometry | null>(null);
+  const [borderGeo, setBorderGeo] = useState<THREE.BufferGeometry | null>(null);
+  const [stateGeo,  setStateGeo]  = useState<THREE.BufferGeometry | null>(null);
+  const [riverGeo,  setRiverGeo]  = useState<THREE.BufferGeometry | null>(null);
 
   useEffect(() => {
     const load = (url: string, r: number, setter: (g: THREE.BufferGeometry) => void) =>
-      fetch(url).then(res => res.json()).then((lines: number[][][]) => setter(buildLineGeo(lines, r))).catch(() => {});
+      fetch(url).then(res => res.json()).then((d: number[][][]) => setter(buildLineGeo(d, r))).catch(() => {});
     load("/geo/coastlines.json", GLOBE_R + 0.005, setCoastGeo);
     load("/geo/borders.json",    GLOBE_R + 0.004, setBorderGeo);
     load("/geo/states.json",     GLOBE_R + 0.003, setStateGeo);
     load("/geo/rivers.json",     GLOBE_R + 0.006, setRiverGeo);
   }, []);
 
-  const gridLines = useMemo(() => {
+  const gridGeo = useMemo(() => {
     const pts: THREE.Vector3[] = [];
     const r = GLOBE_R + 0.001;
-    for (let lat = -60; lat <= 60; lat += 30) {
-      for (let lon = -180; lon <= 180; lon += 2) pts.push(ll2xyz(lat, lon, r), ll2xyz(lat, lon + 2, r));
-    }
-    for (let lon = -180; lon <= 180; lon += 30) {
-      for (let lat = -88; lat <= 88; lat += 2) pts.push(ll2xyz(lat, lon, r), ll2xyz(lat + 2, lon, r));
-    }
+    for (let lat = -60; lat <= 60; lat += 30)
+      for (let lon = -180; lon <= 180; lon += 2)
+        pts.push(ll2xyz(lat, lon, r), ll2xyz(lat, lon + 2, r));
+    for (let lon = -180; lon <= 180; lon += 30)
+      for (let lat = -88; lat <= 88; lat += 2)
+        pts.push(ll2xyz(lat, lon, r), ll2xyz(lat + 2, lon, r));
     return new THREE.BufferGeometry().setFromPoints(pts);
   }, []);
 
   return (
-    <group ref={groupRef}>
-      {/* Core sphere — deep ocean blue-black */}
+    <>
       <mesh>
         <sphereGeometry args={[GLOBE_R, 64, 64]} />
-        <meshPhongMaterial
-          color="#020B1A"
-          emissive="#030E22"
-          emissiveIntensity={0.5}
-          shininess={60}
-          specular={new THREE.Color(0x112244)}
-        />
+        <meshPhongMaterial color="#020B1A" emissive="#030E22" emissiveIntensity={0.5}
+          shininess={60} specular={new THREE.Color(0x112244)} />
       </mesh>
-      {/* Lat/lon grid — very subtle */}
-      <lineSegments geometry={gridLines}>
+      <lineSegments geometry={gridGeo}>
         <lineBasicMaterial color="#0A1A33" transparent opacity={0.25} />
       </lineSegments>
-      {/* Country borders — faint indigo */}
-      {borderGeo && (
-        <lineSegments geometry={borderGeo}>
-          <lineBasicMaterial color="#2233AA" transparent opacity={0.35} />
-        </lineSegments>
-      )}
-      {/* State / province lines — dimmer than country borders */}
-      {stateGeo && (
-        <lineSegments geometry={stateGeo}>
-          <lineBasicMaterial color="#192866" transparent opacity={0.45} />
-        </lineSegments>
-      )}
-      {/* Coastlines — bright holographic cyan */}
-      {coastGeo && (
-        <lineSegments geometry={coastGeo}>
-          <lineBasicMaterial color="#1A66FF" transparent opacity={0.7} />
-        </lineSegments>
-      )}
-      {/* Rivers — pale electric blue */}
-      {riverGeo && (
-        <lineSegments geometry={riverGeo}>
-          <lineBasicMaterial color="#00AAFF" transparent opacity={0.55} />
-        </lineSegments>
-      )}
-      {/* Atmosphere inner glow */}
+      {borderGeo && <lineSegments geometry={borderGeo}><lineBasicMaterial color="#2233AA" transparent opacity={0.35} /></lineSegments>}
+      {stateGeo  && <lineSegments geometry={stateGeo} ><lineBasicMaterial color="#192866" transparent opacity={0.45} /></lineSegments>}
+      {coastGeo  && <lineSegments geometry={coastGeo} ><lineBasicMaterial color="#1A66FF" transparent opacity={0.70} /></lineSegments>}
+      {riverGeo  && <lineSegments geometry={riverGeo} ><lineBasicMaterial color="#00AAFF" transparent opacity={0.55} /></lineSegments>}
       <mesh>
         <sphereGeometry args={[GLOBE_R * 1.004, 32, 32]} />
         <meshPhongMaterial color="#0A2A6A" transparent opacity={0.06} side={THREE.FrontSide} depthWrite={false} />
       </mesh>
-    </group>
+    </>
   );
 }
 
-// ─── Atmosphere shell ─────────────────────────────────────────────────────────
+// ─── Atmosphere shell (not part of rotating group) ────────────────────────────
 function AtmosphereShell() {
   return (
     <mesh>
       <sphereGeometry args={[ATMO_R, 32, 32]} />
-      <meshPhongMaterial
-        color="#1A4AFF"
-        transparent
-        opacity={0.045}
-        side={THREE.BackSide}
-        depthWrite={false}
-      />
+      <meshPhongMaterial color="#1A4AFF" transparent opacity={0.045} side={THREE.BackSide} depthWrite={false} />
     </mesh>
   );
 }
 
-// ─── A single astrocartography line ───────────────────────────────────────────
+// ─── Astro line — no self-rotation ────────────────────────────────────────────
 function AstroLineObject({
-  line,
-  color,
-  dashed,
-  opacity,
+  line, color, dashed, opacity, mode,
 }: {
-  line: AstroLine;
-  color: string;
-  dashed: boolean;
-  opacity: number;
+  line: AstroLine; color: string; dashed: boolean; opacity: number; mode: GlobeMode;
 }) {
-  const meshRef = useRef<THREE.Group>(null);
-
-  // Sync rotation with globe body (both rotate at same rate)
-  useFrame((_, dt) => { if (meshRef.current) meshRef.current.rotation.y += dt * 0.015; });
-
   const col = useMemo(() => new THREE.Color(color), [color]);
 
+  // FIELDS mode: glowing energy orbs scattered along the line path
+  const orbPositions = useMemo(() => {
+    if (mode !== "energy") return null;
+    const positions: THREE.Vector3[] = [];
+    for (const seg of line.segments) {
+      for (let i = 0; i < seg.length; i += 8) {
+        positions.push(ll2xyz(seg[i].lat, seg[i].lon, GLOBE_R + 0.018));
+      }
+    }
+    return positions;
+  }, [line, mode]);
+
+  if (mode === "energy" && orbPositions) {
+    return (
+      <>
+        {orbPositions.map((pos, i) => {
+          const sz = 0.012 + (i % 5) * 0.004;
+          const op = 0.5 + (i % 3) * 0.15;
+          return (
+            <mesh key={i} position={pos} scale={sz}>
+              <sphereGeometry args={[1, 4, 4]} />
+              <meshBasicMaterial color={col} transparent opacity={op} />
+            </mesh>
+          );
+        })}
+      </>
+    );
+  }
+
+  const tubeRadius  = mode === "lines" ? 0.007 : 0.004;
+  const lineOpacity = mode === "lines" ? 1.0 : opacity;
+
   return (
-    <group ref={meshRef}>
+    <>
       {line.segments.map((seg, si) => {
         if (seg.length < 2) return null;
-        const pts = seg.map(p => ll2xyz(p.lat, p.lon, GLOBE_R + 0.012));
+        const pts   = seg.map(p => ll2xyz(p.lat, p.lon, GLOBE_R + 0.012));
         const curve = new THREE.CatmullRomCurve3(pts, false, "chordal", 0.5);
-        const numPts = Math.min(pts.length * 6, 300);
+        const n     = Math.min(pts.length * 6, 300);
 
         if (dashed) {
-          // Dashed → use plain line with gap simulation
-          const sampledPts = curve.getPoints(numPts);
+          const sampled = curve.getPoints(n);
           const geo = new THREE.BufferGeometry().setFromPoints(
-            sampledPts.filter((_, i) => Math.floor(i / 6) % 2 === 0)
+            sampled.filter((_, i) => Math.floor(i / 6) % 2 === 0)
           );
           return (
             <lineSegments key={si} geometry={geo}>
-              <lineBasicMaterial color={col} transparent opacity={opacity * 0.8} linewidth={1} />
+              <lineBasicMaterial color={col} transparent opacity={lineOpacity * 0.8} />
             </lineSegments>
           );
         }
 
-        const tubeGeo = new THREE.TubeGeometry(curve, numPts, 0.004, 4, false);
+        const tubeGeo = new THREE.TubeGeometry(curve, n, tubeRadius, 4, false);
         return (
           <mesh key={si} geometry={tubeGeo}>
-            <meshBasicMaterial color={col} transparent opacity={opacity} />
+            <meshBasicMaterial color={col} transparent opacity={lineOpacity} />
           </mesh>
         );
       })}
-    </group>
+    </>
   );
 }
 
-// ─── Vortex node (line intersection) ─────────────────────────────────────────
+// ─── PLANETS mode: symbol labels at peak point of each MC/ASC line ────────────
+function PlanetLabels({ lines }: { lines: AstroLine[] }) {
+  const labeled = useMemo(() => {
+    const seen = new Set<AstroLinePlanet>();
+    const out: { planet: AstroLinePlanet; pos: THREE.Vector3 }[] = [];
+    for (const line of lines) {
+      if (seen.has(line.planet)) continue;
+      if (line.angle !== "MC" && line.angle !== "ASC") continue;
+      const allPts = line.segments.flatMap(s => s);
+      if (allPts.length === 0) continue;
+      const peak = allPts.reduce((a, b) => Math.abs(a.lat) < Math.abs(b.lat) ? b : a);
+      out.push({ planet: line.planet, pos: ll2xyz(peak.lat, peak.lon, GLOBE_R + 0.15) });
+      seen.add(line.planet);
+    }
+    return out;
+  }, [lines]);
+
+  return (
+    <>
+      {labeled.map(({ planet, pos }) => (
+        <Html key={planet} position={pos} center distanceFactor={6}>
+          <div style={{
+            color: PLANET_COLORS[planet],
+            fontSize: 11,
+            fontFamily: "'Fragment Mono', monospace",
+            letterSpacing: "0.08em",
+            whiteSpace: "nowrap",
+            pointerEvents: "none",
+            textShadow: `0 0 12px ${PLANET_COLORS[planet]}`,
+            background: "rgba(2,8,22,0.6)",
+            padding: "2px 5px",
+            borderRadius: 4,
+          }}>
+            {PLANET_SYMBOLS[planet]} {planet}
+          </div>
+        </Html>
+      ))}
+    </>
+  );
+}
+
+// ─── Vortex node — no self-rotation (parent group handles it) ─────────────────
 interface VortexNode {
   position: THREE.Vector3;
-  lat: number;
-  lon: number;
+  lat: number; lon: number;
   lines: { planet: AstroLinePlanet; angle: AstroLineAngle }[];
-  power: number;
-  label: string;
+  power: number; label: string;
 }
 
 function VortexNodeObject({ node, onClick }: { node: VortexNode; onClick: (n: VortexNode) => void }) {
   const [hovered, setHovered] = useState(false);
 
-  // Globe-sync outer group
-  const globeRef = useRef<THREE.Group>(null);
-  useFrame((_, dt) => { if (globeRef.current) globeRef.current.rotation.y += dt * 0.015; });
-
-  // Independent animation refs
-  const ring1Ref  = useRef<THREE.Mesh>(null);
-  const ring2Ref  = useRef<THREE.Mesh>(null);
-  const ring3Ref  = useRef<THREE.Mesh>(null);
-  const icoRef    = useRef<THREE.Mesh>(null);
-  const coreRef   = useRef<THREE.Mesh>(null);
-  const glowRef   = useRef<THREE.Mesh>(null);
-  const t         = useRef(Math.random() * Math.PI * 2); // stagger start phase
+  const ring1Ref = useRef<THREE.Mesh>(null);
+  const ring2Ref = useRef<THREE.Mesh>(null);
+  const ring3Ref = useRef<THREE.Mesh>(null);
+  const icoRef   = useRef<THREE.Mesh>(null);
+  const coreRef  = useRef<THREE.Mesh>(null);
+  const glowRef  = useRef<THREE.Mesh>(null);
+  const t        = useRef(Math.random() * Math.PI * 2);
 
   const primaryColor   = useMemo(() => new THREE.Color(PLANET_COLORS[node.lines[0].planet]), [node]);
   const secondaryColor = useMemo(() => new THREE.Color(
@@ -226,78 +244,55 @@ function VortexNodeObject({ node, onClick }: { node: VortexNode; onClick: (n: Vo
     const pulse = 0.85 + Math.sin(t.current * 2.2) * 0.18;
     const scale = hovered ? 1.6 : 1.0;
 
-    // Three counter-rotating rings on different axes
     if (ring1Ref.current) ring1Ref.current.rotation.z += dt * 1.1;
     if (ring2Ref.current) ring2Ref.current.rotation.x += dt * 0.75;
     if (ring3Ref.current) { ring3Ref.current.rotation.y += dt * 0.55; ring3Ref.current.rotation.z -= dt * 0.35; }
 
-    // Morphing icosahedron
     if (icoRef.current) {
       icoRef.current.rotation.x += dt * 0.3;
       icoRef.current.rotation.y += dt * 0.45;
-      const icoS = scale * (0.9 + Math.sin(t.current * 1.4 + 0.5) * 0.12);
-      icoRef.current.scale.setScalar(0.12 * icoS);
+      icoRef.current.scale.setScalar(0.12 * scale * (0.9 + Math.sin(t.current * 1.4 + 0.5) * 0.12));
     }
-
-    // Pulsing core
-    if (coreRef.current) coreRef.current.scale.setScalar(0.042 * pulse * scale);
-
-    // Outer glow halo
-    if (glowRef.current) glowRef.current.scale.setScalar(0.18 * (1 + Math.sin(t.current * 1.7) * 0.1) * scale);
+    if (coreRef.current)  coreRef.current.scale.setScalar(0.042 * pulse * scale);
+    if (glowRef.current)  glowRef.current.scale.setScalar(0.18 * (1 + Math.sin(t.current * 1.7) * 0.1) * scale);
   });
 
-  const ringScale = hovered ? 0.115 : 0.095;
+  const rs = hovered ? 0.115 : 0.095;
 
   return (
-    <group ref={globeRef}>
-      {/* Invisible hit-target sphere */}
-      <mesh
-        position={node.position}
-        scale={0.14}
+    <>
+      <mesh position={node.position} scale={0.14}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
-        onClick={(e) => { e.stopPropagation(); onClick(node); }}
-      >
+        onClick={(e) => { e.stopPropagation(); onClick(node); }}>
         <sphereGeometry args={[1, 6, 6]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
-
-      {/* Outer halo glow */}
       <mesh ref={glowRef} position={node.position}>
         <sphereGeometry args={[1, 12, 12]} />
         <meshBasicMaterial color={primaryColor} transparent opacity={0.06} depthWrite={false} />
       </mesh>
-
-      {/* Morphing icosahedron wireframe */}
       <mesh ref={icoRef} position={node.position}>
         <icosahedronGeometry args={[1, 1]} />
         <meshBasicMaterial color={primaryColor} wireframe transparent opacity={hovered ? 0.5 : 0.28} />
       </mesh>
-
-      {/* Ring 1 — equatorial, primary color */}
-      <mesh ref={ring1Ref} position={node.position} scale={ringScale}>
+      <mesh ref={ring1Ref} position={node.position} scale={rs}>
         <torusGeometry args={[1, 0.055, 6, 40]} />
         <meshBasicMaterial color={primaryColor} transparent opacity={0.75} />
       </mesh>
-
-      {/* Ring 2 — polar tilt, secondary color */}
-      <mesh ref={ring2Ref} position={node.position} rotation={[Math.PI / 2.2, 0.3, 0]} scale={ringScale * 0.88}>
+      <mesh ref={ring2Ref} position={node.position} rotation={[Math.PI / 2.2, 0.3, 0]} scale={rs * 0.88}>
         <torusGeometry args={[1, 0.04, 5, 36]} />
         <meshBasicMaterial color={secondaryColor} transparent opacity={0.6} />
       </mesh>
-
-      {/* Ring 3 — diagonal, primary color thinner */}
-      <mesh ref={ring3Ref} position={node.position} rotation={[Math.PI / 4, Math.PI / 3, 0]} scale={ringScale * 0.72}>
+      <mesh ref={ring3Ref} position={node.position} rotation={[Math.PI / 4, Math.PI / 3, 0]} scale={rs * 0.72}>
         <torusGeometry args={[1, 0.028, 4, 28]} />
         <meshBasicMaterial color={primaryColor} transparent opacity={0.45} />
       </mesh>
-
-      {/* Pulsing core */}
       <mesh ref={coreRef} position={node.position}>
         <sphereGeometry args={[1, 10, 10]} />
         <meshBasicMaterial color={primaryColor} transparent opacity={0.95} />
       </mesh>
-    </group>
+    </>
   );
 }
 
@@ -310,8 +305,8 @@ function GlobeClickHandler({ onGlobeClick, globeGroupRef }: {
 
   const handleClick = useCallback((e: MouseEvent) => {
     const rect = gl.domElement.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-    const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    const x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
+    const y = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
 
     const ray = new THREE.Raycaster();
     ray.setFromCamera(new THREE.Vector2(x, y), camera);
@@ -320,12 +315,10 @@ function GlobeClickHandler({ onGlobeClick, globeGroupRef }: {
     const target = new THREE.Vector3();
     if (!ray.ray.intersectSphere(sphere, target)) return;
 
-    // Account for globe rotation
     const angle = globeGroupRef.current?.rotation.y ?? 0;
-    const cosA = Math.cos(-angle);
-    const sinA = Math.sin(-angle);
-    const rx = target.x * cosA + target.z * sinA;
-    const ry = target.y;
+    const cosA = Math.cos(-angle), sinA = Math.sin(-angle);
+    const rx =  target.x * cosA + target.z * sinA;
+    const ry =  target.y;
     const rz = -target.x * sinA + target.z * cosA;
 
     const lat = (Math.asin(ry / GLOBE_R) * 180) / Math.PI;
@@ -341,23 +334,19 @@ function GlobeClickHandler({ onGlobeClick, globeGroupRef }: {
   return null;
 }
 
-// ─── Compute vortex nodes from line intersections ─────────────────────────────
+// ─── Vortex node computation ───────────────────────────────────────────────────
 function computeVortexNodes(lines: AstroLine[]): VortexNode[] {
-  const nodes: VortexNode[] = [];
-  const PROXIMITY = 8; // degrees
-
-  // Sample all line points
   type Sample = { planet: AstroLinePlanet; angle: AstroLineAngle; lat: number; lon: number };
   const samples: Sample[] = [];
-  for (const line of lines) {
-    for (const seg of line.segments) {
-      for (const pt of seg) {
+  for (const line of lines)
+    for (const seg of line.segments)
+      for (const pt of seg)
         samples.push({ planet: line.planet, angle: line.angle, lat: pt.lat, lon: pt.lon });
-      }
-    }
-  }
 
+  const nodes: VortexNode[] = [];
   const seen = new Set<string>();
+  const PROX = 8;
+
   for (let i = 0; i < samples.length; i += 3) {
     const a = samples[i];
     for (let j = i + 1; j < samples.length; j += 3) {
@@ -365,22 +354,18 @@ function computeVortexNodes(lines: AstroLine[]): VortexNode[] {
       if (a.planet === b.planet) continue;
       const dLon = Math.abs(a.lon - b.lon);
       const dist = Math.sqrt(
-        Math.min(dLon, 360 - dLon) ** 2 * Math.cos((a.lat * Math.PI) / 180) ** 2 +
-        (a.lat - b.lat) ** 2
+        Math.min(dLon, 360 - dLon) ** 2 * Math.cos((a.lat * Math.PI) / 180) ** 2 + (a.lat - b.lat) ** 2
       );
-      if (dist > PROXIMITY) continue;
-
+      if (dist > PROX) continue;
       const lat = (a.lat + b.lat) / 2;
       const lon = (a.lon + b.lon) / 2;
       const key = `${Math.round(lat)},${Math.round(lon)}`;
       if (seen.has(key)) continue;
       seen.add(key);
-
       const power = Math.round(
-        60 + 34 * (1 - dist / PROXIMITY) *
+        60 + 34 * (1 - dist / PROX) *
         ([a.planet, b.planet].includes("Jupiter") || [a.planet, b.planet].includes("Sun") ? 1.15 : 1)
       );
-
       nodes.push({
         position: ll2xyz(lat, lon, GLOBE_R + 0.04),
         lat, lon,
@@ -395,31 +380,36 @@ function computeVortexNodes(lines: AstroLine[]): VortexNode[] {
 
 // ─── Main scene ────────────────────────────────────────────────────────────────
 function Scene({
-  lines,
-  activePlanets,
-  activeAngles,
-  showVortexes,
-  onLocationClick,
-  onVortexClick,
+  lines, activePlanets, activeAngles, globeMode,
+  onLocationClick, onVortexClick,
 }: {
-  lines: AstroLine[];
-  activePlanets: Set<AstroLinePlanet>;
-  activeAngles:  Set<AstroLineAngle>;
-  showVortexes:  boolean;
+  lines:           AstroLine[];
+  activePlanets:   Set<AstroLinePlanet>;
+  activeAngles:    Set<AstroLineAngle>;
+  globeMode:       GlobeMode;
   onLocationClick: (lat: number, lon: number) => void;
   onVortexClick:   (node: VortexNode) => void;
 }) {
-  const globeRef = useRef<THREE.Group>(null);
+  // ── Single rotating group — everything geo goes here ──────────────────────
+  const globeGroupRef = useRef<THREE.Group>(null);
+  useFrame((_, dt) => { if (globeGroupRef.current) globeGroupRef.current.rotation.y += dt * 0.015; });
 
-  const visibleLines = useMemo(
-    () => lines.filter(l => activePlanets.has(l.planet) && activeAngles.has(l.angle)),
-    [lines, activePlanets, activeAngles],
-  );
+  const showVortexes = globeMode === "vortex";
+
+  // LINES mode ignores planet toggle and shows everything
+  const visibleLines = useMemo(() => {
+    if (globeMode === "lines") return lines.filter(l => activeAngles.has(l.angle));
+    return lines.filter(l => activePlanets.has(l.planet) && activeAngles.has(l.angle));
+  }, [lines, activePlanets, activeAngles, globeMode]);
+
+  const lineOpacity = globeMode === "vortex" ? 0.3 : 0.88;
 
   const vortexNodes = useMemo(
     () => showVortexes ? computeVortexNodes(lines.filter(l => activePlanets.has(l.planet))) : [],
     [lines, activePlanets, showVortexes],
   );
+
+  const bloomIntensity = globeMode === "energy" ? 2.2 : globeMode === "lines" ? 1.8 : 1.4;
 
   return (
     <>
@@ -427,37 +417,39 @@ function Scene({
       <directionalLight position={[5, 3, 5]} intensity={0.6} color="#446699" />
       <pointLight position={[-5, -3, -5]} intensity={0.3} color="#2244AA" />
 
-      <GlobeBody />
+      {/* ── All geography + lines in one rotating group ── */}
+      <group ref={globeGroupRef}>
+        <GlobeBody />
+
+        {visibleLines.map(line => (
+          <AstroLineObject
+            key={`${line.planet}-${line.angle}`}
+            line={line}
+            color={PLANET_COLORS[line.planet]}
+            dashed={globeMode === "lines" ? false : ANGLE_DASH[line.angle]}
+            opacity={lineOpacity}
+            mode={globeMode}
+          />
+        ))}
+
+        {globeMode === "planets" && <PlanetLabels lines={visibleLines} />}
+
+        {showVortexes && vortexNodes.map((node, i) => (
+          <VortexNodeObject key={i} node={node} onClick={onVortexClick} />
+        ))}
+      </group>
+
       <AtmosphereShell />
 
-      {visibleLines.map(line => (
-        <AstroLineObject
-          key={`${line.planet}-${line.angle}`}
-          line={line}
-          color={PLANET_COLORS[line.planet]}
-          dashed={ANGLE_DASH[line.angle]}
-          opacity={0.88}
-        />
-      ))}
+      <GlobeClickHandler onGlobeClick={onLocationClick} globeGroupRef={globeGroupRef} />
 
-      {showVortexes && vortexNodes.map((node, i) => (
-        <VortexNodeObject key={i} node={node} onClick={onVortexClick} />
-      ))}
-
-      <OrbitControls
-        enablePan={false}
-        minDistance={3.5}
-        maxDistance={9}
-        rotateSpeed={0.4}
-        autoRotate={false}
-        enableDamping
-        dampingFactor={0.05}
-      />
+      <OrbitControls enablePan={false} minDistance={3.5} maxDistance={9}
+        rotateSpeed={0.4} autoRotate={false} enableDamping dampingFactor={0.05} />
 
       <EffectComposer>
         <Bloom
           blendFunction={BlendFunction.ADD}
-          intensity={1.4}
+          intensity={bloomIntensity}
           luminanceThreshold={0.1}
           luminanceSmoothing={0.6}
           radius={0.85}
@@ -467,37 +459,28 @@ function Scene({
   );
 }
 
-// ─── Public export: the full canvas ──────────────────────────────────────────
+// ─── Public export ────────────────────────────────────────────────────────────
 export interface VortexNodePublic extends VortexNode {}
 
 export default function GlobeCanvas({
-  lines,
-  activePlanets,
-  activeAngles,
-  showVortexes,
-  onLocationClick,
-  onVortexClick,
+  lines, activePlanets, activeAngles, globeMode, onLocationClick, onVortexClick,
 }: {
   lines:           AstroLine[];
   activePlanets:   Set<AstroLinePlanet>;
   activeAngles:    Set<AstroLineAngle>;
-  showVortexes:    boolean;
+  globeMode:       GlobeMode;
   onLocationClick: (lat: number, lon: number) => void;
   onVortexClick:   (node: VortexNodePublic) => void;
 }) {
   return (
-    <Canvas
-      camera={{ position: [0, 1.5, 6], fov: 45 }}
-      gl={{ antialias: true, alpha: false }}
-      style={{ background: "#050816" }}
-    >
+    <Canvas camera={{ position: [0, 1.5, 6], fov: 45 }} gl={{ antialias: true, alpha: false }} style={{ background: "#050816" }}>
       <color attach="background" args={["#050816"]} />
       <fog attach="fog" args={["#050816", 18, 40]} />
       <Scene
         lines={lines}
         activePlanets={activePlanets}
         activeAngles={activeAngles}
-        showVortexes={showVortexes}
+        globeMode={globeMode}
         onLocationClick={onLocationClick}
         onVortexClick={onVortexClick}
       />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Sidebar } from "@/components/dashboard/Sidebar";
@@ -449,6 +449,140 @@ function BestWindows({ hours, now, activity, moonSign, isVoid }: {
   );
 }
 
+// ─── Timing Oracle ────────────────────────────────────────────────────────────
+
+function TimingOracle({
+  activity, hourRuler, moonSign, isVoid, score, scoreLabel,
+}: {
+  activity: Activity;
+  hourRuler: PlanetName | null;
+  moonSign: ZodiacSign;
+  isVoid: boolean;
+  score: number;
+  scoreLabel: string;
+}) {
+  const [text, setText]         = useState("");
+  const [streaming, setStreaming] = useState(false);
+  const [started, setStarted]   = useState(false);
+  const prevKeyRef              = useRef("");
+
+  // Reset when activity changes so a fresh reading can be requested
+  const key = `${activity.id}-${hourRuler}-${moonSign}-${isVoid}`;
+  useEffect(() => {
+    if (prevKeyRef.current && prevKeyRef.current !== key) {
+      setText(""); setStarted(false);
+    }
+    prevKeyRef.current = key;
+  }, [key]);
+
+  const generate = useCallback(async () => {
+    if (streaming || started) return;
+    setStarted(true);
+    setStreaming(true);
+    setText("");
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{
+            role: "user",
+            content: [
+              `I want to do: ${activity.name} — ${activity.description}`,
+              `Current planetary hour: ${hourRuler ?? "unknown"}`,
+              `Moon in ${moonSign}${isVoid ? " (void of course)" : ""}`,
+              `Current timing score: ${score > 0 ? "+" : ""}${score} (${scoreLabel})`,
+              "Give me a concise, direct timing oracle in 3-4 sentences. Be specific about whether NOW is good or when to wait. Start directly with your advice — no preamble."
+            ].join("\n"),
+          }],
+          systemPrompt: "You are Cosmora's electional astrology oracle. Give sharp, actionable timing advice. Be direct and specific. Under 100 words total.",
+        }),
+      });
+      if (!res.ok || !res.body) { setStreaming(false); return; }
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const raw = dec.decode(value, { stream: true });
+        for (const line of raw.split("\n")) {
+          if (!line.startsWith("data:")) continue;
+          const data = line.slice(5).trim();
+          if (data === "[DONE]") break;
+          try {
+            const parsed = JSON.parse(data) as { text?: string };
+            if (parsed.text) { buf += parsed.text; setText(buf); }
+          } catch { /* skip */ }
+        }
+      }
+    } catch { /* silent */ }
+    setStreaming(false);
+  }, [activity, hourRuler, moonSign, isVoid, score, scoreLabel, streaming, started]);
+
+  return (
+    <div
+      className="rounded-2xl p-4"
+      style={{ background: "rgba(124,58,237,0.04)", border: "1px solid rgba(124,58,237,0.15)" }}
+    >
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <motion.div
+            animate={streaming ? { opacity: [0.5, 1, 0.5] } : {}}
+            transition={{ duration: 1.4, repeat: Infinity }}
+            className="w-1.5 h-1.5 rounded-full"
+            style={{ background: streaming ? "#7c3aed" : "#334155" }}
+          />
+          <span className="text-[8px] font-bold tracking-widest" style={{ color: "#475569" }}>TIMING ORACLE</span>
+        </div>
+        {!started && (
+          <motion.button
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={generate}
+            className="text-[8px] font-bold tracking-wider px-3 py-1.5 rounded-lg cursor-pointer"
+            style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)", color: "#a78bfa" }}
+          >
+            ✦ ASK ORACLE
+          </motion.button>
+        )}
+        {started && !streaming && (
+          <button
+            onClick={() => { setText(""); setStarted(false); }}
+            className="text-[8px] tracking-wider px-3 py-1.5 rounded-lg cursor-pointer"
+            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", color: "#475569" }}
+          >
+            ↺ NEW
+          </button>
+        )}
+      </div>
+
+      {!started && !text && (
+        <p className="text-[9px] leading-relaxed" style={{ color: "#334155" }}>
+          Get a personalized timing reading for {activity.name.toLowerCase()} based on the current planetary hour, Moon position, and your chart.
+        </p>
+      )}
+
+      {text && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-[9.5px] leading-relaxed"
+          style={{ color: "#94a3b8", whiteSpace: "pre-wrap" }}
+        >
+          {text}
+          {streaming && (
+            <motion.span
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ duration: 0.7, repeat: Infinity }}
+              style={{ display: "inline-block", width: 5, height: 10, background: "#7c3aed", borderRadius: 1, marginLeft: 3, verticalAlign: "middle" }}
+            />
+          )}
+        </motion.p>
+      )}
+    </div>
+  );
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function ElectionalPage() {
@@ -736,6 +870,16 @@ export default function ElectionalPage() {
                     {isVoid && selectedActivity.avoidVoid && " The void of course Moon makes this a poor time for initiating important matters."}
                   </p>
                 </div>
+
+                {/* Timing Oracle */}
+                <TimingOracle
+                  activity={selectedActivity}
+                  hourRuler={currentHour?.planet ?? null}
+                  moonSign={moonSign}
+                  isVoid={isVoid}
+                  score={overallScore}
+                  scoreLabel={overallLabel}
+                />
 
               </div>
             </div>

@@ -100,6 +100,51 @@ export function setOracleModel(modelId: string): void {
   localStorage.setItem(MODEL_KEY, modelId);
 }
 
+// ── Oracle Memories ───────────────────────────────────────────────────────────
+
+export type MemoryCategory = "insight" | "timing" | "relocation" | "relationship" | "warning" | "general";
+
+export interface OracleMemory {
+  id: string;
+  profileId: string;
+  title: string;
+  content: string;
+  category: MemoryCategory;
+  createdAt: string;
+  context?: string; // brief astrological context when saved
+}
+
+const memoriesKey = (id: string) => `cosmora_memories_${id}`;
+
+export function getOracleMemories(profileId: string): OracleMemory[] {
+  if (typeof window === "undefined") return [];
+  try { return JSON.parse(localStorage.getItem(memoriesKey(profileId)) ?? "[]"); } catch { return []; }
+}
+
+export function saveOracleMemory(profileId: string, memory: Omit<OracleMemory, "id" | "profileId" | "createdAt">): OracleMemory {
+  const full: OracleMemory = {
+    ...memory,
+    id: generateId(),
+    profileId,
+    createdAt: new Date().toISOString(),
+  };
+  const list = getOracleMemories(profileId);
+  list.unshift(full);
+  if (list.length > 200) list.splice(200);
+  localStorage.setItem(memoriesKey(profileId), JSON.stringify(list));
+  return full;
+}
+
+export function deleteOracleMemory(profileId: string, memoryId: string): void {
+  const list = getOracleMemories(profileId).filter(m => m.id !== memoryId);
+  localStorage.setItem(memoriesKey(profileId), JSON.stringify(list));
+}
+
+export function updateOracleMemory(profileId: string, memoryId: string, patch: Partial<Pick<OracleMemory, "title" | "category" | "context">>): void {
+  const list = getOracleMemories(profileId).map(m => m.id === memoryId ? { ...m, ...patch } : m);
+  localStorage.setItem(memoriesKey(profileId), JSON.stringify(list));
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 export function generateId(): string {

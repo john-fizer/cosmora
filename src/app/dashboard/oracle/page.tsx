@@ -12,7 +12,9 @@ import {
   getActiveProfileId, getProfile, getCachedChart,
   getChatHistory, pushChatMessage, clearChatHistory,
   getOracleModel, setOracleModel,
+  saveOracleMemory,
 } from "@/lib/storage";
+import type { MemoryCategory } from "@/lib/storage";
 import { ORACLE_MODELS, getModelById } from "@/lib/oracle/models";
 import { VoiceOracle } from "@/components/oracle/VoiceOracle";
 import { InsightPlayer } from "@/components/oracle/InsightPlayer";
@@ -185,22 +187,104 @@ function ToolCallCard({ toolCall }: { toolCall: ToolCallEvent }) {
   );
 }
 
+// ─── Memory save mini-panel ───────────────────────────────────────────────────
+
+const MEMORY_CATS: { id: MemoryCategory; label: string; color: string }[] = [
+  { id: "insight",      label: "Insight",      color: "#a78bfa" },
+  { id: "timing",       label: "Timing",       color: "#f59e0b" },
+  { id: "relocation",   label: "Relocation",   color: "#32D5FF" },
+  { id: "relationship", label: "Relationship", color: "#f472b6" },
+  { id: "warning",      label: "Warning",      color: "#ef4444" },
+  { id: "general",      label: "General",      color: "#64748b" },
+];
+
+function SaveMemoryPanel({
+  content, profileId, onDone, onCancel,
+}: { content: string; profileId: string; onDone: () => void; onCancel: () => void }) {
+  const [cat, setCat]     = useState<MemoryCategory>("insight");
+  const [title, setTitle] = useState(() => content.split(/[.!?]/)[0].slice(0, 60));
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = () => {
+    saveOracleMemory(profileId, { title, content, category: cat });
+    setSaved(true);
+    setTimeout(onDone, 800);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95, y: -8 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      style={{
+        background: "rgba(4,4,28,0.97)", border: "1px solid rgba(124,58,237,0.3)",
+        borderRadius: 14, padding: 14, marginTop: 6, backdropFilter: "blur(24px)",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
+      }}
+    >
+      {saved ? (
+        <p className="text-center text-xs" style={{ color: "#22c55e", padding: "8px 0" }}>✓ Saved to Oracle Memory</p>
+      ) : (
+        <>
+          <p className="text-[8px] tracking-widest mb-2" style={{ color: "#475569" }}>SAVE TO MEMORY</p>
+          <input
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            maxLength={80}
+            placeholder="Memory title…"
+            className="w-full text-xs mb-3 px-3 py-2 rounded-lg outline-none"
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(124,58,237,0.2)", color: "#e2d9f3" }}
+          />
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {MEMORY_CATS.map(c => (
+              <button key={c.id} onClick={() => setCat(c.id)} style={{
+                padding: "3px 10px", borderRadius: 20, fontSize: 9,
+                background: cat === c.id ? `${c.color}22` : "rgba(255,255,255,0.03)",
+                border: `1px solid ${cat === c.id ? c.color + "55" : "rgba(255,255,255,0.06)"}`,
+                color: cat === c.id ? c.color : "#475569", cursor: "pointer",
+              }}>{c.label}</button>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <button onClick={handleSave} style={{
+              flex: 1, padding: "7px 0", borderRadius: 10,
+              background: "linear-gradient(135deg, #4c1d95, #1e3a5f)",
+              border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa",
+              fontSize: 9.5, letterSpacing: "0.1em", cursor: "pointer",
+            }}>SAVE</button>
+            <button onClick={onCancel} style={{
+              padding: "7px 14px", borderRadius: 10,
+              background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
+              color: "#475569", fontSize: 9.5, cursor: "pointer",
+            }}>✕</button>
+          </div>
+        </>
+      )}
+    </motion.div>
+  );
+}
+
 // ─── Oracle message bubble ────────────────────────────────────────────────────
 
-function OracleBubble({ message, isStreaming, voicePlanet, chartAspects, autoPlay }: {
+function OracleBubble({ message, isStreaming, voicePlanet, chartAspects, autoPlay, profileId }: {
   message: Message;
   isStreaming?: boolean;
   voicePlanet?: VoicePlanet;
   chartAspects?: import("@/lib/astrology/types").Aspect[];
   autoPlay?: boolean;
+  profileId?: string;
 }) {
   const isOracle = message.role === "assistant";
+  const [hovered, setHovered]       = useState(false);
+  const [showSave, setShowSave]     = useState(false);
   return (
     <motion.div
       initial={{ opacity: 0, y: 12, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.35 }}
       className={`flex gap-3 ${isOracle ? "flex-row" : "flex-row-reverse"}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       {isOracle && (
         <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-[9px] font-bold mt-0.5"
@@ -260,6 +344,38 @@ function OracleBubble({ message, isStreaming, voicePlanet, chartAspects, autoPla
             autoPlay={autoPlay}
           />
         )}
+        {/* Save-to-memory button */}
+        {isOracle && !isStreaming && message.content && profileId && (
+          <AnimatePresence>
+            {(hovered || showSave) && !showSave && (
+              <motion.button
+                initial={{ opacity: 0, x: -4 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -4 }}
+                onClick={() => setShowSave(true)}
+                style={{
+                  alignSelf: "flex-start", marginTop: 4, padding: "3px 10px",
+                  background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.22)",
+                  borderRadius: 20, color: "#7c3aed", fontSize: 9,
+                  letterSpacing: "0.1em", cursor: "pointer",
+                  fontFamily: "'Fragment Mono', monospace",
+                }}
+              >
+                + SAVE TO MEMORY
+              </motion.button>
+            )}
+          </AnimatePresence>
+        )}
+        <AnimatePresence>
+          {showSave && profileId && (
+            <SaveMemoryPanel
+              content={message.content}
+              profileId={profileId}
+              onDone={() => { setShowSave(false); setHovered(false); }}
+              onCancel={() => setShowSave(false)}
+            />
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   );
@@ -405,6 +521,7 @@ function ModelSelector({ currentModelId, availability, onChange }: {
 
 export default function OraclePage() {
   const [chart, setChart] = useState<ChartData | null>(null);
+  const [profileId, setProfileId] = useState<string | null>(null);
   const [profileName, setProfileName] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [query, setQuery] = useState("");
@@ -436,6 +553,7 @@ export default function OraclePage() {
   useEffect(() => {
     const id = getActiveProfileId();
     if (!id) return;
+    setProfileId(id);
     const profile = getProfile(id);
     if (profile) setProfileName(profile.name);
     const cached = getCachedChart(id);
@@ -731,8 +849,17 @@ export default function OraclePage() {
             <span className="text-xs font-bold tracking-widest gradient-text">AI ORACLE</span>
             {profileName && <><span style={{ color: "#1e293b" }}>/</span><span className="text-xs font-medium" style={{ color: "#64748b" }}>{profileName}</span></>}
           </div>
+          <Link href="/dashboard/oracle/memories">
+            <motion.button
+              whileHover={{ opacity: 0.8 }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] tracking-[0.12em] font-bold"
+              style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.18)", color: "#7c3aed" }}
+            >
+              ✦ MEMORIES
+            </motion.button>
+          </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3" style={{ marginLeft: "auto" }}>
             <div className="flex items-center gap-2">
               <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 1.5, repeat: Infinity }}
                 className="w-1.5 h-1.5 rounded-full"
@@ -907,6 +1034,7 @@ export default function OraclePage() {
                         voicePlanet={voiceEnabled ? voicePlanet : undefined}
                         chartAspects={chart?.aspects}
                         autoPlay={voiceEnabled && autoPlayId === m.id}
+                        profileId={profileId ?? undefined}
                       />
                       {/* Dual agent research panels */}
                       {m.id === -1 && dualMode && (dualAgents.claudeStatus !== "idle" || dualAgents.llamaStatus !== "idle") && (

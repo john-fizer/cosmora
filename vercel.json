@@ -6,6 +6,8 @@
     "src/app/api/suggest/route.ts": { "maxDuration": 30 },
     "src/app/api/chart/route.ts": { "maxDuration": 30 },
     "src/app/api/transits/route.ts": { "maxDuration": 30 },
-    "src/app/api/solar-return/route.ts": { "maxDuration": 30 }
+    "src/app/api/solar-return/route.ts": { "maxDuration": 30 },
+    "src/app/api/astrocartography/route.ts": { "maxDuration": 30 },
+    "src/app/api/astrocartography/read/route.ts": { "maxDuration": 30 }
   }
 }

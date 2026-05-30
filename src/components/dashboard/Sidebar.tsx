@@ -100,6 +100,18 @@ const NAV_ITEMS = [
     ),
   },
   {
+    label: "Map",
+    href: "/dashboard/map",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M3 12 C6 8 10 6 12 12 C14 18 18 16 21 12" />
+        <path d="M12 3 C10 7 10 9 12 12 C14 15 14 17 12 21" />
+        <ellipse cx="12" cy="12" rx="9" ry="4" />
+      </svg>
+    ),
+  },
+  {
     label: "Oracle",
     href: "/dashboard/oracle",
     icon: (

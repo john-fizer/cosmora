@@ -63,14 +63,21 @@ function deriveEnergyScores(): Record<EnergyCategory, number> {
 
 // ─── Top Power Spots (hardcoded sample aligned to common astrocartography zones)
 const SAMPLE_SPOTS = [
-  { city: "Bali, Indonesia",   lat:  -8.34, lon: 115.09 },
-  { city: "Barcelona, Spain",  lat:  41.38, lon:   2.17 },
-  { city: "Los Angeles, USA",  lat:  34.05, lon: -118.24 },
-  { city: "Tokyo, Japan",      lat:  35.68, lon: 139.69 },
-  { city: "Paris, France",     lat:  48.85, lon:   2.35 },
-  { city: "Cape Town, SA",     lat: -33.92, lon:  18.42 },
-  { city: "Rio de Janeiro",    lat: -22.90, lon: -43.17 },
-  { city: "Reykjavik",         lat:  64.13, lon: -21.94 },
+  { city: "Los Angeles, USA",   lat:  34.05, lon: -118.24 },
+  { city: "New York, USA",      lat:  40.71, lon:  -74.01 },
+  { city: "London, UK",         lat:  51.51, lon:   -0.13 },
+  { city: "Paris, France",      lat:  48.85, lon:    2.35 },
+  { city: "Tokyo, Japan",       lat:  35.68, lon:  139.69 },
+  { city: "Bali, Indonesia",    lat:  -8.34, lon:  115.09 },
+  { city: "Barcelona, Spain",   lat:  41.38, lon:    2.17 },
+  { city: "Cape Town, SA",      lat: -33.92, lon:   18.42 },
+  { city: "Rio de Janeiro",     lat: -22.90, lon:  -43.17 },
+  { city: "Reykjavik",          lat:  64.13, lon:  -21.94 },
+  { city: "Sydney, Australia",  lat: -33.87, lon:  151.21 },
+  { city: "Dubai, UAE",         lat:  25.20, lon:   55.27 },
+  { city: "Mexico City",        lat:  19.43, lon:  -99.13 },
+  { city: "Berlin, Germany",    lat:  52.52, lon:   13.41 },
+  { city: "Mumbai, India",      lat:  19.08, lon:   72.88 },
 ];
 
 // ─── Sub-components ────────────────────────────────────────────────────────────

@@ -233,7 +233,8 @@ function CityProjection({ spot, index }: { spot: CitySpot; index: number }) {
 
   const buildings = useMemo(() => {
     const rand = seededRand(index * 997 + Math.round(spot.lat * 10) + Math.round(spot.lon * 10));
-    const scale = 0.5 + (spot.power / 99) * 0.5;
+    // Minimum scale 0.55 so even zero-power cities render visible buildings
+    const scale = 0.55 + (spot.power / 99) * 0.45;
     // Grid layout: 4 rows × 4 cols, skip extreme corners
     const layout: { x: number; z: number }[] = [];
     for (let i = -2; i <= 1; i++)
@@ -245,7 +246,7 @@ function CityProjection({ spot, index }: { spot: CitySpot; index: number }) {
       x, z,
       w: 0.018 + rand() * 0.022,
       d: 0.018 + rand() * 0.022,
-      h: 0.022 + Math.pow(rand(), 1.4) * 0.28 * scale,
+      h: 0.032 + Math.pow(rand(), 1.2) * 0.30 * scale,
     }));
   }, [index, spot.power, spot.lat, spot.lon]);
 
@@ -272,7 +273,7 @@ function CityProjection({ spot, index }: { spot: CitySpot; index: number }) {
         <CityBuilding key={i} {...b} color={col} />
       ))}
       {/* Data readout label — floats above tallest building */}
-      <Html position={[0, maxH + 0.12, 0]} center distanceFactor={7} zIndexRange={[10, 0]}>
+      <Html position={[0, maxH + 0.14, 0]} center distanceFactor={8} zIndexRange={[10, 0]}>
         <div style={{ pointerEvents: "none", textAlign: "center", lineHeight: 1.4 }}>
           <div style={{
             color: energy.color,

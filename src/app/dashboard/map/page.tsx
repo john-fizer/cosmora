@@ -56,6 +56,23 @@ const PLANET_ENERGY_WEIGHTS: Record<AstroLinePlanet, Partial<Record<EnergyCatego
   Neptune: { Spirituality: 1.0, Creativity: 0.8 },
 };
 
+// Primary energy category per planet (matches ENERGY_MAP in GlobeCanvas)
+const PLANET_TO_CATEGORY: Record<AstroLinePlanet, EnergyCategory> = {
+  Sun: "Career", Mercury: "Career", Saturn: "Career",
+  Moon: "Love",  Venus: "Love",
+  Jupiter: "Wealth",
+  Mars: "Transformation",
+  Uranus: "Creativity",
+  Neptune: "Spirituality",
+};
+
+function angularDist(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const φ1 = lat1 * Math.PI / 180, φ2 = lat2 * Math.PI / 180;
+  const Δλ = (lon2 - lon1) * Math.PI / 180;
+  const c = Math.sin(φ1) * Math.sin(φ2) + Math.cos(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+  return Math.acos(Math.min(1, Math.max(-1, c))) * 180 / Math.PI;
+}
+
 function deriveEnergyScores(): Record<EnergyCategory, number> {
   const cats: EnergyCategory[] = ["Career","Love","Creativity","Wealth","Spirituality","Transformation"];
   return Object.fromEntries(cats.map(c => [c, Math.floor(55 + Math.random() * 40)])) as Record<EnergyCategory, number>;
@@ -549,6 +566,9 @@ export default function AstrocartographyPage() {
   const [energyScores]    = useState(() => deriveEnergyScores());
 
   const [topSpots, setTopSpots] = useState<{ city: string; lat: number; lon: number; scores: LocationScore[]; power: number }[]>([]);
+  const [activeCategories, setActiveCategories] = useState<Set<EnergyCategory>>(
+    new Set<EnergyCategory>(["Career", "Love", "Creativity", "Wealth", "Spirituality", "Transformation"])
+  );
 
   // ── Load chart / birth data ──────────────────────────────────────────────────
   useEffect(() => {
@@ -586,12 +606,19 @@ export default function AstrocartographyPage() {
   // ── Compute top power spots ───────────────────────────────────────────────────
   useEffect(() => {
     if (lines.length === 0) return;
-    const spots = SAMPLE_SPOTS.map(s => {
+    const sorted = SAMPLE_SPOTS.map(s => {
       const scores = scoreLocation(lines, s.lat, s.lon);
       const power  = scores.reduce((acc, sc) => acc + sc.influence * 100, 0);
       return { city: s.city, lat: s.lat, lon: s.lon, scores, power: Math.min(99, Math.round(power)) };
-    }).sort((a, b) => b.power - a.power); // all cities scored — globe shows all, panel shows top 5
-    setTopSpots(spots);
+    }).sort((a, b) => b.power - a.power);
+    // Drop cities within 6° (~666 km) of a higher-ranked city to prevent label pileups
+    const deduped: typeof sorted = [];
+    for (const spot of sorted) {
+      if (!deduped.some(k => angularDist(spot.lat, spot.lon, k.lat, k.lon) < 6)) {
+        deduped.push(spot);
+      }
+    }
+    setTopSpots(deduped);
   }, [lines]);
 
   // ── Map click handler ─────────────────────────────────────────────────────────
@@ -606,6 +633,21 @@ export default function AstrocartographyPage() {
     setClickedLocation(null);
     setActiveVortex(node);
   }, []);
+
+  const toggleCategory = (cat: EnergyCategory) => {
+    setActiveCategories(prev => {
+      const next = new Set(prev);
+      next.has(cat) ? next.delete(cat) : next.add(cat);
+      return next;
+    });
+  };
+
+  // City skylines filtered by active energy categories
+  const visibleTopSpots = topSpots.filter(s => {
+    const top = s.scores[0]?.planet;
+    const cat = top ? (PLANET_TO_CATEGORY[top] ?? "Career") : "Career";
+    return activeCategories.has(cat);
+  });
 
   const togglePlanet = (p: AstroLinePlanet) => {
     setActivePlanets(prev => {
@@ -673,7 +715,7 @@ export default function AstrocartographyPage() {
             activePlanets={activePlanets}
             activeAngles={activeAngles}
             globeMode={globeMode}
-            topSpots={topSpots as CitySpot[]}
+            topSpots={visibleTopSpots as CitySpot[]}
             onLocationClick={handleLocationClick}
             onVortexClick={() => {}}
           />
@@ -793,13 +835,46 @@ export default function AstrocartographyPage() {
       >
         {/* Top Power Spots */}
         <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(30,60,100,0.3)", flex: "none" }}>
-          <div className="flex items-center justify-between mb-10">
-            <p style={{ color: "#32D5FF", fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace" }}>
-              TOP POWER SPOTS
-            </p>
-          </div>
+          <p style={{ color: "#32D5FF", fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: globeMode === "cities" ? 10 : 10 }}>
+            TOP POWER SPOTS
+          </p>
+
+          {/* Energy category toggles — only in CITIES mode */}
+          {globeMode === "cities" && (
+            <div style={{ marginBottom: 12 }}>
+              <p style={{ color: "#4455AA", fontSize: 7.5, letterSpacing: "0.14em", fontFamily: "'Fragment Mono', monospace", marginBottom: 6 }}>
+                ENERGY FILTER
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 4 }}>
+                {(["Career","Love","Wealth","Creativity","Spirituality","Transformation"] as EnergyCategory[]).map(cat => {
+                  const on  = activeCategories.has(cat);
+                  const col = ENERGY_COLORS[cat];
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => toggleCategory(cat)}
+                      style={{
+                        padding: "4px 0",
+                        background: on ? `${col}18` : "rgba(8,12,28,0.7)",
+                        border: `1px solid ${on ? col + "50" : "rgba(30,50,80,0.35)"}`,
+                        borderRadius: 6,
+                        color: on ? col : "#334466",
+                        fontSize: 7, letterSpacing: "0.08em",
+                        fontFamily: "'Fragment Mono', monospace",
+                        cursor: "pointer", transition: "all 0.15s",
+                        textAlign: "center" as const,
+                      }}
+                    >
+                      {ENERGY_ICONS[cat]} {cat.toUpperCase().slice(0, 5)}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col gap-2">
-            {topSpots.slice(0, 5).map((spot, i) => (
+            {(globeMode === "cities" ? visibleTopSpots : topSpots).slice(0, 5).map((spot, i) => (
               <motion.div
                 key={spot.city}
                 initial={{ opacity: 0, x: 12 }}

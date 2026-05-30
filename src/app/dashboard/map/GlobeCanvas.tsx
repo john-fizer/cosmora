@@ -28,57 +28,96 @@ function ll2xyz(lat: number, lon: number, r = GLOBE_R): THREE.Vector3 {
   );
 }
 
+// ─── Build line geometry from GeoJSON coordinate arrays ───────────────────────
+function buildLineGeo(lines: number[][][], r: number): THREE.BufferGeometry {
+  const pts: THREE.Vector3[] = [];
+  for (const line of lines) {
+    for (let i = 0; i < line.length - 1; i++) {
+      const [lon1, lat1] = line[i];
+      const [lon2, lat2] = line[i + 1];
+      if (Math.abs(lon2 - lon1) > 90) continue;
+      pts.push(ll2xyz(lat1, lon1, r), ll2xyz(lat2, lon2, r));
+    }
+  }
+  return new THREE.BufferGeometry().setFromPoints(pts);
+}
+
 // ─── Globe body ────────────────────────────────────────────────────────────────
 function GlobeBody() {
-  const meshRef = useRef<THREE.Mesh>(null);
-  useFrame((_, dt) => { if (meshRef.current) meshRef.current.rotation.y += dt * 0.015; });
+  const groupRef = useRef<THREE.Group>(null);
+  useFrame((_, dt) => { if (groupRef.current) groupRef.current.rotation.y += dt * 0.015; });
+
+  const [coastGeo,   setCoastGeo]   = useState<THREE.BufferGeometry | null>(null);
+  const [borderGeo,  setBorderGeo]  = useState<THREE.BufferGeometry | null>(null);
+  const [stateGeo,   setStateGeo]   = useState<THREE.BufferGeometry | null>(null);
+  const [riverGeo,   setRiverGeo]   = useState<THREE.BufferGeometry | null>(null);
+
+  useEffect(() => {
+    const load = (url: string, r: number, setter: (g: THREE.BufferGeometry) => void) =>
+      fetch(url).then(res => res.json()).then((lines: number[][][]) => setter(buildLineGeo(lines, r))).catch(() => {});
+    load("/geo/coastlines.json", GLOBE_R + 0.005, setCoastGeo);
+    load("/geo/borders.json",    GLOBE_R + 0.004, setBorderGeo);
+    load("/geo/states.json",     GLOBE_R + 0.003, setStateGeo);
+    load("/geo/rivers.json",     GLOBE_R + 0.006, setRiverGeo);
+  }, []);
 
   const gridLines = useMemo(() => {
     const pts: THREE.Vector3[] = [];
     const r = GLOBE_R + 0.001;
-    // latitude rings every 30°
     for (let lat = -60; lat <= 60; lat += 30) {
-      for (let lon = -180; lon <= 180; lon += 2) {
-        pts.push(ll2xyz(lat, lon, r), ll2xyz(lat, lon + 2, r));
-      }
+      for (let lon = -180; lon <= 180; lon += 2) pts.push(ll2xyz(lat, lon, r), ll2xyz(lat, lon + 2, r));
     }
-    // longitude meridians every 30°
     for (let lon = -180; lon <= 180; lon += 30) {
-      for (let lat = -88; lat <= 88; lat += 2) {
-        pts.push(ll2xyz(lat, lon, r), ll2xyz(lat + 2, lon, r));
-      }
+      for (let lat = -88; lat <= 88; lat += 2) pts.push(ll2xyz(lat, lon, r), ll2xyz(lat + 2, lon, r));
     }
-    const geo = new THREE.BufferGeometry().setFromPoints(pts);
-    return geo;
+    return new THREE.BufferGeometry().setFromPoints(pts);
   }, []);
 
   return (
-    <group ref={meshRef}>
-      {/* Core sphere */}
+    <group ref={groupRef}>
+      {/* Core sphere — deep ocean blue-black */}
       <mesh>
         <sphereGeometry args={[GLOBE_R, 64, 64]} />
         <meshPhongMaterial
-          color="#020918"
-          emissive="#041230"
-          emissiveIntensity={0.4}
-          shininess={80}
-          specular={new THREE.Color(0x224488)}
+          color="#020B1A"
+          emissive="#030E22"
+          emissiveIntensity={0.5}
+          shininess={60}
+          specular={new THREE.Color(0x112244)}
         />
       </mesh>
-      {/* Grid overlay */}
+      {/* Lat/lon grid — very subtle */}
       <lineSegments geometry={gridLines}>
-        <lineBasicMaterial color="#1A3A6A" transparent opacity={0.22} />
+        <lineBasicMaterial color="#0A1A33" transparent opacity={0.25} />
       </lineSegments>
+      {/* Country borders — faint indigo */}
+      {borderGeo && (
+        <lineSegments geometry={borderGeo}>
+          <lineBasicMaterial color="#2233AA" transparent opacity={0.35} />
+        </lineSegments>
+      )}
+      {/* State / province lines — dimmer than country borders */}
+      {stateGeo && (
+        <lineSegments geometry={stateGeo}>
+          <lineBasicMaterial color="#192866" transparent opacity={0.45} />
+        </lineSegments>
+      )}
+      {/* Coastlines — bright holographic cyan */}
+      {coastGeo && (
+        <lineSegments geometry={coastGeo}>
+          <lineBasicMaterial color="#1A66FF" transparent opacity={0.7} />
+        </lineSegments>
+      )}
+      {/* Rivers — pale electric blue */}
+      {riverGeo && (
+        <lineSegments geometry={riverGeo}>
+          <lineBasicMaterial color="#00AAFF" transparent opacity={0.55} />
+        </lineSegments>
+      )}
       {/* Atmosphere inner glow */}
       <mesh>
-        <sphereGeometry args={[GLOBE_R * 1.003, 32, 32]} />
-        <meshPhongMaterial
-          color="#0A2A6A"
-          transparent
-          opacity={0.07}
-          side={THREE.FrontSide}
-          depthWrite={false}
-        />
+        <sphereGeometry args={[GLOBE_R * 1.004, 32, 32]} />
+        <meshPhongMaterial color="#0A2A6A" transparent opacity={0.06} side={THREE.FrontSide} depthWrite={false} />
       </mesh>
     </group>
   );
@@ -162,41 +201,101 @@ interface VortexNode {
 }
 
 function VortexNodeObject({ node, onClick }: { node: VortexNode; onClick: (n: VortexNode) => void }) {
-  const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
-  const rot = useRef(0);
+
+  // Globe-sync outer group
+  const globeRef = useRef<THREE.Group>(null);
+  useFrame((_, dt) => { if (globeRef.current) globeRef.current.rotation.y += dt * 0.015; });
+
+  // Independent animation refs
+  const ring1Ref  = useRef<THREE.Mesh>(null);
+  const ring2Ref  = useRef<THREE.Mesh>(null);
+  const ring3Ref  = useRef<THREE.Mesh>(null);
+  const icoRef    = useRef<THREE.Mesh>(null);
+  const coreRef   = useRef<THREE.Mesh>(null);
+  const glowRef   = useRef<THREE.Mesh>(null);
+  const t         = useRef(Math.random() * Math.PI * 2); // stagger start phase
+
+  const primaryColor   = useMemo(() => new THREE.Color(PLANET_COLORS[node.lines[0].planet]), [node]);
+  const secondaryColor = useMemo(() => new THREE.Color(
+    node.lines[1] ? PLANET_COLORS[node.lines[1].planet] : PLANET_COLORS[node.lines[0].planet]
+  ), [node]);
 
   useFrame((_, dt) => {
-    rot.current += dt * 1.8;
-    if (meshRef.current) {
-      const s = hovered ? 1.4 : 1 + Math.sin(rot.current) * 0.15;
-      meshRef.current.scale.setScalar(s * 0.055);
+    t.current += dt;
+    const pulse = 0.85 + Math.sin(t.current * 2.2) * 0.18;
+    const scale = hovered ? 1.6 : 1.0;
+
+    // Three counter-rotating rings on different axes
+    if (ring1Ref.current) ring1Ref.current.rotation.z += dt * 1.1;
+    if (ring2Ref.current) ring2Ref.current.rotation.x += dt * 0.75;
+    if (ring3Ref.current) { ring3Ref.current.rotation.y += dt * 0.55; ring3Ref.current.rotation.z -= dt * 0.35; }
+
+    // Morphing icosahedron
+    if (icoRef.current) {
+      icoRef.current.rotation.x += dt * 0.3;
+      icoRef.current.rotation.y += dt * 0.45;
+      const icoS = scale * (0.9 + Math.sin(t.current * 1.4 + 0.5) * 0.12);
+      icoRef.current.scale.setScalar(0.12 * icoS);
     }
+
+    // Pulsing core
+    if (coreRef.current) coreRef.current.scale.setScalar(0.042 * pulse * scale);
+
+    // Outer glow halo
+    if (glowRef.current) glowRef.current.scale.setScalar(0.18 * (1 + Math.sin(t.current * 1.7) * 0.1) * scale);
   });
 
-  // Sync with globe rotation
-  const groupRef = useRef<THREE.Group>(null);
-  useFrame((_, dt) => { if (groupRef.current) groupRef.current.rotation.y += dt * 0.015; });
-
-  const primaryColor = PLANET_COLORS[node.lines[0].planet];
+  const ringScale = hovered ? 0.115 : 0.095;
 
   return (
-    <group ref={groupRef}>
+    <group ref={globeRef}>
+      {/* Invisible hit-target sphere */}
       <mesh
-        ref={meshRef}
         position={node.position}
-        scale={0.055}
+        scale={0.14}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
         onClick={(e) => { e.stopPropagation(); onClick(node); }}
       >
-        <sphereGeometry args={[1, 12, 12]} />
-        <meshBasicMaterial color={primaryColor} transparent opacity={0.9} />
+        <sphereGeometry args={[1, 6, 6]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
-      {/* Outer ring */}
-      <mesh position={node.position} scale={0.09}>
-        <torusGeometry args={[1, 0.15, 4, 24]} />
-        <meshBasicMaterial color={primaryColor} transparent opacity={hovered ? 0.6 : 0.3} wireframe />
+
+      {/* Outer halo glow */}
+      <mesh ref={glowRef} position={node.position}>
+        <sphereGeometry args={[1, 12, 12]} />
+        <meshBasicMaterial color={primaryColor} transparent opacity={0.06} depthWrite={false} />
+      </mesh>
+
+      {/* Morphing icosahedron wireframe */}
+      <mesh ref={icoRef} position={node.position}>
+        <icosahedronGeometry args={[1, 1]} />
+        <meshBasicMaterial color={primaryColor} wireframe transparent opacity={hovered ? 0.5 : 0.28} />
+      </mesh>
+
+      {/* Ring 1 — equatorial, primary color */}
+      <mesh ref={ring1Ref} position={node.position} scale={ringScale}>
+        <torusGeometry args={[1, 0.055, 6, 40]} />
+        <meshBasicMaterial color={primaryColor} transparent opacity={0.75} />
+      </mesh>
+
+      {/* Ring 2 — polar tilt, secondary color */}
+      <mesh ref={ring2Ref} position={node.position} rotation={[Math.PI / 2.2, 0.3, 0]} scale={ringScale * 0.88}>
+        <torusGeometry args={[1, 0.04, 5, 36]} />
+        <meshBasicMaterial color={secondaryColor} transparent opacity={0.6} />
+      </mesh>
+
+      {/* Ring 3 — diagonal, primary color thinner */}
+      <mesh ref={ring3Ref} position={node.position} rotation={[Math.PI / 4, Math.PI / 3, 0]} scale={ringScale * 0.72}>
+        <torusGeometry args={[1, 0.028, 4, 28]} />
+        <meshBasicMaterial color={primaryColor} transparent opacity={0.45} />
+      </mesh>
+
+      {/* Pulsing core */}
+      <mesh ref={coreRef} position={node.position}>
+        <sphereGeometry args={[1, 10, 10]} />
+        <meshBasicMaterial color={primaryColor} transparent opacity={0.95} />
       </mesh>
     </group>
   );

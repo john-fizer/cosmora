@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
@@ -305,6 +305,219 @@ function VortexPanel({ node, onClose }: { node: VortexNodePublic; onClose: () =>
         ))}
       </div>
     </motion.div>
+  );
+}
+
+// ─── Inline Map Oracle ────────────────────────────────────────────────────────
+interface MapOracleMsg { role: "user" | "assistant"; content: string; }
+
+function MapOracle({
+  activePlanets,
+  clickedLocation,
+  locationScores,
+  topSpots,
+  profileName,
+}: {
+  activePlanets: Set<AstroLinePlanet>;
+  clickedLocation: { lat: number; lon: number } | null;
+  locationScores: LocationScore[];
+  topSpots: { city: string; scores: LocationScore[]; power: number }[];
+  profileName: string;
+}) {
+  const [open, setOpen]         = useState(false);
+  const [history, setHistory]   = useState<MapOracleMsg[]>([]);
+  const [input, setInput]       = useState("");
+  const [streaming, setStreaming] = useState(false);
+  const [streamText, setStreamText] = useState("");
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [history, streamText]);
+
+  const buildContext = useCallback(() => {
+    const planetList = Array.from(activePlanets).join(", ");
+    const topList = topSpots.slice(0, 3).map(s => `${s.city} (score ${s.power})`).join(", ");
+    const locPart = clickedLocation
+      ? `\nCurrently selected: ${clickedLocation.lat.toFixed(2)}°, ${clickedLocation.lon.toFixed(2)}°` +
+        (locationScores.length > 0
+          ? ` — nearest lines: ${locationScores.slice(0, 3).map(s => `${s.planet} ${s.angle}`).join(", ")}`
+          : " — no strong activations")
+      : "";
+    return `[ASTROCARTOGRAPHY MAP CONTEXT for ${profileName}]\nActive planets: ${planetList}\nTop power spots: ${topList}${locPart}`;
+  }, [activePlanets, clickedLocation, locationScores, topSpots, profileName]);
+
+  const send = useCallback(async () => {
+    const msg = input.trim();
+    if (!msg || streaming) return;
+    setInput("");
+    const context = buildContext();
+    const fullMsg = `${context}\n\nQuestion: ${msg}`;
+    const newHistory: MapOracleMsg[] = [...history, { role: "user", content: msg }];
+    setHistory(newHistory);
+    setStreaming(true);
+    setStreamText("");
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: fullMsg,
+          history: history.slice(-6).map(h => ({ role: h.role, content: h.content })),
+        }),
+      });
+      if (!res.ok || !res.body) { setStreaming(false); return; }
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = "";
+      let accumulated = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const lines = buf.split("\n");
+        buf = lines.pop() ?? "";
+        for (const line of lines) {
+          if (!line.startsWith("data:")) continue;
+          const payload = line.slice(5).trim();
+          if (payload === "[DONE]") break;
+          try {
+            const parsed = JSON.parse(payload);
+            if (parsed.text) { accumulated += parsed.text; setStreamText(accumulated); }
+          } catch { /* skip */ }
+        }
+      }
+      setHistory(h => [...h, { role: "assistant", content: accumulated }]);
+    } catch { /* silent */ }
+    setStreamText("");
+    setStreaming(false);
+  }, [input, history, streaming, buildContext]);
+
+  const handleKey = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
+  };
+
+  if (!open) {
+    return (
+      <div style={{ padding: "14px 16px", flex: 1, display: "flex", flexDirection: "column" }}>
+        <p style={{ color: "#32D5FF", fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 12 }}>
+          MAP ORACLE
+        </p>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+          <motion.div
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
+            style={{ width: 72, height: 72, border: "1px solid rgba(100,100,255,0.3)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14, position: "relative" }}
+          >
+            <motion.div
+              animate={{ rotate: [360, 0] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              style={{ position: "absolute", inset: 8, border: "1px solid rgba(50,213,255,0.25)", borderRadius: "50%" }}
+            />
+            <span style={{ color: "#7B61FF", fontSize: 24 }}>✦</span>
+          </motion.div>
+          <p style={{ color: "#445577", fontSize: 10, textAlign: "center", lineHeight: 1.5, marginBottom: 14 }}>
+            Ask about your planetary lines, power spots, and where to be.
+          </p>
+          <button
+            onClick={() => setOpen(true)}
+            style={{
+              width: "100%", padding: "9px 0",
+              background: "linear-gradient(135deg, #1A1A6A, #2A1060)",
+              border: "1px solid rgba(120,100,255,0.3)",
+              borderRadius: 10, color: "#9090FF",
+              fontSize: 9.5, letterSpacing: "0.15em",
+              fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
+            }}
+          >
+            ✦ CONSULT ORACLE
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      {/* Oracle header */}
+      <div style={{ padding: "10px 16px", borderTop: "1px solid rgba(30,60,100,0.3)", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ color: "#7B61FF", fontSize: 14 }}>✦</span>
+          <span style={{ color: "#32D5FF", fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace" }}>MAP ORACLE</span>
+        </div>
+        <button onClick={() => setOpen(false)} style={{ color: "#4455AA", fontSize: 13, background: "none", border: "none", cursor: "pointer" }}>✕</button>
+      </div>
+
+      {/* Messages */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "8px 14px", display: "flex", flexDirection: "column", gap: 8, scrollbarWidth: "none" }}>
+        {history.length === 0 && (
+          <p style={{ color: "#334466", fontSize: 10, textAlign: "center", marginTop: 12, lineHeight: 1.5 }}>
+            Ask about your lines, a city, or what energy is calling you.
+          </p>
+        )}
+        {history.map((msg, i) => (
+          <div key={i} style={{
+            alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
+            maxWidth: "90%",
+            background: msg.role === "user" ? "rgba(50,213,255,0.08)" : "rgba(123,97,255,0.08)",
+            border: `1px solid ${msg.role === "user" ? "rgba(50,213,255,0.2)" : "rgba(123,97,255,0.2)"}`,
+            borderRadius: msg.role === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
+            padding: "8px 11px",
+          }}>
+            <p style={{ color: msg.role === "user" ? "#7CCFEF" : "#A89AFF", fontSize: 10.5, lineHeight: 1.6, margin: 0 }}>
+              {msg.content}
+            </p>
+          </div>
+        ))}
+        {streaming && streamText && (
+          <div style={{
+            alignSelf: "flex-start", maxWidth: "90%",
+            background: "rgba(123,97,255,0.08)", border: "1px solid rgba(123,97,255,0.2)",
+            borderRadius: "12px 12px 12px 2px", padding: "8px 11px",
+          }}>
+            <p style={{ color: "#A89AFF", fontSize: 10.5, lineHeight: 1.6, margin: 0 }}>
+              {streamText}
+              <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.7, repeat: Infinity }}
+                style={{ display: "inline-block", width: 5, height: 10, background: "#7B61FF", borderRadius: 1, marginLeft: 2, verticalAlign: "middle" }} />
+            </p>
+          </div>
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input */}
+      <div style={{ padding: "8px 12px", borderTop: "1px solid rgba(30,60,100,0.3)", display: "flex", gap: 6, flexShrink: 0 }}>
+        <input
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={handleKey}
+          placeholder="Ask the oracle..."
+          disabled={streaming}
+          style={{
+            flex: 1, padding: "7px 10px",
+            background: "rgba(10,15,35,0.8)",
+            border: "1px solid rgba(50,80,160,0.3)",
+            borderRadius: 8, color: "#8899CC",
+            fontSize: 10, fontFamily: "'Fragment Mono', monospace",
+            outline: "none",
+          }}
+        />
+        <button
+          onClick={send}
+          disabled={streaming || !input.trim()}
+          style={{
+            padding: "7px 10px",
+            background: streaming ? "rgba(10,15,35,0.8)" : "rgba(123,97,255,0.2)",
+            border: "1px solid rgba(123,97,255,0.3)",
+            borderRadius: 8, color: "#9090FF",
+            fontSize: 12, cursor: streaming ? "not-allowed" : "pointer",
+          }}
+        >
+          ↑
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -624,55 +837,14 @@ export default function AstrocartographyPage() {
           </div>
         </div>
 
-        {/* Oracle prompt */}
-        <div style={{ padding: "14px 16px", flex: 1, display: "flex", flexDirection: "column" }}>
-          <p style={{ color: "#32D5FF", fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 12 }}>
-            COSMORA ORACLE
-          </p>
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-            {/* Fractal sphere visual */}
-            <motion.div
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
-              style={{
-                width: 72, height: 72,
-                border: "1px solid rgba(100,100,255,0.3)",
-                borderRadius: "50%",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                marginBottom: 14, position: "relative",
-              }}
-            >
-              <motion.div
-                animate={{ rotate: [360, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                style={{
-                  position: "absolute", inset: 8,
-                  border: "1px solid rgba(50,213,255,0.25)",
-                  borderRadius: "50%",
-                }}
-              />
-              <span style={{ color: "#7B61FF", fontSize: 24 }}>✦</span>
-            </motion.div>
-            <p style={{ color: "#445577", fontSize: 10, textAlign: "center", lineHeight: 1.5, marginBottom: 14 }}>
-              Ask me anything about your cosmic journey and best locations.
-            </p>
-            <a
-              href="/dashboard/oracle"
-              style={{
-                display: "block", width: "100%", padding: "9px 0",
-                background: "linear-gradient(135deg, #1A1A6A, #2A1060)",
-                border: "1px solid rgba(120,100,255,0.3)",
-                borderRadius: 10, color: "#9090FF",
-                fontSize: 9.5, letterSpacing: "0.15em",
-                fontFamily: "'Fragment Mono', monospace",
-                cursor: "pointer", textAlign: "center",
-                textDecoration: "none",
-              }}
-            >
-              OPEN ORACLE
-            </a>
-          </div>
-        </div>
+        {/* Map Oracle — inline chat */}
+        <MapOracle
+          activePlanets={activePlanets}
+          clickedLocation={clickedLocation}
+          locationScores={locationScores}
+          topSpots={topSpots}
+          profileName={profileName}
+        />
       </motion.div>
 
       {/* ── Top bar: mode selector ── */}

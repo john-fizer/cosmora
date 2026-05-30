@@ -41,8 +41,9 @@ function ll2xyz(lat: number, lon: number, r = GLOBE_R): THREE.Vector3 {
 }
 
 function seededRand(seed: number) {
-  let s = (seed * 9301 + 49297) % 233280;
-  return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+  const M = 233280;
+  let s = ((seed * 9301 + 49297) % M + M) % M;
+  return () => { s = ((s * 9301 + 49297) % M + M) % M; return s / M; };
 }
 
 function buildLineGeo(lines: number[][][], r: number): THREE.BufferGeometry {

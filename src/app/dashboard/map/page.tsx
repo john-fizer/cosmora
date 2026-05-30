@@ -10,7 +10,7 @@ import {
   PLANET_COLORS, PLANET_SYMBOLS, ASTRO_PLANETS,
   LINE_THEMES, scoreLocation,
 } from "@/lib/astrology/astrocartography";
-import type { VortexNodePublic } from "./GlobeCanvas";
+import type { VortexNodePublic, CitySpot } from "./GlobeCanvas";
 
 const GlobeCanvas = dynamic(() => import("./GlobeCanvas"), { ssr: false });
 import type { GlobeMode } from "./GlobeCanvas";
@@ -18,7 +18,7 @@ import type { GlobeMode } from "./GlobeCanvas";
 // ─── Types ─────────────────────────────────────────────────────────────────────
 const MODES: { id: GlobeMode; icon: string; label: string }[] = [
   { id: "globe",   icon: "⊕",  label: "GLOBE"    },
-  { id: "vortex",  icon: "◈",  label: "VORTEX"   },
+  { id: "cities",  icon: "◈",  label: "CITIES"   },
   { id: "lines",   icon: "⌁",  label: "LINES"    },
   { id: "planets", icon: "◉",  label: "PLANETS"  },
   { id: "energy",  icon: "⋈",  label: "FIELDS"   },
@@ -541,7 +541,7 @@ export default function AstrocartographyPage() {
   const [activeVortex,    setActiveVortex]    = useState<VortexNodePublic | null>(null);
   const [energyScores]    = useState(() => deriveEnergyScores());
 
-  const [topSpots, setTopSpots] = useState<{ city: string; scores: LocationScore[]; power: number }[]>([]);
+  const [topSpots, setTopSpots] = useState<{ city: string; lat: number; lon: number; scores: LocationScore[]; power: number }[]>([]);
 
   // ── Load chart / birth data ──────────────────────────────────────────────────
   useEffect(() => {
@@ -582,7 +582,7 @@ export default function AstrocartographyPage() {
     const spots = SAMPLE_SPOTS.map(s => {
       const scores = scoreLocation(lines, s.lat, s.lon);
       const power  = scores.reduce((acc, sc) => acc + sc.influence * 100, 0);
-      return { city: s.city, scores, power: Math.min(99, Math.round(power)) };
+      return { city: s.city, lat: s.lat, lon: s.lon, scores, power: Math.min(99, Math.round(power)) };
     }).sort((a, b) => b.power - a.power).slice(0, 5);
     setTopSpots(spots);
   }, [lines]);
@@ -666,8 +666,9 @@ export default function AstrocartographyPage() {
             activePlanets={activePlanets}
             activeAngles={activeAngles}
             globeMode={globeMode}
+            topSpots={topSpots as CitySpot[]}
             onLocationClick={handleLocationClick}
-            onVortexClick={handleVortexClick}
+            onVortexClick={() => {}}
           />
         )}
       </div>

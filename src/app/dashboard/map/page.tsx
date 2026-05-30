@@ -56,12 +56,11 @@ const PLANET_ENERGY_WEIGHTS: Record<AstroLinePlanet, Partial<Record<EnergyCatego
   Neptune: { Spirituality: 1.0, Creativity: 0.8 },
 };
 
-// Primary energy category per planet (matches ENERGY_MAP in GlobeCanvas)
+// Primary energy category per planet — Transformation folded into Career
 const PLANET_TO_CATEGORY: Record<AstroLinePlanet, EnergyCategory> = {
-  Sun: "Career", Mercury: "Career", Saturn: "Career",
+  Sun: "Career", Mercury: "Career", Saturn: "Career", Mars: "Career",
   Moon: "Love",  Venus: "Love",
   Jupiter: "Wealth",
-  Mars: "Transformation",
   Uranus: "Creativity",
   Neptune: "Spirituality",
 };
@@ -567,7 +566,7 @@ export default function AstrocartographyPage() {
 
   const [topSpots, setTopSpots] = useState<{ city: string; lat: number; lon: number; scores: LocationScore[]; power: number }[]>([]);
   const [activeCategories, setActiveCategories] = useState<Set<EnergyCategory>>(
-    new Set<EnergyCategory>(["Career", "Love", "Creativity", "Wealth", "Spirituality", "Transformation"])
+    new Set<EnergyCategory>(["Career", "Love", "Creativity", "Wealth", "Spirituality"])
   );
 
   // ── Load chart / birth data ──────────────────────────────────────────────────
@@ -842,11 +841,14 @@ export default function AstrocartographyPage() {
           {/* Energy category toggles — only in CITIES mode */}
           {globeMode === "cities" && (
             <div style={{ marginBottom: 12 }}>
-              <p style={{ color: "#4455AA", fontSize: 7.5, letterSpacing: "0.14em", fontFamily: "'Fragment Mono', monospace", marginBottom: 6 }}>
-                ENERGY FILTER
-              </p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 4 }}>
-                {(["Career","Love","Wealth","Creativity","Spirituality","Transformation"] as EnergyCategory[]).map(cat => {
+              <div style={{ display: "flex", gap: 4, flexWrap: "wrap" as const }}>
+                {([
+                  { cat: "Career"      as EnergyCategory, label: "career"  },
+                  { cat: "Love"        as EnergyCategory, label: "love"    },
+                  { cat: "Wealth"      as EnergyCategory, label: "wealth"  },
+                  { cat: "Creativity"  as EnergyCategory, label: "create"  },
+                  { cat: "Spirituality"as EnergyCategory, label: "spirit"  },
+                ]).map(({ cat, label }) => {
                   const on  = activeCategories.has(cat);
                   const col = ENERGY_COLORS[cat];
                   return (
@@ -854,18 +856,17 @@ export default function AstrocartographyPage() {
                       key={cat}
                       onClick={() => toggleCategory(cat)}
                       style={{
-                        padding: "4px 0",
+                        padding: "4px 8px",
                         background: on ? `${col}18` : "rgba(8,12,28,0.7)",
                         border: `1px solid ${on ? col + "50" : "rgba(30,50,80,0.35)"}`,
-                        borderRadius: 6,
+                        borderRadius: 20,
                         color: on ? col : "#334466",
-                        fontSize: 7, letterSpacing: "0.08em",
+                        fontSize: 8, letterSpacing: "0.06em",
                         fontFamily: "'Fragment Mono', monospace",
                         cursor: "pointer", transition: "all 0.15s",
-                        textAlign: "center" as const,
                       }}
                     >
-                      {ENERGY_ICONS[cat]} {cat.toUpperCase().slice(0, 5)}
+                      {label}
                     </button>
                   );
                 })}

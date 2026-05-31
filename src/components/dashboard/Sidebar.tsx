@@ -123,8 +123,8 @@ const NAV_ITEMS = [
     ),
   },
   {
-    label: "Report",
-    href: "/dashboard/report",
+    label: "Reports",
+    href: "/dashboard/reports",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
         <path d="M9 12h6M9 16h4M6 3h12a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2z" />

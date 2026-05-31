@@ -33,7 +33,12 @@ function ConfidenceGauge({ value, color }: { value: number; color: string }) {
   );
 }
 
+// ─── Spring config — underdamped, expresses velocity ──────────────────────────
+const CARD_SPRING = { type: "spring" as const, stiffness: 280, damping: 20 };
+
 // ─── Report type card ──────────────────────────────────────────────────────────
+// Resting state = integral (the compressed whole, folded inward)
+// Hover state   = derivative (rate of change at this point, unfolding)
 
 function ReportTypeCard({
   meta, existingReport, onGenerate, generating,
@@ -53,168 +58,269 @@ function ReportTypeCard({
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={{
+        opacity: 1, y: 0,
+        scale: hovered ? 1.018 : 1,
+        boxShadow: hovered
+          ? `0 16px 56px ${meta.color}1A, 0 0 0 1px ${meta.color}28`
+          : "0 1px 0 rgba(255,255,255,0)",
+      }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
+      transition={CARD_SPRING}
       style={{
         position: "relative",
-        background: hovered
-          ? `linear-gradient(135deg, rgba(12,14,28,0.98), rgba(16,14,36,0.98))`
-          : "rgba(8,10,22,0.92)",
-        border: `1px solid ${hovered ? meta.color + "40" : "rgba(255,255,255,0.06)"}`,
+        background: "rgba(8,10,22,0.94)",
+        border: `1px solid ${hovered ? meta.color + "38" : "rgba(255,255,255,0.055)"}`,
         borderRadius: 16,
-        padding: "28px 28px 24px",
+        padding: "24px 24px 22px",
         cursor: "pointer",
-        transition: "all 0.25s cubic-bezier(0.25,0.1,0.25,1)",
-        boxShadow: hovered ? `0 8px 40px ${meta.color}14, 0 0 0 1px ${meta.color}20` : "none",
+        zIndex: hovered ? 1 : 0,
         overflow: "hidden",
+        transition: "border-color 0.22s",
       }}
     >
-      {/* Subtle corner accent */}
-      <div style={{
-        position: "absolute", top: 0, right: 0,
-        width: 80, height: 80,
-        background: `radial-gradient(circle at top right, ${meta.color}10, transparent 70%)`,
-        borderRadius: "0 16px 0 0",
-        pointerEvents: "none",
-      }} />
+      {/* Corner radial — blooms on hover */}
+      <motion.div
+        animate={{ opacity: hovered ? 1 : 0.3 }}
+        transition={CARD_SPRING}
+        style={{
+          position: "absolute", top: 0, right: 0,
+          width: 120, height: 120, pointerEvents: "none",
+          background: `radial-gradient(circle at top right, ${meta.color}14, transparent 65%)`,
+          borderRadius: "0 16px 0 0",
+        }}
+      />
 
-      {/* Header row */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
+      {/* ── INTEGRAL LAYER — always visible ─────────────────────────────── */}
+
+      {/* Header */}
+      <motion.div
+        animate={{ opacity: hovered ? 1 : 0.72 }}
+        transition={CARD_SPRING}
+        style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 14 }}
+      >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{
-            width: 40, height: 40, borderRadius: 10,
-            background: `${meta.color}15`,
-            border: `1px solid ${meta.color}30`,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 18, color: meta.color,
-            fontFamily: "'Cormorant Garamond', serif",
-          }}>
-            {meta.icon}
-          </div>
-          <div>
-            <p style={{
-              color: meta.color, fontSize: 8, letterSpacing: "0.22em",
-              fontFamily: "'Fragment Mono', monospace", marginBottom: 3,
-              textTransform: "uppercase",
-            }}>
-              {meta.subtitle}
-            </p>
-            <h3 style={{
-              color: "#F0EDE8", fontSize: 18,
+          {/* Icon — springs outward on hover */}
+          <motion.div
+            animate={{ scale: hovered ? 1.08 : 0.9, opacity: hovered ? 1 : 0.75 }}
+            transition={CARD_SPRING}
+            style={{
+              width: 40, height: 40, borderRadius: 10, flexShrink: 0,
+              background: hovered ? `${meta.color}20` : `${meta.color}0D`,
+              border: `1px solid ${hovered ? meta.color + "45" : meta.color + "22"}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 18, color: meta.color,
               fontFamily: "'Cormorant Garamond', serif",
-              fontWeight: 600, lineHeight: 1.1,
-            }}>
+              transition: "background 0.2s, border-color 0.2s",
+            }}
+          >
+            {meta.icon}
+          </motion.div>
+
+          <div>
+            <motion.p
+              animate={{
+                opacity: hovered ? 1 : 0.45,
+                letterSpacing: hovered ? "0.22em" : "0.16em",
+              }}
+              transition={CARD_SPRING}
+              style={{
+                color: meta.color, fontSize: 7.5,
+                fontFamily: "'Fragment Mono', monospace", marginBottom: 3,
+                textTransform: "uppercase",
+              }}
+            >
+              {meta.subtitle}
+            </motion.p>
+            <motion.h3
+              animate={{
+                color: hovered ? "#F4F0EA" : "#C4BFB5",
+                fontSize: hovered ? 19 : 17,
+              }}
+              transition={CARD_SPRING}
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontWeight: hovered ? 600 : 400,
+                lineHeight: 1.1,
+              }}
+            >
               {meta.title}
-            </h3>
+            </motion.h3>
           </div>
         </div>
 
         {/* Status badge */}
         {hasReport && !isExpired && (
-          <div style={{
-            background: `${meta.color}18`, border: `1px solid ${meta.color}35`,
-            borderRadius: 20, padding: "3px 10px",
-            color: meta.color, fontSize: 7.5,
-            fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
-          }}>
+          <motion.div
+            animate={{ opacity: hovered ? 1 : 0.5 }}
+            transition={CARD_SPRING}
+            style={{
+              background: `${meta.color}18`, border: `1px solid ${meta.color}35`,
+              borderRadius: 20, padding: "3px 10px",
+              color: meta.color, fontSize: 7.5,
+              fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
+              flexShrink: 0,
+            }}
+          >
             READY
-          </div>
+          </motion.div>
         )}
         {isExpired && (
-          <div style={{
-            background: "rgba(255,100,50,0.1)", border: "1px solid rgba(255,100,50,0.3)",
-            borderRadius: 20, padding: "3px 10px",
-            color: "#FF8060", fontSize: 7.5,
-            fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
-          }}>
+          <motion.div
+            animate={{ opacity: hovered ? 1 : 0.5 }}
+            transition={CARD_SPRING}
+            style={{
+              background: "rgba(255,100,50,0.1)", border: "1px solid rgba(255,100,50,0.3)",
+              borderRadius: 20, padding: "3px 10px",
+              color: "#FF8060", fontSize: 7.5,
+              fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
+              flexShrink: 0,
+            }}
+          >
             EXPIRED
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
 
-      {/* Description */}
-      <p style={{
-        color: "rgba(200,190,178,0.65)", fontSize: 13,
-        fontFamily: "'Cormorant Garamond', serif",
-        lineHeight: 1.65, marginBottom: 20,
-      }}>
+      {/* Technique count — visible at rest, hides as detail tags take over */}
+      <motion.div
+        animate={{ opacity: hovered ? 0 : 0.28, height: hovered ? 0 : "auto" }}
+        transition={CARD_SPRING}
+        style={{ overflow: "hidden", marginBottom: hovered ? 0 : 12 }}
+      >
+        <span style={{
+          fontSize: 7.5, color: "rgba(255,255,255,0.4)",
+          fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
+        }}>
+          {meta.techniques.length} techniques · {meta.expiryDays >= 3650 ? "permanent" : `${meta.expiryDays}d validity`}
+        </span>
+      </motion.div>
+
+      {/* ── DERIVATIVE LAYER — unfurls on hover ──────────────────────────── */}
+
+      {/* Description — blurred ghost at rest, focuses on hover */}
+      <motion.p
+        animate={{
+          opacity: hovered ? 0.76 : 0.055,
+          y: hovered ? 0 : 9,
+          filter: hovered ? "blur(0px)" : "blur(3.5px)",
+        }}
+        transition={{ ...CARD_SPRING, delay: hovered ? 0 : 0 }}
+        style={{
+          color: "rgba(210,200,188,1)", fontSize: 12.5,
+          fontFamily: "'Cormorant Garamond', serif",
+          lineHeight: 1.68, marginBottom: 16,
+        }}
+      >
         {meta.description}
-      </p>
+      </motion.p>
 
-      {/* Techniques */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 20 }}>
+      {/* Technique tags — cascades in */}
+      <motion.div
+        animate={{
+          opacity: hovered ? 0.9 : 0.0,
+          y: hovered ? 0 : 7,
+        }}
+        transition={{ ...CARD_SPRING, delay: hovered ? 0.04 : 0 }}
+        style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 18 }}
+      >
         {meta.techniques.slice(0, 5).map(t => (
           <span key={t} style={{
-            fontSize: 7, color: "rgba(255,255,255,0.28)",
+            fontSize: 6.5, color: "rgba(255,255,255,0.36)",
             fontFamily: "'Fragment Mono', monospace",
             background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: 3, padding: "2px 6px",
-            letterSpacing: "0.06em",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: 3, padding: "2px 7px",
+            letterSpacing: "0.07em",
           }}>
             {t.toLowerCase()}
           </span>
         ))}
         {meta.techniques.length > 5 && (
-          <span style={{ fontSize: 7, color: "rgba(255,255,255,0.2)", padding: "2px 4px" }}>
-            +{meta.techniques.length - 5} more
+          <span style={{ fontSize: 6.5, color: "rgba(255,255,255,0.2)", padding: "2px 4px" }}>
+            +{meta.techniques.length - 5}
           </span>
         )}
-      </div>
+      </motion.div>
 
-      {/* Footer */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      {/* Footer — last to arrive, sharpest derivative */}
+      <motion.div
+        animate={{
+          opacity: hovered ? 1 : 0.0,
+          y: hovered ? 0 : 5,
+        }}
+        transition={{ ...CARD_SPRING, delay: hovered ? 0.07 : 0 }}
+        style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+      >
         <div style={{ display: "flex", gap: 14 }}>
           <span style={{
-            color: "rgba(255,255,255,0.22)", fontSize: 8,
+            color: "rgba(255,255,255,0.28)", fontSize: 7.5,
             fontFamily: "'Fragment Mono', monospace",
           }}>
             ~{meta.estimatedMinutes} min
           </span>
           <span style={{
-            color: "rgba(255,255,255,0.22)", fontSize: 8,
+            color: "rgba(255,255,255,0.28)", fontSize: 7.5,
             fontFamily: "'Fragment Mono', monospace",
           }}>
-            {meta.expiryDays >= 3650 ? "permanent" : `${meta.expiryDays}d validity`}
+            {meta.expiryDays >= 3650 ? "permanent" : `${meta.expiryDays}d`}
           </span>
         </div>
 
         {hasReport && !isExpired ? (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => router.push(`/dashboard/reports/${existingReport!.id}`)}
             style={{
-              padding: "7px 18px",
+              padding: "6px 16px",
               background: `${meta.color}18`,
               border: `1px solid ${meta.color}40`,
-              borderRadius: 8, color: meta.color,
-              fontSize: 8.5, letterSpacing: "0.12em",
+              borderRadius: 7, color: meta.color,
+              fontSize: 8, letterSpacing: "0.12em",
               fontFamily: "'Fragment Mono', monospace",
-              cursor: "pointer", transition: "all 0.15s",
+              cursor: "pointer",
             }}
           >
             VIEW REPORT →
-          </button>
+          </motion.button>
         ) : (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => onGenerate(meta)}
             disabled={generating}
             style={{
-              padding: "7px 18px",
-              background: generating ? "rgba(255,255,255,0.04)" : `linear-gradient(135deg, ${meta.color}22, ${meta.color}10)`,
+              padding: "6px 16px",
+              background: generating
+                ? "rgba(255,255,255,0.04)"
+                : `linear-gradient(135deg, ${meta.color}24, ${meta.color}10)`,
               border: `1px solid ${generating ? "rgba(255,255,255,0.08)" : meta.color + "50"}`,
-              borderRadius: 8,
+              borderRadius: 7,
               color: generating ? "rgba(255,255,255,0.25)" : meta.color,
-              fontSize: 8.5, letterSpacing: "0.12em",
+              fontSize: 8, letterSpacing: "0.12em",
               fontFamily: "'Fragment Mono', monospace",
               cursor: generating ? "not-allowed" : "pointer",
-              transition: "all 0.15s",
             }}
           >
             {isExpired ? "REGENERATE" : "GENERATE"}
-          </button>
+          </motion.button>
         )}
-      </div>
+      </motion.div>
+
+      {/* Bottom accent line — the resting indicator of latent energy */}
+      <motion.div
+        animate={{ opacity: hovered ? 0 : 0.22, scaleX: hovered ? 0 : 1 }}
+        transition={CARD_SPRING}
+        style={{
+          position: "absolute", bottom: 0, left: 0, right: 0,
+          height: 1.5,
+          background: `linear-gradient(90deg, transparent, ${meta.color}, transparent)`,
+          transformOrigin: "center",
+          borderRadius: "0 0 16px 16px",
+        }}
+      />
     </motion.div>
   );
 }

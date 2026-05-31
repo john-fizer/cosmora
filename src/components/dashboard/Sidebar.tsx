@@ -1,13 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
 
+const SPRING = { type: "spring" as const, stiffness: 300, damping: 26 };
+
 const NAV_ITEMS = [
   {
     label: "Home",
+    hint: "overview",
     href: "/dashboard",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
@@ -19,6 +23,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Briefing",
+    hint: "daily intel",
     href: "/dashboard/briefing",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
@@ -29,6 +34,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Chart",
+    hint: "natal wheel",
     href: "/dashboard/chart",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
@@ -40,6 +46,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Transits",
+    hint: "live sky",
     href: "/dashboard/transits",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
@@ -50,6 +57,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Insights",
+    hint: "synthesis",
     href: "/dashboard/insights",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
@@ -59,6 +67,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Timeline",
+    hint: "life arc",
     href: "/dashboard/timeline",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
@@ -69,6 +78,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Timing",
+    hint: "elections",
     href: "/dashboard/electional",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
@@ -80,6 +90,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Match",
+    hint: "synastry",
     href: "/dashboard/compatibility",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
@@ -91,6 +102,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Solar Rtn",
+    hint: "year ahead",
     href: "/dashboard/solar-return",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
@@ -101,6 +113,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Map",
+    hint: "astrocartography",
     href: "/dashboard/map",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
@@ -113,6 +126,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Oracle",
+    hint: "ai readings",
     href: "/dashboard/oracle",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
@@ -124,6 +138,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Reports",
+    hint: "intelligence",
     href: "/dashboard/reports",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
@@ -134,6 +149,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Settings",
+    hint: "profile",
     href: "/dashboard/settings",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
@@ -144,136 +160,174 @@ const NAV_ITEMS = [
   },
 ];
 
-const stagger = {
-  show: { transition: { staggerChildren: 0.04, delayChildren: 0.1 } },
-};
-const navItem = {
-  hidden: { opacity: 0, x: -8 },
-  show:   { opacity: 1, x: 0, transition: { duration: 0.3, ease: [0.25,0.1,0.25,1] as [number,number,number,number] } },
-};
-
 function DesktopSidebar({ pathname }: { pathname: string }) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <motion.aside
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className="fixed left-0 top-0 h-full flex-col items-center py-5 z-50 hidden md:flex"
+      animate={{ width: expanded ? 196 : 56 }}
+      transition={SPRING}
+      onHoverStart={() => setExpanded(true)}
+      onHoverEnd={() => setExpanded(false)}
+      className="fixed left-0 top-0 h-full z-50 hidden md:flex flex-col"
       style={{
-        width: 64,
         background: "var(--sidebar-bg)",
         borderRight: "1px solid var(--sidebar-border)",
         backdropFilter: "blur(32px)",
+        overflow: "hidden",
       }}
     >
-      {/* Logo mark */}
-      <Link href="/" className="flex flex-col items-center gap-1 mb-5 cursor-pointer group">
-        <motion.div
-          whileHover={{ y: -1 }}
-          transition={{ duration: 0.2 }}
-          className="w-9 h-9 rounded-xl flex items-center justify-center"
-          style={{
-            background: "var(--logo-gradient)",
-            boxShadow: "0 4px 16px rgba(200,165,91,0.20)",
-          }}
-        >
-          <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#08080F" strokeWidth="1.8">
-            <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
-            <line x1="12" y1="3" x2="12" y2="8" /><line x1="12" y1="16" x2="12" y2="21" />
-            <line x1="3" y1="12" x2="8" y2="12" /><line x1="16" y1="12" x2="21" y2="12" />
-          </svg>
-        </motion.div>
-        <span
-          className="text-[7px] tracking-[0.2em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-          style={{ color: "var(--solar)", fontFamily: "'Fragment Mono', monospace" }}
-        >
-          Csmr
-        </span>
-      </Link>
+      {/* Logo */}
+      <div style={{ padding: "20px 12px 14px", display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none" }}>
+          <motion.div
+            animate={{ scale: expanded ? 1 : 0.9 }}
+            transition={SPRING}
+            style={{
+              width: 32, height: 32, borderRadius: 10, flexShrink: 0,
+              background: "var(--logo-gradient)",
+              boxShadow: expanded ? "0 4px 20px rgba(200,165,91,0.28)" : "0 2px 8px rgba(200,165,91,0.12)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              transition: "box-shadow 0.3s",
+            }}
+          >
+            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="#08080F" strokeWidth="1.8">
+              <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
+              <line x1="12" y1="3" x2="12" y2="8" /><line x1="12" y1="16" x2="12" y2="21" />
+              <line x1="3" y1="12" x2="8" y2="12" /><line x1="16" y1="12" x2="21" y2="12" />
+            </svg>
+          </motion.div>
+          <motion.span
+            animate={{ opacity: expanded ? 1 : 0, x: expanded ? 0 : -6 }}
+            transition={{ ...SPRING, delay: expanded ? 0.06 : 0 }}
+            style={{
+              fontFamily: "'Fragment Mono', monospace",
+              fontSize: 10, letterSpacing: "0.22em",
+              color: "var(--solar)", textTransform: "uppercase",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Cosmora
+          </motion.span>
+        </Link>
+      </div>
 
       {/* Top hairline */}
-      <div style={{ width: 28, height: 1, background: "var(--border)", marginBottom: 8 }} />
+      <div style={{ height: 1, background: "var(--border)", margin: "0 10px 6px", flexShrink: 0 }} />
 
       {/* Nav */}
-      <motion.nav
-        variants={stagger}
-        initial="hidden"
-        animate="show"
-        className="flex flex-col gap-0.5 flex-1 w-full px-2 overflow-y-auto"
-        style={{ scrollbarWidth: "none" }}
+      <nav
+        style={{
+          flex: 1, padding: "2px 6px",
+          overflowY: "auto", overflowX: "hidden",
+          scrollbarWidth: "none",
+        }}
       >
-        {NAV_ITEMS.map((item) => {
+        {NAV_ITEMS.map((item, i) => {
           const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
           return (
-            <motion.div key={item.href} variants={navItem}>
-              <Link href={item.href}>
+            <Link key={item.href} href={item.href} style={{ textDecoration: "none", display: "block" }}>
+              <motion.div
+                animate={{
+                  opacity: active ? 1 : expanded ? 0.72 : 0.36,
+                  paddingLeft: expanded ? 10 : 0,
+                  paddingRight: expanded ? 10 : 0,
+                  justifyContent: expanded ? "flex-start" : "center",
+                  backgroundColor: active ? "var(--nav-active-bg)" : "transparent",
+                }}
+                whileHover={{ opacity: 1 }}
+                transition={SPRING}
+                style={{
+                  position: "relative",
+                  display: "flex", alignItems: "center", gap: 10,
+                  paddingTop: 7, paddingBottom: 7,
+                  borderRadius: 9, cursor: "pointer", marginBottom: 1,
+                  border: active ? "1px solid var(--nav-active-border)" : "1px solid transparent",
+                  boxShadow: active ? "var(--nav-active-shadow)" : "none",
+                }}
+              >
+                {/* Active indicator */}
+                <AnimatePresence>
+                  {active && (
+                    <motion.div
+                      layoutId="nav-indicator"
+                      initial={{ scaleY: 0 }} animate={{ scaleY: 1 }} exit={{ scaleY: 0 }}
+                      style={{
+                        position: "absolute", left: 0,
+                        top: "20%", bottom: "20%", width: 2,
+                        borderRadius: 2, background: "var(--solar)",
+                        transformOrigin: "center",
+                      }}
+                    />
+                  )}
+                </AnimatePresence>
+
+                {/* Icon */}
                 <motion.div
-                  whileHover={{ backgroundColor: "rgba(123,111,212,0.08)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="relative flex flex-col items-center gap-1 py-2 rounded-xl cursor-pointer"
+                  animate={{ scale: expanded ? 1 : 0.86 }}
+                  transition={SPRING}
                   style={{
-                    background: active ? "var(--nav-active-bg)" : "transparent",
                     color: active ? "var(--nav-active-text)" : "var(--nav-inactive-text)",
-                    border: active ? "1px solid var(--nav-active-border)" : "1px solid transparent",
-                    boxShadow: active ? "var(--nav-active-shadow)" : "none",
-                    transition: "color 0.18s, background 0.18s, border-color 0.18s",
+                    flexShrink: 0, display: "flex", alignItems: "center",
                   }}
                 >
-                  <AnimatePresence>
-                    {active && (
-                      <motion.div
-                        layoutId="nav-indicator"
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        exit={{ scaleY: 0 }}
-                        style={{
-                          position: "absolute",
-                          left: -1,
-                          top: "20%",
-                          bottom: "20%",
-                          width: 2,
-                          borderRadius: 2,
-                          background: "var(--solar)",
-                          transformOrigin: "center",
-                        }}
-                      />
-                    )}
-                  </AnimatePresence>
                   {item.icon}
-                  <span
-                    style={{ fontFamily: "'Fragment Mono', monospace", fontSize: 6, letterSpacing: "0.10em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 52 }}
-                    className="uppercase"
-                  >
-                    {item.label}
-                  </span>
                 </motion.div>
-              </Link>
-            </motion.div>
+
+                {/* Label + hint (derivative layer) */}
+                <motion.div
+                  animate={{
+                    opacity: expanded ? 1 : 0,
+                    x: expanded ? 0 : -5,
+                  }}
+                  transition={{ ...SPRING, delay: expanded ? i * 0.016 : 0 }}
+                  style={{ overflow: "hidden", whiteSpace: "nowrap", lineHeight: 1.1 }}
+                >
+                  <div style={{
+                    fontFamily: "'Fragment Mono', monospace",
+                    fontSize: 9, letterSpacing: "0.12em",
+                    color: active ? "var(--solar)" : "rgba(240,237,232,0.88)",
+                    textTransform: "uppercase",
+                    marginBottom: 2,
+                  }}>
+                    {item.label}
+                  </div>
+                  <div style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: 9.5, letterSpacing: "0.02em",
+                    color: "rgba(200,190,178,0.38)",
+                    fontStyle: "italic",
+                  }}>
+                    {item.hint}
+                  </div>
+                </motion.div>
+              </motion.div>
+            </Link>
           );
         })}
-      </motion.nav>
+      </nav>
 
-      {/* Bottom section */}
-      <div style={{ width: 28, height: 1, background: "var(--border)", marginTop: 8, marginBottom: 10 }} />
-
-      <div className="flex flex-col items-center gap-2">
-        <ThemeSwitcher />
-        <kbd
-          title="Command Palette (⌘K)"
-          style={{
-            fontSize: 7,
-            letterSpacing: 0.5,
-            color: "var(--text-3)",
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid var(--border)",
-            borderRadius: 5,
-            padding: "3px 5px",
-            fontFamily: "'Fragment Mono', monospace",
-            cursor: "default",
-          }}
-        >
-          ⌘K
-        </kbd>
+      {/* Bottom */}
+      <div style={{ flexShrink: 0 }}>
+        <div style={{ height: 1, background: "var(--border)", margin: "6px 10px 10px" }} />
+        <div style={{ padding: "0 12px 18px", display: "flex", alignItems: "center", gap: 10 }}>
+          <ThemeSwitcher />
+          <motion.kbd
+            animate={{ opacity: expanded ? 0.5 : 0, x: expanded ? 0 : -4 }}
+            transition={{ ...SPRING, delay: expanded ? 0.08 : 0 }}
+            style={{
+              fontSize: 7, letterSpacing: 0.5,
+              color: "var(--text-3)",
+              background: "rgba(255,255,255,0.03)",
+              border: "1px solid var(--border)",
+              borderRadius: 5, padding: "3px 5px",
+              fontFamily: "'Fragment Mono', monospace",
+              cursor: "default", whiteSpace: "nowrap",
+            }}
+          >
+            ⌘K
+          </motion.kbd>
+        </div>
       </div>
     </motion.aside>
   );
@@ -284,7 +338,7 @@ function MobileNav({ pathname }: { pathname: string }) {
     <motion.nav
       initial={{ y: 80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.4, ease: [0.25,0.1,0.25,1] }}
+      transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
       className="fixed bottom-0 left-0 right-0 flex items-center justify-around px-2 z-50 md:hidden"
       style={{
         background: "rgba(8,8,15,0.96)",
@@ -314,7 +368,12 @@ function MobileNav({ pathname }: { pathname: string }) {
                 {item.icon}
               </div>
               <span
-                style={{ fontFamily: "'Fragment Mono', monospace", fontSize: 6, letterSpacing: "0.10em", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 52 }}
+                style={{
+                  fontFamily: "'Fragment Mono', monospace",
+                  fontSize: 6, letterSpacing: "0.10em",
+                  overflow: "hidden", textOverflow: "ellipsis",
+                  whiteSpace: "nowrap", maxWidth: 52,
+                }}
                 className="uppercase"
               >
                 {item.label}

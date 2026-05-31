@@ -59,7 +59,7 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
     <div className="h-full flex flex-col">
       {/* Column headers */}
       <div
-        className="grid gap-2 px-4 py-2 text-[9px] font-bold tracking-widest flex-shrink-0"
+        className="grid gap-2 px-4 py-2 text-[11px] font-bold tracking-widest flex-shrink-0"
         style={{
           color: "#475569",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
@@ -109,7 +109,7 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
                 <div>
                   <span className="text-xs font-semibold" style={{ color: "#e2e8f0" }}>{p.name}</span>
                   {p.retrograde && (
-                    <span className="ml-1 text-[9px] font-bold" style={{ color: "#f97316" }}>℞</span>
+                    <span className="ml-1 text-[11px] font-bold" style={{ color: "#f97316" }}>℞</span>
                   )}
                   {mutualReceptions.has(p.name) && (
                     <span className="ml-1 text-[8px] font-bold px-1 py-0.5 rounded" title="Mutual Reception"
@@ -149,7 +149,7 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
               <div className="flex items-center">
                 {p.dignity && (
                   <span
-                    className="text-[9px] font-bold px-2 py-0.5 rounded-lg tracking-wide"
+                    className="text-[11px] font-bold px-2 py-0.5 rounded-lg tracking-wide"
                     style={{
                       background: dignityConf.bg,
                       color: dignityConf.color,
@@ -163,7 +163,7 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
 
               {/* Angularity */}
               <div className="flex items-center">
-                <span className="text-[9px]" style={{ color: "#475569" }}>
+                <span className="text-[11px]" style={{ color: "#475569" }}>
                   {ANGULARITY[p.house]}
                 </span>
               </div>
@@ -183,7 +183,7 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
 
         {/* Lots */}
         <div className="px-4 pt-4 pb-2">
-          <p className="text-[9px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>ARABIC LOTS</p>
+          <p className="text-[11px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>ARABIC LOTS</p>
         </div>
         {[
           { label: "Lot of Fortune", lon: chart.lotOfFortune, color: "#f59e0b", symbol: "⊕" },

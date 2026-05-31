@@ -42,7 +42,7 @@ function ConfidenceMeter({ value, color, label }: { value: number; color: string
           {pct}%
         </span>
         {label && (
-          <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 8, fontFamily: "'Fragment Mono', monospace", marginLeft: 4 }}>
+          <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 11, fontFamily: "'Fragment Mono', monospace", marginLeft: 4 }}>
             {label}
           </span>
         )}
@@ -76,7 +76,7 @@ function SectionCard({
             <div>
               {section.subheading && (
                 <p style={{
-                  color: color + "99", fontSize: 7.5, letterSpacing: "0.2em",
+                  color: color + "99", fontSize: 11, letterSpacing: "0.2em",
                   fontFamily: "'Fragment Mono', monospace", marginBottom: 5,
                   textTransform: "uppercase",
                 }}>
@@ -84,7 +84,7 @@ function SectionCard({
                 </p>
               )}
               <h3 style={{
-                color: "#EDE8DC", fontSize: 22,
+                color: "#EDE8DC", fontSize: 26,
                 fontFamily: "'Cormorant Garamond', serif",
                 fontWeight: 600, lineHeight: 1.15,
               }}>
@@ -103,7 +103,7 @@ function SectionCard({
               background: `${color}0E`, border: `1px solid ${color}25`,
               borderRadius: 4, padding: "3px 10px", marginBottom: 16,
             }}>
-              <span style={{ color, fontSize: 7, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em" }}>
+              <span style={{ color, fontSize: 11, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em" }}>
                 ◷ {section.timeWindow.label}
               </span>
             </div>
@@ -111,7 +111,7 @@ function SectionCard({
 
           {/* Body text */}
           <div style={{
-            color: "rgba(220,212,198,0.82)", fontSize: 15.5,
+            color: "rgba(220,212,198,0.82)", fontSize: 17,
             fontFamily: "'Cormorant Garamond', serif",
             lineHeight: 1.78,
           }}>
@@ -125,7 +125,7 @@ function SectionCard({
           {/* Technique tag */}
           <div style={{ marginTop: 18 }}>
             <span style={{
-              fontSize: 7, color: "rgba(255,255,255,0.18)",
+              fontSize: 11, color: "rgba(255,255,255,0.18)",
               fontFamily: "'Fragment Mono', monospace",
               background: "rgba(255,255,255,0.03)",
               border: "1px solid rgba(255,255,255,0.05)",
@@ -214,13 +214,13 @@ function FeedbackModal({
       >
         {/* Header */}
         <div style={{ padding: "24px 28px 20px", borderBottom: "1px solid rgba(255,255,255,0.05)", flexShrink: 0 }}>
-          <p style={{ color: meta.color, fontSize: 7.5, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 6 }}>
+          <p style={{ color: meta.color, fontSize: 11, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 6 }}>
             ACCURACY REVIEW
           </p>
-          <h3 style={{ color: "#EDE8DC", fontSize: 20, fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+          <h3 style={{ color: "#EDE8DC", fontSize: 22, fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
             How did this reading land?
           </h3>
-          <p style={{ color: "rgba(200,190,178,0.45)", fontSize: 12, fontFamily: "'Cormorant Garamond', serif", marginTop: 4, lineHeight: 1.5 }}>
+          <p style={{ color: "rgba(200,190,178,0.45)", fontSize: 14, fontFamily: "'Cormorant Garamond', serif", marginTop: 4, lineHeight: 1.5 }}>
             Your feedback refines the intelligence. Rate each section after the prediction window has passed.
           </p>
         </div>
@@ -236,7 +236,7 @@ function FeedbackModal({
                 border: "1px solid rgba(255,255,255,0.05)",
                 borderRadius: 10,
               }}>
-                <p style={{ color: "#C0B89E", fontSize: 12, fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, marginBottom: 8 }}>
+                <p style={{ color: "#C0B89E", fontSize: 14, fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, marginBottom: 8 }}>
                   {s.heading}
                 </p>
                 <StarRow value={sectionRatings[s.id] ?? 0} onChange={v => setSectionRatings(p => ({ ...p, [s.id]: v }))} />
@@ -246,7 +246,7 @@ function FeedbackModal({
 
           {/* Overall */}
           <div style={{ marginBottom: 20 }}>
-            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 8, letterSpacing: "0.14em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>
+            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, letterSpacing: "0.14em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>
               OVERALL ACCURACY
             </p>
             <StarRow value={overall} onChange={setOverall} />
@@ -262,7 +262,7 @@ function FeedbackModal({
               background: "rgba(255,255,255,0.03)",
               border: "1px solid rgba(255,255,255,0.08)",
               borderRadius: 8, color: "rgba(200,190,178,0.7)",
-              fontSize: 12, fontFamily: "'Cormorant Garamond', serif",
+              fontSize: 14, fontFamily: "'Cormorant Garamond', serif",
               padding: "10px 12px", resize: "vertical",
               outline: "none", boxSizing: "border-box",
               lineHeight: 1.5, marginBottom: 20,
@@ -288,7 +288,7 @@ function FeedbackModal({
               display: "flex", alignItems: "center", justifyContent: "center",
               transition: "all 0.15s",
             }}>
-              {consent && <span style={{ color: "#000", fontSize: 9, lineHeight: 1 }}>✓</span>}
+              {consent && <span style={{ color: "#000", fontSize: 11, lineHeight: 1 }}>✓</span>}
             </div>
             <p style={{ color: "rgba(200,190,178,0.55)", fontSize: 11, fontFamily: "'Cormorant Garamond', serif", lineHeight: 1.5 }}>
               I consent to this feedback being used to improve future readings. My data will be anonymized and stored with a quality flag.
@@ -305,7 +305,7 @@ function FeedbackModal({
               background: "transparent",
               border: "1px solid rgba(255,255,255,0.08)",
               borderRadius: 8, color: "rgba(255,255,255,0.3)",
-              fontSize: 8.5, letterSpacing: "0.1em",
+              fontSize: 11, letterSpacing: "0.1em",
               fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
             }}
           >
@@ -319,7 +319,7 @@ function FeedbackModal({
               background: allRated ? `linear-gradient(135deg, ${meta.color}28, ${meta.color}14)` : "rgba(255,255,255,0.03)",
               border: `1px solid ${allRated ? meta.color + "50" : "rgba(255,255,255,0.06)"}`,
               borderRadius: 8, color: allRated ? meta.color : "rgba(255,255,255,0.2)",
-              fontSize: 8.5, letterSpacing: "0.1em",
+              fontSize: 11, letterSpacing: "0.1em",
               fontFamily: "'Fragment Mono', monospace",
               cursor: allRated ? "pointer" : "not-allowed",
               transition: "all 0.15s",
@@ -423,7 +423,7 @@ export default function ReportPage() {
               onClick={() => router.push("/dashboard/reports")}
               style={{
                 background: "none", border: "none", cursor: "pointer",
-                color: "rgba(255,255,255,0.25)", fontSize: 8,
+                color: "rgba(255,255,255,0.25)", fontSize: 11,
                 fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em",
                 marginBottom: 20, padding: 0, display: "flex", alignItems: "center", gap: 6,
               }}
@@ -434,21 +434,21 @@ export default function ReportPage() {
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 20 }}>
               <div>
                 <p style={{
-                  color: meta.color, fontSize: 8, letterSpacing: "0.24em",
+                  color: meta.color, fontSize: 11, letterSpacing: "0.24em",
                   fontFamily: "'Fragment Mono', monospace", marginBottom: 8,
                   textTransform: "uppercase",
                 }}>
                   {meta.subtitle}
                 </p>
                 <h1 style={{
-                  color: "#F0EDE8", fontSize: 36,
+                  color: "#F0EDE8", fontSize: 40,
                   fontFamily: "'Cormorant Garamond', serif",
                   fontWeight: 600, lineHeight: 1.1, marginBottom: 10,
                 }}>
                   {meta.title}
                 </h1>
                 <p style={{
-                  color: "rgba(255,255,255,0.22)", fontSize: 8,
+                  color: "rgba(255,255,255,0.22)", fontSize: 11,
                   fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
                 }}>
                   Generated {new Date(report.generatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
@@ -468,11 +468,11 @@ export default function ReportPage() {
                 border: `1px solid ${meta.color}25`,
                 borderRadius: 12,
               }}>
-                <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 7.5, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em", marginBottom: 8 }}>
+                <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 11, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em", marginBottom: 8 }}>
                   OVERALL CONFIDENCE
                 </p>
                 <ConfidenceMeter value={report.overallConfidence} color={meta.color} />
-                <p style={{ color: "rgba(255,255,255,0.2)", fontSize: 7.5, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.08em", marginTop: 8 }}>
+                <p style={{ color: "rgba(255,255,255,0.2)", fontSize: 11, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.08em", marginTop: 8 }}>
                   {report.sections.length} technique agents
                 </p>
               </div>
@@ -530,7 +530,7 @@ export default function ReportPage() {
             }}
           >
             {!feedbackDone && !isExpired && (
-              <p style={{ color: "rgba(255,255,255,0.2)", fontSize: 10, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
+              <p style={{ color: "rgba(255,255,255,0.2)", fontSize: 13, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
                 Accuracy review available after {expiryFormatted}
               </p>
             )}
@@ -542,7 +542,7 @@ export default function ReportPage() {
                   background: `${meta.color}15`,
                   border: `1px solid ${meta.color}40`,
                   borderRadius: 8, color: meta.color,
-                  fontSize: 8.5, letterSpacing: "0.12em",
+                  fontSize: 11, letterSpacing: "0.12em",
                   fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
                 }}
               >
@@ -550,7 +550,7 @@ export default function ReportPage() {
               </button>
             )}
             {feedbackDone && (
-              <p style={{ color: "rgba(255,255,255,0.2)", fontSize: 10, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
+              <p style={{ color: "rgba(255,255,255,0.2)", fontSize: 13, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
                 Thank you for your review. Your feedback improves the intelligence.
               </p>
             )}
@@ -561,7 +561,7 @@ export default function ReportPage() {
                 background: "transparent",
                 border: "1px solid rgba(255,255,255,0.08)",
                 borderRadius: 8, color: "rgba(255,255,255,0.3)",
-                fontSize: 8.5, letterSpacing: "0.12em",
+                fontSize: 11, letterSpacing: "0.12em",
                 fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
               }}
             >

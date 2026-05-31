@@ -67,7 +67,7 @@ export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle, onLiveV
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
         onClick={handleToggle}
-        className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[8px] font-bold tracking-wider cursor-pointer"
+        className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-bold tracking-wider cursor-pointer"
         style={{
           background: enabled ? `${profile.color}18` : "rgba(255,255,255,0.03)",
           border: `1px solid ${enabled ? (isConnected ? profile.color + "88" : profile.color + "55") : "rgba(255,255,255,0.08)"}`,
@@ -170,7 +170,7 @@ export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle, onLiveV
                         <span style={{ fontSize: 7, letterSpacing: 1, color: active ? prof.color : "#475569", fontWeight: 700, position: "relative" }}>
                           {p.toUpperCase()}
                         </span>
-                        <span style={{ fontSize: 6, color: active ? prof.color + "80" : "#334155", letterSpacing: 0.3, position: "relative" }}>
+                        <span style={{ fontSize: 10, color: active ? prof.color + "80" : "#334155", letterSpacing: 0.3, position: "relative" }}>
                           {prof.voiceName}
                         </span>
                       </motion.button>

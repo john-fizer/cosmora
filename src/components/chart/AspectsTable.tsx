@@ -45,11 +45,11 @@ export function AspectsTable({ chart, selectedPlanet }: AspectsTableProps) {
         {Object.entries(ASPECT_CONFIG).map(([type, cfg]) => (
           <div key={type} className="flex items-center gap-1.5">
             <span className="text-base font-bold" style={{ color: cfg.color }}>{cfg.symbol}</span>
-            <span className="text-[9px] font-medium" style={{ color: "#64748b" }}>{cfg.label}</span>
+            <span className="text-[11px] font-medium" style={{ color: "#64748b" }}>{cfg.label}</span>
           </div>
         ))}
         {selectedPlanet && (
-          <span className="ml-auto text-[9px] px-2 py-1 rounded-lg"
+          <span className="ml-auto text-[11px] px-2 py-1 rounded-lg"
             style={{ background: "rgba(124,58,237,0.15)", color: "#a78bfa", border: "1px solid rgba(124,58,237,0.3)" }}>
             Filtering: {selectedPlanet}
           </span>
@@ -57,7 +57,7 @@ export function AspectsTable({ chart, selectedPlanet }: AspectsTableProps) {
       </div>
 
       {/* Headers */}
-      <div className="grid gap-3 px-4 py-2 text-[9px] font-bold tracking-widest flex-shrink-0"
+      <div className="grid gap-3 px-4 py-2 text-[11px] font-bold tracking-widest flex-shrink-0"
         style={{
           color: "#475569",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
@@ -87,10 +87,10 @@ export function AspectsTable({ chart, selectedPlanet }: AspectsTableProps) {
                 <div className="px-4 py-2 flex items-center gap-2"
                   style={{ background: `${cfg.color}08`, borderBottom: `1px solid ${cfg.color}15` }}>
                   <span className="text-base" style={{ color: cfg.color }}>{cfg.symbol}</span>
-                  <span className="text-[9px] font-bold tracking-widest" style={{ color: cfg.color }}>
+                  <span className="text-[11px] font-bold tracking-widest" style={{ color: cfg.color }}>
                     {cfg.label.toUpperCase()} ({aspects.length})
                   </span>
-                  <span className="text-[8px] ml-1" style={{ color: "#475569" }}>{cfg.meaning}</span>
+                  <span className="text-[11px] ml-1" style={{ color: "#475569" }}>{cfg.meaning}</span>
                 </div>
 
                 {aspects.map((asp, i) => {
@@ -140,23 +140,23 @@ export function AspectsTable({ chart, selectedPlanet }: AspectsTableProps) {
                       {/* Exact */}
                       <div className="flex items-center">
                         {asp.exact ? (
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded"
+                          <span className="text-[11px] font-bold px-1.5 py-0.5 rounded"
                             style={{ background: `${cfg.color}20`, color: cfg.color }}>EXACT</span>
                         ) : (
-                          <span className="text-[9px]" style={{ color: "#2d3748" }}>—</span>
+                          <span className="text-[11px]" style={{ color: "#2d3748" }}>—</span>
                         )}
                       </div>
 
                       {/* Applying */}
                       <div className="flex items-center">
-                        <span className="text-[9px]" style={{ color: asp.applying ? "#22c55e" : "#64748b" }}>
+                        <span className="text-[11px]" style={{ color: asp.applying ? "#22c55e" : "#64748b" }}>
                           {asp.applying ? "▲ Appl." : "▼ Sep."}
                         </span>
                       </div>
 
                       {/* Meaning snippet */}
                       <div className="flex items-center">
-                        <span className="text-[9px] leading-tight" style={{ color: "#475569" }}>
+                        <span className="text-[11px] leading-tight" style={{ color: "#475569" }}>
                           {asp.planet1} + {asp.planet2} themes
                         </span>
                       </div>

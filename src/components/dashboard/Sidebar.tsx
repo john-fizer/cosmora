@@ -202,7 +202,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
             transition={{ ...SPRING, delay: expanded ? 0.06 : 0 }}
             style={{
               fontFamily: "'Fragment Mono', monospace",
-              fontSize: 10, letterSpacing: "0.22em",
+              fontSize: 12, letterSpacing: "0.18em",
               color: "var(--solar)", textTransform: "uppercase",
               whiteSpace: "nowrap",
             }}
@@ -285,7 +285,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                 >
                   <div style={{
                     fontFamily: "'Fragment Mono', monospace",
-                    fontSize: 9, letterSpacing: "0.12em",
+                    fontSize: 11, letterSpacing: "0.10em",
                     color: active ? "var(--solar)" : "rgba(240,237,232,0.88)",
                     textTransform: "uppercase",
                     marginBottom: 2,
@@ -294,7 +294,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                   </div>
                   <div style={{
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: 9.5, letterSpacing: "0.02em",
+                    fontSize: 12, letterSpacing: "0.02em",
                     color: "rgba(200,190,178,0.38)",
                     fontStyle: "italic",
                   }}>
@@ -370,7 +370,7 @@ function MobileNav({ pathname }: { pathname: string }) {
               <span
                 style={{
                   fontFamily: "'Fragment Mono', monospace",
-                  fontSize: 6, letterSpacing: "0.10em",
+                  fontSize: 11, letterSpacing: "0.10em",
                   overflow: "hidden", textOverflow: "ellipsis",
                   whiteSpace: "nowrap", maxWidth: 52,
                 }}

@@ -26,7 +26,7 @@ function ConfidenceGauge({ value, color }: { value: number; color: string }) {
           alignSelf: "flex-end",
         }} />
       ))}
-      <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 9, marginLeft: 4, fontFamily: "'Fragment Mono', monospace" }}>
+      <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 11, marginLeft: 4, fontFamily: "'Fragment Mono', monospace" }}>
         {Math.round(value * 100)}%
       </span>
     </div>
@@ -126,7 +126,7 @@ function ReportTypeCard({
               }}
               transition={CARD_SPRING}
               style={{
-                color: meta.color, fontSize: 7.5,
+                color: meta.color, fontSize: 11,
                 fontFamily: "'Fragment Mono', monospace", marginBottom: 3,
                 textTransform: "uppercase",
               }}
@@ -158,7 +158,7 @@ function ReportTypeCard({
             style={{
               background: `${meta.color}18`, border: `1px solid ${meta.color}35`,
               borderRadius: 20, padding: "3px 10px",
-              color: meta.color, fontSize: 7.5,
+              color: meta.color, fontSize: 11,
               fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
               flexShrink: 0,
             }}
@@ -173,7 +173,7 @@ function ReportTypeCard({
             style={{
               background: "rgba(255,100,50,0.1)", border: "1px solid rgba(255,100,50,0.3)",
               borderRadius: 20, padding: "3px 10px",
-              color: "#FF8060", fontSize: 7.5,
+              color: "#FF8060", fontSize: 11,
               fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
               flexShrink: 0,
             }}
@@ -190,7 +190,7 @@ function ReportTypeCard({
         style={{ overflow: "hidden", marginBottom: hovered ? 0 : 12 }}
       >
         <span style={{
-          fontSize: 7.5, color: "rgba(255,255,255,0.4)",
+          fontSize: 11, color: "rgba(255,255,255,0.4)",
           fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
         }}>
           {meta.techniques.length} techniques · {meta.expiryDays >= 3650 ? "permanent" : `${meta.expiryDays}d validity`}
@@ -208,7 +208,7 @@ function ReportTypeCard({
         }}
         transition={{ ...CARD_SPRING, delay: hovered ? 0 : 0 }}
         style={{
-          color: "rgba(210,200,188,1)", fontSize: 12.5,
+          color: "rgba(210,200,188,1)", fontSize: 15,
           fontFamily: "'Cormorant Garamond', serif",
           lineHeight: 1.68, marginBottom: 16,
         }}
@@ -227,7 +227,7 @@ function ReportTypeCard({
       >
         {meta.techniques.slice(0, 5).map(t => (
           <span key={t} style={{
-            fontSize: 6.5, color: "rgba(255,255,255,0.36)",
+            fontSize: 11, color: "rgba(255,255,255,0.36)",
             fontFamily: "'Fragment Mono', monospace",
             background: "rgba(255,255,255,0.04)",
             border: "1px solid rgba(255,255,255,0.07)",
@@ -238,7 +238,7 @@ function ReportTypeCard({
           </span>
         ))}
         {meta.techniques.length > 5 && (
-          <span style={{ fontSize: 6.5, color: "rgba(255,255,255,0.2)", padding: "2px 4px" }}>
+          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", padding: "2px 4px" }}>
             +{meta.techniques.length - 5}
           </span>
         )}
@@ -255,13 +255,13 @@ function ReportTypeCard({
       >
         <div style={{ display: "flex", gap: 14 }}>
           <span style={{
-            color: "rgba(255,255,255,0.28)", fontSize: 7.5,
+            color: "rgba(255,255,255,0.28)", fontSize: 11,
             fontFamily: "'Fragment Mono', monospace",
           }}>
             ~{meta.estimatedMinutes} min
           </span>
           <span style={{
-            color: "rgba(255,255,255,0.28)", fontSize: 7.5,
+            color: "rgba(255,255,255,0.28)", fontSize: 11,
             fontFamily: "'Fragment Mono', monospace",
           }}>
             {meta.expiryDays >= 3650 ? "permanent" : `${meta.expiryDays}d`}
@@ -278,7 +278,7 @@ function ReportTypeCard({
               background: `${meta.color}18`,
               border: `1px solid ${meta.color}40`,
               borderRadius: 7, color: meta.color,
-              fontSize: 8, letterSpacing: "0.12em",
+              fontSize: 11, letterSpacing: "0.12em",
               fontFamily: "'Fragment Mono', monospace",
               cursor: "pointer",
             }}
@@ -299,7 +299,7 @@ function ReportTypeCard({
               border: `1px solid ${generating ? "rgba(255,255,255,0.08)" : meta.color + "50"}`,
               borderRadius: 7,
               color: generating ? "rgba(255,255,255,0.25)" : meta.color,
-              fontSize: 8, letterSpacing: "0.12em",
+              fontSize: 11, letterSpacing: "0.12em",
               fontFamily: "'Fragment Mono', monospace",
               cursor: generating ? "not-allowed" : "pointer",
             }}
@@ -378,13 +378,13 @@ function GeneratingOverlay({
         </motion.div>
 
         <p style={{
-          color: meta.color, fontSize: 8, letterSpacing: "0.25em",
+          color: meta.color, fontSize: 11, letterSpacing: "0.25em",
           fontFamily: "'Fragment Mono', monospace", marginBottom: 6,
         }}>
           GENERATING REPORT
         </p>
         <h3 style={{
-          color: "#F0EDE8", fontSize: 22,
+          color: "#F0EDE8", fontSize: 26,
           fontFamily: "'Cormorant Garamond', serif",
           fontWeight: 600, marginBottom: 24,
         }}>
@@ -404,7 +404,7 @@ function GeneratingOverlay({
             />
           </div>
           <p style={{
-            color: "rgba(255,255,255,0.4)", fontSize: 9,
+            color: "rgba(255,255,255,0.4)", fontSize: 11,
             fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
           }}>
             {progress.phase}
@@ -449,14 +449,14 @@ function HistoryRow({ report, onClick }: { report: Report; onClick: () => void }
     >
       <span style={{ fontSize: 16, color: meta.color, width: 24, textAlign: "center" }}>{meta.icon}</span>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ color: "#D4CEBD", fontSize: 12, fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}>{meta.title}</p>
-        <p style={{ color: "rgba(255,255,255,0.25)", fontSize: 8, fontFamily: "'Fragment Mono', monospace" }}>
+        <p style={{ color: "#D4CEBD", fontSize: 14, fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}>{meta.title}</p>
+        <p style={{ color: "rgba(255,255,255,0.25)", fontSize: 11, fontFamily: "'Fragment Mono', monospace" }}>
           {age === 0 ? "Today" : `${age}d ago`}
         </p>
       </div>
       <ConfidenceGauge value={report.overallConfidence} color={meta.color} />
       {isExpired && (
-        <span style={{ fontSize: 7, color: "#FF8060", fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.08em" }}>EXPIRED</span>
+        <span style={{ fontSize: 11, color: "#FF8060", fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.08em" }}>EXPIRED</span>
       )}
       <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 12 }}>→</span>
     </motion.div>
@@ -581,7 +581,7 @@ export default function ReportsPage() {
       <div className="fixed inset-0 flex items-center justify-center" style={{ background: "#04050E" }}>
         <Sidebar />
         <div style={{ textAlign: "center", padding: 32 }}>
-          <p style={{ color: "#C8A55B", fontSize: 14, fontFamily: "'Cormorant Garamond', serif", marginBottom: 8 }}>
+          <p style={{ color: "#C8A55B", fontSize: 17, fontFamily: "'Cormorant Garamond', serif", marginBottom: 8 }}>
             Birth data required to generate reports.
           </p>
         </div>
@@ -612,7 +612,7 @@ export default function ReportsPage() {
         }}>
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <p style={{
-              color: "#C8A55B", fontSize: 8, letterSpacing: "0.28em",
+              color: "#C8A55B", fontSize: 11, letterSpacing: "0.28em",
               fontFamily: "'Fragment Mono', monospace", marginBottom: 12,
               textTransform: "uppercase",
             }}>
@@ -627,7 +627,7 @@ export default function ReportsPage() {
               <span style={{ color: "#C8A55B", fontStyle: "italic" }}>Cosmic Intelligence File</span>
             </h1>
             <p style={{
-              color: "rgba(200,190,178,0.5)", fontSize: 14,
+              color: "rgba(200,190,178,0.5)", fontSize: 17,
               fontFamily: "'Cormorant Garamond', serif",
               maxWidth: 520, lineHeight: 1.6,
             }}>
@@ -646,7 +646,7 @@ export default function ReportsPage() {
               style={{ marginBottom: 48 }}
             >
               <p style={{
-                color: "rgba(255,255,255,0.25)", fontSize: 8, letterSpacing: "0.18em",
+                color: "rgba(255,255,255,0.25)", fontSize: 11, letterSpacing: "0.18em",
                 fontFamily: "'Fragment Mono', monospace", marginBottom: 14,
                 textTransform: "uppercase",
               }}>
@@ -666,7 +666,7 @@ export default function ReportsPage() {
           {/* ── Report type catalog ── */}
           <div>
             <p style={{
-              color: "rgba(255,255,255,0.25)", fontSize: 8, letterSpacing: "0.18em",
+              color: "rgba(255,255,255,0.25)", fontSize: 11, letterSpacing: "0.18em",
               fontFamily: "'Fragment Mono', monospace", marginBottom: 20,
               textTransform: "uppercase",
             }}>

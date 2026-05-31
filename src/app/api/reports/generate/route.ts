@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import type { ChartData } from "@/lib/astrology/types";
 import type { ReportType, ReportSection } from "@/lib/reports/types";
 import { PLANET_SYMBOLS } from "@/lib/astrology/types";
+import { getPersonaById } from "@/lib/oracle/personas";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -151,6 +152,71 @@ async function synthesize(
   return { headline, overallConfidence: Math.round(avgConfidence * 100) / 100 };
 }
 
+// ─── Phase 3: Persona rewrite ──────────────────────────────────────────────────
+
+async function personaRewrite(
+  personaId: string,
+  sections: ReportSection[],
+  headline: string,
+): Promise<{ sections: ReportSection[]; headline: string }> {
+  const persona = getPersonaById(personaId);
+  if (!persona.reportRewriteSystemPrompt) return { sections, headline };
+
+  const sectionBlocks = sections.map((s, i) =>
+    `===SECTION_${i + 1}===\n${s.body}`
+  ).join("\n\n");
+
+  const msg = await anthropic.messages.create({
+    model: "claude-sonnet-4-6",
+    max_tokens: 5000,
+    system: persona.reportRewriteSystemPrompt,
+    messages: [{
+      role: "user",
+      content: `Rewrite each section below in your voice. Keep every specific insight but express it without any astrology terminology.
+
+Return EXACTLY in this format (same delimiters, same count):
+===SECTION_1===
+[rewritten text]
+===SECTION_2===
+[rewritten text]
+(continue for all sections)
+===HEADLINE===
+[2–3 sentence rewritten headline in your voice]
+
+SECTIONS TO TRANSLATE:
+${sectionBlocks}
+
+HEADLINE TO TRANSLATE:
+${headline}`,
+    }],
+  });
+
+  const response = msg.content
+    .filter(b => b.type === "text")
+    .map(b => (b as { type: "text"; text: string }).text)
+    .join("");
+
+  const updatedSections = sections.map((section, i) => {
+    const marker = `===SECTION_${i + 1}===`;
+    const nextMarker = i < sections.length - 1 ? `===SECTION_${i + 2}===` : `===HEADLINE===`;
+    const start = response.indexOf(marker);
+    if (start === -1) return section;
+    const end = response.indexOf(nextMarker, start + marker.length);
+    const body = (end !== -1
+      ? response.slice(start + marker.length, end)
+      : response.slice(start + marker.length)
+    ).trim();
+    return body ? { ...section, body } : section;
+  });
+
+  const headlineStart = response.indexOf("===HEADLINE===");
+  const newHeadline = headlineStart !== -1
+    ? response.slice(headlineStart + "===HEADLINE===".length).trim()
+    : headline;
+
+  return { sections: updatedSections, headline: newHeadline };
+}
+
 // ─── Route handler ─────────────────────────────────────────────────────────────
 
 export const maxDuration = 120;
@@ -163,9 +229,10 @@ export async function POST(req: NextRequest) {
       birthDatetime: string;
       profileId: string;
       reportId: string;
+      persona?: string;
     };
 
-    const { reportType, chart, birthDatetime } = body;
+    const { reportType, chart, birthDatetime, persona = "oracle" } = body;
     if (!reportType || !chart) {
       return new Response(JSON.stringify({ error: "reportType and chart required" }), { status: 400 });
     }
@@ -201,10 +268,10 @@ export async function POST(req: NextRequest) {
           emit({ type: "synthesizing" });
 
           // ── Phase 2: Synthesis ─────────────────────────────────────────────
-          const { headline, overallConfidence } = await synthesize(reportType, results, chartContext);
+          const { headline: rawHeadline, overallConfidence } = await synthesize(reportType, results, chartContext);
 
           // ── Phase 3: Build section objects ────────────────────────────────
-          const sections: ReportSection[] = results.map((r, i) => ({
+          let sections: ReportSection[] = results.map((r, i) => ({
             id: `sec_${i}_${r.technique.id}`,
             heading: r.technique.label,
             subheading: r.technique.areaOfLife,
@@ -215,12 +282,24 @@ export async function POST(req: NextRequest) {
             convergenceCount: 1,
           }));
 
+          let headline = rawHeadline;
+
+          // ── Phase 4: Persona rewrite (if not Oracle) ──────────────────────
+          const personaDef = getPersonaById(persona);
+          if (personaDef.reportRewriteSystemPrompt) {
+            emit({ type: "translating", persona });
+            const rewritten = await personaRewrite(persona, sections, headline);
+            sections = rewritten.sections;
+            headline = rewritten.headline;
+          }
+
           emit({
             type: "complete",
             headline,
             overallConfidence,
             sections,
             techniquesSummary: techniques.map(t => t.label),
+            persona,
           });
 
         } catch (e) {

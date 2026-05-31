@@ -154,6 +154,7 @@ export function createReportShell(
       birthDatetime,
       chartHash: btoa(birthDatetime).slice(0, 12),
       modelId: "claude-sonnet-4-6",
+      persona: "oracle",
       generationMs: 0,
     },
   };

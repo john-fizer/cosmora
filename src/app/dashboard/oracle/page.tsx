@@ -12,10 +12,13 @@ import {
   getActiveProfileId, getProfile, getCachedChart,
   getChatHistory, pushChatMessage, clearChatHistory,
   getOracleModel, setOracleModel,
+  getOraclePersona, setOraclePersona,
   saveOracleMemory,
 } from "@/lib/storage";
 import type { MemoryCategory } from "@/lib/storage";
 import { ORACLE_MODELS, getModelById } from "@/lib/oracle/models";
+import { ORACLE_PERSONAS, getPersonaById } from "@/lib/oracle/personas";
+import type { PersonaId } from "@/lib/oracle/personas";
 import { VoiceOracle } from "@/components/oracle/VoiceOracle";
 import { InsightPlayer } from "@/components/oracle/InsightPlayer";
 import { type VoicePlanet } from "@/lib/oracle/voice";
@@ -517,6 +520,86 @@ function ModelSelector({ currentModelId, availability, onChange }: {
   );
 }
 
+// ─── Persona selector ─────────────────────────────────────────────────────────
+
+function PersonaSelector({ currentPersonaId, onChange }: {
+  currentPersonaId: PersonaId;
+  onChange: (id: PersonaId) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const current = getPersonaById(currentPersonaId);
+
+  return (
+    <div className="relative">
+      <motion.button
+        whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+        onClick={() => setOpen(o => !o)}
+        className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-bold tracking-wider cursor-pointer"
+        style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${current.color}30`, color: current.color }}
+      >
+        <span style={{ fontSize: 12 }}>{current.icon}</span>
+        <span className="hidden sm:inline">{current.name}</span>
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-2.5 h-2.5 opacity-40">
+          <path d="M3 4.5l3 3 3-3" />
+        </svg>
+      </motion.button>
+
+      <AnimatePresence>
+        {open && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: -8, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.96 }}
+              transition={{ duration: 0.15 }}
+              className="absolute right-0 top-full mt-2 z-50 w-72 rounded-2xl overflow-hidden"
+              style={{
+                background: "rgba(4,4,28,0.97)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                backdropFilter: "blur(24px)",
+                boxShadow: `0 0 40px ${current.color}20`,
+              }}
+            >
+              <div className="p-2">
+                <p className="text-[11px] font-bold tracking-widest px-3 py-2" style={{ color: "#334155" }}>VOICE & PERSONA</p>
+                {ORACLE_PERSONAS.map(persona => {
+                  const isActive = persona.id === currentPersonaId;
+                  return (
+                    <motion.button
+                      key={persona.id}
+                      whileHover={{ background: `${persona.color}10` }}
+                      onClick={() => { onChange(persona.id); setOpen(false); }}
+                      className="w-full flex items-start gap-3 px-3 py-2.5 rounded-xl text-left cursor-pointer"
+                      style={{
+                        background: isActive ? `${persona.color}18` : "transparent",
+                        border: isActive ? `1px solid ${persona.color}35` : "1px solid transparent",
+                      }}
+                    >
+                      <span className="text-lg mt-0.5 flex-shrink-0" style={{ color: persona.color }}>{persona.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="text-[12px] font-bold" style={{ color: isActive ? persona.color : "#94a3b8" }}>{persona.name}</p>
+                          {isActive && (
+                            <span className="text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded"
+                              style={{ background: `${persona.color}20`, color: persona.color }}>ACTIVE</span>
+                          )}
+                        </div>
+                        <p className="text-[11px] mt-0.5" style={{ color: "#64748b" }}>{persona.tagline}</p>
+                        <p className="text-[11px] mt-0.5 leading-snug" style={{ color: "#475569" }}>{persona.description}</p>
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // ─── Main oracle page ─────────────────────────────────────────────────────────
 
 export default function OraclePage() {
@@ -530,6 +613,7 @@ export default function OraclePage() {
   const [msgId, setMsgId] = useState(0);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [modelId, setModelId] = useState("claude-opus-4-7");
+  const [personaId, setPersonaId] = useState<PersonaId>("oracle");
   const [modelAvailability, setModelAvailability] = useState<Record<string, { available: boolean }>>({});
   const [pendingAutoSeed, setPendingAutoSeed] = useState<string | null>(null);
   const [toolCalls, setToolCalls] = useState<ToolCallEvent[]>([]);
@@ -564,6 +648,7 @@ export default function OraclePage() {
       setMsgId(history.length);
     }
     setModelId(getOracleModel());
+    setPersonaId(getOraclePersona() as PersonaId);
   }, []);
 
   useEffect(() => {
@@ -726,6 +811,7 @@ export default function OraclePage() {
           chart: chart ?? undefined,
           history: messages.slice(-12).map(m => ({ role: m.role, content: m.content })),
           modelId,
+          persona: personaId,
         }),
       });
 
@@ -791,6 +877,11 @@ export default function OraclePage() {
   const handleModelChange = (id: string) => {
     setModelId(id);
     setOracleModel(id);
+  };
+
+  const handlePersonaChange = (id: PersonaId) => {
+    setPersonaId(id);
+    setOraclePersona(id);
   };
 
   const allMessages: Message[] = orbState === "speaking"
@@ -905,6 +996,7 @@ export default function OraclePage() {
               <span className="hidden sm:inline">DUAL ORACLE</span>
             </motion.button>
 
+            <PersonaSelector currentPersonaId={personaId} onChange={handlePersonaChange} />
             <ModelSelector currentModelId={modelId} availability={modelAvailability} onChange={handleModelChange} />
             {messages.length > 0 && orbState === "idle" && (
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={clearHistory}

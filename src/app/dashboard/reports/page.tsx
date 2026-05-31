@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/dashboard/Sidebar";
-import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
+import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona, setOraclePersona } from "@/lib/storage";
+import { ORACLE_PERSONAS, getPersonaById } from "@/lib/oracle/personas";
+import type { PersonaId } from "@/lib/oracle/personas";
 import { REPORT_TYPES } from "@/lib/reports/types";
 import type { ReportTypeMeta, Report } from "@/lib/reports/types";
 import { listReports, saveReport, createReportShell } from "@/lib/reports/storage";
@@ -475,6 +477,7 @@ export default function ReportsPage() {
   const [generatingMeta, setGeneratingMeta] = useState<ReportTypeMeta | null>(null);
   const [genProgress, setGenProgress] = useState({ phase: "Initializing...", current: 0, total: 0 });
   const [noProfile, setNoProfile] = useState(false);
+  const [personaId, setPersonaId] = useState<PersonaId>("oracle");
 
   useEffect(() => {
     const id = getActiveProfileId();
@@ -489,6 +492,7 @@ export default function ReportsPage() {
       (profile.birthDate && profile.birthTime ? `${profile.birthDate}T${profile.birthTime}:00` : null);
     setBirthDatetime(dt);
     setReports(listReports(id));
+    setPersonaId(getOraclePersona() as PersonaId);
   }, []);
 
   const latestByType = Object.fromEntries(
@@ -518,6 +522,7 @@ export default function ReportsPage() {
           birthDatetime,
           profileId,
           reportId: shell.id,
+          persona: personaId,
         }),
       });
 
@@ -549,6 +554,9 @@ export default function ReportsPage() {
               setGenProgress(p => ({ ...p, current: doneCount }));
             } else if (evt.type === "synthesizing") {
               setGenProgress(p => ({ ...p, phase: "Synthesizing & scoring convergences..." }));
+            } else if (evt.type === "translating") {
+              const pDef = getPersonaById(evt.persona as string);
+              setGenProgress(p => ({ ...p, phase: `Translating through ${pDef.name} voice...` }));
             } else if (evt.type === "complete") {
               const t1 = Date.now();
               const finalReport: Report = {
@@ -560,6 +568,7 @@ export default function ReportsPage() {
                 techniquesSummary: evt.techniquesSummary,
                 metadata: {
                   ...shell.metadata,
+                  persona: evt.persona ?? "oracle",
                   generationMs: t1 - new Date(shell.generatedAt).getTime(),
                 },
               };
@@ -665,13 +674,52 @@ export default function ReportsPage() {
 
           {/* ── Report type catalog ── */}
           <div>
-            <p style={{
-              color: "rgba(255,255,255,0.25)", fontSize: 11, letterSpacing: "0.18em",
-              fontFamily: "'Fragment Mono', monospace", marginBottom: 20,
-              textTransform: "uppercase",
-            }}>
-              Available Reports
-            </p>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+              <p style={{
+                color: "rgba(255,255,255,0.25)", fontSize: 11, letterSpacing: "0.18em",
+                fontFamily: "'Fragment Mono', monospace",
+                textTransform: "uppercase",
+              }}>
+                Available Reports
+              </p>
+
+              {/* Persona selector */}
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 11, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em" }}>
+                  VOICE
+                </span>
+                <div style={{ display: "flex", gap: 4 }}>
+                  {ORACLE_PERSONAS.map(p => {
+                    const isActive = p.id === personaId;
+                    return (
+                      <motion.button
+                        key={p.id}
+                        whileHover={{ scale: 1.06 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => { setPersonaId(p.id as PersonaId); setOraclePersona(p.id); }}
+                        title={`${p.name} — ${p.tagline}`}
+                        style={{
+                          padding: "4px 10px",
+                          borderRadius: 6,
+                          background: isActive ? `${p.color}20` : "rgba(255,255,255,0.03)",
+                          border: `1px solid ${isActive ? p.color + "50" : "rgba(255,255,255,0.06)"}`,
+                          color: isActive ? p.color : "rgba(255,255,255,0.25)",
+                          fontSize: 11,
+                          fontFamily: "'Fragment Mono', monospace",
+                          letterSpacing: "0.08em",
+                          cursor: "pointer",
+                          display: "flex", alignItems: "center", gap: 4,
+                          transition: "all 0.15s",
+                        }}
+                      >
+                        <span style={{ fontSize: 13 }}>{p.icon}</span>
+                        <span>{p.name.toUpperCase()}</span>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
             <div style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",

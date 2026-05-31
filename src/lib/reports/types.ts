@@ -140,6 +140,7 @@ export interface Report {
     birthDatetime: string;
     chartHash: string;        // to detect if chart changed
     modelId: string;
+    persona: string;
     generationMs: number;
   };
 }

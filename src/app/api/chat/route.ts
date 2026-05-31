@@ -5,6 +5,7 @@ import type { ChartData, PlanetName } from "@/lib/astrology/types";
 import { selectSkills, formatSkillsForPrompt } from "@/lib/skills";
 import { buildKnowledgeContext } from "@/lib/oracle/knowledge";
 import { getModelById, DEFAULT_MODEL_ID } from "@/lib/oracle/models";
+import { getPersonaById } from "@/lib/oracle/personas";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -434,11 +435,13 @@ export async function POST(req: NextRequest) {
       chart,
       history = [],
       modelId = DEFAULT_MODEL_ID,
+      persona = "oracle",
     } = body as {
       message: string;
       chart?: ChartData;
       history?: { role: "user" | "assistant"; content: string }[];
       modelId?: string;
+      persona?: string;
     };
 
     if (!message?.trim()) {
@@ -451,8 +454,11 @@ export async function POST(req: NextRequest) {
     const skills = selectSkills(message);
     const skillsSection = formatSkillsForPrompt(skills);
 
+    const personaDef = getPersonaById(persona);
+    const systemIdentity = personaDef.chatSystemPrompt || COSMORA_IDENTITY;
+
     const systemContent = [
-      COSMORA_IDENTITY,
+      systemIdentity,
       skillsSection,
       knowledgeContext
         ? `--- ASTROLOGICAL DOCTRINE ---\n${knowledgeContext}\n--- END DOCTRINE ---`

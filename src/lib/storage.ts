@@ -100,6 +100,20 @@ export function setOracleModel(modelId: string): void {
   localStorage.setItem(MODEL_KEY, modelId);
 }
 
+// ── Oracle persona preference ─────────────────────────────────────────────────
+
+const PERSONA_KEY = "cosmora_oracle_persona";
+
+export function getOraclePersona(): string {
+  if (typeof window === "undefined") return "oracle";
+  return localStorage.getItem(PERSONA_KEY) ?? "oracle";
+}
+
+export function setOraclePersona(personaId: string): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(PERSONA_KEY, personaId);
+}
+
 // ── Oracle Memories ───────────────────────────────────────────────────────────
 
 export type MemoryCategory = "insight" | "timing" | "relocation" | "relationship" | "warning" | "general";

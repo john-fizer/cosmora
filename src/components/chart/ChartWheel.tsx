@@ -348,7 +348,7 @@ export function ChartWheel({ size = 440, interactive = true, chart, onPlanetClic
         <motion.div
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-medium"
+          className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[13px] font-medium"
           style={{
             background: "rgba(124,58,237,0.3)",
             border: "1px solid rgba(124,58,237,0.5)",

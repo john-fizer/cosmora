@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import type { ChartData, ZodiacSign } from "@/lib/astrology/types";
@@ -49,7 +49,7 @@ export function ElementsBalance({ chart }: ElementsBalanceProps) {
       className="glass-card rounded-2xl p-4"
       style={{ border: "1px solid rgba(99,102,241,0.15)" }}
     >
-      <h3 className="text-xs font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>ELEMENTS BALANCE</h3>
+      <h3 className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>ELEMENTS BALANCE</h3>
       <div className="flex items-center gap-4">
         <div className="flex-shrink-0">
           <svg width="120" height="120" viewBox="0 0 120 120">

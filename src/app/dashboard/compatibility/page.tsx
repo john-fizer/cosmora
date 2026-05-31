@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -276,11 +276,11 @@ Write 3 paragraphs: (1) the overall nature and dynamic of this relationship base
               className="w-4 h-4 rounded-full border border-t-transparent flex-shrink-0"
               style={{ borderColor: "#f472b6" }}
             />
-            <span className="text-xs" style={{ color: "#475569" }}>Oracle is reading your connection…</span>
+            <span className="text-[13px]" style={{ color: "#475569" }}>Oracle is reading your connection…</span>
           </div>
         )}
         {text && (
-          <div className="text-sm leading-relaxed space-y-3" style={{ color: "#94a3b8" }}>
+          <div className="text-[16px] leading-relaxed space-y-3" style={{ color: "#94a3b8" }}>
             {text.split("\n\n").map((para, i) => (
               <p key={i}>{para}</p>
             ))}
@@ -328,7 +328,7 @@ function ProfileSelector({
             }}
           >
             <div
-              className="w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center text-xs font-bold"
+              className="w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center text-[13px] font-bold"
               style={{
                 background: selectedId === p.id ? `${accentColor}25` : "rgba(255,255,255,0.06)",
                 color: selectedId === p.id ? accentColor : "#475569",
@@ -337,7 +337,7 @@ function ProfileSelector({
               {p.name.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-semibold truncate" style={{ color: selectedId === p.id ? "#e2e8f0" : "#94a3b8" }}>
+              <p className="text-[13px] font-semibold truncate" style={{ color: selectedId === p.id ? "#e2e8f0" : "#94a3b8" }}>
                 {p.name}
               </p>
               <p className="text-[13px] truncate" style={{ color: "#334155" }}>
@@ -419,7 +419,7 @@ function AspectRow({ aspect, nameA, nameB }: {
     >
       {/* Person A planet */}
       <div className="flex items-center gap-1 min-w-[64px]">
-        <span className="text-sm" style={{ color: colorA }}>{PLANET_SYMBOLS[aspect.personAplanet]}</span>
+        <span className="text-[14px]" style={{ color: colorA }}>{PLANET_SYMBOLS[aspect.personAplanet]}</span>
         <span className="text-[13px] font-medium" style={{ color: colorA }}>
           {aspect.personAplanet.substring(0, 3)}
         </span>
@@ -437,7 +437,7 @@ function AspectRow({ aspect, nameA, nameB }: {
 
       {/* Person B planet */}
       <div className="flex items-center gap-1 min-w-[64px]">
-        <span className="text-sm" style={{ color: colorB }}>{PLANET_SYMBOLS[aspect.personBplanet]}</span>
+        <span className="text-[14px]" style={{ color: colorB }}>{PLANET_SYMBOLS[aspect.personBplanet]}</span>
         <span className="text-[13px] font-medium" style={{ color: colorB }}>
           {aspect.personBplanet.substring(0, 3)}
         </span>
@@ -766,14 +766,14 @@ export default function CompatibilityPage() {
             <h2 className="text-base font-bold font-title mb-2" style={{ color: "#e2e8f0" }}>
               Add a second profile to compare
             </h2>
-            <p className="text-sm max-w-xs mx-auto" style={{ color: "#475569" }}>
+            <p className="text-[14px] max-w-xs mx-auto" style={{ color: "#475569" }}>
               Synastry requires two birth charts. Create a second profile for the person you&apos;d like to compare with.
             </p>
           </div>
           <Link href="/onboarding">
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-              className="px-6 py-3 rounded-xl text-sm font-bold tracking-wider cursor-pointer"
+              className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
               style={{ background: "linear-gradient(135deg, #f472b6, #7c3aed)", color: "white" }}
             >
               + Add Profile
@@ -809,7 +809,7 @@ export default function CompatibilityPage() {
             <Link href="/dashboard">
               <motion.button
                 whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1.5 text-xs font-medium cursor-pointer"
+                className="flex items-center gap-1.5 text-[13px] font-medium cursor-pointer"
                 style={{ color: "#64748b" }}
               >
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -819,7 +819,7 @@ export default function CompatibilityPage() {
               </motion.button>
             </Link>
             <span style={{ color: "#1e293b" }}>/</span>
-            <span className="text-xs font-bold tracking-widest" style={{ background: "linear-gradient(135deg, #f472b6, #a855f7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <span className="text-[13px] font-bold tracking-widest" style={{ background: "linear-gradient(135deg, #f472b6, #a855f7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               SYNASTRY
             </span>
           </div>
@@ -907,7 +907,7 @@ export default function CompatibilityPage() {
                   animate={{ opacity: 1 }}
                   className="text-center py-10"
                 >
-                  <p className="text-sm" style={{ color: "#475569" }}>
+                  <p className="text-[14px]" style={{ color: "#475569" }}>
                     Missing chart data for one or more profiles.
                     <br />
                     <span className="text-[13px]">Charts are generated during onboarding. Try re-entering that profile.</span>
@@ -923,7 +923,7 @@ export default function CompatibilityPage() {
                   animate={{ opacity: 1 }}
                   className="text-center py-10"
                 >
-                  <p className="text-sm" style={{ color: "#475569" }}>Select Person B above to begin</p>
+                  <p className="text-[14px]" style={{ color: "#475569" }}>Select Person B above to begin</p>
                 </motion.div>
               )}
 
@@ -955,7 +955,7 @@ export default function CompatibilityPage() {
                           <h3 className="text-lg font-bold font-title mb-1" style={{ color: "#e2e8f0" }}>
                             {profileA.name} & {profileB.name}
                           </h3>
-                          <p className="text-xs mb-3" style={{ color: "#475569" }}>
+                          <p className="text-[13px] mb-3" style={{ color: "#475569" }}>
                             {score.total >= 75
                               ? "Strong cosmic resonance — multiple harmonious connections"
                               : score.total >= 55
@@ -965,15 +965,15 @@ export default function CompatibilityPage() {
                           <div className="flex gap-4">
                             <div>
                               <p className="text-[14px] tracking-widest mb-0.5" style={{ color: "#334155" }}>HARMONIOUS</p>
-                              <p className="text-sm font-bold" style={{ color: "#22c55e" }}>{harmoniousAspects.length} aspects</p>
+                              <p className="text-[14px] font-bold" style={{ color: "#22c55e" }}>{harmoniousAspects.length} aspects</p>
                             </div>
                             <div>
                               <p className="text-[14px] tracking-widest mb-0.5" style={{ color: "#334155" }}>CHALLENGING</p>
-                              <p className="text-sm font-bold" style={{ color: "#f59e0b" }}>{challengingAspects.length} aspects</p>
+                              <p className="text-[14px] font-bold" style={{ color: "#f59e0b" }}>{challengingAspects.length} aspects</p>
                             </div>
                             <div>
                               <p className="text-[14px] tracking-widest mb-0.5" style={{ color: "#334155" }}>TOTAL</p>
-                              <p className="text-sm font-bold" style={{ color: "#94a3b8" }}>{synastry.length} aspects</p>
+                              <p className="text-[14px] font-bold" style={{ color: "#94a3b8" }}>{synastry.length} aspects</p>
                             </div>
                           </div>
                         </div>
@@ -994,7 +994,7 @@ export default function CompatibilityPage() {
                           >✦</div>
                           <div>
                             <p className="text-[14px] font-bold tracking-widest mb-0.5" style={{ color: archetype.color }}>RELATIONSHIP ARCHETYPE</p>
-                            <p className="text-sm font-bold" style={{ color: "#e2e8f0" }}>{archetype.name}</p>
+                            <p className="text-[14px] font-bold" style={{ color: "#e2e8f0" }}>{archetype.name}</p>
                             <p className="text-[14px] mt-0.5 leading-relaxed" style={{ color: "#64748b" }}>{archetype.description}</p>
                           </div>
                         </motion.div>
@@ -1145,7 +1145,7 @@ export default function CompatibilityPage() {
                         <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#06b6d4" }}>
                           PLANET HOUSE OVERLAYS
                         </p>
-                        <p className="text-xs" style={{ color: "#334155" }}>
+                        <p className="text-[13px]" style={{ color: "#334155" }}>
                           Where each person&apos;s planets activate the other&apos;s houses
                         </p>
                       </div>
@@ -1240,11 +1240,11 @@ export default function CompatibilityPage() {
                               style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}
                             >
                               <div className="flex items-center gap-1.5">
-                                <span className="text-sm" style={{ color }}>{PLANET_SYMBOLS[cp.name]}</span>
+                                <span className="text-[14px]" style={{ color }}>{PLANET_SYMBOLS[cp.name]}</span>
                                 <span className="text-[13px] font-medium" style={{ color }}>{cp.name}</span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <span className="text-sm" style={{ color: signColor }}>{SIGN_SYMBOLS[cp.sign]}</span>
+                                <span className="text-[14px]" style={{ color: signColor }}>{SIGN_SYMBOLS[cp.sign]}</span>
                                 <span className="text-[13px]" style={{ color: signColor }}>{cp.sign.substring(0, 3)}</span>
                               </div>
                               <p className="text-[13px]" style={{ color: "#475569" }}>{cp.signDegree.toFixed(1)}°</p>
@@ -1264,7 +1264,7 @@ export default function CompatibilityPage() {
                             style={{ background: "rgba(244,114,182,0.05)", border: "1px solid rgba(244,114,182,0.15)" }}>
                             <div>
                               <p className="text-[14px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>COMPOSITE SUN</p>
-                              <p className="text-sm font-bold" style={{ color: "#fbbf24" }}>
+                              <p className="text-[14px] font-bold" style={{ color: "#fbbf24" }}>
                                 {SIGN_SYMBOLS[compSun.sign]} {compSun.sign}
                               </p>
                               <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
@@ -1274,7 +1274,7 @@ export default function CompatibilityPage() {
                             </div>
                             <div>
                               <p className="text-[14px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>COMPOSITE MOON</p>
-                              <p className="text-sm font-bold" style={{ color: "#c4b5fd" }}>
+                              <p className="text-[14px] font-bold" style={{ color: "#c4b5fd" }}>
                                 {SIGN_SYMBOLS[compMoon.sign]} {compMoon.sign}
                               </p>
                               <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>

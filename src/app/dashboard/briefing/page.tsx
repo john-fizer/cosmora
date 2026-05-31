@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -299,12 +299,12 @@ Be specific, poetic but grounded. Max 200 words total. Avoid generic phrases.`;
               className="w-3 h-3 rounded-full border border-t-transparent flex-shrink-0"
               style={{ borderColor: "#f59e0b" }}
             />
-            <span className="text-sm" style={{ color: "#475569" }}>Reading the sky for {profile.name}…</span>
+            <span className="text-[14px]" style={{ color: "#475569" }}>Reading the sky for {profile.name}…</span>
           </div>
         ) : (
           <div className="space-y-4">
             {text.split("\n\n").filter(Boolean).map((para, i) => (
-              <p key={i} className="text-sm leading-relaxed" style={{ color: "#94a3b8" }}>
+              <p key={i} className="text-[16px] leading-relaxed" style={{ color: "#94a3b8" }}>
                 {para}
                 {streaming && i === text.split("\n\n").filter(Boolean).length - 1 && (
                   <motion.span
@@ -439,7 +439,7 @@ function PlanetaryHoursPanel({ lat }: { lat: number }) {
                   opacity: isPast ? 0.35 : 1,
                 }}
               >
-                <span className="text-sm w-5 text-center flex-shrink-0" style={{ color }}>{PLANET_SYMBOLS[h.planet]}</span>
+                <span className="text-[14px] w-5 text-center flex-shrink-0" style={{ color }}>{PLANET_SYMBOLS[h.planet]}</span>
                 <div className="flex-1 min-w-0">
                   <span className="text-[14px] font-medium" style={{ color: isCurrent ? color : "#64748b" }}>
                     {h.planet}
@@ -470,7 +470,7 @@ function TransitSnapshot({ aspects, warpTo }: { aspects: TransitAspect[]; warpTo
     .slice(0, 6);
 
   if (top.length === 0) {
-    return <p className="text-xs" style={{ color: "#334155" }}>No close applying transits.</p>;
+    return <p className="text-[13px]" style={{ color: "#334155" }}>No close applying transits.</p>;
   }
 
   return (
@@ -499,7 +499,7 @@ function TransitSnapshot({ aspects, warpTo }: { aspects: TransitAspect[]; warpTo
             <span className="text-base flex-shrink-0" style={{ color: nColor }}>{PLANET_SYMBOLS[asp.natalPlanet]}</span>
 
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium truncate" style={{ color: "#94a3b8" }}>
+              <p className="text-[13px] font-medium truncate" style={{ color: "#94a3b8" }}>
                 {asp.transitPlanet}{asp.transitRetrograde ? " ℞" : ""} {asp.type} natal {asp.natalPlanet}
               </p>
               <p className="text-[13px]" style={{ color: "#475569" }}>
@@ -514,7 +514,7 @@ function TransitSnapshot({ aspects, warpTo }: { aspects: TransitAspect[]; warpTo
                 </span>
               ) : days !== null ? (
                 <div>
-                  <span className="text-sm font-bold" style={{ color: "#22c55e" }}>{days}</span>
+                  <span className="text-[14px] font-bold" style={{ color: "#22c55e" }}>{days}</span>
                   <span className="text-[13px] ml-0.5" style={{ color: "#334155" }}>d</span>
                 </div>
               ) : null}
@@ -530,7 +530,7 @@ function TransitSnapshot({ aspects, warpTo }: { aspects: TransitAspect[]; warpTo
 
 function IngressBadges({ ingresses }: { ingresses: Ingress[] }) {
   const near = ingresses.filter(i => i.daysUntil <= 30).slice(0, 4);
-  if (near.length === 0) return <p className="text-xs" style={{ color: "#334155" }}>No ingresses in 30 days.</p>;
+  if (near.length === 0) return <p className="text-[13px]" style={{ color: "#334155" }}>No ingresses in 30 days.</p>;
   return (
     <div className="flex flex-wrap gap-2">
       {near.map((ing, i) => {
@@ -545,9 +545,9 @@ function IngressBadges({ ingresses }: { ingresses: Ingress[] }) {
             className="flex items-center gap-2 px-3 py-2 rounded-xl"
             style={{ background: `${pColor}0d`, border: `1px solid ${pColor}20` }}
           >
-            <span className="text-sm" style={{ color: pColor }}>{PLANET_SYMBOLS[ing.planet as PlanetName]}</span>
+            <span className="text-[14px]" style={{ color: pColor }}>{PLANET_SYMBOLS[ing.planet as PlanetName]}</span>
             <span className="text-[13px]" style={{ color: "#475569" }}>→</span>
-            <span className="text-sm" style={{ color: sColor }}>{SIGN_SYMBOLS[ing.toSign]}</span>
+            <span className="text-[14px]" style={{ color: sColor }}>{SIGN_SYMBOLS[ing.toSign]}</span>
             <div>
               <p className="text-[13px] font-bold" style={{ color: pColor }}>
                 {ing.planet}{ing.retrograde ? " ℞" : ""} → {ing.toSign}
@@ -628,7 +628,7 @@ function WeekForecast({ now, moonLon, ingresses, warpTo }: {
 
               {/* Date number */}
               <span
-                className="text-xs font-bold"
+                className="text-[13px] font-bold"
                 style={{ color: day.isToday ? "#e2e8f0" : "#475569" }}
               >
                 {day.date.getDate()}
@@ -643,11 +643,11 @@ function WeekForecast({ now, moonLon, ingresses, warpTo }: {
                   boxShadow: day.isToday ? `0 0 10px ${rulerColor}30` : "none",
                 }}
               >
-                <span className="text-sm" style={{ color: rulerColor }}>{PLANET_SYMBOLS[day.dayRuler]}</span>
+                <span className="text-[14px]" style={{ color: rulerColor }}>{PLANET_SYMBOLS[day.dayRuler]}</span>
               </div>
 
               {/* Moon sign */}
-              <span className="text-sm" style={{ color: moonColor }} title={`Moon in ${day.moonSign}`}>
+              <span className="text-[14px]" style={{ color: moonColor }} title={`Moon in ${day.moonSign}`}>
                 {SIGN_SYMBOLS[day.moonSign]}
               </span>
 
@@ -683,7 +683,7 @@ function WeekForecast({ now, moonLon, ingresses, warpTo }: {
           <span className="text-[14px]" style={{ color: "#334155" }}>Day ruler</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-sm" style={{ color: "#c4b5fd" }}>♈</span>
+          <span className="text-[14px]" style={{ color: "#c4b5fd" }}>♈</span>
           <span className="text-[14px]" style={{ color: "#334155" }}>Moon sign (approx)</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -752,7 +752,7 @@ function DignityLeaderboard({ chart }: { chart: ChartData }) {
         <div className="flex items-center gap-2">
           <span className="text-[13px]" style={{ color: "#334155" }}>CHART SCORE</span>
           <span
-            className="text-sm font-bold px-2 py-0.5 rounded-lg"
+            className="text-[14px] font-bold px-2 py-0.5 rounded-lg"
             style={{ background: `${strengthColor}15`, color: strengthColor, border: `1px solid ${strengthColor}30` }}
           >
             {chartStrength > 0 ? "+" : ""}{chartStrength} · {strengthLabel}
@@ -932,12 +932,12 @@ export default function BriefingPage() {
           <div className="text-center">
             <p className="text-[14px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
             <h2 className="text-2xl font-bold mb-3" style={{ fontFamily: "Space Grotesk, sans-serif", color: "#e2e8f0" }}>Cosmic instruments standing by.</h2>
-            <p className="text-sm max-w-xs mx-auto" style={{ color: "#475569" }}>Enter your birth data to unlock your daily briefing and all its cosmic layers.</p>
+            <p className="text-[15px] max-w-xs mx-auto" style={{ color: "#475569" }}>Enter your birth data to unlock your daily briefing and all its cosmic layers.</p>
           </div>
           <Link href="/onboarding">
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-              className="px-6 py-3 rounded-xl text-sm font-bold tracking-wider cursor-pointer"
+              className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
               style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
             >
               Begin Your Chart →
@@ -973,7 +973,7 @@ export default function BriefingPage() {
             <Link href="/dashboard">
               <motion.button
                 whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1.5 text-xs font-medium cursor-pointer"
+                className="flex items-center gap-1.5 text-[13px] font-medium cursor-pointer"
                 style={{ color: "#64748b" }}
               >
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -983,14 +983,14 @@ export default function BriefingPage() {
               </motion.button>
             </Link>
             <span style={{ color: "#1e293b" }}>/</span>
-            <span className="text-xs font-bold tracking-widest" style={{ background: "linear-gradient(135deg, #f59e0b, #fbbf24)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <span className="text-[13px] font-bold tracking-widest" style={{ background: "linear-gradient(135deg, #f59e0b, #fbbf24)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               DAILY BRIEFING
             </span>
           </div>
 
           {/* Live clock */}
           <div className="text-right hidden md:block">
-            <p className="text-xs font-mono font-bold tabular-nums" style={{ color: "#475569" }}>{timeStr}</p>
+            <p className="text-[13px] font-mono font-bold tabular-nums" style={{ color: "#475569" }}>{timeStr}</p>
             <p className="text-[13px] tracking-widest" style={{ color: "#1e293b" }}>{dayName.toUpperCase()} · {dateStr.toUpperCase()}</p>
           </div>
         </motion.div>
@@ -1004,7 +1004,7 @@ export default function BriefingPage() {
               className="w-10 h-10 rounded-full border-2 border-t-transparent"
               style={{ borderColor: "#f59e0b" }}
             />
-            <p className="text-xs tracking-widest" style={{ color: "#475569" }}>READING THE SKY</p>
+            <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>READING THE SKY</p>
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
@@ -1027,7 +1027,7 @@ export default function BriefingPage() {
                   >
                     <MoonOrb angle={moonPhase.angle} size={72} />
                     <div className="text-center">
-                      <p className="text-sm font-bold" style={{ color: "#c4b5fd" }}>{moonPhase.name}</p>
+                      <p className="text-[14px] font-bold" style={{ color: "#c4b5fd" }}>{moonPhase.name}</p>
                       <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
                         {moonPhase.illumination.toFixed(0)}% illuminated
                       </p>
@@ -1073,7 +1073,7 @@ export default function BriefingPage() {
                       <div className="flex items-start gap-4 flex-wrap">
                         <div>
                           <p className="text-[13px] tracking-widest mb-1" style={{ color: "#334155" }}>PROFECTION YEAR</p>
-                          <p className="text-sm font-bold" style={{ color: "#a78bfa" }}>
+                          <p className="text-[14px] font-bold" style={{ color: "#a78bfa" }}>
                             Age {chart.annualProfection.age} · House {chart.annualProfection.activatedHouse}
                           </p>
                           <p className="text-[13px]" style={{ color: "#64748b" }}>
@@ -1082,14 +1082,14 @@ export default function BriefingPage() {
                         </div>
                         <div>
                           <p className="text-[13px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
-                          <p className="text-sm font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
+                          <p className="text-[14px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
                             {chart.sect === "day" ? "☀ Day Chart" : "☽ Night Chart"}
                           </p>
                         </div>
                         {sun && (
                           <div>
                             <p className="text-[13px] tracking-widest mb-1" style={{ color: "#334155" }}>SUN NOW</p>
-                            <p className="text-sm font-bold" style={{ color: "#fbbf24" }}>
+                            <p className="text-[14px] font-bold" style={{ color: "#fbbf24" }}>
                               ☉ {SIGN_SYMBOLS[sun.sign]} {sun.sign}
                             </p>
                           </div>
@@ -1110,7 +1110,7 @@ export default function BriefingPage() {
                                 className="flex items-center gap-1.5 px-2 py-1 rounded-lg"
                                 style={{ background: `${color}10`, border: `1px solid ${color}20` }}
                               >
-                                <span className="text-sm" style={{ color }}>{PLANET_SYMBOLS[p.name as PlanetName]}</span>
+                                <span className="text-[14px]" style={{ color }}>{PLANET_SYMBOLS[p.name as PlanetName]}</span>
                                 <span className="text-[13px]" style={{ color: SIGN_COLORS[p.sign] }}>{SIGN_SYMBOLS[p.sign]}</span>
                                 {p.retrograde && <span className="text-[14px]" style={{ color: "#f97316" }}>℞</span>}
                               </div>
@@ -1196,7 +1196,7 @@ export default function BriefingPage() {
                         style={{ background: `${item.color}0d`, border: `1px solid ${item.color}20` }}
                       >
                         <span className="text-lg" style={{ color: item.color }}>{item.icon}</span>
-                        <span className="text-xs font-semibold" style={{ color: "#94a3b8" }}>{item.label}</span>
+                        <span className="text-[13px] font-semibold" style={{ color: "#94a3b8" }}>{item.label}</span>
                       </motion.div>
                     </Link>
                   ))}

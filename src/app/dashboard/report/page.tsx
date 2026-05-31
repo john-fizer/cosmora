@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -273,7 +273,7 @@ function SectionBlock({
           >
             {section.label}
           </p>
-          <p className="text-sm font-light" style={{ color: "rgba(100,116,139,0.8)" }}>
+          <p className="text-[14px] font-light" style={{ color: "rgba(100,116,139,0.8)" }}>
             {section.subtitle}
           </p>
         </div>
@@ -302,7 +302,7 @@ function SectionBlock({
       <div className="pb-10">
         {section.content ? (
           <motion.p
-            className="text-sm leading-[1.9] whitespace-pre-wrap"
+            className="text-[17px] leading-[1.9] whitespace-pre-wrap"
             style={{ color: "#94a3b8" }}
           >
             {section.content}
@@ -385,7 +385,7 @@ function ReportLanding({
         <h1 className="text-3xl font-light tracking-wide" style={{ color: "#e2e8f0" }}>
           {profileName ? `${profileName}'s Natal Report` : "Your Natal Report"}
         </h1>
-        <p className="text-sm max-w-md leading-relaxed" style={{ color: "#475569" }}>
+        <p className="text-[16px] max-w-md leading-relaxed" style={{ color: "#475569" }}>
           An 8-chapter AI interpretation of your birth chart — streaming one section at a time, from cosmic identity to outer planet signature.
         </p>
       </div>
@@ -406,10 +406,10 @@ function ReportLanding({
                 border: `1px solid ${item.color}25`,
               }}
             >
-              <span className="text-xs" style={{ color: item.color }}>{item.glyph}</span>
+              <span className="text-[13px]" style={{ color: item.color }}>{item.glyph}</span>
               <div>
                 <p className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>{item.label}</p>
-                <p className="text-xs font-medium" style={{ color: item.color }}>{item.value}</p>
+                <p className="text-[13px] font-medium" style={{ color: item.color }}>{item.value}</p>
               </div>
             </div>
           ))}
@@ -444,7 +444,7 @@ function ReportLanding({
 
       {/* CTA */}
       {!chart ? (
-        <p className="text-sm" style={{ color: "#334155" }}>
+        <p className="text-[14px]" style={{ color: "#334155" }}>
           Complete your birth data in{" "}
           <Link href="/dashboard/settings" className="underline" style={{ color: "#a78bfa" }}>
             Settings
@@ -456,7 +456,7 @@ function ReportLanding({
           whileHover={{ scale: 1.04, boxShadow: "0 0 40px rgba(168,85,247,0.35)" }}
           whileTap={{ scale: 0.97 }}
           onClick={onGenerate}
-          className="px-10 py-4 rounded-2xl text-sm font-bold tracking-widest cursor-pointer"
+          className="px-10 py-4 rounded-2xl text-[14px] font-bold tracking-widest cursor-pointer"
           style={{
             background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(6,182,212,0.3))",
             border: "1px solid rgba(168,85,247,0.4)",
@@ -580,7 +580,7 @@ export default function ReportPage() {
             <Link href="/dashboard">
               <motion.button
                 whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1.5 text-xs font-medium cursor-pointer"
+                className="flex items-center gap-1.5 text-[13px] font-medium cursor-pointer"
                 style={{ color: "#64748b" }}
               >
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -590,7 +590,7 @@ export default function ReportPage() {
               </motion.button>
             </Link>
             <span style={{ color: "#1e293b" }}>/</span>
-            <span className="text-xs font-bold tracking-widest gradient-text">NATAL REPORT</span>
+            <span className="text-[13px] font-bold tracking-widest gradient-text">NATAL REPORT</span>
           </div>
 
           {/* Progress + actions */}
@@ -782,7 +782,7 @@ export default function ReportPage() {
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.15 }}
-                      className="text-xs"
+                      className="text-[13px]"
                       style={{ color: "#334155" }}
                     >
                       {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
@@ -833,7 +833,7 @@ export default function ReportPage() {
                           whileHover={{ scale: 1.04 }}
                           whileTap={{ scale: 0.97 }}
                           onClick={copyReport}
-                          className="px-5 py-2.5 rounded-xl text-xs font-bold tracking-wider cursor-pointer"
+                          className="px-5 py-2.5 rounded-xl text-[13px] font-bold tracking-wider cursor-pointer"
                           style={{
                             background: "rgba(168,85,247,0.12)",
                             border: "1px solid rgba(168,85,247,0.25)",
@@ -846,7 +846,7 @@ export default function ReportPage() {
                           <motion.button
                             whileHover={{ scale: 1.04 }}
                             whileTap={{ scale: 0.97 }}
-                            className="px-5 py-2.5 rounded-xl text-xs font-bold tracking-wider cursor-pointer"
+                            className="px-5 py-2.5 rounded-xl text-[13px] font-bold tracking-wider cursor-pointer"
                             style={{
                               background: "rgba(6,182,212,0.08)",
                               border: "1px solid rgba(6,182,212,0.2)",
@@ -860,7 +860,7 @@ export default function ReportPage() {
                           whileHover={{ scale: 1.04 }}
                           whileTap={{ scale: 0.97 }}
                           onClick={generateReport}
-                          className="px-5 py-2.5 rounded-xl text-xs font-bold tracking-wider cursor-pointer"
+                          className="px-5 py-2.5 rounded-xl text-[13px] font-bold tracking-wider cursor-pointer"
                           style={{
                             background: "rgba(255,255,255,0.03)",
                             border: "1px solid rgba(255,255,255,0.07)",

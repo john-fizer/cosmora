@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -273,7 +273,7 @@ export default function OracleMemoriesPage() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search memories…"
-                className="w-full max-w-md text-xs px-4 py-2 rounded-xl outline-none"
+                className="w-full max-w-md text-[13px] px-4 py-2 rounded-xl outline-none"
                 style={{
                   background: "rgba(255,255,255,0.03)",
                   border: "1px solid rgba(124,58,237,0.15)",

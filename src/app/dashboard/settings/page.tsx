@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -79,7 +79,7 @@ function OptionButton({
         {selected && <div className="w-1.5 h-1.5 rounded-full bg-violet-400" />}
       </div>
       <div>
-        <p className="text-xs font-semibold" style={{ color: selected ? "#c4b5fd" : "#94a3b8" }}>{label}</p>
+        <p className="text-[13px] font-semibold" style={{ color: selected ? "#c4b5fd" : "#94a3b8" }}>{label}</p>
         {desc && <p className="text-[13px]" style={{ color: "#334155" }}>{desc}</p>}
       </div>
     </motion.button>
@@ -119,7 +119,7 @@ function ProfileCard({
       <div className="flex items-start gap-3">
         {/* Avatar */}
         <div
-          className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center text-sm font-bold"
+          className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center text-[14px] font-bold"
           style={{
             background: isActive
               ? "linear-gradient(135deg, rgba(124,58,237,0.4), rgba(6,182,212,0.3))"
@@ -134,7 +134,7 @@ function ProfileCard({
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-sm font-bold" style={{ color: isActive ? "#e2e8f0" : "#94a3b8" }}>
+            <p className="text-[14px] font-bold" style={{ color: isActive ? "#e2e8f0" : "#94a3b8" }}>
               {profile.name}
             </p>
             {isActive && (
@@ -285,7 +285,7 @@ function EditPanel({
     >
       <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="text-xs font-bold" style={{ color: "#e2e8f0" }}>Editing: {profile.name}</p>
+          <p className="text-[13px] font-bold" style={{ color: "#e2e8f0" }}>Editing: {profile.name}</p>
           <p className="text-[14px]" style={{ color: "#475569" }}>{profile.birthDate} · {profile.birthPlace}</p>
         </div>
         <motion.button
@@ -359,7 +359,7 @@ function EditPanel({
         </div>
 
         {error && (
-          <p className="text-xs px-3 py-2 rounded-lg" style={{ background: "rgba(239,68,68,0.1)", color: "#f87171", border: "1px solid rgba(239,68,68,0.2)" }}>
+          <p className="text-[13px] px-3 py-2 rounded-lg" style={{ background: "rgba(239,68,68,0.1)", color: "#f87171", border: "1px solid rgba(239,68,68,0.2)" }}>
             {error}
           </p>
         )}
@@ -369,7 +369,7 @@ function EditPanel({
           whileTap={{ scale: 0.97 }}
           onClick={handleSave}
           disabled={saving}
-          className="w-full py-3 rounded-xl text-sm font-bold tracking-wider cursor-pointer disabled:opacity-50"
+          className="w-full py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer disabled:opacity-50"
           style={{
             background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
             color: "white",
@@ -389,7 +389,7 @@ function ClearAllButton({ onConfirm }: { onConfirm: () => void }) {
   const [confirm, setConfirm] = useState(false);
   return confirm ? (
     <div className="flex items-center gap-2 px-4 py-3 rounded-xl" style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)" }}>
-      <p className="flex-1 text-xs" style={{ color: "#f87171" }}>This wipes all profiles, charts, and chat history from this device. Cannot be undone.</p>
+      <p className="flex-1 text-[13px]" style={{ color: "#f87171" }}>This wipes all profiles, charts, and chat history from this device. Cannot be undone.</p>
       <div className="flex gap-2 flex-shrink-0">
         <motion.button whileTap={{ scale: 0.95 }} onClick={onConfirm}
           className="text-[13px] font-bold px-2.5 py-1 rounded-lg cursor-pointer"
@@ -412,7 +412,7 @@ function ClearAllButton({ onConfirm }: { onConfirm: () => void }) {
         <path d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" />
       </svg>
       <div>
-        <p className="text-xs font-semibold" style={{ color: "#f87171" }}>Clear All Data</p>
+        <p className="text-[13px] font-semibold" style={{ color: "#f87171" }}>Clear All Data</p>
         <p className="text-[13px]" style={{ color: "#334155" }}>Permanently wipes all profiles, charts, and chat history from this device.</p>
       </div>
     </motion.button>
@@ -604,7 +604,7 @@ export default function SettingsPage() {
             <Link href="/dashboard">
               <motion.button
                 whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1.5 text-xs font-medium cursor-pointer"
+                className="flex items-center gap-1.5 text-[13px] font-medium cursor-pointer"
                 style={{ color: "#64748b" }}
               >
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -614,7 +614,7 @@ export default function SettingsPage() {
               </motion.button>
             </Link>
             <span style={{ color: "#1e293b" }}>/</span>
-            <span className="text-xs font-bold tracking-widest gradient-text">SETTINGS</span>
+            <span className="text-[13px] font-bold tracking-widest gradient-text">SETTINGS</span>
           </div>
 
           <Link href="/onboarding">
@@ -652,11 +652,11 @@ export default function SettingsPage() {
 
               {!loading && profiles.length === 0 && (
                 <div className="text-center py-10">
-                  <p className="text-sm mb-4" style={{ color: "#475569" }}>No profiles yet</p>
+                  <p className="text-[14px] mb-4" style={{ color: "#475569" }}>No profiles yet</p>
                   <Link href="/onboarding">
                     <motion.button
                       whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-                      className="px-6 py-3 rounded-xl text-sm font-bold tracking-wider cursor-pointer"
+                      className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
                       style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white" }}
                     >
                       Create First Profile →
@@ -722,7 +722,7 @@ export default function SettingsPage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-bold" style={{ color: "#e2e8f0" }}>Cosmora</p>
+                    <p className="text-[14px] font-bold" style={{ color: "#e2e8f0" }}>Cosmora</p>
                     <p className="text-[14px]" style={{ color: "#334155" }}>
                       Precision astrology · Hellenistic foundations
                     </p>
@@ -805,7 +805,7 @@ export default function SettingsPage() {
                     <path d="M3 3h7a1 1 0 011 1v2M3 3v14a1 1 0 001 1h6M3 3l14 7-14 7" />
                   </svg>
                   <div>
-                    <p className="text-xs font-semibold" style={{ color: "#94a3b8" }}>Switch Profile / Sign Out</p>
+                    <p className="text-[13px] font-semibold" style={{ color: "#94a3b8" }}>Switch Profile / Sign Out</p>
                     <p className="text-[13px]" style={{ color: "#334155" }}>Returns to onboarding. Your profiles stay saved on this device.</p>
                   </div>
                 </motion.button>
@@ -828,7 +828,7 @@ export default function SettingsPage() {
             className="fixed bottom-24 md:bottom-6 left-1/2 z-[100]"
           >
             <div
-              className="px-4 py-2.5 rounded-xl text-xs font-medium"
+              className="px-4 py-2.5 rounded-xl text-[13px] font-medium"
               style={{
                 background: "rgba(4,4,28,0.95)",
                 border: "1px solid rgba(124,58,237,0.3)",

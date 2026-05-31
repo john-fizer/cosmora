@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -226,7 +226,7 @@ function SaveMemoryPanel({
       }}
     >
       {saved ? (
-        <p className="text-center text-xs" style={{ color: "#22c55e", padding: "8px 0" }}>✓ Saved to Oracle Memory</p>
+        <p className="text-center text-[13px]" style={{ color: "#22c55e", padding: "8px 0" }}>✓ Saved to Oracle Memory</p>
       ) : (
         <>
           <p className="text-[13px] tracking-widest mb-2" style={{ color: "#475569" }}>SAVE TO MEMORY</p>
@@ -235,7 +235,7 @@ function SaveMemoryPanel({
             onChange={e => setTitle(e.target.value)}
             maxLength={80}
             placeholder="Memory title…"
-            className="w-full text-xs mb-3 px-3 py-2 rounded-lg outline-none"
+            className="w-full text-[13px] mb-3 px-3 py-2 rounded-lg outline-none"
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(124,58,237,0.2)", color: "#e2d9f3" }}
           />
           <div className="flex flex-wrap gap-1.5 mb-3">
@@ -297,7 +297,7 @@ function OracleBubble({ message, isStreaming, voicePlanet, chartAspects, autoPla
       )}
       <div className="flex flex-col gap-0">
         <div
-          className="relative max-w-lg px-4 py-3 rounded-2xl text-sm leading-relaxed"
+          className="relative max-w-lg px-4 py-3 rounded-2xl text-[14px] leading-relaxed"
           style={isOracle ? {
             background: "rgba(4,4,28,0.9)",
             border: "1px solid rgba(124,58,237,0.25)",
@@ -929,7 +929,7 @@ export default function OraclePage() {
           <div className="flex items-center gap-3">
             <Link href="/dashboard">
               <motion.button whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "#64748b" }}>
+                className="flex items-center gap-1.5 text-[13px] font-medium cursor-pointer" style={{ color: "#64748b" }}>
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
                   <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
                 </svg>
@@ -937,8 +937,8 @@ export default function OraclePage() {
               </motion.button>
             </Link>
             <span style={{ color: "#1e293b" }}>/</span>
-            <span className="text-xs font-bold tracking-widest gradient-text">AI ORACLE</span>
-            {profileName && <><span style={{ color: "#1e293b" }}>/</span><span className="text-xs font-medium" style={{ color: "#64748b" }}>{profileName}</span></>}
+            <span className="text-[13px] font-bold tracking-widest gradient-text">AI ORACLE</span>
+            {profileName && <><span style={{ color: "#1e293b" }}>/</span><span className="text-[13px] font-medium" style={{ color: "#64748b" }}>{profileName}</span></>}
           </div>
           <Link href="/dashboard/oracle/memories">
             <motion.button
@@ -1043,7 +1043,7 @@ export default function OraclePage() {
               <motion.div whileHover={{ scale: 1.02, borderColor: "rgba(196,181,253,0.3)" }}
                 className="w-full py-2.5 px-3 rounded-xl flex items-center gap-2 cursor-pointer"
                 style={{ background: "rgba(168,85,247,0.06)", border: "1px solid rgba(168,85,247,0.15)" }}>
-                <span className="text-xs" style={{ color: "#c4b5fd" }}>✦</span>
+                <span className="text-[13px]" style={{ color: "#c4b5fd" }}>✦</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-[13px] font-bold tracking-widest" style={{ color: "#c4b5fd" }}>NATAL REPORT</p>
                   <p className="text-[13px]" style={{ color: "#334155" }}>Full AI chart interpretation</p>
@@ -1092,14 +1092,14 @@ export default function OraclePage() {
                   className="h-full flex flex-col items-center justify-center text-center gap-4">
                   <div className="md:hidden mb-4"><LiquidMetalOrb state={orbState} size={160} /></div>
                   <p className="text-2xl font-light" style={{ color: "#475569" }}>The cosmos awaits.</p>
-                  <p className="text-sm max-w-sm" style={{ color: "#64748b" }}>
+                  <p className="text-[14px] max-w-sm" style={{ color: "#64748b" }}>
                     Ask the Oracle anything about your chart, transits, or the cosmic forces shaping your path.
                   </p>
                   <div className="flex flex-wrap justify-center gap-2 mt-2">
                     {chart && (
                       <motion.button initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
                         whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} onClick={sendDailyBriefing}
-                        className="px-5 py-2.5 rounded-xl text-xs font-bold tracking-wider cursor-pointer"
+                        className="px-5 py-2.5 rounded-xl text-[13px] font-bold tracking-wider cursor-pointer"
                         style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.25), rgba(6,182,212,0.25))", border: "1px solid rgba(124,58,237,0.4)", color: "#a78bfa" }}>
                         ✦ Get Today&apos;s Cosmic Briefing
                       </motion.button>
@@ -1109,7 +1109,7 @@ export default function OraclePage() {
                         transition={{ delay: 0.55 + i * 0.08 }}
                         whileHover={{ scale: 1.03, borderColor: "rgba(168,85,247,0.5)" }} whileTap={{ scale: 0.97 }}
                         onClick={() => sendMessage(p)}
-                        className="px-4 py-2 rounded-xl text-xs cursor-pointer transition-all duration-200"
+                        className="px-4 py-2 rounded-xl text-[13px] cursor-pointer transition-all duration-200"
                         style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)", color: "#7c3aed" }}>
                         {p}
                       </motion.button>
@@ -1229,7 +1229,7 @@ export default function OraclePage() {
                   onKeyDown={e => e.key === "Enter" && (dualMode ? sendDualMessage() : sendMessage())}
                   placeholder={dualMode ? "Ask both oracles — consensus awaits…" : chart ? "Ask the Oracle about your chart…" : "Ask the Oracle anything…"}
                   disabled={orbState !== "idle"}
-                  className="flex-1 bg-transparent text-sm outline-none disabled:opacity-40"
+                  className="flex-1 bg-transparent text-[14px] outline-none disabled:opacity-40"
                   style={{ color: "#e2e8f0", fontFamily: "'DM Sans', sans-serif" }} />
                 <AnimatePresence mode="wait">
                   {orbState !== "idle" ? (

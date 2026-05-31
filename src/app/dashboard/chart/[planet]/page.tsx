@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { use, useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
@@ -119,7 +119,7 @@ function OraclePanel({ text, loading }: { text: string; loading: boolean }) {
       )}
 
       <div className="flex items-center gap-3 mb-4">
-        <span className="text-xs font-bold tracking-widest" style={{ color: "#7c3aed" }}>
+        <span className="text-[13px] font-bold tracking-widest" style={{ color: "#7c3aed" }}>
           ✶ ORACLE
         </span>
         {loading && (
@@ -133,11 +133,11 @@ function OraclePanel({ text, loading }: { text: string; loading: boolean }) {
       </div>
 
       {text ? (
-        <p className="text-sm leading-relaxed" style={{ color: "#94a3b8", whiteSpace: "pre-wrap" }}>
+        <p className="text-[16px] leading-relaxed" style={{ color: "#94a3b8", whiteSpace: "pre-wrap" }}>
           {text}
         </p>
       ) : loading ? (
-        <p className="text-sm" style={{ color: "#334155" }}>Reading the celestial spheres…</p>
+        <p className="text-[14px]" style={{ color: "#334155" }}>Reading the celestial spheres…</p>
       ) : null}
     </div>
   );
@@ -292,13 +292,13 @@ export default function PlanetDetailPage({
             <motion.button
               initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
               onClick={() => warpTo("/dashboard/chart")} whileHover={{ color: "#94a3b8" }}
-              className="flex items-center gap-2 text-xs font-bold tracking-widest cursor-pointer"
+              className="flex items-center gap-2 text-[13px] font-bold tracking-widest cursor-pointer"
               style={{ color: "#334155", background: "none", border: "none" }}
             >
               ← CHART
             </motion.button>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-              className="text-xs font-bold tracking-widest" style={{ color: meta.color }}>
+              className="text-[13px] font-bold tracking-widest" style={{ color: meta.color }}>
               {meta.archetype.toUpperCase()}
             </motion.p>
           </div>
@@ -313,7 +313,7 @@ export default function PlanetDetailPage({
                   {planetName}
                 </h1>
                 {planetData && (
-                  <p className="text-sm mt-1" style={{ color: "#64748b" }}>
+                  <p className="text-[14px] mt-1" style={{ color: "#64748b" }}>
                     {formatDeg(planetData.longitude)}&nbsp;{planetData.sign}&nbsp;·&nbsp;House&nbsp;{planetData.house}
                     {planetData.retrograde && <span className="ml-2 font-bold" style={{ color: "#f97316" }}>℞</span>}
                   </p>
@@ -322,7 +322,7 @@ export default function PlanetDetailPage({
             </div>
             <div className="flex flex-wrap gap-2">
               {meta.keywords.slice(0, 5).map(k => (
-                <span key={k} className="px-3 py-1 rounded-xl text-xs font-bold tracking-wide"
+                <span key={k} className="px-3 py-1 rounded-xl text-[13px] font-bold tracking-wide"
                   style={{ background: `${meta.color}15`, border: `1px solid ${meta.color}30`, color: meta.color, backdropFilter: "blur(12px)" }}>
                   {k}
                 </span>
@@ -362,7 +362,7 @@ export default function PlanetDetailPage({
             ].map(row => (
               <div key={row.label}>
                 <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#334155" }}>{row.label}</p>
-                <p className="text-sm font-semibold" style={{ color: row.color }}>{row.value}</p>
+                <p className="text-[14px] font-semibold" style={{ color: row.color }}>{row.value}</p>
               </div>
             ))}
           </motion.div>
@@ -370,7 +370,7 @@ export default function PlanetDetailPage({
 
         <motion.p
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-          className="text-sm leading-relaxed mb-10 max-w-2xl"
+          className="text-[14px] leading-relaxed mb-10 max-w-2xl"
           style={{ color: "#64748b" }}
         >
           {meta.myth}
@@ -387,10 +387,10 @@ export default function PlanetDetailPage({
           >
             <span style={{ fontSize: "1.4rem", color: meta.color }}>✶</span>
             <div>
-              <p className="text-sm font-bold" style={{ color: meta.color }}>
+              <p className="text-[14px] font-bold" style={{ color: meta.color }}>
                 Lord of Your Profection Year
               </p>
-              <p className="text-xs mt-0.5" style={{ color: "#64748b" }}>
+              <p className="text-[13px] mt-0.5" style={{ color: "#64748b" }}>
                 {planetName} governs House {chart.annualProfection.activatedHouse} this year (age {chart.annualProfection.age}).
                 All matters of House {chart.annualProfection.activatedHouse} are activated by {planetName}&apos;s condition and transits.
               </p>
@@ -432,7 +432,7 @@ export default function PlanetDetailPage({
                     <span style={{ fontSize: "1.1rem", color: meta.color }}>{meta.glyph}</span>
 
                     <div className="flex flex-col items-center" style={{ minWidth: 34 }}>
-                      <span className="text-sm font-bold" style={{ color: aspColor }}>
+                      <span className="text-[14px] font-bold" style={{ color: aspColor }}>
                         {ASPECT_GLYPHS[a.type] ?? "~"}
                       </span>
                       <span className="text-[13px] font-mono" style={{ color: "#334155" }}>
@@ -443,7 +443,7 @@ export default function PlanetDetailPage({
                     <span style={{ fontSize: "1.1rem", color: otherColor }}>
                       {PLANET_SYMBOLS[other] ?? "?"}
                     </span>
-                    <span className="text-xs font-semibold flex-1" style={{ color: "#94a3b8" }}>{other}</span>
+                    <span className="text-[13px] font-semibold flex-1" style={{ color: "#94a3b8" }}>{other}</span>
 
                     <div className="flex gap-1">
                       {a.exact && (
@@ -510,7 +510,7 @@ export default function PlanetDetailPage({
                     {t.transitRetrograde && (
                       <span className="text-[13px] font-bold" style={{ color: "#f97316" }}>℞</span>
                     )}
-                    <span className="text-xs font-bold" style={{ color: aspColor }}>
+                    <span className="text-[13px] font-bold" style={{ color: aspColor }}>
                       {ASPECT_GLYPHS[t.type] ?? "~"}
                     </span>
                     <span className="text-[14px] font-mono" style={{ color: "#475569" }}>
@@ -609,7 +609,7 @@ export default function PlanetDetailPage({
               >
                 {dir === "prev" && <span>←</span>}
                 <span style={{ fontSize: "1.1rem", color: m.color }}>{m.glyph}</span>
-                <span className="text-xs font-bold tracking-wide">{planet}</span>
+                <span className="text-[13px] font-bold tracking-wide">{planet}</span>
                 {dir === "next" && <span>→</span>}
               </motion.button>
             );

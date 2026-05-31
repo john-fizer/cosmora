@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
@@ -309,7 +309,7 @@ function FAQAccordion() {
             onClick={() => setOpen(open === i ? null : i)}
             className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left cursor-pointer"
           >
-            <span className="text-sm" style={{ color: open === i ? "var(--text-1)" : "var(--text-2)", fontFamily: "'Outfit', sans-serif", fontWeight: open === i ? 500 : 400 }}>
+            <span className="text-[14px]" style={{ color: open === i ? "var(--text-1)" : "var(--text-2)", fontFamily: "'Outfit', sans-serif", fontWeight: open === i ? 500 : 400 }}>
               {item.q}
             </span>
             <motion.span
@@ -331,7 +331,7 @@ function FAQAccordion() {
                 style={{ overflow: "hidden" }}
               >
                 <div className="px-6 pb-5">
-                  <p className="text-sm leading-relaxed" style={{ color: "#64748b" }}>{item.a}</p>
+                  <p className="text-[16px] leading-relaxed" style={{ color: "#64748b" }}>{item.a}</p>
                 </div>
               </motion.div>
             )}
@@ -423,7 +423,7 @@ export default function LandingPage() {
               key={item}
               href={`#${item.toLowerCase()}`}
               whileHover={{ color: "var(--text-1)" }}
-              className="text-sm tracking-wide cursor-pointer"
+              className="text-[14px] tracking-wide cursor-pointer"
               style={{ color: "var(--text-2)", fontFamily: "'Outfit', sans-serif", fontWeight: 400, transition: "color 0.2s" }}
             >
               {item}
@@ -435,7 +435,7 @@ export default function LandingPage() {
           <motion.button
             whileHover={{ opacity: 0.88, y: -1 }}
             whileTap={{ scale: 0.96 }}
-            className="px-5 py-2 rounded-xl text-sm font-semibold tracking-wider cursor-pointer"
+            className="px-5 py-2 rounded-xl text-[14px] font-semibold tracking-wider cursor-pointer"
             style={{
               background: "linear-gradient(135deg, #C8A55B, #A8852B)",
               color: "#08080F",
@@ -570,7 +570,7 @@ export default function LandingPage() {
               <motion.button
                 whileHover={{ opacity: 0.88, y: -2 }}
                 whileTap={{ scale: 0.96 }}
-                className="px-8 py-3.5 rounded-2xl text-sm font-semibold tracking-wider cursor-pointer"
+                className="px-8 py-3.5 rounded-2xl text-[14px] font-semibold tracking-wider cursor-pointer"
                 style={{
                   background: "linear-gradient(135deg, #C8A55B, #A8852B)",
                   color: "#08080F",
@@ -587,7 +587,7 @@ export default function LandingPage() {
               whileHover={{ borderColor: "var(--border-md)" }}
               whileTap={{ scale: 0.98 }}
               onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}
-              className="px-8 py-3.5 rounded-2xl text-sm font-medium tracking-wide cursor-pointer"
+              className="px-8 py-3.5 rounded-2xl text-[14px] font-medium tracking-wide cursor-pointer"
               style={{
                 background: "rgba(255,255,255,0.03)",
                 border: "1px solid var(--border)",
@@ -648,7 +648,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-14"
           >
-            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "var(--solar)", fontFamily: "'Fragment Mono', monospace" }}>HOW IT WORKS</p>
+            <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "var(--solar)", fontFamily: "'Fragment Mono', monospace" }}>HOW IT WORKS</p>
             <h2
               className="font-bold"
               style={{
@@ -725,7 +725,7 @@ export default function LandingPage() {
                   >
                     {step.title}
                   </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: "#64748b" }}>{step.desc}</p>
+                  <p className="text-[16px] leading-relaxed" style={{ color: "#64748b" }}>{step.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -742,7 +742,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "var(--solar)", fontFamily: "'Fragment Mono', monospace" }}>LIVE INTERFACE</p>
+            <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "var(--solar)", fontFamily: "'Fragment Mono', monospace" }}>LIVE INTERFACE</p>
             <h2
               className="font-bold mb-4"
               style={{
@@ -980,7 +980,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "var(--oracle)", fontFamily: "'Fragment Mono', monospace" }}>THE SYSTEM</p>
+            <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "var(--oracle)", fontFamily: "'Fragment Mono', monospace" }}>THE SYSTEM</p>
             <h2
               className="font-bold mb-4"
               style={{
@@ -1015,7 +1015,7 @@ export default function LandingPage() {
                   >
                     {f.title}
                   </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: "#64748b" }}>{f.desc}</p>
+                  <p className="text-[16px] leading-relaxed" style={{ color: "#64748b" }}>{f.desc}</p>
                 </div>
               </HolographicCard>
             ))}
@@ -1032,7 +1032,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-14"
           >
-            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "#22c55e" }}>WHAT PEOPLE SAY</p>
+            <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "#22c55e" }}>WHAT PEOPLE SAY</p>
             <h2
               className="font-bold"
               style={{
@@ -1078,7 +1078,7 @@ export default function LandingPage() {
                       <span key={j} style={{ color: t.color, fontSize: "0.7rem" }}>✦</span>
                     ))}
                   </div>
-                  <p className="text-sm leading-relaxed flex-1 mb-5 italic" style={{ color: "#94a3b8" }}>
+                  <p className="text-[14px] leading-relaxed flex-1 mb-5 italic" style={{ color: "#94a3b8" }}>
                     &ldquo;{t.quote}&rdquo;
                   </p>
                   <div
@@ -1086,13 +1086,13 @@ export default function LandingPage() {
                     style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
                   >
                     <div
-                      className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-bold flex-shrink-0"
                       style={{ background: `${t.color}18`, border: `1px solid ${t.color}30`, color: t.color }}
                     >
                       {t.name[0]}
                     </div>
                     <div>
-                      <p className="text-xs font-semibold" style={{ color: "#e2e8f0" }}>{t.name}</p>
+                      <p className="text-[13px] font-semibold" style={{ color: "#e2e8f0" }}>{t.name}</p>
                       <p className="text-[14px]" style={{ color: "#475569" }}>{t.title}</p>
                       <p className="text-[14px] font-medium" style={{ color: t.color }}>{t.planet}</p>
                     </div>
@@ -1114,7 +1114,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "#f59e0b" }}>DEPTH</p>
+            <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "#f59e0b" }}>DEPTH</p>
             <h2
               className="font-bold mb-4"
               style={{
@@ -1133,7 +1133,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="space-y-8" style={{ minWidth: 0 }}>
               <div>
-                <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "#94a3b8" }}>HOUSE SYSTEMS</p>
+                <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "#94a3b8" }}>HOUSE SYSTEMS</p>
                 <div className="flex flex-wrap gap-2">
                   {HOUSE_SYSTEMS.map((hs, i) => (
                     <motion.span
@@ -1142,7 +1142,7 @@ export default function LandingPage() {
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.05 }}
-                      className="px-3 py-1.5 rounded-xl text-xs font-medium"
+                      className="px-3 py-1.5 rounded-xl text-[13px] font-medium"
                       style={{
                         background: "rgba(123,111,212,0.08)",
                         border: "1px solid rgba(123,111,212,0.18)",
@@ -1156,7 +1156,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <div>
-                <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "#94a3b8" }}>TIMING TECHNIQUES</p>
+                <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "#94a3b8" }}>TIMING TECHNIQUES</p>
                 <div className="flex flex-wrap gap-2">
                   {TIMING_SYSTEMS.map((ts, i) => (
                     <motion.span
@@ -1165,7 +1165,7 @@ export default function LandingPage() {
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.05 + 0.3 }}
-                      className="px-3 py-1.5 rounded-xl text-xs font-medium"
+                      className="px-3 py-1.5 rounded-xl text-[13px] font-medium"
                       style={{
                         background: "rgba(200,165,91,0.08)",
                         border: "1px solid rgba(200,165,91,0.18)",
@@ -1184,16 +1184,16 @@ export default function LandingPage() {
             <HolographicCard scanLine style={{ minWidth: 0 }}>
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <p className="text-xs font-bold tracking-widest" style={{ color: "#94a3b8" }}>CONVERGENCE EXAMPLE</p>
+                  <p className="text-[13px] font-bold tracking-widest" style={{ color: "#94a3b8" }}>CONVERGENCE EXAMPLE</p>
                   <span
-                    className="text-xs font-bold px-2 py-1 rounded-lg"
+                    className="text-[13px] font-bold px-2 py-1 rounded-lg"
                     style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}
                   >
                     SCORE: 0.87
                   </span>
                 </div>
                 <h4
-                  className="font-bold text-sm mb-4"
+                  className="font-bold text-[14px] mb-4"
                   style={{ color: "#c4b5fd", fontFamily: "'Space Grotesk', sans-serif" }}
                 >
                   Career Transition Window
@@ -1215,12 +1215,12 @@ export default function LandingPage() {
                       className="flex items-center gap-3"
                     >
                       <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: signal.color }} />
-                      <span className="text-xs" style={{ color: "#94a3b8" }}>{signal.text}</span>
+                      <span className="text-[13px]" style={{ color: "#94a3b8" }}>{signal.text}</span>
                     </motion.div>
                   ))}
                 </div>
                 <div className="mt-4 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                  <p className="text-xs italic" style={{ color: "#64748b" }}>
+                  <p className="text-[13px] italic" style={{ color: "#64748b" }}>
                     "Multiple timing systems emphasize career restructuring and public role development."
                   </p>
                 </div>
@@ -1239,7 +1239,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-14"
           >
-            <p className="text-xs font-bold tracking-widest mb-4" style={{ color: "var(--solar)", fontFamily: "'Fragment Mono', monospace" }}>PRICING</p>
+            <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "var(--solar)", fontFamily: "'Fragment Mono', monospace" }}>PRICING</p>
             <h2
               className="font-bold mb-4"
               style={{
@@ -1273,7 +1273,7 @@ export default function LandingPage() {
                           {plan.price}
                         </span>
                         {plan.priceSuffix && (
-                          <span className="text-sm mb-1" style={{ color: "#475569" }}>{plan.priceSuffix}</span>
+                          <span className="text-[14px] mb-1" style={{ color: "#475569" }}>{plan.priceSuffix}</span>
                         )}
                       </div>
                     </div>
@@ -1284,10 +1284,10 @@ export default function LandingPage() {
                       </span>
                     )}
                   </div>
-                  <p className="text-sm mb-6" style={{ color: "#64748b" }}>{plan.desc}</p>
+                  <p className="text-[14px] mb-6" style={{ color: "#64748b" }}>{plan.desc}</p>
                   <ul className="space-y-2.5 flex-1 mb-7">
                     {plan.features.map(f => (
-                      <li key={f} className="flex items-center gap-2.5 text-sm" style={{ color: "#94a3b8" }}>
+                      <li key={f} className="flex items-center gap-2.5 text-[14px]" style={{ color: "#94a3b8" }}>
                         <span style={{ color: plan.color, fontSize: "0.75rem" }}>✦</span>
                         {f}
                       </li>
@@ -1298,7 +1298,7 @@ export default function LandingPage() {
                       <motion.button
                         whileHover={{ opacity: 0.88, y: -1 }}
                         whileTap={{ scale: 0.97 }}
-                        className="w-full py-3.5 rounded-xl font-semibold tracking-wider cursor-pointer text-sm"
+                        className="w-full py-3.5 rounded-xl font-semibold tracking-wider cursor-pointer text-[14px]"
                         style={{
                           background: "linear-gradient(135deg, #C8A55B, #A8852B)",
                           color: "#08080F",
@@ -1313,7 +1313,7 @@ export default function LandingPage() {
                       <motion.button
                         whileHover={{ scale: 1.03, borderColor: `${plan.color}60` }}
                         whileTap={{ scale: 0.97 }}
-                        className="w-full py-3.5 rounded-xl font-bold tracking-wider cursor-pointer text-sm"
+                        className="w-full py-3.5 rounded-xl font-bold tracking-wider cursor-pointer text-[14px]"
                         style={{
                           background: "rgba(255,255,255,0.03)",
                           border: `1px solid ${plan.color}25`,
@@ -1341,7 +1341,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <p className="text-xs tracking-[0.22em] mb-4" style={{ color: "var(--text-2)", fontFamily: "'Fragment Mono', monospace" }}>FAQ</p>
+            <p className="text-[13px] tracking-[0.22em] mb-4" style={{ color: "var(--text-2)", fontFamily: "'Fragment Mono', monospace" }}>FAQ</p>
             <h2
               className="font-bold"
               style={{
@@ -1372,7 +1372,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="relative"
           >
-            <p className="text-xs tracking-[0.22em] mb-6" style={{ color: "var(--solar)", fontFamily: "'Fragment Mono', monospace" }}>BEGIN YOUR READING</p>
+            <p className="text-[13px] tracking-[0.22em] mb-6" style={{ color: "var(--solar)", fontFamily: "'Fragment Mono', monospace" }}>BEGIN YOUR READING</p>
             <h2
               className="font-bold mb-6"
               style={{
@@ -1457,7 +1457,7 @@ export default function LandingPage() {
             </div>
             <span style={{ fontFamily: "'Fragment Mono', monospace", fontSize: 13, letterSpacing: "0.18em", color: "var(--solar)" }}>COSMORA</span>
           </div>
-          <p className="text-xs text-center" style={{ color: "var(--text-3)", fontFamily: "'Outfit', sans-serif" }}>
+          <p className="text-[13px] text-center" style={{ color: "var(--text-3)", fontFamily: "'Outfit', sans-serif" }}>
             Astrology as symbolic intelligence — not prediction, not fate.
           </p>
           <p style={{ fontSize: 14, color: "var(--text-3)", fontFamily: "'Fragment Mono', monospace" }}>© 2026 Cosmora</p>

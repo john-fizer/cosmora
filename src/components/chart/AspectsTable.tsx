@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import type { ChartData, PlanetName } from "@/lib/astrology/types";
@@ -75,7 +75,7 @@ export function AspectsTable({ chart, selectedPlanet }: AspectsTableProps) {
       <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
         {filtered.length === 0 ? (
           <div className="flex items-center justify-center h-32">
-            <p className="text-sm" style={{ color: "#334155" }}>No aspects found</p>
+            <p className="text-[14px]" style={{ color: "#334155" }}>No aspects found</p>
           </div>
         ) : (
           Object.entries(grouped).map(([type, aspects]) => {
@@ -115,8 +115,8 @@ export function AspectsTable({ chart, selectedPlanet }: AspectsTableProps) {
                     >
                       {/* Planet 1 */}
                       <div className="flex items-center gap-2">
-                        <span className="text-sm" style={{ color: p1color }}>{PLANET_SYMBOLS[asp.planet1]}</span>
-                        <span className="text-xs font-medium" style={{ color: "#cbd5e1" }}>{asp.planet1}</span>
+                        <span className="text-[14px]" style={{ color: p1color }}>{PLANET_SYMBOLS[asp.planet1]}</span>
+                        <span className="text-[13px] font-medium" style={{ color: "#cbd5e1" }}>{asp.planet1}</span>
                       </div>
 
                       {/* Aspect symbol */}
@@ -126,13 +126,13 @@ export function AspectsTable({ chart, selectedPlanet }: AspectsTableProps) {
 
                       {/* Planet 2 */}
                       <div className="flex items-center gap-2">
-                        <span className="text-sm" style={{ color: p2color }}>{PLANET_SYMBOLS[asp.planet2]}</span>
-                        <span className="text-xs font-medium" style={{ color: "#cbd5e1" }}>{asp.planet2}</span>
+                        <span className="text-[14px]" style={{ color: p2color }}>{PLANET_SYMBOLS[asp.planet2]}</span>
+                        <span className="text-[13px] font-medium" style={{ color: "#cbd5e1" }}>{asp.planet2}</span>
                       </div>
 
                       {/* Orb */}
                       <div className="flex items-center">
-                        <span className="text-xs font-mono" style={{ color: asp.orb < 1 ? cfg.color : "#64748b" }}>
+                        <span className="text-[13px] font-mono" style={{ color: asp.orb < 1 ? cfg.color : "#64748b" }}>
                           {asp.orb.toFixed(1)}°
                         </span>
                       </div>

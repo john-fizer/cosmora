@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -83,7 +83,7 @@ function SRNatalAspects({ srChart, natalChart }: { srChart: ChartData; natalChar
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
             style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
             <div className="flex items-center gap-1 w-28 flex-shrink-0">
-              <span className="text-xs" style={{ color: srColor }}>{PLANET_SYMBOLS[asp.srPlanet]}</span>
+              <span className="text-[13px]" style={{ color: srColor }}>{PLANET_SYMBOLS[asp.srPlanet]}</span>
               <span className="text-[13px] font-medium" style={{ color: srColor }}>{asp.srPlanet}</span>
               <span className="text-[14px] font-bold ml-1 px-1 py-0.5 rounded" style={{ background: "rgba(245,158,11,0.12)", color: "#f59e0b" }}>SR</span>
             </div>
@@ -92,7 +92,7 @@ function SRNatalAspects({ srChart, natalChart }: { srChart: ChartData; natalChar
               <span className="text-[14px]" style={{ color: "#334155" }}>{asp.orb.toFixed(1)}°</span>
             </div>
             <div className="flex items-center gap-1 flex-1">
-              <span className="text-xs" style={{ color: natColor }}>{PLANET_SYMBOLS[asp.natalPlanet]}</span>
+              <span className="text-[13px]" style={{ color: natColor }}>{PLANET_SYMBOLS[asp.natalPlanet]}</span>
               <span className="text-[13px] font-medium" style={{ color: natColor }}>{asp.natalPlanet}</span>
               <span className="text-[14px] font-bold ml-1 px-1 py-0.5 rounded" style={{ background: "rgba(124,58,237,0.12)", color: "#a78bfa" }}>NATAL</span>
             </div>
@@ -199,14 +199,14 @@ function HouseEmphasis({ srChart }: { srChart: ChartData }) {
           style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}
         >
           <div className="flex-shrink-0">
-            <p className="text-xs font-bold" style={{ color: "#a78bfa" }}>H{house}</p>
+            <p className="text-[13px] font-bold" style={{ color: "#a78bfa" }}>H{house}</p>
             <p className="text-[13px]" style={{ color: "#334155" }}>{planets.length} planets</p>
           </div>
           <div className="flex-1">
             <p className="text-[13px] mb-1" style={{ color: "#64748b" }}>{HOUSE_THEMES[Number(house)]}</p>
             <div className="flex gap-1.5 flex-wrap">
               {planets.map(name => (
-                <span key={name} className="text-xs" style={{ color: PLANET_COLORS[name as PlanetName] ?? "#94a3b8" }}>
+                <span key={name} className="text-[13px]" style={{ color: PLANET_COLORS[name as PlanetName] ?? "#94a3b8" }}>
                   {PLANET_SYMBOLS[name as PlanetName]} {name}
                 </span>
               ))}
@@ -296,11 +296,11 @@ Write 3 paragraphs: (1) the overarching yearly theme from the SR Ascendant and i
               className="w-4 h-4 rounded-full border border-t-transparent flex-shrink-0"
               style={{ borderColor: "#f59e0b" }}
             />
-            <span className="text-xs" style={{ color: "#475569" }}>Oracle is reading your year…</span>
+            <span className="text-[13px]" style={{ color: "#475569" }}>Oracle is reading your year…</span>
           </div>
         )}
         {text && (
-          <div className="text-sm leading-relaxed space-y-3" style={{ color: "#94a3b8" }}>
+          <div className="text-[16px] leading-relaxed space-y-3" style={{ color: "#94a3b8" }}>
             {text.split("\n\n").map((para, i) => (
               <p key={i}>{para}</p>
             ))}
@@ -404,12 +404,12 @@ export default function SolarReturnPage() {
           <div className="text-center">
             <p className="text-[14px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
             <h2 className="text-2xl font-bold mb-3" style={{ fontFamily: "Space Grotesk, sans-serif", color: "#e2e8f0" }}>Cosmic instruments standing by.</h2>
-            <p className="text-sm max-w-xs mx-auto" style={{ color: "#475569" }}>Enter your birth data to unlock your solar return and all its cosmic layers.</p>
+            <p className="text-[14px] max-w-xs mx-auto" style={{ color: "#475569" }}>Enter your birth data to unlock your solar return and all its cosmic layers.</p>
           </div>
           <Link href="/onboarding">
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-              className="px-6 py-3 rounded-xl text-sm font-bold tracking-wider cursor-pointer"
+              className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
               style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
             >
               Begin Your Chart →
@@ -436,7 +436,7 @@ export default function SolarReturnPage() {
           <div className="flex items-center gap-3">
             <Link href="/dashboard">
               <motion.button whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "#64748b" }}>
+                className="flex items-center gap-1.5 text-[13px] font-medium cursor-pointer" style={{ color: "#64748b" }}>
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
                   <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
                 </svg>
@@ -444,10 +444,10 @@ export default function SolarReturnPage() {
               </motion.button>
             </Link>
             <span style={{ color: "#1e293b" }}>/</span>
-            <span className="text-xs font-bold tracking-widest" style={{ background: "linear-gradient(135deg, #f59e0b, #f97316)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <span className="text-[13px] font-bold tracking-widest" style={{ background: "linear-gradient(135deg, #f59e0b, #f97316)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               SOLAR RETURN
             </span>
-            {profile && <><span style={{ color: "#1e293b" }}>/</span><span className="text-xs" style={{ color: "#64748b" }}>{profile.name}</span></>}
+            {profile && <><span style={{ color: "#1e293b" }}>/</span><span className="text-[13px]" style={{ color: "#64748b" }}>{profile.name}</span></>}
           </div>
 
           {srChart && (
@@ -484,7 +484,7 @@ export default function SolarReturnPage() {
                 <select
                   value={selectedYear}
                   onChange={e => { const y = Number(e.target.value); setSelectedYear(y); fetchSolarReturn(y); }}
-                  className="bg-transparent text-sm font-bold cursor-pointer outline-none px-2 py-1 rounded-lg"
+                  className="bg-transparent text-[14px] font-bold cursor-pointer outline-none px-2 py-1 rounded-lg"
                   style={{ color: "#fbbf24", border: "1px solid rgba(245,158,11,0.25)", background: "rgba(245,158,11,0.08)" }}
                 >
                   {years.map(y => <option key={y} value={y} style={{ background: "#0a0a1a" }}>{y}</option>)}
@@ -508,7 +508,7 @@ export default function SolarReturnPage() {
             </motion.div>
 
             {error && (
-              <div className="mb-4 px-4 py-3 rounded-xl text-sm" style={{ background: "rgba(239,68,68,0.08)", color: "#f87171", border: "1px solid rgba(239,68,68,0.15)" }}>
+              <div className="mb-4 px-4 py-3 rounded-xl text-[14px]" style={{ background: "rgba(239,68,68,0.08)", color: "#f87171", border: "1px solid rgba(239,68,68,0.15)" }}>
                 {error}
               </div>
             )}
@@ -535,7 +535,7 @@ export default function SolarReturnPage() {
                           ].map(({ label, value, color }) => (
                             <div key={label} className="flex flex-col gap-1">
                               <p className="text-[14px] tracking-widest font-bold" style={{ color: "#334155" }}>{label}</p>
-                              <p className="text-sm font-bold" style={{ color }}>{value}</p>
+                              <p className="text-[14px] font-bold" style={{ color }}>{value}</p>
                             </div>
                           ))}
                         </div>
@@ -559,7 +559,7 @@ export default function SolarReturnPage() {
                             <div className="flex items-center gap-3">
                               <span className="text-3xl" style={{ color }}>{PLANET_SYMBOLS[srLord]}</span>
                               <div>
-                                <p className="text-sm font-bold" style={{ color }}>{srLord}</p>
+                                <p className="text-[14px] font-bold" style={{ color }}>{srLord}</p>
                                 {srLordPlanet && (
                                   <p className="text-[14px]" style={{ color: "#475569" }}>
                                     {SIGN_SYMBOLS[srLordPlanet.sign]} {srLordPlanet.sign} · House {srLordPlanet.house}
@@ -593,7 +593,7 @@ export default function SolarReturnPage() {
                             <div className="grid grid-cols-2 gap-4">
                               <div>
                                 <p className="text-[14px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>NATAL PROFECTION YEAR</p>
-                                <p className="text-sm font-bold" style={{ color: "#06b6d4" }}>Age {profectionAge} → House {profHouse}</p>
+                                <p className="text-[14px] font-bold" style={{ color: "#06b6d4" }}>Age {profectionAge} → House {profHouse}</p>
                                 <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>{profSign} · {HOUSE_THEMES[profHouse]}</p>
                                 <p className="text-[13px] mt-1" style={{ color: "#334155" }}>
                                   Lord: <span style={{ color: lordColor }}>{PLANET_SYMBOLS[profLord]} {profLord}</span>
@@ -603,7 +603,7 @@ export default function SolarReturnPage() {
                                 <p className="text-[14px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>PROFECTION LORD IN SR</p>
                                 {srProfLordPlanet ? (
                                   <>
-                                    <p className="text-sm font-bold" style={{ color: lordColor }}>
+                                    <p className="text-[14px] font-bold" style={{ color: lordColor }}>
                                       {SIGN_SYMBOLS[srProfLordPlanet.sign]} {srProfLordPlanet.sign}
                                     </p>
                                     <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
@@ -618,7 +618,7 @@ export default function SolarReturnPage() {
                                     )}
                                   </>
                                 ) : (
-                                  <p className="text-xs" style={{ color: "#334155" }}>—</p>
+                                  <p className="text-[13px]" style={{ color: "#334155" }}>—</p>
                                 )}
                               </div>
                             </div>
@@ -642,12 +642,12 @@ export default function SolarReturnPage() {
                                 <div key={s.sign} className="flex items-center gap-3 flex-wrap">
                                   <span className="text-xl" style={{ color: signColor }}>{SIGN_SYMBOLS[s.sign]}</span>
                                   <div>
-                                    <p className="text-sm font-bold" style={{ color: signColor }}>{s.sign}</p>
+                                    <p className="text-[14px] font-bold" style={{ color: signColor }}>{s.sign}</p>
                                     <p className="text-[13px]" style={{ color: "#475569" }}>{s.planets.length} planets · concentrated energy</p>
                                   </div>
                                   <div className="flex gap-2 ml-2 flex-wrap">
                                     {s.planets.map(name => (
-                                      <span key={name} className="flex items-center gap-0.5 text-sm" style={{ color: PLANET_COLORS[name] ?? "#94a3b8" }}>
+                                      <span key={name} className="flex items-center gap-0.5 text-[14px]" style={{ color: PLANET_COLORS[name] ?? "#94a3b8" }}>
                                         {PLANET_SYMBOLS[name]}
                                         <span className="text-[13px]">{name}</span>
                                       </span>
@@ -723,7 +723,7 @@ export default function SolarReturnPage() {
                               {planetsHere.length > 0 && (
                                 <div className="flex gap-1 mt-1.5 flex-wrap">
                                   {planetsHere.map(p => (
-                                    <span key={p.name} className="text-xs" style={{ color: PLANET_COLORS[p.name] ?? "#94a3b8" }}>
+                                    <span key={p.name} className="text-[13px]" style={{ color: PLANET_COLORS[p.name] ?? "#94a3b8" }}>
                                       {PLANET_SYMBOLS[p.name]}
                                     </span>
                                   ))}
@@ -756,7 +756,7 @@ export default function SolarReturnPage() {
                   className="flex flex-col items-center justify-center py-20 gap-4">
                   <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                     className="w-10 h-10 rounded-full border-2 border-t-transparent" style={{ borderColor: "#f59e0b" }} />
-                  <p className="text-xs" style={{ color: "#475569" }}>Calculating solar return…</p>
+                  <p className="text-[13px]" style={{ color: "#475569" }}>Calculating solar return…</p>
                 </motion.div>
               )}
             </AnimatePresence>

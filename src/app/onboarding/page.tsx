@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef } from "react";
@@ -136,7 +136,7 @@ export default function OnboardingPage() {
       content: (
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
+            <label className="block text-[13px] font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
               CHART NAME *
             </label>
             <input
@@ -144,7 +144,7 @@ export default function OnboardingPage() {
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="e.g. Aurora, John, Client 1..."
-              className="w-full px-4 py-3 rounded-xl text-sm cosmic-input"
+              className="w-full px-4 py-3 rounded-xl text-[14px] cosmic-input"
               autoFocus
             />
           </div>
@@ -158,31 +158,31 @@ export default function OnboardingPage() {
       content: (
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
+            <label className="block text-[13px] font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
               BIRTH DATE *
             </label>
             <input
               type="date"
               value={birthDate}
               onChange={e => setBirthDate(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl text-sm cosmic-input"
+              className="w-full px-4 py-3 rounded-xl text-[14px] cosmic-input"
               style={{ colorScheme: "dark" }}
             />
           </div>
           <div>
-            <label className="block text-xs font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
+            <label className="block text-[13px] font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
               BIRTH TIME
             </label>
             <input
               type="time"
               value={birthTime}
               onChange={e => setBirthTime(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl text-sm cosmic-input"
+              className="w-full px-4 py-3 rounded-xl text-[14px] cosmic-input"
               style={{ colorScheme: "dark" }}
             />
           </div>
           <div>
-            <label className="block text-xs font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
+            <label className="block text-[13px] font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
               TIME CONFIDENCE
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -190,7 +190,7 @@ export default function OnboardingPage() {
                 <button
                   key={o.value}
                   onClick={() => setConfidence(o.value)}
-                  className="px-3 py-2 rounded-xl text-xs font-medium text-left cursor-pointer transition-all duration-150"
+                  className="px-3 py-2 rounded-xl text-[13px] font-medium text-left cursor-pointer transition-all duration-150"
                   style={{
                     background: confidence === o.value ? "rgba(124,58,237,0.25)" : "rgba(255,255,255,0.04)",
                     border: confidence === o.value ? "1px solid rgba(124,58,237,0.5)" : "1px solid rgba(255,255,255,0.08)",
@@ -212,7 +212,7 @@ export default function OnboardingPage() {
       content: (
         <div className="space-y-4">
           <div className="relative">
-            <label className="block text-xs font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
+            <label className="block text-[13px] font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
               BIRTHPLACE *
             </label>
             <input
@@ -220,7 +220,7 @@ export default function OnboardingPage() {
               value={locationQuery}
               onChange={e => handleLocationSearch(e.target.value)}
               placeholder="Search city or town..."
-              className="w-full px-4 py-3 rounded-xl text-sm cosmic-input"
+              className="w-full px-4 py-3 rounded-xl text-[14px] cosmic-input"
             />
             {geoLoading && (
               <div className="absolute right-3 top-10">
@@ -250,10 +250,10 @@ export default function OnboardingPage() {
                     className="w-full px-4 py-3 text-left hover:bg-white/5 transition-colors cursor-pointer"
                     style={{ borderBottom: i < geoResults.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}
                   >
-                    <p className="text-sm font-medium" style={{ color: "#e2e8f0" }}>
+                    <p className="text-[14px] font-medium" style={{ color: "#e2e8f0" }}>
                       {r.city || r.displayName.split(",")[0]}
                     </p>
-                    <p className="text-xs mt-0.5 truncate" style={{ color: "#64748b" }}>{r.displayName}</p>
+                    <p className="text-[13px] mt-0.5 truncate" style={{ color: "#64748b" }}>{r.displayName}</p>
                   </button>
                 ))}
               </motion.div>
@@ -270,10 +270,10 @@ export default function OnboardingPage() {
                 <path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
               </svg>
               <div className="min-w-0">
-                <p className="text-sm font-medium truncate" style={{ color: "#c4b5fd" }}>
+                <p className="text-[14px] font-medium truncate" style={{ color: "#c4b5fd" }}>
                   {selectedLocation.city || selectedLocation.displayName.split(",")[0]}
                 </p>
-                <p className="text-xs" style={{ color: "#64748b" }}>
+                <p className="text-[13px]" style={{ color: "#64748b" }}>
                   {selectedLocation.latitude.toFixed(4)}°, {selectedLocation.longitude.toFixed(4)}° · {selectedLocation.timezone}
                 </p>
               </div>
@@ -289,7 +289,7 @@ export default function OnboardingPage() {
       content: (
         <div className="space-y-6">
           <div>
-            <label className="block text-xs font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>
+            <label className="block text-[13px] font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>
               HOUSE SYSTEM
             </label>
             <div className="space-y-2">
@@ -297,7 +297,7 @@ export default function OnboardingPage() {
                 <button
                   key={hs.value}
                   onClick={() => setHouseSystem(hs.value)}
-                  className="w-full px-4 py-3 rounded-xl text-left text-sm font-medium cursor-pointer transition-all duration-150"
+                  className="w-full px-4 py-3 rounded-xl text-left text-[14px] font-medium cursor-pointer transition-all duration-150"
                   style={{
                     background: houseSystem === hs.value ? "rgba(124,58,237,0.25)" : "rgba(255,255,255,0.03)",
                     border: houseSystem === hs.value ? "1px solid rgba(124,58,237,0.5)" : "1px solid rgba(255,255,255,0.07)",
@@ -310,7 +310,7 @@ export default function OnboardingPage() {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>
+            <label className="block text-[13px] font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>
               INTERPRETATION MODE
             </label>
             <div className="space-y-2">
@@ -318,7 +318,7 @@ export default function OnboardingPage() {
                 <button
                   key={m.value}
                   onClick={() => setAstrologyMode(m.value)}
-                  className="w-full px-4 py-3 rounded-xl text-left text-sm font-medium cursor-pointer transition-all duration-150"
+                  className="w-full px-4 py-3 rounded-xl text-left text-[14px] font-medium cursor-pointer transition-all duration-150"
                   style={{
                     background: astrologyMode === m.value ? "rgba(245,158,11,0.2)" : "rgba(255,255,255,0.03)",
                     border: astrologyMode === m.value ? "1px solid rgba(245,158,11,0.4)" : "1px solid rgba(255,255,255,0.07)",
@@ -391,11 +391,11 @@ export default function OnboardingPage() {
                 <line x1="12" y1="2" x2="12" y2="6" /><line x1="12" y1="18" x2="12" y2="22" />
               </svg>
             </motion.div>
-            <p className="text-xs font-bold tracking-[0.25em] mb-3" style={{ color: "#7c3aed" }}>CHART COMPLETE</p>
+            <p className="text-[13px] font-bold tracking-[0.25em] mb-3" style={{ color: "#7c3aed" }}>CHART COMPLETE</p>
             <h2 className="text-3xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#f1f5f9", letterSpacing: "-0.02em" }}>
               Welcome, {name}.
             </h2>
-            <p className="text-sm mt-2" style={{ color: "#475569" }}>Here&apos;s what we found in your chart.</p>
+            <p className="text-[14px] mt-2" style={{ color: "#475569" }}>Here&apos;s what we found in your chart.</p>
           </motion.div>
 
           {/* Reveals */}
@@ -439,7 +439,7 @@ export default function OnboardingPage() {
             <span style={{ color: revealChart.sect === "day" ? "#fbbf24" : "#c4b5fd", fontSize: "1.1rem" }}>
               {revealChart.sect === "day" ? "☀" : "☽"}
             </span>
-            <span className="text-xs font-medium" style={{ color: "#64748b" }}>
+            <span className="text-[13px] font-medium" style={{ color: "#64748b" }}>
               {revealChart.sect === "day" ? "Day chart — Sun above the horizon at birth" : "Night chart — Sun below the horizon at birth"}
             </span>
           </motion.div>
@@ -537,7 +537,7 @@ export default function OnboardingPage() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.2 }}
             >
-              <p className="text-xs font-bold tracking-widest mb-2" style={{ color: "#7c3aed" }}>
+              <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#7c3aed" }}>
                 STEP {step + 1} OF {steps.length}
               </p>
               <h2
@@ -546,7 +546,7 @@ export default function OnboardingPage() {
               >
                 {current.title}
               </h2>
-              <p className="text-sm mb-6" style={{ color: "#64748b" }}>{current.subtitle}</p>
+              <p className="text-[14px] mb-6" style={{ color: "#64748b" }}>{current.subtitle}</p>
               {current.content}
             </motion.div>
           </AnimatePresence>
@@ -555,7 +555,7 @@ export default function OnboardingPage() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="mt-4 text-xs px-3 py-2 rounded-lg"
+              className="mt-4 text-[13px] px-3 py-2 rounded-lg"
               style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", color: "#fca5a5" }}
             >
               {error}
@@ -566,7 +566,7 @@ export default function OnboardingPage() {
             {step > 0 && (
               <button
                 onClick={() => setStep(s => s - 1)}
-                className="px-5 py-3 rounded-xl text-sm font-medium cursor-pointer transition-all duration-150"
+                className="px-5 py-3 rounded-xl text-[14px] font-medium cursor-pointer transition-all duration-150"
                 style={{
                   background: "rgba(255,255,255,0.04)",
                   border: "1px solid rgba(255,255,255,0.08)",
@@ -581,7 +581,7 @@ export default function OnboardingPage() {
               whileTap={{ scale: 0.98 }}
               onClick={isLast ? handleSave : () => { if (current.valid()) { setError(""); setStep(s => s + 1); } else setError("Please complete this step."); }}
               disabled={saving}
-              className="flex-1 py-3 rounded-xl text-sm font-bold tracking-wider cursor-pointer transition-all duration-150 disabled:opacity-50"
+              className="flex-1 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer transition-all duration-150 disabled:opacity-50"
               style={{
                 background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
                 color: "white",
@@ -593,7 +593,7 @@ export default function OnboardingPage() {
           </div>
         </div>
 
-        <p className="text-center text-xs mt-4" style={{ color: "#334155" }}>
+        <p className="text-center text-[13px] mt-4" style={{ color: "#334155" }}>
           Your data is stored locally on your device.
         </p>
       </motion.div>

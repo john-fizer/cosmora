@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import type { ChartData, PlanetName } from "@/lib/astrology/types";
@@ -107,7 +107,7 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
               <div className="flex items-center gap-2">
                 <span className="text-lg leading-none" style={{ color }}>{PLANET_SYMBOLS[p.name]}</span>
                 <div>
-                  <span className="text-xs font-semibold" style={{ color: "#e2e8f0" }}>{p.name}</span>
+                  <span className="text-[13px] font-semibold" style={{ color: "#e2e8f0" }}>{p.name}</span>
                   {p.retrograde && (
                     <span className="ml-1 text-[13px] font-bold" style={{ color: "#f97316" }}>℞</span>
                   )}
@@ -120,7 +120,7 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
 
               {/* Position */}
               <div className="flex items-center">
-                <span className="text-xs font-mono font-medium" style={{ color: "#94a3b8" }}>
+                <span className="text-[13px] font-mono font-medium" style={{ color: "#94a3b8" }}>
                   {formatDegree(p.longitude)}
                 </span>
               </div>
@@ -128,13 +128,13 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
               {/* Sign */}
               <div className="flex items-center gap-1.5">
                 <span className="text-base leading-none" style={{ color }}>{SIGN_SYMBOLS[p.sign]}</span>
-                <span className="text-xs" style={{ color: "#cbd5e1" }}>{p.sign}</span>
+                <span className="text-[13px]" style={{ color: "#cbd5e1" }}>{p.sign}</span>
               </div>
 
               {/* House */}
               <div className="flex items-center">
                 <span
-                  className="text-xs font-bold px-2 py-0.5 rounded-lg"
+                  className="text-[13px] font-bold px-2 py-0.5 rounded-lg"
                   style={{
                     background: "rgba(99,102,241,0.15)",
                     color: "#818cf8",
@@ -214,16 +214,16 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
             >
               <div className="flex items-center gap-2">
                 <span className="text-base" style={{ color: lot.color }}>{lot.symbol}</span>
-                <span className="text-xs font-semibold" style={{ color: "#94a3b8" }}>{lot.label}</span>
+                <span className="text-[13px] font-semibold" style={{ color: "#94a3b8" }}>{lot.label}</span>
               </div>
               <div className="flex items-center">
-                <span className="text-xs font-mono" style={{ color: "#94a3b8" }}>{formatDegree(lot.lon)}</span>
+                <span className="text-[13px] font-mono" style={{ color: "#94a3b8" }}>{formatDegree(lot.lon)}</span>
               </div>
               <div className="flex items-center">
-                <span className="text-xs" style={{ color: "#cbd5e1" }}>{sign}</span>
+                <span className="text-[13px]" style={{ color: "#cbd5e1" }}>{sign}</span>
               </div>
               <div className="flex items-center">
-                <span className="text-xs font-bold px-2 py-0.5 rounded-lg"
+                <span className="text-[13px] font-bold px-2 py-0.5 rounded-lg"
                   style={{ background:"rgba(99,102,241,0.15)", color:"#818cf8" }}>
                   {houseIdx + 1}
                 </span>

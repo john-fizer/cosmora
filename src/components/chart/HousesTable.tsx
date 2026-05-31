@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import type { ChartData, ZodiacSign, PlanetName } from "@/lib/astrology/types";
@@ -99,7 +99,7 @@ export function HousesTable({ chart, onSelectHouse, selectedHouse, onHouseNaviga
             >
               {/* House number */}
               <div className="flex items-center">
-                <div className="flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold"
+                <div className="flex items-center justify-center w-7 h-7 rounded-lg text-[13px] font-bold"
                   style={{ background: `${qColor}15`, color: qColor, border: `1px solid ${qColor}30` }}>
                   {house.house}
                 </div>
@@ -107,7 +107,7 @@ export function HousesTable({ chart, onSelectHouse, selectedHouse, onHouseNaviga
 
               {/* Cusp */}
               <div className="flex items-center">
-                <span className="text-xs font-mono" style={{ color: "#94a3b8" }}>
+                <span className="text-[13px] font-mono" style={{ color: "#94a3b8" }}>
                   {formatCusp(house.longitude)}
                 </span>
               </div>
@@ -115,16 +115,16 @@ export function HousesTable({ chart, onSelectHouse, selectedHouse, onHouseNaviga
               {/* Sign */}
               <div className="flex items-center gap-1.5">
                 <span className="text-base" style={{ color: signColor }}>{SIGN_SYMBOLS[house.sign]}</span>
-                <span className="text-xs" style={{ color: "#cbd5e1" }}>{house.sign}</span>
+                <span className="text-[13px]" style={{ color: "#cbd5e1" }}>{house.sign}</span>
               </div>
 
               {/* Lord */}
               <div className="flex items-center gap-1.5">
-                <span className="text-sm" style={{ color: lordPlanet?.dignity === "domicile" ? "#22c55e" : "#94a3b8" }}>
+                <span className="text-[14px]" style={{ color: lordPlanet?.dignity === "domicile" ? "#22c55e" : "#94a3b8" }}>
                   {PLANET_SYMBOLS[lord]}
                 </span>
                 <div>
-                  <span className="text-xs" style={{ color: "#94a3b8" }}>{lord}</span>
+                  <span className="text-[13px]" style={{ color: "#94a3b8" }}>{lord}</span>
                   {lordPlanet && (
                     <span className="text-[13px] ml-1" style={{ color: "#475569" }}>
                       H{lordPlanet.house}
@@ -145,7 +145,7 @@ export function HousesTable({ chart, onSelectHouse, selectedHouse, onHouseNaviga
                   <span className="text-[13px]" style={{ color: "#2d3748" }}>empty</span>
                 ) : (
                   occupants.map(pName => (
-                    <span key={pName} className="text-sm" title={pName}
+                    <span key={pName} className="text-[14px]" title={pName}
                       style={{ color: pName === "Sun" ? "#fbbf24" : pName === "Moon" ? "#94a3b8" : "#a78bfa" }}>
                       {PLANET_SYMBOLS[pName]}
                     </span>

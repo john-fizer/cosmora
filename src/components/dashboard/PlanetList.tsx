@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import type { ChartData, PlanetName } from "@/lib/astrology/types";
@@ -30,7 +30,7 @@ export function PlanetList({ chart, loading }: PlanetListProps) {
       style={{ border: "1px solid rgba(99,102,241,0.15)" }}
     >
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-xs font-bold tracking-widest" style={{ color: "#94a3b8" }}>CURRENT ENERGIES</h3>
+        <h3 className="text-[13px] font-bold tracking-widest" style={{ color: "#94a3b8" }}>CURRENT ENERGIES</h3>
         {chart && (
           <span className="text-[13px] tracking-widest capitalize" style={{ color: "#475569" }}>
             {chart.sect} chart
@@ -45,7 +45,7 @@ export function PlanetList({ chart, loading }: PlanetListProps) {
           ))}
         </div>
       ) : planets.length === 0 ? (
-        <p className="text-xs text-center py-4" style={{ color: "#475569" }}>
+        <p className="text-[13px] text-center py-4" style={{ color: "#475569" }}>
           No chart data. Create a birth profile to see your planets.
         </p>
       ) : (
@@ -57,7 +57,7 @@ export function PlanetList({ chart, loading }: PlanetListProps) {
               whileHover={{ x: 3, backgroundColor: "rgba(124,58,237,0.08)" }}
               className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors duration-150"
             >
-              <span className="text-sm w-5 text-center" style={{ color: PLANET_COLORS[p.name] }}>
+              <span className="text-[14px] w-5 text-center" style={{ color: PLANET_COLORS[p.name] }}>
                 {PLANET_SYMBOLS[p.name]}
               </span>
               <span className="text-[14px] font-semibold tracking-wider flex-1" style={{ color: "#cbd5e1" }}>

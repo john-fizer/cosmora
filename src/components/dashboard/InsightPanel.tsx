@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -34,12 +34,12 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
           className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
           style={{ background:"linear-gradient(135deg, #7c3aed, #a855f7)", boxShadow:"0 0 15px rgba(124,58,237,0.5)" }}
         >
-          <span className="text-sm font-bold text-white">
+          <span className="text-[14px] font-bold text-white">
             {profileName ? profileName[0].toUpperCase() : "?"}
           </span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold tracking-wider truncate" style={{ color: "#e2e8f0" }}>
+          <p className="text-[14px] font-bold tracking-wider truncate" style={{ color: "#e2e8f0" }}>
             {profileName || "NO PROFILE"}
           </p>
           <p className="text-[13px] tracking-widest" style={{ color: "#64748b" }}>
@@ -61,12 +61,12 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
           }}>BETA</span>
         </div>
         {prof && (
-          <h4 className="text-sm font-bold mb-2 tracking-wide" style={{ color: "#c4b5fd" }}>
+          <h4 className="text-[14px] font-bold mb-2 tracking-wide" style={{ color: "#c4b5fd" }}>
             AGE {prof.age} · HOUSE {prof.activatedHouse} · {prof.activatedSign.toUpperCase()}
           </h4>
         )}
         <motion.p
-          className="text-xs leading-relaxed mb-3"
+          className="text-[13px] leading-relaxed mb-3"
           style={{ color: "#94a3b8" }}
           animate={{ opacity: [0.7, 1, 0.7] }}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
@@ -77,7 +77,7 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
           <motion.button
             whileHover={{ scale: 1.02, boxShadow:"0 0 20px rgba(124,58,237,0.4)" }}
             whileTap={{ scale: 0.98 }}
-            className="flex-1 py-2 rounded-xl text-xs font-semibold tracking-wider cursor-pointer"
+            className="flex-1 py-2 rounded-xl text-[13px] font-semibold tracking-wider cursor-pointer"
             style={{
               background:"linear-gradient(135deg, rgba(124,58,237,0.4), rgba(99,102,241,0.3))",
               border:"1px solid rgba(124,58,237,0.4)", color:"#c4b5fd"
@@ -89,7 +89,7 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => setExpanded(!expanded)}
-              className="px-3 py-2 rounded-xl text-xs cursor-pointer"
+              className="px-3 py-2 rounded-xl text-[13px] cursor-pointer"
               style={{ background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.08)", color:"#64748b" }}
             >
               {expanded ? "−" : "+"}
@@ -105,7 +105,7 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
           className="glass-card rounded-2xl p-4"
           style={{ border: "1px solid rgba(245,158,11,0.15)" }}
         >
-          <h3 className="text-xs font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>ANNUAL PROFECTION</h3>
+          <h3 className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>ANNUAL PROFECTION</h3>
           <div className="flex items-center gap-3 mb-3">
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
@@ -114,7 +114,7 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
               {SIGN_SYMBOLS[prof.activatedSign]}
             </div>
             <div>
-              <p className="text-xs font-bold" style={{ color: "#fbbf24" }}>HOUSE {prof.activatedHouse} · {prof.activatedSign.toUpperCase()}</p>
+              <p className="text-[13px] font-bold" style={{ color: "#fbbf24" }}>HOUSE {prof.activatedHouse} · {prof.activatedSign.toUpperCase()}</p>
               <p className="text-[13px]" style={{ color:"#64748b" }}>Lord of Year: {PLANET_SYMBOLS[prof.lordOfYear]} {prof.lordOfYear}</p>
             </div>
           </div>
@@ -135,7 +135,7 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
           className="glass-card rounded-2xl p-4"
           style={{ border: "1px solid rgba(99,102,241,0.15)" }}
         >
-          <h3 className="text-xs font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>KEY ASPECTS</h3>
+          <h3 className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>KEY ASPECTS</h3>
           <div className="space-y-2">
             {chart.aspects.slice(0, 5).map((a, i) => {
               const typeColors: Record<string, string> = {
@@ -173,7 +173,7 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
           className="glass-card rounded-2xl p-4"
           style={{ border: "1px solid rgba(99,102,241,0.15)" }}
         >
-          <h3 className="text-xs font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>ARABIC LOTS</h3>
+          <h3 className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>ARABIC LOTS</h3>
           {[
             { label: "Lot of Fortune", lon: chart.lotOfFortune },
             { label: "Lot of Spirit", lon: chart.lotOfSpirit },

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -767,7 +767,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
             >
               <div className="flex items-center gap-3 mb-2">
                 <span style={{ fontSize: 22, color }}>{PLANET_SYMBOLS[hovered]}</span>
-                <p className="text-sm font-bold" style={{ color }}>{hovered} in {p.sign}</p>
+                <p className="text-[14px] font-bold" style={{ color }}>{hovered} in {p.sign}</p>
                 {selfNames.has(hovered) && (
                   <span className="text-[13px] font-bold px-2 py-0.5 rounded-full"
                     style={{ background: `${color}20`, color }}>SELF-DISPOSITING ✦</span>
@@ -876,7 +876,7 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
       {totalConjunctions === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 gap-3">
           <span className="text-3xl" style={{ color: "#1e293b" }}>✦</span>
-          <p className="text-sm" style={{ color: "#334155" }}>No fixed star conjunctions within 1°30′</p>
+          <p className="text-[14px]" style={{ color: "#334155" }}>No fixed star conjunctions within 1°30′</p>
           <p className="text-[13px]" style={{ color: "#1e293b" }}>Your chart has rare planetary freedom from stellar influence</p>
         </div>
       ) : (
@@ -896,7 +896,7 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
                 <div className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: `1px solid ${pColor}12` }}>
                   <span className="text-xl" style={{ color: pColor }}>{PLANET_SYMBOLS[planet.name]}</span>
                   <div className="flex-1">
-                    <p className="text-xs font-bold" style={{ color: pColor }}>
+                    <p className="text-[13px] font-bold" style={{ color: pColor }}>
                       {planet.name} · {planet.signDegree.toFixed(1)}° {planet.sign}
                       {planet.retrograde ? " ℞" : ""}
                     </p>
@@ -940,7 +940,7 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                              <span className="text-xs font-bold" style={{ color: sColor }}>{star.name}</span>
+                              <span className="text-[13px] font-bold" style={{ color: sColor }}>{star.name}</span>
                               <span className="text-[13px] font-medium px-1.5 py-0.5 rounded"
                                 style={{ background: "rgba(255,255,255,0.04)", color: "#475569" }}>
                                 {star.nature}
@@ -975,7 +975,7 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
               style={{ border: "1px solid rgba(6,182,212,0.2)", background: "rgba(6,182,212,0.04)" }}
             >
               <div className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: "1px solid rgba(6,182,212,0.1)" }}>
-                <span className="text-sm font-bold" style={{ color: "#06b6d4" }}>{label}</span>
+                <span className="text-[14px] font-bold" style={{ color: "#06b6d4" }}>{label}</span>
                 <p className="text-[13px] flex-1" style={{ color: "#475569" }}>
                   {(lon % 30).toFixed(1)}° {ZODIAC_SIGNS[Math.floor(((lon % 360) + 360) % 360 / 30)]}
                 </p>
@@ -998,7 +998,7 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                            <span className="text-xs font-bold" style={{ color: sColor }}>{star.name}</span>
+                            <span className="text-[13px] font-bold" style={{ color: sColor }}>{star.name}</span>
                             <span className="text-[13px] px-1.5 py-0.5 rounded"
                               style={{ background: "rgba(255,255,255,0.04)", color: "#475569" }}>
                               {star.nature}
@@ -1387,8 +1387,8 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
       {patterns.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 gap-4">
           <div className="text-4xl" style={{ color: "#1e293b" }}>○</div>
-          <p className="text-sm" style={{ color: "#334155" }}>No major chart patterns detected.</p>
-          <p className="text-xs text-center" style={{ color: "#1e293b", maxWidth: "28ch" }}>
+          <p className="text-[14px]" style={{ color: "#334155" }}>No major chart patterns detected.</p>
+          <p className="text-[13px] text-center" style={{ color: "#1e293b", maxWidth: "28ch" }}>
             This is common. A chart without major configurations can still be deeply complex through sign, house, and dignity placement.
           </p>
         </div>
@@ -1413,7 +1413,7 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
                     {pattern.glyph}
                   </span>
                   <div>
-                    <p className="text-sm font-bold" style={{ color: "#e2e8f0", fontFamily: "'Space Grotesk', sans-serif" }}>
+                    <p className="text-[14px] font-bold" style={{ color: "#e2e8f0", fontFamily: "'Space Grotesk', sans-serif" }}>
                       {pattern.name}
                     </p>
                     <span
@@ -1431,7 +1431,7 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
                 {pattern.planets.map((pName, pi) => (
                   <span
                     key={pi}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold"
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[13px] font-semibold"
                     style={{
                       background: `${PAT_PLANET_COLORS[pName] ?? "#94a3b8"}12`,
                       border: `1px solid ${PAT_PLANET_COLORS[pName] ?? "#94a3b8"}28`,
@@ -1549,7 +1549,7 @@ function ArabicLots({ chart }: { chart: ChartData }) {
                 {/* Name + position */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-xs font-bold" style={{ color: "#e2e8f0" }}>Lot of {lot.name}</span>
+                    <span className="text-[13px] font-bold" style={{ color: "#e2e8f0" }}>Lot of {lot.name}</span>
                     <span className="text-[14px] font-mono" style={{ color: "#475569" }}>{lot.signDeg.toFixed(1)}°</span>
                     <span className="text-[13px]" style={{ color: lot.color }}>{lot.sigSym}</span>
                     <span className="text-[14px]" style={{ color: "#64748b" }}>{lot.sign}</span>
@@ -1792,7 +1792,7 @@ export default function ChartPage() {
             <h2 className="text-base font-bold mb-2" style={{ color: "#e2e8f0", fontFamily: "'Space Grotesk', sans-serif" }}>
               Cosmic instruments standing by.
             </h2>
-            <p className="text-sm max-w-xs mx-auto" style={{ color: "#475569" }}>
+            <p className="text-[14px] max-w-xs mx-auto" style={{ color: "#475569" }}>
               Enter your birth data to unlock your natal chart and all its layers.
             </p>
           </div>
@@ -1800,7 +1800,7 @@ export default function ChartPage() {
             <motion.button
               whileHover={{ scale: 1.04, boxShadow: "0 0 32px rgba(124,58,237,0.45)" }}
               whileTap={{ scale: 0.96 }}
-              className="px-7 py-3 rounded-xl text-sm font-bold tracking-wider cursor-pointer"
+              className="px-7 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
               style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
             >
               Begin Your Chart →
@@ -1834,7 +1834,7 @@ export default function ChartPage() {
             <Link href="/dashboard">
               <motion.button
                 whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1.5 text-xs font-medium cursor-pointer transition-colors duration-200"
+                className="flex items-center gap-1.5 text-[13px] font-medium cursor-pointer transition-colors duration-200"
                 style={{ color: "#64748b" }}
               >
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -1844,11 +1844,11 @@ export default function ChartPage() {
               </motion.button>
             </Link>
             <span style={{ color: "#1e293b" }}>/</span>
-            <span className="text-xs font-bold tracking-widest gradient-text">NATAL CHART</span>
+            <span className="text-[13px] font-bold tracking-widest gradient-text">NATAL CHART</span>
             {profileName && (
               <>
                 <span style={{ color: "#1e293b" }}>/</span>
-                <span className="text-xs font-medium" style={{ color: "#64748b" }}>{profileName}</span>
+                <span className="text-[13px] font-medium" style={{ color: "#64748b" }}>{profileName}</span>
               </>
             )}
           </div>
@@ -1861,7 +1861,7 @@ export default function ChartPage() {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setActiveTab(tab.id)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold tracking-wide cursor-pointer transition-all duration-200"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-bold tracking-wide cursor-pointer transition-all duration-200"
                 style={{
                   background: activeTab === tab.id ? "rgba(124,58,237,0.25)" : "rgba(255,255,255,0.03)",
                   border: activeTab === tab.id ? "1px solid rgba(124,58,237,0.4)" : "1px solid rgba(255,255,255,0.06)",
@@ -1897,7 +1897,7 @@ export default function ChartPage() {
                   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
                   a.download = "cosmora-natal-chart.svg"; a.click();
                 }}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all duration-200"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-medium cursor-pointer transition-all duration-200"
                 style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", color: "#64748b" }}
               >
                 <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3.5 h-3.5">
@@ -1914,7 +1914,7 @@ export default function ChartPage() {
               whileTap={{ scale: 0.95 }}
               onClick={() => setSplitView(s => !s)}
               disabled={activeTab === "WHEEL" || activeTab === "ORRERY"}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all duration-200 disabled:opacity-30"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[13px] font-medium cursor-pointer transition-all duration-200 disabled:opacity-30"
               style={{
                 background: splitView ? "rgba(6,182,212,0.15)" : "rgba(255,255,255,0.03)",
                 border: splitView ? "1px solid rgba(6,182,212,0.3)" : "1px solid rgba(255,255,255,0.06)",
@@ -1948,14 +1948,14 @@ export default function ChartPage() {
               className="w-16 h-16 rounded-full border-2 border-t-transparent"
               style={{ borderColor: "#7c3aed" }}
             />
-            <p className="text-xs tracking-widest" style={{ color: "#475569" }}>LOADING CHART DATA</p>
+            <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>LOADING CHART DATA</p>
           </div>
         ) : !chart ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center space-y-3">
-              <p className="text-sm" style={{ color: "#64748b" }}>Chart not found.</p>
+              <p className="text-[14px]" style={{ color: "#64748b" }}>Chart not found.</p>
               <Link href="/onboarding">
-                <button className="px-4 py-2 rounded-xl text-xs font-bold cursor-pointer"
+                <button className="px-4 py-2 rounded-xl text-[13px] font-bold cursor-pointer"
                   style={{ background: "rgba(124,58,237,0.2)", color: "#a78bfa", border: "1px solid rgba(124,58,237,0.3)" }}>
                   Create Profile
                 </button>
@@ -2017,7 +2017,7 @@ export default function ChartPage() {
                         className="w-12 h-12 rounded-full border-2 border-t-transparent"
                         style={{ borderColor: "#7c3aed" }}
                       />
-                      <p className="text-xs tracking-widest" style={{ color: "#475569" }}>RECALCULATING</p>
+                      <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>RECALCULATING</p>
                     </div>
                   ) : (
                     <motion.div
@@ -2052,11 +2052,11 @@ export default function ChartPage() {
                           }}
                         >
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-bold" style={{ color: "#e2e8f0" }}>
+                            <span className="text-[14px] font-bold" style={{ color: "#e2e8f0" }}>
                               {p.name} {p.retrograde ? "℞" : ""}
                             </span>
                             <button onClick={() => setSelectedPlanet(null)}
-                              className="text-xs cursor-pointer" style={{ color: "#475569" }}>×</button>
+                              className="text-[13px] cursor-pointer" style={{ color: "#475569" }}>×</button>
                           </div>
                           <div className="grid grid-cols-3 gap-3">
                             {[
@@ -2066,7 +2066,7 @@ export default function ChartPage() {
                             ].map(item => (
                               <div key={item.label}>
                                 <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>{item.label}</p>
-                                <p className="text-xs font-semibold capitalize" style={{ color: "#c4b5fd" }}>{item.value}</p>
+                                <p className="text-[13px] font-semibold capitalize" style={{ color: "#c4b5fd" }}>{item.value}</p>
                               </div>
                             ))}
                           </div>

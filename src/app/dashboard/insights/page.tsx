@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -404,7 +404,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
               <div className="flex items-center gap-1.5">
                 <span className="text-lg" style={{ color }}>{symbol}</span>
                 <div>
-                  <p className="text-sm font-bold" style={{ color }}>{value}</p>
+                  <p className="text-[14px] font-bold" style={{ color }}>{value}</p>
                   <p className="text-[13px]" style={{ color: "#475569" }}>{SIGN_KEYWORDS[value as ZodiacSign]?.split(" · ")[0]}</p>
                 </div>
               </div>
@@ -444,7 +444,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
           <div className="flex items-center gap-2 mb-2">
             <span className="text-2xl" style={{ color: lordColor }}>{PLANET_SYMBOLS[prof.lordOfYear]}</span>
             <div>
-              <p className="text-sm font-bold" style={{ color: lordColor }}>{prof.lordOfYear}</p>
+              <p className="text-[14px] font-bold" style={{ color: lordColor }}>{prof.lordOfYear}</p>
               <p className="text-[13px]" style={{ color: "#475569" }}>Age {prof.age} · H{prof.activatedHouse}</p>
             </div>
           </div>
@@ -475,7 +475,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                 {PLANET_SYMBOLS[dignifiedPlanets[0].name]}
               </span>
               <div>
-                <p className="text-sm font-bold" style={{ color: PLANET_COLORS[dignifiedPlanets[0].name] ?? "#94a3b8" }}>
+                <p className="text-[14px] font-bold" style={{ color: PLANET_COLORS[dignifiedPlanets[0].name] ?? "#94a3b8" }}>
                   {dignifiedPlanets[0].name}
                 </p>
                 <p className="text-[13px]" style={{ color: "#475569" }}>
@@ -507,7 +507,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
             <div className="flex items-center gap-2 mb-2">
               <span className="text-lg" style={{ color: SIGN_COLORS[stelliums[0][0]] }}>{SIGN_SYMBOLS[stelliums[0][0]]}</span>
               <div>
-                <p className="text-sm font-bold" style={{ color: SIGN_COLORS[stelliums[0][0]] }}>{stelliums[0][0]}</p>
+                <p className="text-[14px] font-bold" style={{ color: SIGN_COLORS[stelliums[0][0]] }}>{stelliums[0][0]}</p>
                 <p className="text-[13px]" style={{ color: "#475569" }}>{stelliums[0][1].length} planets concentrated</p>
               </div>
             </div>
@@ -589,7 +589,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                   <span style={{ color: sectLightColor }}>{isDay ? "☀" : "☽"}</span>
                 </div>
                 <div>
-                  <p className="text-xs font-bold" style={{ color: sectLightColor }}>
+                  <p className="text-[13px] font-bold" style={{ color: sectLightColor }}>
                     {isDay ? "Day Chart — Sun is your Sect Light" : "Night Chart — Moon is your Sect Light"}
                   </p>
                   <p className="text-[13px] mt-0.5 leading-relaxed" style={{ color: "#475569" }}>
@@ -825,7 +825,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-bold" style={{ color: crColor }}>{chartRulerName}</span>
+                      <span className="text-[14px] font-bold" style={{ color: crColor }}>{chartRulerName}</span>
                       <span className="text-[13px] px-2 py-0.5 rounded-full font-bold" style={{ background: `${crColor}15`, color: crColor }}>CHART RULER</span>
                     </div>
                     <p className="text-[14px]" style={{ color: "#64748b" }}>
@@ -1195,7 +1195,7 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                 {/* Name + sign */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold" style={{ color: "#e2e8f0" }}>{p.name}</span>
+                    <span className="text-[14px] font-bold" style={{ color: "#e2e8f0" }}>{p.name}</span>
                     {p.retrograde && <span className="text-[13px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(239,68,68,0.12)", color: "#ef4444" }}>℞</span>}
                   </div>
                   <div className="flex items-center gap-1.5 mt-0.5">
@@ -1412,7 +1412,7 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                         transition={{ delay: i * 0.04 }}
                         className="flex items-center gap-2"
                       >
-                        <span className="text-sm w-5 flex-shrink-0" style={{ color }}>{PLANET_SYMBOLS[s.planet.name]}</span>
+                        <span className="text-[14px] w-5 flex-shrink-0" style={{ color }}>{PLANET_SYMBOLS[s.planet.name]}</span>
                         <span className="text-[13px] w-14 flex-shrink-0" style={{ color: i === 0 ? color : "#475569", fontWeight: i === 0 ? "700" : "400" }}>{s.planet.name}</span>
                         <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.04)" }}>
                           <motion.div
@@ -1698,7 +1698,7 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <span className="text-xs font-bold" style={{ color: p.color }}>{p.type}</span>
+                  <span className="text-[13px] font-bold" style={{ color: p.color }}>{p.type}</span>
                   <div className="flex gap-1 flex-wrap">
                     {p.planets.map(name => (
                       <span key={name} className="text-[13px] px-1.5 py-0.5 rounded-md"
@@ -1884,7 +1884,7 @@ function AspectsTab({ chart }: { chart: ChartData }) {
               <div className="flex items-center gap-1.5 min-w-0 flex-shrink-0" style={{ width: 120 }}>
                 <span className="text-base" style={{ color: PLANET_COLORS[a.planet1] ?? "#94a3b8" }}>{PLANET_SYMBOLS[a.planet1]}</span>
                 <span className="text-[13px] font-medium" style={{ color: "#475569" }}>{a.planet1}</span>
-                <span className="text-sm font-bold mx-1" style={{ color }}>{ASPECT_GLYPHS[a.type]}</span>
+                <span className="text-[14px] font-bold mx-1" style={{ color }}>{ASPECT_GLYPHS[a.type]}</span>
                 <span className="text-base" style={{ color: PLANET_COLORS[a.planet2] ?? "#94a3b8" }}>{PLANET_SYMBOLS[a.planet2]}</span>
                 <span className="text-[13px] font-medium" style={{ color: "#475569" }}>{a.planet2}</span>
               </div>
@@ -2018,7 +2018,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
               </div>
             </div>
             <div className="flex items-center gap-2 mt-2 flex-wrap">
-              <span className="text-sm px-2.5 py-0.5 rounded-lg font-bold"
+              <span className="text-[14px] px-2.5 py-0.5 rounded-lg font-bold"
                 style={{ background: `${signColor}15`, color: signColor }}>
                 {SIGN_SYMBOLS[prof.activatedSign]} {prof.activatedSign}
               </span>
@@ -2031,7 +2031,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
           {lordPlanet && (
             <div className="text-right">
               <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>LORD IN YOUR CHART</p>
-              <p className="text-xs font-semibold" style={{ color: SIGN_COLORS[lordPlanet.sign] }}>
+              <p className="text-[13px] font-semibold" style={{ color: SIGN_COLORS[lordPlanet.sign] }}>
                 {SIGN_SYMBOLS[lordPlanet.sign]} {lordPlanet.sign}
               </p>
               <p className="text-[13px]" style={{ color: "#475569" }}>H{lordPlanet.house}</p>
@@ -2081,7 +2081,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
             {PLANET_SYMBOLS[nextLord]}
           </span>
           <div className="flex-1">
-            <p className="text-sm font-bold" style={{ color: "#94a3b8" }}>
+            <p className="text-[14px] font-bold" style={{ color: "#94a3b8" }}>
               {nextLord} year · {SIGN_SYMBOLS[nextSign]} {nextSign}
             </p>
             <p className="text-[13px]" style={{ color: "#475569" }}>
@@ -2148,7 +2148,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className="text-xl" style={{ color: SIGN_COLORS[sign] }}>{SIGN_SYMBOLS[sign]}</span>
                   <div>
-                    <p className="text-xs font-bold" style={{ color: SIGN_COLORS[sign] }}>{sign}</p>
+                    <p className="text-[13px] font-bold" style={{ color: SIGN_COLORS[sign] }}>{sign}</p>
                     <p className="text-[13px]" style={{ color: "#475569" }}>{degree.toFixed(1)}° · H{house > 0 ? house : 1}</p>
                   </div>
                 </div>
@@ -2234,7 +2234,7 @@ function MessageBubble({ role, content, streaming = false }: { role: "user" | "a
   if (role === "user") {
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex justify-end">
-        <div className="max-w-[80%] px-4 py-3 rounded-2xl rounded-tr-sm text-sm leading-relaxed"
+        <div className="max-w-[80%] px-4 py-3 rounded-2xl rounded-tr-sm text-[14px] leading-relaxed"
           style={{ background: "rgba(124,58,237,0.2)", border: "1px solid rgba(124,58,237,0.35)", color: "#c4b5fd" }}>
           {content}
         </div>
@@ -2247,7 +2247,7 @@ function MessageBubble({ role, content, streaming = false }: { role: "user" | "a
         style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 16px rgba(124,58,237,0.5)" }}>
         <span className="text-[13px] text-white font-bold">✦</span>
       </div>
-      <div className="flex-1 px-4 py-3 rounded-2xl rounded-tl-sm text-sm leading-relaxed"
+      <div className="flex-1 px-4 py-3 rounded-2xl rounded-tl-sm text-[14px] leading-relaxed"
         style={{ background: "rgba(4,4,28,0.8)", border: "1px solid rgba(99,102,241,0.2)", color: "#cbd5e1", whiteSpace: "pre-wrap" }}>
         {content}
         {streaming && (
@@ -2318,7 +2318,7 @@ function OracleTab({
               </div>
               <div className="text-center">
                 <p className="text-base font-bold" style={{ color: "#e2e8f0" }}>Cosmora Oracle</p>
-                <p className="text-xs mt-1" style={{ color: "#475569" }}>
+                <p className="text-[13px] mt-1" style={{ color: "#475569" }}>
                   {chart ? "Ask anything about your chart" : "Connect your chart to begin"}
                 </p>
               </div>
@@ -2406,7 +2406,7 @@ function OracleTab({
             onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input); } }}
             placeholder={chart ? "Ask about your chart, timing, relationships…" : "Create a birth profile to begin…"}
             disabled={streaming || !chart}
-            className="flex-1 bg-transparent text-sm outline-none resize-none leading-relaxed disabled:opacity-40"
+            className="flex-1 bg-transparent text-[14px] outline-none resize-none leading-relaxed disabled:opacity-40"
             style={{ color: "#e2e8f0", minHeight: 24, maxHeight: 120 }}
           />
           <motion.button
@@ -2532,7 +2532,7 @@ export default function InsightsPage() {
           <div className="flex items-center gap-3">
             <Link href="/dashboard">
               <motion.button whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "#64748b" }}>
+                className="flex items-center gap-1.5 text-[13px] font-medium cursor-pointer" style={{ color: "#64748b" }}>
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
                   <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
                 </svg>
@@ -2540,11 +2540,11 @@ export default function InsightsPage() {
               </motion.button>
             </Link>
             <span style={{ color: "#1e293b" }}>/</span>
-            <span className="text-xs font-bold tracking-widest gradient-text">INSIGHTS</span>
+            <span className="text-[13px] font-bold tracking-widest gradient-text">INSIGHTS</span>
             {profile && (
               <>
                 <span style={{ color: "#1e293b" }}>/</span>
-                <span className="text-xs font-medium hidden md:inline" style={{ color: "#64748b" }}>{profile.name}</span>
+                <span className="text-[13px] font-medium hidden md:inline" style={{ color: "#64748b" }}>{profile.name}</span>
               </>
             )}
           </div>
@@ -2616,11 +2616,11 @@ export default function InsightsPage() {
                 <div className="text-center">
                   <p className="text-[14px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
                   <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "Space Grotesk, sans-serif", color: "#e2e8f0" }}>Cosmic instruments standing by.</h3>
-                  <p className="text-sm max-w-xs mx-auto" style={{ color: "#475569" }}>Enter your birth data to unlock natal insights and all their cosmic layers.</p>
+                  <p className="text-[14px] max-w-xs mx-auto" style={{ color: "#475569" }}>Enter your birth data to unlock natal insights and all their cosmic layers.</p>
                 </div>
                 <Link href="/onboarding">
                   <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-                    className="px-6 py-3 rounded-xl text-sm font-bold tracking-wider cursor-pointer"
+                    className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
                     style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}>
                     Begin Your Chart →
                   </motion.button>

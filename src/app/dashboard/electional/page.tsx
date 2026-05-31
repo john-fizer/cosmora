@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -405,7 +405,7 @@ function BestWindows({ hours, now, activity, moonSign, isVoid }: {
   if (upcoming.length === 0) {
     return (
       <div className="rounded-xl px-4 py-3" style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)" }}>
-        <p className="text-xs font-bold mb-1" style={{ color: "#ef4444" }}>No optimal windows today</p>
+        <p className="text-[13px] font-bold mb-1" style={{ color: "#ef4444" }}>No optimal windows today</p>
         <p className="text-[13px]" style={{ color: "#475569" }}>
           Current conditions are not ideal for {activity.name.toLowerCase()}. Consider tomorrow or adjust your timing.
         </p>
@@ -665,12 +665,12 @@ export default function ElectionalPage() {
           <div className="text-center">
             <p className="text-[14px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
             <h2 className="text-2xl font-bold mb-3" style={{ fontFamily: "Space Grotesk, sans-serif", color: "#e2e8f0" }}>Cosmic instruments standing by.</h2>
-            <p className="text-sm max-w-xs mx-auto" style={{ color: "#475569" }}>Enter your birth data to unlock electional timing and all its cosmic layers.</p>
+            <p className="text-[14px] max-w-xs mx-auto" style={{ color: "#475569" }}>Enter your birth data to unlock electional timing and all its cosmic layers.</p>
           </div>
           <Link href="/onboarding">
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-              className="px-6 py-3 rounded-xl text-sm font-bold tracking-wider cursor-pointer"
+              className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
               style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
             >
               Begin Your Chart →
@@ -706,7 +706,7 @@ export default function ElectionalPage() {
             <Link href="/dashboard">
               <motion.button
                 whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1.5 text-xs font-medium cursor-pointer"
+                className="flex items-center gap-1.5 text-[13px] font-medium cursor-pointer"
                 style={{ color: "#64748b" }}
               >
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -716,7 +716,7 @@ export default function ElectionalPage() {
               </motion.button>
             </Link>
             <span style={{ color: "#1e293b" }}>/</span>
-            <span className="text-xs font-bold tracking-widest" style={{ background: "linear-gradient(135deg, #22c55e, #06b6d4)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <span className="text-[13px] font-bold tracking-widest" style={{ background: "linear-gradient(135deg, #22c55e, #06b6d4)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               ELECTIONAL TIMING
             </span>
           </div>
@@ -725,12 +725,12 @@ export default function ElectionalPage() {
           <div className="flex items-center gap-3">
             {currentHour && (
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: `${PLANET_COLORS[currentHour.planet]}12`, border: `1px solid ${PLANET_COLORS[currentHour.planet]}25` }}>
-                <span className="text-sm" style={{ color: PLANET_COLORS[currentHour.planet] }}>{PLANET_SYMBOLS[currentHour.planet]}</span>
+                <span className="text-[14px]" style={{ color: PLANET_COLORS[currentHour.planet] }}>{PLANET_SYMBOLS[currentHour.planet]}</span>
                 <span className="text-[13px] font-bold" style={{ color: PLANET_COLORS[currentHour.planet] }}>Hour of {currentHour.planet}</span>
               </div>
             )}
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: `${SIGN_COLORS[moonSign]}10`, border: `1px solid ${SIGN_COLORS[moonSign]}20` }}>
-              <span className="text-sm" style={{ color: SIGN_COLORS[moonSign] }}>{SIGN_SYMBOLS[moonSign]}</span>
+              <span className="text-[14px]" style={{ color: SIGN_COLORS[moonSign] }}>{SIGN_SYMBOLS[moonSign]}</span>
               <span className="text-[13px] font-bold" style={{ color: SIGN_COLORS[moonSign] }}>☽ {moonSign}</span>
               {isVoid && <span className="text-[14px] font-bold" style={{ color: "#f97316" }}>VoC</span>}
             </div>
@@ -745,7 +745,7 @@ export default function ElectionalPage() {
               className="w-10 h-10 rounded-full border-2 border-t-transparent"
               style={{ borderColor: "#22c55e" }}
             />
-            <p className="text-xs tracking-widest" style={{ color: "#475569" }}>LOADING SKY DATA</p>
+            <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>LOADING SKY DATA</p>
           </div>
         ) : (
           <div className="flex-1 flex min-h-0 overflow-hidden">
@@ -787,9 +787,9 @@ export default function ElectionalPage() {
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-xl" style={{ color: selectedActivity.color }}>{selectedActivity.icon}</span>
-                          <p className="text-sm font-bold" style={{ color: "#e2e8f0" }}>{selectedActivity.name}</p>
+                          <p className="text-[14px] font-bold" style={{ color: "#e2e8f0" }}>{selectedActivity.name}</p>
                         </div>
-                        <p className="text-xs mb-3" style={{ color: "#475569" }}>{selectedActivity.description}</p>
+                        <p className="text-[13px] mb-3" style={{ color: "#475569" }}>{selectedActivity.description}</p>
                         <div className="flex flex-wrap gap-2">
                           {selectedActivity.bestPlanets.slice(0, 3).map(p => (
                             <span key={p} className="flex items-center gap-1 text-[13px] px-2 py-1 rounded-lg" style={{ background: `${PLANET_COLORS[p] ?? "#64748b"}12`, color: PLANET_COLORS[p] ?? "#64748b", border: `1px solid ${PLANET_COLORS[p] ?? "#64748b"}20` }}>

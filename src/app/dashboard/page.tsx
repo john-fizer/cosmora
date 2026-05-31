@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -124,7 +124,7 @@ function MoonPhaseWidget() {
         </svg>
 
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold leading-tight" style={{ color: "#c4b5fd" }}>{phase.name}</p>
+          <p className="text-[14px] font-bold leading-tight" style={{ color: "#c4b5fd" }}>{phase.name}</p>
           <p className="text-[14px] mt-0.5 tabular-nums" style={{ color: "#475569" }}>
             {illumination.toFixed(0)}% illuminated · {isWaxing ? "Waxing" : "Waning"}
           </p>
@@ -248,7 +248,7 @@ function PlanetaryHourWidget({ lat, lon }: { lat: number; lon: number }) {
             letterSpacing={0.5}>{curr.isDay ? "DAY" : "NGT"}</text>
         </svg>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold leading-tight" style={{ color }}>{curr.planet}</p>
+          <p className="text-[14px] font-bold leading-tight" style={{ color }}>{curr.planet}</p>
           <p className="text-[13px] tabular-nums" style={{ color: "#475569" }}>
             {String(remMin).padStart(2,"0")}:{String(remSec).padStart(2,"0")} left
           </p>
@@ -281,7 +281,7 @@ function CosmicClock() {
   }, []);
   return (
     <div className="text-center">
-      <p className="text-xs font-bold tracking-widest" style={{ color: "#06b6d4", fontFamily: "'Share Tech Mono', monospace" }}>
+      <p className="text-[13px] font-bold tracking-widest" style={{ color: "#06b6d4", fontFamily: "'Share Tech Mono', monospace" }}>
         {time.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "2-digit", second: "2-digit" })}
       </p>
       <p className="text-[13px] tracking-widest" style={{ color: "#334155" }}>
@@ -346,7 +346,7 @@ function PlanetPopup({ planet, onClose }: { planet: PlanetPosition; onClose: () 
           <div className="flex items-center gap-2">
             <span className="text-2xl" style={{ color }}>{PLANET_SYMBOLS[planet.name] ?? ""}</span>
             <div>
-              <p className="text-sm font-bold" style={{ color: "#e2e8f0" }}>{planet.name}{planet.retrograde ? " ℞" : ""}</p>
+              <p className="text-[14px] font-bold" style={{ color: "#e2e8f0" }}>{planet.name}{planet.retrograde ? " ℞" : ""}</p>
               <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>NATAL</p>
             </div>
           </div>
@@ -436,10 +436,10 @@ function CosmicWeatherStrip({ aspects }: { aspects: TransitPill[] }) {
               }}
               whileHover={{ borderColor: aColor, scale: 1.05 }}
             >
-              <span className="text-xs leading-none" style={{ color: tColor }}>{PLANET_SYMBOLS[a.transitPlanet]}</span>
+              <span className="text-[13px] leading-none" style={{ color: tColor }}>{PLANET_SYMBOLS[a.transitPlanet]}</span>
               {a.transitRetrograde && <span className="text-[13px]" style={{ color: "#f97316" }}>℞</span>}
               <span className="text-[13px] font-bold mx-0.5" style={{ color: aColor }}>{ASPECT_GLYPHS[a.type]}</span>
-              <span className="text-xs leading-none" style={{ color: nColor }}>{PLANET_SYMBOLS[a.natalPlanet]}</span>
+              <span className="text-[13px] leading-none" style={{ color: nColor }}>{PLANET_SYMBOLS[a.natalPlanet]}</span>
               <span className="ml-1 text-[13px]" style={{ color: "#334155" }}>H{a.natalHouse}</span>
               {a.exact && (
                 <span className="ml-0.5 text-[13px] font-bold px-1 rounded" style={{ background: "rgba(167,139,250,0.2)", color: "#a78bfa" }}>EX</span>
@@ -612,7 +612,7 @@ Key transits: ${top3 || "No tight transits today"}
               <span className="text-[13px]" style={{ color: "#334155" }}>Reading the skies…</span>
             </div>
           ) : (
-            <p className="text-sm leading-relaxed" style={{ color: "#94a3b8" }}>
+            <p className="text-[16px] leading-relaxed" style={{ color: "#94a3b8" }}>
               {text}
               {streaming && (
                 <motion.span
@@ -641,9 +641,9 @@ Key transits: ${top3 || "No tight transits today"}
                   className="flex items-center gap-1 px-2 py-1 rounded-lg flex-shrink-0"
                   style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
                 >
-                  <span className="text-xs leading-none" style={{ color: tColor }}>{PLANET_SYMBOLS[t.transitPlanet]}</span>
+                  <span className="text-[13px] leading-none" style={{ color: tColor }}>{PLANET_SYMBOLS[t.transitPlanet]}</span>
                   <span className="text-[13px] font-bold" style={{ color: aColor }}>{ASPECT_GLYPHS[t.type]}</span>
-                  <span className="text-xs leading-none" style={{ color: PLANET_COLORS[t.natalPlanet] ?? "#94a3b8" }}>{PLANET_SYMBOLS[t.natalPlanet]}</span>
+                  <span className="text-[13px] leading-none" style={{ color: PLANET_COLORS[t.natalPlanet] ?? "#94a3b8" }}>{PLANET_SYMBOLS[t.natalPlanet]}</span>
                   <span className="text-[13px] font-mono ml-0.5" style={{ color: "#334155" }}>{t.orb.toFixed(1)}°</span>
                 </div>
               );
@@ -688,7 +688,7 @@ function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet
                 onClick={() => onSelectPlanet(p)}
                 className="flex items-center gap-2 px-3 py-1.5 cursor-pointer transition-colors"
               >
-                <span className="text-sm w-5 flex-shrink-0" style={{ color }}>{PLANET_SYMBOLS[p.name]}</span>
+                <span className="text-[14px] w-5 flex-shrink-0" style={{ color }}>{PLANET_SYMBOLS[p.name]}</span>
                 <span className="text-[14px] font-medium flex-1" style={{ color: "#94a3b8" }}>
                   {p.name}{p.retrograde ? " ℞" : ""}
                 </span>
@@ -1011,7 +1011,7 @@ function NextExactWidget({ transits }: { transits: TransitPill[] }) {
           <span style={{ fontSize: "1rem", color: tColor(topExact.transitPlanet) }}>
             {PLANET_SYMBOLS[topExact.transitPlanet] ?? "○"}
           </span>
-          <span className="text-sm font-bold" style={{ color: ASPECT_COLORS[topExact.type] ?? "#94a3b8" }}>
+          <span className="text-[14px] font-bold" style={{ color: ASPECT_COLORS[topExact.type] ?? "#94a3b8" }}>
             {ASPECT_GLYPHS_NE[topExact.type] ?? "~"}
           </span>
           <span style={{ fontSize: "1rem", color: tColor(topExact.natalPlanet) }}>
@@ -1031,7 +1031,7 @@ function NextExactWidget({ transits }: { transits: TransitPill[] }) {
           <span style={{ fontSize: "1rem", color: tColor(next.transitPlanet) }}>
             {PLANET_SYMBOLS[next.transitPlanet] ?? "○"}
           </span>
-          <span className="text-sm font-bold" style={{ color: ASPECT_COLORS[next.type] ?? "#94a3b8" }}>
+          <span className="text-[14px] font-bold" style={{ color: ASPECT_COLORS[next.type] ?? "#94a3b8" }}>
             {ASPECT_GLYPHS_NE[next.type] ?? "~"}
           </span>
           <span style={{ fontSize: "1rem", color: tColor(next.natalPlanet) }}>
@@ -1403,7 +1403,7 @@ function SignatureCard({ chart, name }: { chart: ChartData; name: string }) {
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.96 }}
           onClick={handleDownload}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold tracking-widest cursor-pointer"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
           style={{ background: "rgba(124,58,237,0.2)", border: "1px solid rgba(124,58,237,0.4)", color: "#a78bfa" }}
         >
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3.5 h-3.5">
@@ -1495,11 +1495,11 @@ export default function DashboardPage() {
         </div>
         <div className="text-center space-y-2">
           <h2 className="text-2xl font-bold" style={{ color: "#e2e8f0" }}>No chart found</h2>
-          <p className="text-sm" style={{ color: "#64748b" }}>Enter your birth data to begin.</p>
+          <p className="text-[14px]" style={{ color: "#64748b" }}>Enter your birth data to begin.</p>
         </div>
         <Link href="/onboarding">
           <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-            className="px-8 py-3 rounded-xl text-sm font-bold tracking-wider cursor-pointer"
+            className="px-8 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
             style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white" }}>
             Begin →
           </motion.button>
@@ -1675,7 +1675,7 @@ export default function DashboardPage() {
             >
               <button
                 onClick={() => setShowSignatureCard(false)}
-                className="absolute -top-10 right-0 text-sm cursor-pointer font-bold tracking-widest"
+                className="absolute -top-10 right-0 text-[14px] cursor-pointer font-bold tracking-widest"
                 style={{ color: "#475569" }}
               >
                 ✕ CLOSE

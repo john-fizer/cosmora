@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
@@ -108,7 +108,7 @@ export function ChatInput({ profileId, chart }: ChatInputProps) {
           >
             <div className="flex items-center justify-between px-4 py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
               <span className="text-[13px] font-bold tracking-widest" style={{ color: "#64748b" }}>COSMIC DIALOGUE</span>
-              <button onClick={() => setOpen(false)} className="text-[#64748b] hover:text-[#94a3b8] cursor-pointer text-xs">×</button>
+              <button onClick={() => setOpen(false)} className="text-[#64748b] hover:text-[#94a3b8] cursor-pointer text-[13px]">×</button>
             </div>
             <div className="max-h-72 overflow-y-auto px-4 py-3 space-y-3" style={{ scrollbarWidth: "thin" }}>
               {allMessages.map((m, i) => (
@@ -119,7 +119,7 @@ export function ChatInput({ profileId, chart }: ChatInputProps) {
                   className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}
                 >
                   <div
-                    className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold"
+                    className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[13px] font-bold"
                     style={{
                       background: m.role === "user" ? "rgba(124,58,237,0.3)" : "linear-gradient(135deg, #7c3aed, #06b6d4)",
                       border: "1px solid rgba(124,58,237,0.4)",
@@ -128,7 +128,7 @@ export function ChatInput({ profileId, chart }: ChatInputProps) {
                     {m.role === "user" ? "U" : "✦"}
                   </div>
                   <div
-                    className="flex-1 px-3 py-2 rounded-xl text-xs leading-relaxed"
+                    className="flex-1 px-3 py-2 rounded-xl text-[13px] leading-relaxed"
                     style={{
                       background: m.role === "user" ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.04)",
                       border: `1px solid ${m.role === "user" ? "rgba(124,58,237,0.3)" : "rgba(255,255,255,0.07)"}`,
@@ -178,7 +178,7 @@ export function ChatInput({ profileId, chart }: ChatInputProps) {
           onKeyDown={e => e.key === "Enter" && send()}
           placeholder={chart ? "Ask Cosmora about your chart..." : "Ask Cosmora anything..."}
           disabled={streaming}
-          className="flex-1 bg-transparent text-sm outline-none disabled:opacity-50"
+          className="flex-1 bg-transparent text-[14px] outline-none disabled:opacity-50"
           style={{ color: "#e2e8f0" }}
         />
         <motion.button

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo } from "react";
@@ -92,7 +92,7 @@ function SkyStrip({ planets }: { planets: TransitsData["transitPlanets"] }) {
               border: `1px solid ${color}25`,
             }}
           >
-            <span className="text-sm leading-none" style={{ color }}>{PLANET_SYMBOLS[p.name as PlanetName]}</span>
+            <span className="text-[14px] leading-none" style={{ color }}>{PLANET_SYMBOLS[p.name as PlanetName]}</span>
             <div>
               <span className="text-[13px] font-bold" style={{ color }}>{p.name}</span>
               {p.retrograde && <span className="text-[13px] ml-0.5" style={{ color: "#f97316" }}>℞</span>}
@@ -157,7 +157,7 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
           {PLANET_SYMBOLS[aspect.transitPlanet]}
         </span>
         <div>
-          <span className="text-xs font-semibold" style={{ color: tColor }}>
+          <span className="text-[13px] font-semibold" style={{ color: tColor }}>
             {aspect.transitPlanet}
             {aspect.transitRetrograde && <span className="ml-1 text-[13px]" style={{ color: "#f97316" }}>℞</span>}
           </span>
@@ -180,7 +180,7 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
           {PLANET_SYMBOLS[aspect.natalPlanet]}
         </span>
         <div>
-          <span className="text-xs font-semibold" style={{ color: nColor }}>
+          <span className="text-[13px] font-semibold" style={{ color: nColor }}>
             {aspect.natalPlanet}
           </span>
           <p className="text-[13px]" style={{ color: "#475569" }}>
@@ -192,7 +192,7 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
       {/* Orb */}
       <div className="flex items-center">
         <span
-          className="text-xs font-mono"
+          className="text-[13px] font-mono"
           style={{ color: aspect.orb < 0.5 ? cfg?.color : "#64748b" }}
         >
           {aspect.orb.toFixed(1)}°
@@ -250,16 +250,16 @@ function IngressCard({ ingress, index }: { ingress: Ingress; index: number }) {
         className="flex items-center justify-center w-8 h-8 rounded-lg flex-shrink-0"
         style={{ background: `${color}15`, border: `1px solid ${color}25` }}
       >
-        <span className="text-sm" style={{ color }}>{PLANET_SYMBOLS[ingress.planet as PlanetName]}</span>
+        <span className="text-[14px]" style={{ color }}>{PLANET_SYMBOLS[ingress.planet as PlanetName]}</span>
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
-          <span className="text-xs font-semibold" style={{ color }}>
+          <span className="text-[13px] font-semibold" style={{ color }}>
             {ingress.planet}
             {ingress.retrograde && <span className="ml-1 text-[13px]" style={{ color: "#f97316" }}>℞</span>}
           </span>
           <span className="text-[13px]" style={{ color: "#334155" }}>→</span>
-          <span className="text-xs font-semibold" style={{ color: toColor }}>
+          <span className="text-[13px] font-semibold" style={{ color: toColor }}>
             {SIGN_SYMBOLS[ingress.toSign]} {ingress.toSign}
           </span>
         </div>
@@ -763,9 +763,9 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
               const nColor = PLANET_COLORS[asp.natalPlanet] ?? "#64748b";
               return (
                 <div key={i} className="flex items-center gap-2 py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                  <span className="text-sm" style={{ color: tColor }}>{PLANET_SYMBOLS[asp.transitPlanet]}</span>
+                  <span className="text-[14px]" style={{ color: tColor }}>{PLANET_SYMBOLS[asp.transitPlanet]}</span>
                   <span className="text-base font-bold" style={{ color: cfg?.color }}>{cfg?.symbol}</span>
-                  <span className="text-sm" style={{ color: nColor }}>{PLANET_SYMBOLS[asp.natalPlanet]}</span>
+                  <span className="text-[14px]" style={{ color: nColor }}>{PLANET_SYMBOLS[asp.natalPlanet]}</span>
                   <span className="text-[13px] capitalize flex-1" style={{ color: "#94a3b8" }}>
                     {asp.transitPlanet} {asp.type} natal {asp.natalPlanet}
                   </span>
@@ -779,7 +779,7 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
               const sColor = SIGN_COLORS[ing.toSign as ZodiacSign] ?? "#64748b";
               return (
                 <div key={`ing-${i}`} className="flex items-center gap-2 py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                  <span className="text-sm" style={{ color: pColor }}>{PLANET_SYMBOLS[ing.planet as PlanetName]}</span>
+                  <span className="text-[14px]" style={{ color: pColor }}>{PLANET_SYMBOLS[ing.planet as PlanetName]}</span>
                   <span className="text-[13px] font-semibold" style={{ color: pColor }}>{ing.planet}</span>
                   <span className="text-[13px]" style={{ color: "#334155" }}>enters</span>
                   <span className="text-[13px] font-bold flex-1" style={{ color: sColor }}>{SIGN_SYMBOLS[ing.toSign as ZodiacSign]} {ing.toSign}</span>
@@ -908,7 +908,7 @@ export default function TransitsPage() {
             <div>
               <p className="text-[14px] font-bold tracking-[0.3em] mb-2" style={{ color: "#06b6d4" }}>NO CHART DATA</p>
               <h2 className="text-3xl font-bold mb-3 font-title" style={{ color: "#f0f4ff" }}>Transit Radar Offline</h2>
-              <p className="text-sm max-w-sm leading-relaxed" style={{ color: "#64748b" }}>
+              <p className="text-[14px] max-w-sm leading-relaxed" style={{ color: "#64748b" }}>
                 Enter your birth data to activate planetary transit tracking and real-time cosmic alerts.
               </p>
             </div>
@@ -916,7 +916,7 @@ export default function TransitsPage() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.96 }}
-                className="px-8 py-3 rounded-2xl text-sm font-bold tracking-wider cursor-pointer"
+                className="px-8 py-3 rounded-2xl text-[14px] font-bold tracking-wider cursor-pointer"
                 style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", boxShadow: "0 0 30px rgba(124,58,237,0.4)" }}
               >
                 Begin Setup →
@@ -954,7 +954,7 @@ export default function TransitsPage() {
             <Link href="/dashboard">
               <motion.button
                 whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1.5 text-xs font-medium cursor-pointer"
+                className="flex items-center gap-1.5 text-[13px] font-medium cursor-pointer"
                 style={{ color: "#64748b" }}
               >
                 <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -964,11 +964,11 @@ export default function TransitsPage() {
               </motion.button>
             </Link>
             <span style={{ color: "#1e293b" }}>/</span>
-            <span className="text-xs font-bold tracking-widest gradient-text">TRANSITS</span>
+            <span className="text-[13px] font-bold tracking-widest gradient-text">TRANSITS</span>
             {profileName && (
               <>
                 <span style={{ color: "#1e293b" }}>/</span>
-                <span className="text-xs font-medium" style={{ color: "#64748b" }}>{profileName}</span>
+                <span className="text-[13px] font-medium" style={{ color: "#64748b" }}>{profileName}</span>
               </>
             )}
           </div>
@@ -978,7 +978,7 @@ export default function TransitsPage() {
             <motion.button
               whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
               onClick={() => changeDate(-1)}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs cursor-pointer"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[13px] cursor-pointer"
               style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#64748b" }}
             >
               <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -989,7 +989,7 @@ export default function TransitsPage() {
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={goToToday}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all"
+              className="px-3 py-1.5 rounded-lg text-[13px] font-semibold cursor-pointer transition-all"
               style={{
                 background: isToday(date) ? "rgba(124,58,237,0.2)" : "rgba(255,255,255,0.04)",
                 border: isToday(date) ? "1px solid rgba(124,58,237,0.4)" : "1px solid rgba(255,255,255,0.08)",
@@ -1006,7 +1006,7 @@ export default function TransitsPage() {
             <motion.button
               whileHover={{ x: 2 }} whileTap={{ scale: 0.95 }}
               onClick={() => changeDate(1)}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs cursor-pointer"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[13px] cursor-pointer"
               style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#64748b" }}
             >
               <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
@@ -1052,7 +1052,7 @@ export default function TransitsPage() {
                   key={type}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => toggleAspectType(type)}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-sm cursor-pointer transition-all"
+                  className="w-7 h-7 flex items-center justify-center rounded-lg text-[14px] cursor-pointer transition-all"
                   style={{
                     background: activeAspectTypes.has(type) ? `${cfg.color}20` : "rgba(255,255,255,0.03)",
                     border: `1px solid ${activeAspectTypes.has(type) ? cfg.color + "40" : "rgba(255,255,255,0.06)"}`,
@@ -1079,11 +1079,11 @@ export default function TransitsPage() {
               className="w-12 h-12 rounded-full border-2 border-t-transparent"
               style={{ borderColor: "#7c3aed" }}
             />
-            <p className="text-xs tracking-widest" style={{ color: "#475569" }}>CALCULATING TRANSITS</p>
+            <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>CALCULATING TRANSITS</p>
           </div>
         ) : !data ? (
           <div className="flex-1 flex items-center justify-center">
-            <p className="text-sm" style={{ color: "#64748b" }}>No chart found.</p>
+            <p className="text-[14px]" style={{ color: "#64748b" }}>No chart found.</p>
           </div>
         ) : (
           <div className="flex-1 flex min-h-0 overflow-hidden">
@@ -1158,7 +1158,7 @@ export default function TransitsPage() {
                   <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
                     {aspects.length === 0 ? (
                       <div className="flex items-center justify-center h-32">
-                        <p className="text-sm" style={{ color: "#334155" }}>No transits match current filters</p>
+                        <p className="text-[14px]" style={{ color: "#334155" }}>No transits match current filters</p>
                       </div>
                     ) : (
                       <AnimatePresence mode="popLayout">
@@ -1245,7 +1245,7 @@ export default function TransitsPage() {
                     ).length;
                     return (
                       <div key={type} className="flex items-center gap-2">
-                        <span className="text-sm w-5 text-center" style={{ color: cfg.color }}>{cfg.symbol}</span>
+                        <span className="text-[14px] w-5 text-center" style={{ color: cfg.color }}>{cfg.symbol}</span>
                         <span className="text-[13px] flex-1" style={{ color: "#475569" }}>{cfg.label}</span>
                         <span className="text-[13px] font-bold" style={{ color: count > 0 ? cfg.color : "#334155" }}>
                           {count}
@@ -1382,9 +1382,9 @@ export default function TransitsPage() {
                             className="flex items-center gap-2 rounded-lg px-2.5 py-1.5"
                             style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.04)" }}
                           >
-                            <span className="text-sm" style={{ color: tColor }}>{PLANET_SYMBOLS[asp.transitPlanet]}</span>
-                            <span className="text-sm" style={{ color: cfg?.color ?? "#64748b" }}>{cfg?.symbol}</span>
-                            <span className="text-sm" style={{ color: PLANET_COLORS[asp.natalPlanet] ?? "#64748b" }}>{PLANET_SYMBOLS[asp.natalPlanet]}</span>
+                            <span className="text-[14px]" style={{ color: tColor }}>{PLANET_SYMBOLS[asp.transitPlanet]}</span>
+                            <span className="text-[14px]" style={{ color: cfg?.color ?? "#64748b" }}>{cfg?.symbol}</span>
+                            <span className="text-[14px]" style={{ color: PLANET_COLORS[asp.natalPlanet] ?? "#64748b" }}>{PLANET_SYMBOLS[asp.natalPlanet]}</span>
                             <div className="flex-1 flex items-center justify-end gap-1">
                               {days === 0 ? (
                                 <span className="text-[13px] font-black" style={{ color: "#a855f7" }}>TODAY</span>
@@ -1408,7 +1408,7 @@ export default function TransitsPage() {
                   UPCOMING INGRESSES
                 </p>
                 {data.ingresses.length === 0 ? (
-                  <p className="text-xs" style={{ color: "#334155" }}>None found in range</p>
+                  <p className="text-[13px]" style={{ color: "#334155" }}>None found in range</p>
                 ) : (
                   <div className="space-y-2">
                     {data.ingresses.map((ing, i) => (

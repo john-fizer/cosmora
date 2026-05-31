@@ -22,15 +22,15 @@ const ATMO_R  = 2.12;
 const ANGLE_DASH: Record<AstroLineAngle, boolean> = { MC: false, IC: true, ASC: false, DSC: true };
 
 const ENERGY_MAP: Record<AstroLinePlanet, { label: string; color: string }> = {
-  Sun:     { label: "CAREER",         color: "#4488FF" },
-  Mercury: { label: "CAREER",         color: "#4488FF" },
-  Saturn:  { label: "CAREER",         color: "#6688CC" },
-  Moon:    { label: "LOVE",           color: "#FF71D1" },
-  Venus:   { label: "LOVE",           color: "#FF88CC" },
-  Jupiter: { label: "WEALTH",         color: "#FFD700" },
-  Mars:    { label: "TRANSFORMATION", color: "#FF4444" },
-  Uranus:  { label: "CREATIVITY",     color: "#B06AFF" },
-  Neptune: { label: "SPIRITUALITY",   color: "#2DFFB3" },
+  Sun:     { label: "VITALITY",       color: "#fbbf24" },
+  Mercury: { label: "COMMUNICATION",  color: "#a78bfa" },
+  Venus:   { label: "LOVE",           color: "#f472b6" },
+  Moon:    { label: "EMOTIONS",       color: "#94a3b8" },
+  Mars:    { label: "DRIVE",          color: "#ef4444" },
+  Jupiter: { label: "EXPANSION",      color: "#f59e0b" },
+  Saturn:  { label: "DISCIPLINE",     color: "#8b9ab4" },
+  Uranus:  { label: "INNOVATION",     color: "#06b6d4" },
+  Neptune: { label: "SPIRITUALITY",   color: "#3b82f6" },
 };
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
@@ -274,45 +274,83 @@ function CityProjection({ spot, index }: { spot: CitySpot; index: number }) {
         <CityBuilding key={i} {...b} color={col} />
       ))}
       {/* Data readout label — floats above tallest building */}
-      <Html position={[0, maxH + 0.14, 0]} center distanceFactor={8} zIndexRange={[10, 0]}>
-        <div style={{ pointerEvents: "none", textAlign: "center", lineHeight: 1.4 }}>
+      <Html position={[0, maxH + 0.16, 0]} center distanceFactor={8} zIndexRange={[10, 0]}>
+        <div style={{ pointerEvents: "none", textAlign: "center", lineHeight: 1.5 }}>
           <div style={{
-            color: energy.color,
-            fontSize: 9.5,
+            color: energy.color, fontSize: 9,
             fontFamily: "'Fragment Mono', monospace",
-            letterSpacing: "0.18em",
-            fontWeight: 700,
-            textShadow: `0 0 10px ${energy.color}`,
+            letterSpacing: "0.18em", fontWeight: 700,
+            textShadow: `0 0 12px ${energy.color}99`,
           }}>
             {spot.city.split(",")[0].toUpperCase()}
           </div>
           <div style={{
-            color: energy.color,
-            fontSize: 7.5,
+            color: energy.color, fontSize: 8.5,
             fontFamily: "'Fragment Mono', monospace",
-            opacity: 0.75,
-            letterSpacing: "0.1em",
+            opacity: 0.88, letterSpacing: "0.1em",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 3,
+          }}>
+            <span>{PLANET_SYMBOLS[spot.scores[0]?.planet as AstroLinePlanet] ?? "·"}</span>
+            <span>{spot.scores[0]?.planet?.toUpperCase() ?? ""}</span>
+          </div>
+          <div style={{
+            color: energy.color, fontSize: 7.5,
+            fontFamily: "'Fragment Mono', monospace",
+            opacity: 0.62, letterSpacing: "0.12em",
           }}>
             {energy.label}
           </div>
-          <div style={{
-            color: "#4466AA",
-            fontSize: 7,
-            fontFamily: "'Fragment Mono', monospace",
-            letterSpacing: "0.08em",
-            marginTop: 1,
-          }}>
-            {Math.abs(spot.lat).toFixed(1)}°{spot.lat >= 0 ? "N" : "S"} {Math.abs(spot.lon).toFixed(1)}°{spot.lon >= 0 ? "E" : "W"}
-          </div>
-          <div style={{
-            color: energy.color,
-            fontSize: 7,
-            fontFamily: "'Fragment Mono', monospace",
-            opacity: 0.6,
-            marginTop: 2,
-          }}>
-            {"▮".repeat(Math.round(spot.power / 20))} {spot.power}
-          </div>
+        </div>
+      </Html>
+    </group>
+  );
+}
+
+// ─── Birth location pulse rings ──────────────────────────────────────────────
+function BirthPulseRings({ lat, lon }: { lat: number; lon: number }) {
+  const groupRef = useRef<THREE.Group>(null);
+  const t = useRef(0);
+
+  const pos = useMemo(() => ll2xyz(lat, lon, GLOBE_R), [lat, lon]);
+  const quat = useMemo(() => {
+    const n = ll2xyz(lat, lon, 1).normalize();
+    return new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), n);
+  }, [lat, lon]);
+
+  useFrame((_, dt) => {
+    t.current += dt;
+    if (!groupRef.current) return;
+    groupRef.current.children.forEach((child, i) => {
+      if (child instanceof THREE.Mesh) {
+        const phase = ((t.current * 0.45 + i * 0.34) % 1.0);
+        child.scale.setScalar(1 + phase * 3.2);
+        (child.material as THREE.MeshBasicMaterial).opacity = (1 - phase) * 0.5;
+      }
+    });
+  });
+
+  return (
+    <group position={[pos.x, pos.y, pos.z]} quaternion={quat}>
+      <group ref={groupRef}>
+        {[0, 1, 2].map(i => (
+          <mesh key={i}>
+            <ringGeometry args={[0.04, 0.058, 48]} />
+            <meshBasicMaterial color="#c4b5fd" transparent opacity={0} depthWrite={false} side={THREE.DoubleSide} />
+          </mesh>
+        ))}
+      </group>
+      {/* Birth marker */}
+      <mesh>
+        <sphereGeometry args={[0.024, 8, 8]} />
+        <meshBasicMaterial color="#ffffff" />
+      </mesh>
+      <Html center distanceFactor={7} zIndexRange={[5, 0]}>
+        <div style={{
+          pointerEvents: "none", color: "#c4b5fd", fontSize: 7,
+          fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
+          opacity: 0.75, textAlign: "center", whiteSpace: "nowrap", marginTop: 20,
+        }}>
+          BIRTH
         </div>
       </Html>
     </group>
@@ -419,11 +457,15 @@ function GlobeClickHandler({ onGlobeClick, globeGroupRef }: {
 function Scene({
   lines, activePlanets, activeAngles, globeMode, topSpots,
   onLocationClick, onVortexClick: _,
+  birthLat = 34.05, birthLon = -118.24,
+  showCities = true, showLines = true,
 }: {
   lines: AstroLine[]; activePlanets: Set<AstroLinePlanet>; activeAngles: Set<AstroLineAngle>;
   globeMode: GlobeMode; topSpots: CitySpot[];
   onLocationClick: (lat: number, lon: number) => void;
   onVortexClick: (node: unknown) => void;
+  birthLat?: number; birthLon?: number;
+  showCities?: boolean; showLines?: boolean;
 }) {
   const globeGroupRef = useRef<THREE.Group>(null);
   useFrame((_, dt) => { if (globeGroupRef.current) globeGroupRef.current.rotation.y += dt * 0.015; });
@@ -472,11 +514,14 @@ function Scene({
           <meshPhongMaterial color="#0A2A6A" transparent opacity={0.05} side={THREE.FrontSide} depthWrite={false} />
         </mesh>
 
+        {/* Birth location pulse rings */}
+        <BirthPulseRings lat={birthLat} lon={birthLon} />
+
         {/* Energy heatmap — FIELDS mode */}
         {globeMode === "energy" && <EnergyHeatmap lines={visibleLines} />}
 
         {/* Astro lines */}
-        {visibleLines.map(line => (
+        {showLines && visibleLines.map(line => (
           <AstroLineObject
             key={`${line.planet}-${line.angle}`}
             line={line}
@@ -491,7 +536,7 @@ function Scene({
         {globeMode === "planets" && <PlanetLabels lines={visibleLines} />}
 
         {/* Holographic city projections — CITIES mode */}
-        {globeMode === "cities" && topSpots.map((spot, i) => (
+        {showCities && globeMode === "cities" && topSpots.map((spot, i) => (
           <CityProjection key={spot.city} spot={spot} index={i} />
         ))}
       </group>
@@ -514,11 +559,14 @@ export interface VortexNodePublic { lat: number; lon: number; lines: { planet: A
 
 export default function GlobeCanvas({
   lines, activePlanets, activeAngles, globeMode, topSpots, onLocationClick, onVortexClick,
+  birthLat, birthLon, showCities, showLines,
 }: {
   lines: AstroLine[]; activePlanets: Set<AstroLinePlanet>; activeAngles: Set<AstroLineAngle>;
   globeMode: GlobeMode; topSpots: CitySpot[];
   onLocationClick: (lat: number, lon: number) => void;
   onVortexClick: (node: unknown) => void;
+  birthLat?: number; birthLon?: number;
+  showCities?: boolean; showLines?: boolean;
 }) {
   return (
     <Canvas camera={{ position: [0, 1.5, 6], fov: 45 }} gl={{ antialias: true, alpha: false }} style={{ background: "#010810" }}>
@@ -526,7 +574,9 @@ export default function GlobeCanvas({
       <fog attach="fog" args={["#010810", 20, 45]} />
       <Scene lines={lines} activePlanets={activePlanets} activeAngles={activeAngles}
         globeMode={globeMode} topSpots={topSpots}
-        onLocationClick={onLocationClick} onVortexClick={onVortexClick} />
+        onLocationClick={onLocationClick} onVortexClick={onVortexClick}
+        birthLat={birthLat} birthLon={birthLon}
+        showCities={showCities} showLines={showLines} />
     </Canvas>
   );
 }

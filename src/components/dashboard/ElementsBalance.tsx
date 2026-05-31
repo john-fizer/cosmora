@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import type { ChartData, ZodiacSign } from "@/lib/astrology/types";
@@ -78,8 +78,8 @@ export function ElementsBalance({ chart }: ElementsBalanceProps) {
           {elements.map((el, i) => (
             <div key={el.name}>
               <div className="flex justify-between">
-                <span className="text-[9px] font-bold tracking-wider" style={{ color: el.color }}>{el.name.toUpperCase()}</span>
-                <span className="text-[9px]" style={{ color: "#94a3b8" }}>{el.pct}%</span>
+                <span className="text-[13px] font-bold tracking-wider" style={{ color: el.color }}>{el.name.toUpperCase()}</span>
+                <span className="text-[13px]" style={{ color: "#94a3b8" }}>{el.pct}%</span>
               </div>
               <div className="h-1 rounded-full" style={{ background:"rgba(255,255,255,0.06)" }}>
                 <motion.div
@@ -92,7 +92,7 @@ export function ElementsBalance({ chart }: ElementsBalanceProps) {
               </div>
             </div>
           ))}
-          <p className="text-[9px] text-center tracking-widest mt-2" style={{ color: "#64748b" }}>
+          <p className="text-[13px] text-center tracking-widest mt-2" style={{ color: "#64748b" }}>
             {Object.entries(counts).reduce((a, [k, v]) => v > a[1] ? [k, v] : a, ["", 0])[0].toUpperCase()} DOMINANT
           </p>
         </div>

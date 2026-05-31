@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -99,7 +99,7 @@ function MoonPhaseWidget() {
   return (
     <div className="rounded-2xl p-4"
       style={{ background: "rgba(4,4,28,0.85)", border: "1px solid rgba(196,181,253,0.12)", backdropFilter: "blur(20px)" }}>
-      <p className="text-[11px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>MOON PHASE</p>
+      <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>MOON PHASE</p>
       <div className="flex items-center gap-3">
         {/* SVG moon glyph */}
         <svg width={48} height={48} viewBox="0 0 48 48" style={{ flexShrink: 0 }}>
@@ -125,7 +125,7 @@ function MoonPhaseWidget() {
 
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold leading-tight" style={{ color: "#c4b5fd" }}>{phase.name}</p>
-          <p className="text-[12px] mt-0.5 tabular-nums" style={{ color: "#475569" }}>
+          <p className="text-[14px] mt-0.5 tabular-nums" style={{ color: "#475569" }}>
             {illumination.toFixed(0)}% illuminated · {isWaxing ? "Waxing" : "Waning"}
           </p>
           <div className="mt-2 flex gap-1">
@@ -140,7 +140,7 @@ function MoonPhaseWidget() {
               />
             </div>
           </div>
-          <p className="text-[11px] mt-1.5 tabular-nums" style={{ color: "#334155" }}>
+          <p className="text-[13px] mt-1.5 tabular-nums" style={{ color: "#334155" }}>
             {nextEventName} in {nextEventDays.toFixed(1)} days
           </p>
         </div>
@@ -234,7 +234,7 @@ function PlanetaryHourWidget({ lat, lon }: { lat: number; lon: number }) {
   return (
     <div className="rounded-2xl p-4"
       style={{ background: "rgba(4,4,28,0.85)", border: `1px solid ${color}22`, backdropFilter: "blur(20px)" }}>
-      <p className="text-[11px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>PLANETARY HOUR</p>
+      <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>PLANETARY HOUR</p>
       <div className="flex items-center gap-3">
         <svg width={72} height={72} viewBox="0 0 72 72">
           <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth={4} />
@@ -249,17 +249,17 @@ function PlanetaryHourWidget({ lat, lon }: { lat: number; lon: number }) {
         </svg>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold leading-tight" style={{ color }}>{curr.planet}</p>
-          <p className="text-[11px] tabular-nums" style={{ color: "#475569" }}>
+          <p className="text-[13px] tabular-nums" style={{ color: "#475569" }}>
             {String(remMin).padStart(2,"0")}:{String(remSec).padStart(2,"0")} left
           </p>
           <div className="flex gap-1 mt-2">
             {upcoming.map((h, i) => (
               <div key={i} className="flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-lg"
                 style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${CHALDEAN_COLORS[h.planet]}18` }}>
-                <span className="text-[11px] leading-none" style={{ color: CHALDEAN_COLORS[h.planet] }}>
+                <span className="text-[13px] leading-none" style={{ color: CHALDEAN_COLORS[h.planet] }}>
                   {PLANET_SYMBOLS[h.planet as PlanetName] ?? "?"}
                 </span>
-                <span className="text-[11px] tabular-nums" style={{ color: "#334155" }}>
+                <span className="text-[13px] tabular-nums" style={{ color: "#334155" }}>
                   {h.start.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })}
                 </span>
               </div>
@@ -284,7 +284,7 @@ function CosmicClock() {
       <p className="text-xs font-bold tracking-widest" style={{ color: "#06b6d4", fontFamily: "'Share Tech Mono', monospace" }}>
         {time.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "2-digit", second: "2-digit" })}
       </p>
-      <p className="text-[11px] tracking-widest" style={{ color: "#334155" }}>
+      <p className="text-[13px] tracking-widest" style={{ color: "#334155" }}>
         {time.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).toUpperCase()}
       </p>
     </div>
@@ -305,7 +305,7 @@ function ElementBalance({ chart }: { chart: ChartData }) {
     <div className="space-y-1.5">
       {(Object.entries(counts) as [keyof typeof counts, number][]).map(([el, count]) => (
         <div key={el} className="flex items-center gap-2">
-          <span className="text-[11px] font-bold w-8 flex-shrink-0" style={{ color: ELEMENT_COLORS[el] }}>{el.substring(0, 4)}</span>
+          <span className="text-[13px] font-bold w-8 flex-shrink-0" style={{ color: ELEMENT_COLORS[el] }}>{el.substring(0, 4)}</span>
           <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
             <motion.div
               initial={{ width: 0 }}
@@ -315,7 +315,7 @@ function ElementBalance({ chart }: { chart: ChartData }) {
               style={{ background: ELEMENT_COLORS[el], boxShadow: `0 0 4px ${ELEMENT_COLORS[el]}` }}
             />
           </div>
-          <span className="text-[11px] w-6 text-right" style={{ color: "#475569" }}>{Math.round((count / total) * 100)}%</span>
+          <span className="text-[13px] w-6 text-right" style={{ color: "#475569" }}>{Math.round((count / total) * 100)}%</span>
         </div>
       ))}
     </div>
@@ -347,7 +347,7 @@ function PlanetPopup({ planet, onClose }: { planet: PlanetPosition; onClose: () 
             <span className="text-2xl" style={{ color }}>{PLANET_SYMBOLS[planet.name] ?? ""}</span>
             <div>
               <p className="text-sm font-bold" style={{ color: "#e2e8f0" }}>{planet.name}{planet.retrograde ? " ℞" : ""}</p>
-              <p className="text-[11px] tracking-widest" style={{ color: "#475569" }}>NATAL</p>
+              <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>NATAL</p>
             </div>
           </div>
           <button onClick={onClose} className="text-lg leading-none cursor-pointer" style={{ color: "#475569" }}>×</button>
@@ -369,7 +369,7 @@ function PlanetPopup({ planet, onClose }: { planet: PlanetPosition; onClose: () 
           onClick={() => { onClose(); warpTo(`/dashboard/chart/${planet.name.toLowerCase()}`); }}
           whileHover={{ scale: 1.02, borderColor: `${color}50` }}
           whileTap={{ scale: 0.97 }}
-          className="w-full py-2 rounded-xl text-[11px] font-bold tracking-widest cursor-pointer"
+          className="w-full py-2 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
           style={{ background: `${color}10`, border: `1px solid ${color}25`, color }}
         >
           FULL {planet.name.toUpperCase()} READING →
@@ -410,7 +410,7 @@ function CosmicWeatherStrip({ aspects }: { aspects: TransitPill[] }) {
           className="w-1.5 h-1.5 rounded-full flex-shrink-0"
           style={{ background: "#22c55e" }}
         />
-        <span className="text-[11px] font-bold tracking-[0.2em]" style={{ color: "#334155" }}>LIVE TRANSITS</span>
+        <span className="text-[13px] font-bold tracking-[0.2em]" style={{ color: "#334155" }}>LIVE TRANSITS</span>
         <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, rgba(34,197,94,0.15), transparent)" }} />
       </div>
       <div
@@ -437,15 +437,15 @@ function CosmicWeatherStrip({ aspects }: { aspects: TransitPill[] }) {
               whileHover={{ borderColor: aColor, scale: 1.05 }}
             >
               <span className="text-xs leading-none" style={{ color: tColor }}>{PLANET_SYMBOLS[a.transitPlanet]}</span>
-              {a.transitRetrograde && <span className="text-[11px]" style={{ color: "#f97316" }}>℞</span>}
+              {a.transitRetrograde && <span className="text-[13px]" style={{ color: "#f97316" }}>℞</span>}
               <span className="text-[13px] font-bold mx-0.5" style={{ color: aColor }}>{ASPECT_GLYPHS[a.type]}</span>
               <span className="text-xs leading-none" style={{ color: nColor }}>{PLANET_SYMBOLS[a.natalPlanet]}</span>
-              <span className="ml-1 text-[11px]" style={{ color: "#334155" }}>H{a.natalHouse}</span>
+              <span className="ml-1 text-[13px]" style={{ color: "#334155" }}>H{a.natalHouse}</span>
               {a.exact && (
-                <span className="ml-0.5 text-[11px] font-bold px-1 rounded" style={{ background: "rgba(167,139,250,0.2)", color: "#a78bfa" }}>EX</span>
+                <span className="ml-0.5 text-[13px] font-bold px-1 rounded" style={{ background: "rgba(167,139,250,0.2)", color: "#a78bfa" }}>EX</span>
               )}
               {a.applying && !a.exact && (
-                <span className="ml-0.5 text-[11px] font-bold" style={{ color: "#22c55e" }}>→</span>
+                <span className="ml-0.5 text-[13px] font-bold" style={{ color: "#22c55e" }}>→</span>
               )}
             </motion.div>
           );
@@ -581,10 +581,10 @@ Key transits: ${top3 || "No tight transits today"}
               className="w-1.5 h-1.5 rounded-full"
               style={{ background: streaming ? "#06b6d4" : "#22c55e" }}
             />
-            <span className="text-[11px] font-bold tracking-widest" style={{ color: "#475569" }}>
+            <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>
               DAILY COSMIC WEATHER
             </span>
-            <span className="text-[11px]" style={{ color: "#1e293b" }}>
+            <span className="text-[13px]" style={{ color: "#1e293b" }}>
               · {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}
             </span>
           </div>
@@ -644,7 +644,7 @@ Key transits: ${top3 || "No tight transits today"}
                   <span className="text-xs leading-none" style={{ color: tColor }}>{PLANET_SYMBOLS[t.transitPlanet]}</span>
                   <span className="text-[13px] font-bold" style={{ color: aColor }}>{ASPECT_GLYPHS[t.type]}</span>
                   <span className="text-xs leading-none" style={{ color: PLANET_COLORS[t.natalPlanet] ?? "#94a3b8" }}>{PLANET_SYMBOLS[t.natalPlanet]}</span>
-                  <span className="text-[11px] font-mono ml-0.5" style={{ color: "#334155" }}>{t.orb.toFixed(1)}°</span>
+                  <span className="text-[13px] font-mono ml-0.5" style={{ color: "#334155" }}>{t.orb.toFixed(1)}°</span>
                 </div>
               );
             })}
@@ -675,7 +675,7 @@ function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet
         }}
       >
         <div className="px-4 pt-3 pb-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-          <p className="text-[11px] font-bold tracking-widest" style={{ color: "#7c3aed" }}>PLANETARY POSITIONS</p>
+          <p className="text-[13px] font-bold tracking-widest" style={{ color: "#7c3aed" }}>PLANETARY POSITIONS</p>
         </div>
         <div className="flex-1 overflow-y-auto" style={{ maxHeight: 260, scrollbarWidth: "none" }}>
           {chart.planets.map((p) => {
@@ -689,13 +689,13 @@ function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet
                 className="flex items-center gap-2 px-3 py-1.5 cursor-pointer transition-colors"
               >
                 <span className="text-sm w-5 flex-shrink-0" style={{ color }}>{PLANET_SYMBOLS[p.name]}</span>
-                <span className="text-[12px] font-medium flex-1" style={{ color: "#94a3b8" }}>
+                <span className="text-[14px] font-medium flex-1" style={{ color: "#94a3b8" }}>
                   {p.name}{p.retrograde ? " ℞" : ""}
                 </span>
-                <span className="text-[12px] font-bold" style={{ color: signColor }}>
+                <span className="text-[14px] font-bold" style={{ color: signColor }}>
                   {p.signDegree.toFixed(0)}° {SIGN_SYMBOLS[p.sign]}
                 </span>
-                <span className="text-[11px] w-6 text-right" style={{ color: "#334155" }}>H{p.house}</span>
+                <span className="text-[13px] w-6 text-right" style={{ color: "#334155" }}>H{p.house}</span>
               </motion.div>
             );
           })}
@@ -712,19 +712,19 @@ function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet
         }}
       >
         <div className="px-4 pt-3 pb-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-          <p className="text-[11px] font-bold tracking-widest" style={{ color: "#06b6d4" }}>ASPECTS</p>
+          <p className="text-[13px] font-bold tracking-widest" style={{ color: "#06b6d4" }}>ASPECTS</p>
         </div>
         <div className="px-3 py-2 space-y-1">
           {chart.aspects.slice(0, 7).map((a, i) => {
             const color = ASPECT_COLORS[a.type] ?? "#94a3b8";
             return (
-              <div key={i} className="flex items-center gap-1.5 text-[12px]">
+              <div key={i} className="flex items-center gap-1.5 text-[14px]">
                 <span style={{ color: PLANET_COLORS[a.planet1] ?? "#94a3b8" }}>{PLANET_SYMBOLS[a.planet1]}</span>
                 <span style={{ color }} className="font-bold">{ASPECT_GLYPHS[a.type]}</span>
                 <span style={{ color: PLANET_COLORS[a.planet2] ?? "#94a3b8" }}>{PLANET_SYMBOLS[a.planet2]}</span>
                 <span className="flex-1 capitalize" style={{ color: "#475569" }}>{a.type}</span>
                 <span style={{ color: "#334155" }}>{a.orb.toFixed(1)}°</span>
-                {a.exact && <span className="text-[11px]" style={{ color: "#22c55e" }}>EX</span>}
+                {a.exact && <span className="text-[13px]" style={{ color: "#22c55e" }}>EX</span>}
               </div>
             );
           })}
@@ -732,7 +732,7 @@ function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet
         <div className="px-3 pb-3">
           <Link href="/dashboard/chart">
             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-              className="w-full py-1.5 rounded-lg text-[11px] font-bold tracking-widest cursor-pointer"
+              className="w-full py-1.5 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer"
               style={{ background: "rgba(6,182,212,0.08)", border: "1px solid rgba(6,182,212,0.2)", color: "#06b6d4" }}>
               VIEW ALL ASPECTS →
             </motion.button>
@@ -818,8 +818,8 @@ function ConvergenceWidget({ chart, transits }: { chart: ChartData; transits: Tr
         }}
       >
         <div className="flex items-center justify-between mb-3">
-          <p className="text-[11px] font-bold tracking-widest" style={{ color }}>CONVERGENCE</p>
-          <span className="text-[11px] tracking-widest" style={{ color: "#1e293b" }}>TIMING ALIGNMENT</span>
+          <p className="text-[13px] font-bold tracking-widest" style={{ color }}>CONVERGENCE</p>
+          <span className="text-[13px] tracking-widest" style={{ color: "#1e293b" }}>TIMING ALIGNMENT</span>
         </div>
 
         <div className="flex items-center gap-3">
@@ -875,18 +875,18 @@ function ConvergenceWidget({ chart, transits }: { chart: ChartData; transits: Tr
                 className="flex items-center gap-1.5"
               >
                 <div className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: color }} />
-                <span className="text-[11px] leading-snug" style={{ color: "#475569" }}>{f.text}</span>
-                <span className="ml-auto text-[11px] font-bold flex-shrink-0" style={{ color }}>+{f.pts}</span>
+                <span className="text-[13px] leading-snug" style={{ color: "#475569" }}>{f.text}</span>
+                <span className="ml-auto text-[13px] font-bold flex-shrink-0" style={{ color }}>+{f.pts}</span>
               </motion.div>
             ))}
             {factors.length === 0 && (
-              <span className="text-[11px]" style={{ color: "#334155" }}>No major alignments active right now.</span>
+              <span className="text-[13px]" style={{ color: "#334155" }}>No major alignments active right now.</span>
             )}
           </div>
         </div>
 
         <div className="mt-2.5 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-          <span className="text-[11px] font-bold tracking-widest" style={{ color: "#334155" }}>
+          <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>
             VIEW FULL ANALYSIS →
           </span>
         </div>
@@ -908,11 +908,11 @@ function SkyStatusWidget({ retrogrades, ingresses }: { retrogrades: PlanetName[]
         backdropFilter: "blur(20px)",
       }}
     >
-      <p className="text-[11px] font-bold tracking-widest mb-3" style={{ color: "#475569" }}>SKY STATUS</p>
+      <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#475569" }}>SKY STATUS</p>
 
       {retrogrades.length > 0 && (
         <div className="mb-3">
-          <p className="text-[11px] tracking-widest mb-1.5" style={{ color: "#1e293b" }}>RETROGRADE</p>
+          <p className="text-[13px] tracking-widest mb-1.5" style={{ color: "#1e293b" }}>RETROGRADE</p>
           <div className="flex flex-wrap gap-1.5">
             {retrogrades.map(name => {
               const color = PLANET_COLORS[name] ?? "#94a3b8";
@@ -923,8 +923,8 @@ function SkyStatusWidget({ retrogrades, ingresses }: { retrogrades: PlanetName[]
                   style={{ background: `${color}10`, border: `1px solid ${color}25` }}
                 >
                   <span style={{ fontSize: "0.75rem", color }}>{PLANET_SYMBOLS[name] ?? "○"}</span>
-                  <span className="text-[11px] font-bold" style={{ color }}>{name.slice(0, 3)}</span>
-                  <span className="text-[11px] font-bold" style={{ color: "#f97316" }}>℞</span>
+                  <span className="text-[13px] font-bold" style={{ color }}>{name.slice(0, 3)}</span>
+                  <span className="text-[13px] font-bold" style={{ color: "#f97316" }}>℞</span>
                 </div>
               );
             })}
@@ -934,16 +934,16 @@ function SkyStatusWidget({ retrogrades, ingresses }: { retrogrades: PlanetName[]
 
       {ingresses.length > 0 && (
         <div>
-          <p className="text-[11px] tracking-widest mb-1.5" style={{ color: "#1e293b" }}>NEXT INGRESS</p>
+          <p className="text-[13px] tracking-widest mb-1.5" style={{ color: "#1e293b" }}>NEXT INGRESS</p>
           <div className="space-y-1.5">
             {ingresses.slice(0, 3).map((ing, i) => {
               const color = PLANET_COLORS[ing.planet as PlanetName] ?? "#94a3b8";
               return (
                 <div key={i} className="flex items-center gap-2">
                   <span style={{ fontSize: "0.8rem", color }}>{PLANET_SYMBOLS[ing.planet as PlanetName] ?? "○"}</span>
-                  <span className="text-[11px]" style={{ color: "#64748b" }}>→</span>
-                  <span className="text-[11px] font-medium" style={{ color: "#94a3b8" }}>{SIGN_SYMBOLS[ing.toSign]} {ing.toSign}</span>
-                  <span className="text-[11px] font-mono ml-auto" style={{ color: "#334155" }}>
+                  <span className="text-[13px]" style={{ color: "#64748b" }}>→</span>
+                  <span className="text-[13px] font-medium" style={{ color: "#94a3b8" }}>{SIGN_SYMBOLS[ing.toSign]} {ing.toSign}</span>
+                  <span className="text-[13px] font-mono ml-auto" style={{ color: "#334155" }}>
                     {ing.daysUntil === 0 ? "today" : `${ing.daysUntil}d`}
                   </span>
                 </div>
@@ -993,7 +993,7 @@ function NextExactWidget({ transits }: { transits: TransitPill[] }) {
       }}
     >
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[11px] font-bold tracking-widest" style={{ color: "#06b6d4" }}>NEXT EXACT</p>
+        <p className="text-[13px] font-bold tracking-widest" style={{ color: "#06b6d4" }}>NEXT EXACT</p>
         {exact.length > 0 && (
           <motion.div
             animate={{ opacity: [1, 0.3, 1] }}
@@ -1001,7 +1001,7 @@ function NextExactWidget({ transits }: { transits: TransitPill[] }) {
             className="flex items-center gap-1"
           >
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#22c55e" }} />
-            <span className="text-[11px] font-bold tracking-widest" style={{ color: "#22c55e" }}>EXACT NOW</span>
+            <span className="text-[13px] font-bold tracking-widest" style={{ color: "#22c55e" }}>EXACT NOW</span>
           </motion.div>
         )}
       </div>
@@ -1018,11 +1018,11 @@ function NextExactWidget({ transits }: { transits: TransitPill[] }) {
             {PLANET_SYMBOLS[topExact.natalPlanet] ?? "○"}
           </span>
           <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-semibold truncate" style={{ color: "#94a3b8" }}>
+            <p className="text-[13px] font-semibold truncate" style={{ color: "#94a3b8" }}>
               {topExact.transitPlanet} {topExact.type} {topExact.natalPlanet}
             </p>
           </div>
-          <span className="text-[11px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}>EXACT</span>
+          <span className="text-[13px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}>EXACT</span>
         </div>
       )}
 
@@ -1038,12 +1038,12 @@ function NextExactWidget({ transits }: { transits: TransitPill[] }) {
             {PLANET_SYMBOLS[next.natalPlanet] ?? "○"}
           </span>
           <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-semibold truncate" style={{ color: "#94a3b8" }}>
+            <p className="text-[13px] font-semibold truncate" style={{ color: "#94a3b8" }}>
               {next.transitPlanet} {next.type} {next.natalPlanet}
             </p>
           </div>
           {next.daysToExact != null && (
-            <span className="text-[11px] font-bold font-mono flex-shrink-0" style={{ color: "#06b6d4" }}>
+            <span className="text-[13px] font-bold font-mono flex-shrink-0" style={{ color: "#06b6d4" }}>
               {fmtDays(next.daysToExact)}
             </span>
           )}
@@ -1052,7 +1052,7 @@ function NextExactWidget({ transits }: { transits: TransitPill[] }) {
 
       {applying.length > 1 && (
         <div className="mt-2 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-          <p className="text-[11px] tracking-widest mb-1.5" style={{ color: "#1e293b" }}>APPROACHING</p>
+          <p className="text-[13px] tracking-widest mb-1.5" style={{ color: "#1e293b" }}>APPROACHING</p>
           <div className="flex flex-wrap gap-1">
             {applying.slice(1, 4).map((t, i) => (
               <div key={i} className="flex items-center gap-1 px-2 py-1 rounded-lg" style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.1)" }}>
@@ -1060,7 +1060,7 @@ function NextExactWidget({ transits }: { transits: TransitPill[] }) {
                 <span style={{ fontSize: "0.65rem", color: ASPECT_COLORS[t.type] ?? "#64748b" }}>{ASPECT_GLYPHS_NE[t.type] ?? "~"}</span>
                 <span style={{ fontSize: "0.7rem", color: tColor(t.natalPlanet) }}>{PLANET_SYMBOLS[t.natalPlanet] ?? "○"}</span>
                 {t.daysToExact != null && (
-                  <span className="text-[11px] font-mono" style={{ color: "#334155" }}>{fmtDays(t.daysToExact)}</span>
+                  <span className="text-[13px] font-mono" style={{ color: "#334155" }}>{fmtDays(t.daysToExact)}</span>
                 )}
               </div>
             ))}
@@ -1107,26 +1107,26 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
         }}
       >
         <div className="flex items-center justify-between mb-3">
-          <p className="text-[11px] font-bold tracking-widest" style={{ color: "#7c3aed" }}>COSMIC INSIGHT</p>
-          <span className="text-[11px] tracking-widest" style={{ color: "#334155" }}>AI ANALYSIS</span>
+          <p className="text-[13px] font-bold tracking-widest" style={{ color: "#7c3aed" }}>COSMIC INSIGHT</p>
+          <span className="text-[13px] tracking-widest" style={{ color: "#334155" }}>AI ANALYSIS</span>
         </div>
         <div className="flex items-start gap-2 mb-3">
           <div className="w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center"
             style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 12px rgba(124,58,237,0.4)" }}>
-            <span className="text-[11px] text-white font-bold">✦</span>
+            <span className="text-[13px] text-white font-bold">✦</span>
           </div>
           <div>
-            <p className="text-[11px] font-bold tracking-wider mb-1" style={{ color: "#a78bfa" }}>
+            <p className="text-[13px] font-bold tracking-wider mb-1" style={{ color: "#a78bfa" }}>
               {prof.lordOfYear.toUpperCase()} YEAR · H{prof.activatedHouse}
             </p>
-            <p className="text-[12px] leading-relaxed" style={{ color: "#475569" }}>
+            <p className="text-[14px] leading-relaxed" style={{ color: "#475569" }}>
               Age {prof.age} profection activates your {prof.activatedSign} house. {prof.lordOfYear} rules your {prof.activatedHouse === 1 ? "identity" : prof.activatedHouse === 7 ? "partnerships" : prof.activatedHouse === 10 ? "career" : "life theme"} this year.
             </p>
           </div>
         </div>
         <Link href="/dashboard/insights">
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-            className="w-full py-2 rounded-xl text-[11px] font-bold tracking-widest cursor-pointer"
+            className="w-full py-2 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
             style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa" }}>
             EXPLORE INSIGHT →
           </motion.button>
@@ -1156,12 +1156,12 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
         >
           <div className="flex items-center gap-2 mb-2">
             <span className="text-base leading-none" style={{ color: "#f59e0b" }}>✦</span>
-            <p className="text-[11px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>TODAY'S BRIEFING</p>
+            <p className="text-[13px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>TODAY'S BRIEFING</p>
           </div>
-          <p className="text-[12px] leading-relaxed mb-3" style={{ color: "#64748b" }}>
+          <p className="text-[14px] leading-relaxed mb-3" style={{ color: "#64748b" }}>
             Morning cosmic weather, planetary hours &amp; AI-narrated sky report.
           </p>
-          <div className="text-[11px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>
+          <div className="text-[13px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>
             OPEN BRIEFING →
           </div>
         </motion.div>
@@ -1180,12 +1180,12 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
         >
           <div className="flex items-center gap-2 mb-2">
             <span className="text-base leading-none" style={{ color: "#c4b5fd" }}>✦</span>
-            <p className="text-[11px] font-bold tracking-widest" style={{ color: "#c4b5fd" }}>NATAL REPORT</p>
+            <p className="text-[13px] font-bold tracking-widest" style={{ color: "#c4b5fd" }}>NATAL REPORT</p>
           </div>
-          <p className="text-[12px] leading-relaxed mb-3" style={{ color: "#64748b" }}>
+          <p className="text-[14px] leading-relaxed mb-3" style={{ color: "#64748b" }}>
             8-chapter AI interpretation of your birth chart — streamed live.
           </p>
-          <div className="text-[11px] font-bold tracking-widest" style={{ color: "#c4b5fd" }}>
+          <div className="text-[13px] font-bold tracking-widest" style={{ color: "#c4b5fd" }}>
             GENERATE REPORT →
           </div>
         </motion.div>
@@ -1200,7 +1200,7 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
           backdropFilter: "blur(20px)",
         }}
       >
-        <p className="text-[11px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>KEY PLACEMENTS</p>
+        <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>KEY PLACEMENTS</p>
         <div className="space-y-2">
           {[
             { label: "SUN",    planet: sun,  color: "#fbbf24" },
@@ -1212,21 +1212,21 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
             if (!displaySign) return null;
             return (
               <div key={label} className="flex items-center gap-2">
-                <span className="text-[11px] font-bold tracking-widest w-10 flex-shrink-0" style={{ color: "#334155" }}>{label}</span>
+                <span className="text-[13px] font-bold tracking-widest w-10 flex-shrink-0" style={{ color: "#334155" }}>{label}</span>
                 <span className="text-base leading-none" style={{ color: SIGN_COLORS[displaySign] }}>{SIGN_SYMBOLS[displaySign]}</span>
-                <span className="text-[12px] font-medium" style={{ color }}>{displaySign}</span>
-                {planet && <span className="text-[11px] ml-auto" style={{ color: "#334155" }}>H{planet.house}</span>}
+                <span className="text-[14px] font-medium" style={{ color }}>{displaySign}</span>
+                {planet && <span className="text-[13px] ml-auto" style={{ color: "#334155" }}>H{planet.house}</span>}
               </div>
             );
           })}
         </div>
         <div className="mt-3 pt-3 flex items-center gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-          <span className="text-[11px] font-bold tracking-widest" style={{ color: "#334155" }}>SECT</span>
-          <span className="text-[12px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
+          <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>SECT</span>
+          <span className="text-[14px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
             {chart.sect === "day" ? "☀ DAY" : "☽ NIGHT"}
           </span>
-          <span className="ml-auto text-[11px] font-bold tracking-widest" style={{ color: "#334155" }}>DOMINANT</span>
-          <span className="text-[12px] font-bold" style={{ color: ELEMENT_COLORS[dominant as keyof typeof ELEMENT_COLORS] }}>{dominant}</span>
+          <span className="ml-auto text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>DOMINANT</span>
+          <span className="text-[14px] font-bold" style={{ color: ELEMENT_COLORS[dominant as keyof typeof ELEMENT_COLORS] }}>{dominant}</span>
         </div>
       </div>
 
@@ -1239,12 +1239,12 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
           backdropFilter: "blur(20px)",
         }}
       >
-        <p className="text-[11px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>ENERGY BALANCE</p>
+        <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>ENERGY BALANCE</p>
         <ElementBalance chart={chart} />
         <div className="mt-3 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
           <Link href="/dashboard/timeline">
             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-              className="w-full py-1.5 rounded-lg text-[11px] font-bold tracking-widest cursor-pointer"
+              className="w-full py-1.5 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer"
               style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", color: "#f59e0b" }}>
               VIEW TIMELINE →
             </motion.button>
@@ -1411,7 +1411,7 @@ function SignatureCard({ chart, name }: { chart: ChartData; name: string }) {
           </svg>
           DOWNLOAD SVG
         </motion.button>
-        <p className="text-[12px]" style={{ color: "#334155" }}>Screenshot works too</p>
+        <p className="text-[14px]" style={{ color: "#334155" }}>Screenshot works too</p>
       </div>
     </div>
   );
@@ -1550,8 +1550,8 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <div className="hidden md:block">
-                <p className="text-[12px] font-bold tracking-[0.2em]" style={{ color: "#7c3aed" }}>COSMORA</p>
-                <p className="text-[11px] tracking-widest" style={{ color: "#334155" }}>2070</p>
+                <p className="text-[14px] font-bold tracking-[0.2em]" style={{ color: "#7c3aed" }}>COSMORA</p>
+                <p className="text-[13px] tracking-widest" style={{ color: "#334155" }}>2070</p>
               </div>
             </div>
           </Link>
@@ -1559,13 +1559,13 @@ export default function DashboardPage() {
           {/* Center: profile + clock */}
           <div className="flex-1 flex items-center justify-center gap-6">
             {profileName && (
-              <span className="text-[12px] font-bold tracking-widest" style={{ color: "#475569" }}>
+              <span className="text-[14px] font-bold tracking-widest" style={{ color: "#475569" }}>
                 {profileName.toUpperCase()}
               </span>
             )}
             <CosmicClock />
             {chart && (
-              <span className="text-[12px] tracking-widest hidden md:block" style={{ color: "#334155" }}>
+              <span className="text-[14px] tracking-widest hidden md:block" style={{ color: "#334155" }}>
                 BIRTH CHART
               </span>
             )}
@@ -1575,7 +1575,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2">
             <Link href="/dashboard/chart">
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-bold tracking-widest cursor-pointer"
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[14px] font-bold tracking-widest cursor-pointer"
                 style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#64748b" }}>
                 FULL CHART
               </motion.button>
@@ -1584,7 +1584,7 @@ export default function DashboardPage() {
               <motion.button
                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => setShowSignatureCard(true)}
-                className="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-lg text-[12px] font-bold tracking-widest cursor-pointer"
+                className="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-lg text-[14px] font-bold tracking-widest cursor-pointer"
                 style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.25)", color: "#06b6d4" }}
               >
                 ✦ SHARE
@@ -1592,7 +1592,7 @@ export default function DashboardPage() {
             )}
             <Link href="/onboarding">
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[12px] font-bold tracking-widest cursor-pointer"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[14px] font-bold tracking-widest cursor-pointer"
                 style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa" }}>
                 + CHART
               </motion.button>

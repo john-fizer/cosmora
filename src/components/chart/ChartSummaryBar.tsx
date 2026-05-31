@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import type { ChartData } from "@/lib/astrology/types";
@@ -74,9 +74,9 @@ export function ChartSummaryBar({ chart, profileName, onHouseSystemChange, recal
               minWidth: 72,
             }}
           >
-            <span className="text-[7px] font-bold tracking-widest" style={{ color: "#475569" }}>{item.label}</span>
-            <span className="text-[11px] font-semibold mt-0.5" style={{ color: "#e2e8f0" }}>{item.value}</span>
-            {item.sub && <span className="text-[8px] mt-0.5 capitalize" style={{ color: "#64748b" }}>{item.sub}</span>}
+            <span className="text-[14px] font-bold tracking-widest" style={{ color: "#475569" }}>{item.label}</span>
+            <span className="text-[13px] font-semibold mt-0.5" style={{ color: "#e2e8f0" }}>{item.value}</span>
+            {item.sub && <span className="text-[13px] mt-0.5 capitalize" style={{ color: "#64748b" }}>{item.sub}</span>}
           </motion.div>
         ))}
       </div>
@@ -90,7 +90,7 @@ export function ChartSummaryBar({ chart, profileName, onHouseSystemChange, recal
             whileTap={{ scale: 0.97 }}
             onClick={() => !recalculating && onHouseSystemChange(hs.value)}
             disabled={recalculating}
-            className="px-3 py-1.5 rounded-lg text-[9px] font-bold tracking-wider cursor-pointer transition-all duration-150 disabled:opacity-50"
+            className="px-3 py-1.5 rounded-lg text-[13px] font-bold tracking-wider cursor-pointer transition-all duration-150 disabled:opacity-50"
             style={{
               background: chart.houseSystem === hs.value ? "rgba(124,58,237,0.25)" : "rgba(255,255,255,0.03)",
               border: chart.houseSystem === hs.value ? "1px solid rgba(124,58,237,0.4)" : "1px solid rgba(255,255,255,0.06)",

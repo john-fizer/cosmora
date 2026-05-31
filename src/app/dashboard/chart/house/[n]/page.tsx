@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { use, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
@@ -109,11 +109,11 @@ function HouseOracle({ houseNum, chart, meta }: { houseNum: number; chart: Chart
     <HolographicCard glowColor={`${meta.color}22`} scanLine={loading} style={{ padding: 28 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
         <span style={{ fontSize: 16, color: meta.color }}>◈</span>
-        <span style={{ fontSize: 11, letterSpacing: 3, color: meta.color, textTransform: "uppercase" }}>
+        <span style={{ fontSize: 13, letterSpacing: 3, color: meta.color, textTransform: "uppercase" }}>
           Oracle · House {houseNum} Reading
         </span>
         {loading && (
-          <span style={{ marginLeft: "auto", fontSize: 10, color: "#64748b", letterSpacing: 2 }}>STREAMING...</span>
+          <span style={{ marginLeft: "auto", fontSize: 14, color: "#64748b", letterSpacing: 2 }}>STREAMING...</span>
         )}
       </div>
       {text ? (
@@ -202,7 +202,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
               display: "flex", alignItems: "center", gap: 6,
               background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
               borderRadius: 8, padding: "6px 14px", cursor: "pointer",
-              color: "#94a3b8", fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase",
+              color: "#94a3b8", fontSize: 14, letterSpacing: 1.5, textTransform: "uppercase",
               transition: "all 0.2s",
             }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = meta.color + "66"; e.currentTarget.style.color = meta.color; }}
@@ -224,7 +224,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
               <div style={{ fontSize: 20, fontWeight: 700, color: "#f1f5f9", letterSpacing: 1 }}>
                 {meta.title}
               </div>
-              <div style={{ fontSize: 12, color: "#64748b", letterSpacing: 1, fontStyle: "italic" }}>
+              <div style={{ fontSize: 14, color: "#64748b", letterSpacing: 1, fontStyle: "italic" }}>
                 {meta.latinName} · {meta.quadrant} · {meta.element}
               </div>
             </div>
@@ -232,7 +232,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
 
           <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
             <span style={{
-              fontSize: 10, letterSpacing: 2, color: qColor,
+              fontSize: 14, letterSpacing: 2, color: qColor,
               background: `${qColor}15`, border: `1px solid ${qColor}30`,
               borderRadius: 6, padding: "4px 10px",
             }}>
@@ -288,7 +288,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
               <HolographicCard glowColor={`${meta.color}22`} style={{ padding: 20 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                   <div>
-                    <div style={{ fontSize: 9, letterSpacing: 2.5, color: "#475569", textTransform: "uppercase", marginBottom: 3 }}>
+                    <div style={{ fontSize: 13, letterSpacing: 2.5, color: "#475569", textTransform: "uppercase", marginBottom: 3 }}>
                       Cusp Sign
                     </div>
                     <div style={{ fontSize: 16, color: meta.color }}>
@@ -296,7 +296,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
                     </div>
                   </div>
                   <div>
-                    <div style={{ fontSize: 9, letterSpacing: 2.5, color: "#475569", textTransform: "uppercase", marginBottom: 3 }}>
+                    <div style={{ fontSize: 13, letterSpacing: 2.5, color: "#475569", textTransform: "uppercase", marginBottom: 3 }}>
                       Cusp Degree
                     </div>
                     <div style={{ fontSize: 14, color: "#cbd5e1", fontVariantNumeric: "tabular-nums" }}>
@@ -304,7 +304,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
                     </div>
                   </div>
                   <div>
-                    <div style={{ fontSize: 9, letterSpacing: 2.5, color: "#475569", textTransform: "uppercase", marginBottom: 3 }}>
+                    <div style={{ fontSize: 13, letterSpacing: 2.5, color: "#475569", textTransform: "uppercase", marginBottom: 3 }}>
                       House Lord
                     </div>
                     {lord && lordPlanet ? (
@@ -316,14 +316,14 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
                           {PLANET_SYMBOLS[lord as PlanetName] ?? "○"}
                         </span>
                         <span style={{ fontSize: 13, color: lordMeta?.color ?? "#94a3b8", textDecoration: "underline" }}>{lord}</span>
-                        <span style={{ fontSize: 11, color: "#64748b" }}>→ H{lordPlanet.house}</span>
+                        <span style={{ fontSize: 13, color: "#64748b" }}>→ H{lordPlanet.house}</span>
                       </button>
                     ) : (
                       <span style={{ fontSize: 13, color: "#94a3b8" }}>{lord ?? "—"}</span>
                     )}
                   </div>
                   <div>
-                    <div style={{ fontSize: 9, letterSpacing: 2.5, color: "#475569", textTransform: "uppercase", marginBottom: 3 }}>
+                    <div style={{ fontSize: 13, letterSpacing: 2.5, color: "#475569", textTransform: "uppercase", marginBottom: 3 }}>
                       Occupants
                     </div>
                     {occupants.length > 0 ? (
@@ -342,7 +342,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
                         ))}
                       </div>
                     ) : (
-                      <span style={{ fontSize: 12, color: "#334155" }}>Empty house</span>
+                      <span style={{ fontSize: 14, color: "#334155" }}>Empty house</span>
                     )}
                   </div>
                 </div>
@@ -359,7 +359,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
             transition={{ delay: 0.15, duration: 0.5 }}
           >
             <div style={{ marginBottom: 24 }}>
-              <div style={{ fontSize: 11, letterSpacing: 3, color: meta.color, textTransform: "uppercase", marginBottom: 8 }}>
+              <div style={{ fontSize: 13, letterSpacing: 3, color: meta.color, textTransform: "uppercase", marginBottom: 8 }}>
                 Traditional Theme
               </div>
               <p style={{ fontSize: 15, color: "#94a3b8", lineHeight: 1.75 }}>
@@ -373,7 +373,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
                 <span
                   key={kw}
                   style={{
-                    fontSize: 10, letterSpacing: 2, textTransform: "uppercase",
+                    fontSize: 14, letterSpacing: 2, textTransform: "uppercase",
                     color: meta.color, background: `${meta.color}18`,
                     border: `1px solid ${meta.color}33`, borderRadius: 20, padding: "4px 12px",
                   }}
@@ -386,7 +386,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
             {/* Lord detail */}
             {lord && lordPlanet && (
               <HolographicCard glowColor={`${lordMeta?.color ?? meta.color}22`} style={{ padding: 18 }}>
-                <div style={{ fontSize: 9, letterSpacing: 2.5, color: "#475569", textTransform: "uppercase", marginBottom: 12 }}>
+                <div style={{ fontSize: 13, letterSpacing: 2.5, color: "#475569", textTransform: "uppercase", marginBottom: 12 }}>
                   Lord of this House
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
@@ -395,7 +395,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
                   </span>
                   <div>
                     <div style={{ fontSize: 15, fontWeight: 700, color: lordMeta?.color ?? "#f1f5f9" }}>{lord}</div>
-                    <div style={{ fontSize: 11, color: "#64748b" }}>
+                    <div style={{ fontSize: 13, color: "#64748b" }}>
                       {SIGN_SYMBOLS[lordPlanet.sign]} {lordPlanet.sign} · House {lordPlanet.house}
                       {lordPlanet.retrograde && <span style={{ color: "#f59e0b", marginLeft: 4 }}>℞</span>}
                     </div>
@@ -403,7 +403,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
                   {lordPlanet.dignity && (
                     <div style={{ marginLeft: "auto" }}>
                       <span style={{
-                        fontSize: 9, letterSpacing: 2, textTransform: "uppercase",
+                        fontSize: 13, letterSpacing: 2, textTransform: "uppercase",
                         color: lordPlanet.dignity === "domicile" || lordPlanet.dignity === "exaltation" ? "#22c55e" : "#ef4444",
                         background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
                         borderRadius: 6, padding: "3px 8px",
@@ -413,7 +413,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
                     </div>
                   )}
                 </div>
-                <div style={{ fontSize: 12, color: "#475569", lineHeight: 1.6 }}>
+                <div style={{ fontSize: 14, color: "#475569", lineHeight: 1.6 }}>
                   As lord of House {houseNum}, {lord} in {lordPlanet.sign} House {lordPlanet.house} shows how {meta.title.toLowerCase()} themes play out through {lordMeta?.archetype?.toLowerCase() ?? lord.toLowerCase()} energy.
                 </div>
                 <button
@@ -423,7 +423,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
                     background: `${lordMeta?.color ?? meta.color}12`,
                     border: `1px solid ${lordMeta?.color ?? meta.color}33`,
                     color: lordMeta?.color ?? meta.color,
-                    fontSize: 10, letterSpacing: 2, textTransform: "uppercase",
+                    fontSize: 14, letterSpacing: 2, textTransform: "uppercase",
                     cursor: "pointer", transition: "all 0.2s",
                   }}
                 >
@@ -442,7 +442,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
             transition={{ delay: 0.25, duration: 0.5 }}
             style={{ marginBottom: 40 }}
           >
-            <div style={{ fontSize: 10, letterSpacing: 4, color: "#475569", textTransform: "uppercase", marginBottom: 14 }}>
+            <div style={{ fontSize: 14, letterSpacing: 4, color: "#475569", textTransform: "uppercase", marginBottom: 14 }}>
               Planets in House {houseNum}
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
@@ -469,18 +469,18 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 13, fontWeight: 600, color: "#f1f5f9" }}>
                             {p.name}
-                            {p.retrograde && <span style={{ color: "#f59e0b", marginLeft: 4, fontSize: 10 }}>℞</span>}
+                            {p.retrograde && <span style={{ color: "#f59e0b", marginLeft: 4, fontSize: 14 }}>℞</span>}
                           </div>
-                          <div style={{ fontSize: 11, color: "#64748b" }}>
+                          <div style={{ fontSize: 13, color: "#64748b" }}>
                             {SIGN_SYMBOLS[p.sign]} {p.sign}
                             {p.dignity && p.dignity !== "peregrine" && (
-                              <span style={{ marginLeft: 6, fontSize: 9, color: p.dignity === "domicile" || p.dignity === "exaltation" ? "#22c55e" : "#ef4444" }}>
+                              <span style={{ marginLeft: 6, fontSize: 13, color: p.dignity === "domicile" || p.dignity === "exaltation" ? "#22c55e" : "#ef4444" }}>
                                 {p.dignity}
                               </span>
                             )}
                           </div>
                         </div>
-                        <span style={{ fontSize: 11, color: "#334155" }}>→</span>
+                        <span style={{ fontSize: 13, color: "#334155" }}>→</span>
                       </div>
                     </HolographicCard>
                   </motion.div>
@@ -498,7 +498,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
             transition={{ delay: 0.35, duration: 0.5 }}
             style={{ marginBottom: 48 }}
           >
-            <div style={{ fontSize: 10, letterSpacing: 4, color: "#475569", textTransform: "uppercase", marginBottom: 14 }}>
+            <div style={{ fontSize: 14, letterSpacing: 4, color: "#475569", textTransform: "uppercase", marginBottom: 14 }}>
               Oracle
             </div>
             <HouseOracle houseNum={houseNum} chart={chart} meta={meta} />
@@ -525,7 +525,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
                   display: "flex", alignItems: "center", gap: 10,
                   background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)",
                   borderRadius: 10, padding: "12px 20px", cursor: "pointer",
-                  color: "#64748b", fontSize: 12, letterSpacing: 1, transition: "all 0.2s",
+                  color: "#64748b", fontSize: 14, letterSpacing: 1, transition: "all 0.2s",
                 }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = m.color + "55"; e.currentTarget.style.color = m.color; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; e.currentTarget.style.color = "#64748b"; }}

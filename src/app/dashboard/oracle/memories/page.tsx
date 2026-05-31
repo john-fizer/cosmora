@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -73,7 +73,7 @@ function MemoryCard({
             <button
               onClick={e => { e.stopPropagation(); setShowCats(v => !v); }}
               style={{
-                padding: "2px 8px", borderRadius: 20, fontSize: 8.5,
+                padding: "2px 8px", borderRadius: 20, fontSize: 13,
                 background: `${meta.color}18`, border: `1px solid ${meta.color}35`,
                 color: meta.color, cursor: "pointer",
               }}
@@ -83,7 +83,7 @@ function MemoryCard({
             <button
               onClick={handleDelete}
               style={{
-                width: 20, height: 20, borderRadius: "50%", fontSize: 9,
+                width: 20, height: 20, borderRadius: "50%", fontSize: 13,
                 background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)",
                 color: "#ef4444", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
               }}
@@ -110,7 +110,7 @@ function MemoryCard({
                 {(Object.entries(CAT_META) as [MemoryCategory, typeof CAT_META[MemoryCategory]][]).map(([id, m]) => (
                   <button key={id} onClick={() => { onUpdateCategory(memory.id, id); setShowCats(false); }}
                     style={{
-                      padding: "3px 8px", borderRadius: 20, fontSize: 8,
+                      padding: "3px 8px", borderRadius: 20, fontSize: 13,
                       background: memory.category === id ? `${m.color}22` : "rgba(255,255,255,0.03)",
                       border: `1px solid ${memory.category === id ? m.color + "44" : "rgba(255,255,255,0.06)"}`,
                       color: memory.category === id ? m.color : "#475569", cursor: "pointer",
@@ -123,14 +123,14 @@ function MemoryCard({
           </AnimatePresence>
 
           {/* Content */}
-          <p style={{ color: "#94a3b8", fontSize: 8, letterSpacing: "0.12em", marginBottom: 6, fontFamily: "'Fragment Mono', monospace" }}>
+          <p style={{ color: "#94a3b8", fontSize: 13, letterSpacing: "0.12em", marginBottom: 6, fontFamily: "'Fragment Mono', monospace" }}>
             {formatDate(memory.createdAt)}
           </p>
           <p style={{ color: "#e2d9f3", fontSize: 13, fontWeight: 500, marginBottom: 8, paddingRight: 100, lineHeight: 1.4 }}>
             {memory.title}
           </p>
           <p style={{
-            color: "#64748b", fontSize: 11, lineHeight: 1.6,
+            color: "#64748b", fontSize: 13, lineHeight: 1.6,
             overflow: "hidden",
             display: "-webkit-box",
             WebkitLineClamp: expanded ? 999 : 3,
@@ -139,7 +139,7 @@ function MemoryCard({
             {memory.content}
           </p>
           {memory.content.length > 200 && (
-            <p style={{ color: meta.color, fontSize: 9, marginTop: 6, fontFamily: "'Fragment Mono', monospace" }}>
+            <p style={{ color: meta.color, fontSize: 13, marginTop: 6, fontFamily: "'Fragment Mono', monospace" }}>
               {expanded ? "▲ COLLAPSE" : "▼ EXPAND"}
             </p>
           )}
@@ -204,17 +204,17 @@ export default function OracleMemoriesPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/dashboard/oracle"
-              style={{ color: "#475569", fontSize: 10, letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace" }}
+              style={{ color: "#475569", fontSize: 14, letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace" }}
             >
               ← ORACLE
             </Link>
             <span style={{ color: "#1e293b" }}>/</span>
-            <span style={{ color: "#7c3aed", fontSize: 10, letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace" }}>
+            <span style={{ color: "#7c3aed", fontSize: 14, letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace" }}>
               MEMORIES
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <span style={{ color: "#334155", fontSize: 10, fontFamily: "'Fragment Mono', monospace" }}>
+            <span style={{ color: "#334155", fontSize: 14, fontFamily: "'Fragment Mono', monospace" }}>
               {memories.length} saved
             </span>
           </div>
@@ -229,7 +229,7 @@ export default function OracleMemoriesPage() {
             className="flex-shrink-0 flex flex-col gap-1 p-4"
             style={{ width: 180, borderRight: "1px solid rgba(124,58,237,0.08)" }}
           >
-            <p className="text-[8px] tracking-[0.2em] mb-3" style={{ color: "#334155", fontFamily: "'Fragment Mono', monospace" }}>
+            <p className="text-[13px] tracking-[0.2em] mb-3" style={{ color: "#334155", fontFamily: "'Fragment Mono', monospace" }}>
               FILTER
             </p>
             <button
@@ -239,7 +239,7 @@ export default function OracleMemoriesPage() {
                 background: activeFilter === "all" ? "rgba(124,58,237,0.12)" : "transparent",
                 border: `1px solid ${activeFilter === "all" ? "rgba(124,58,237,0.3)" : "transparent"}`,
                 color: activeFilter === "all" ? "#a78bfa" : "#475569",
-                fontSize: 10, cursor: "pointer", display: "flex", justifyContent: "space-between",
+                fontSize: 14, cursor: "pointer", display: "flex", justifyContent: "space-between",
                 fontFamily: "'Fragment Mono', monospace",
               }}
             >
@@ -255,7 +255,7 @@ export default function OracleMemoriesPage() {
                   background: activeFilter === id ? `${m.color}12` : "transparent",
                   border: `1px solid ${activeFilter === id ? m.color + "30" : "transparent"}`,
                   color: activeFilter === id ? m.color : "#475569",
-                  fontSize: 10, cursor: "pointer", display: "flex", justifyContent: "space-between",
+                  fontSize: 14, cursor: "pointer", display: "flex", justifyContent: "space-between",
                   fontFamily: "'Fragment Mono', monospace",
                 }}
               >
@@ -303,7 +303,7 @@ export default function OracleMemoriesPage() {
                   <p style={{ color: "#475569", fontSize: 13, marginBottom: 8 }}>
                     {memories.length === 0 ? "No memories saved yet" : "No memories match this filter"}
                   </p>
-                  <p style={{ color: "#334155", fontSize: 11 }}>
+                  <p style={{ color: "#334155", fontSize: 13 }}>
                     {memories.length === 0
                       ? "Hover over Oracle responses and click \"+ SAVE TO MEMORY\" to save insights here."
                       : "Try a different filter or search term."}
@@ -314,7 +314,7 @@ export default function OracleMemoriesPage() {
                       style={{
                         marginTop: 20, padding: "8px 20px",
                         background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)",
-                        borderRadius: 24, color: "#a78bfa", fontSize: 10,
+                        borderRadius: 24, color: "#a78bfa", fontSize: 14,
                         letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace",
                         textDecoration: "none",
                       }}

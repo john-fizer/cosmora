@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
@@ -107,7 +107,7 @@ export function ChatInput({ profileId, chart }: ChatInputProps) {
             style={{ background: "rgba(4,4,32,0.9)", border: "1px solid rgba(99,102,241,0.2)", backdropFilter: "blur(20px)" }}
           >
             <div className="flex items-center justify-between px-4 py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-              <span className="text-[11px] font-bold tracking-widest" style={{ color: "#64748b" }}>COSMIC DIALOGUE</span>
+              <span className="text-[13px] font-bold tracking-widest" style={{ color: "#64748b" }}>COSMIC DIALOGUE</span>
               <button onClick={() => setOpen(false)} className="text-[#64748b] hover:text-[#94a3b8] cursor-pointer text-xs">×</button>
             </div>
             <div className="max-h-72 overflow-y-auto px-4 py-3 space-y-3" style={{ scrollbarWidth: "thin" }}>
@@ -169,7 +169,7 @@ export function ChatInput({ profileId, chart }: ChatInputProps) {
           style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 10px rgba(124,58,237,0.4)" }}
           onClick={() => setOpen(o => !o)}
         >
-          <span className="text-[11px] text-white font-bold">✦</span>
+          <span className="text-[13px] text-white font-bold">✦</span>
         </motion.div>
         <input
           type="text"

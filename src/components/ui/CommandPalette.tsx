@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -415,7 +415,7 @@ export function CommandPalette() {
                 }}
               />
               <kbd style={{
-                fontSize: 9, letterSpacing: 1, color: "#334155",
+                fontSize: 13, letterSpacing: 1, color: "#334155",
                 background: "rgba(255,255,255,0.04)",
                 border: "1px solid rgba(255,255,255,0.08)",
                 borderRadius: 5, padding: "3px 7px", flexShrink: 0,
@@ -438,7 +438,7 @@ export function CommandPalette() {
                   <div key={category}>
                     <div style={{
                       padding: "8px 18px 4px",
-                      fontSize: 9, letterSpacing: 3,
+                      fontSize: 13, letterSpacing: 3,
                       color: "#334155", textTransform: "uppercase",
                     }}>
                       {category}
@@ -477,14 +477,14 @@ export function CommandPalette() {
                               {cmd.label}
                             </div>
                             {cmd.description && (
-                              <div style={{ fontSize: 11, color: "#334155", marginTop: 1 }}>
+                              <div style={{ fontSize: 13, color: "#334155", marginTop: 1 }}>
                                 {cmd.description}
                               </div>
                             )}
                           </div>
                           {isSelected && (
                             <kbd style={{
-                              fontSize: 9, letterSpacing: 1, color: "#475569",
+                              fontSize: 13, letterSpacing: 1, color: "#475569",
                               background: "rgba(255,255,255,0.04)",
                               border: "1px solid rgba(255,255,255,0.08)",
                               borderRadius: 5, padding: "3px 7px", flexShrink: 0,
@@ -505,7 +505,7 @@ export function CommandPalette() {
               padding: "8px 18px",
               borderTop: "1px solid rgba(255,255,255,0.04)",
               display: "flex", alignItems: "center", gap: 12,
-              fontSize: 9, letterSpacing: 1.5, color: "#1e293b",
+              fontSize: 13, letterSpacing: 1.5, color: "#1e293b",
             }}>
               <span>↑↓ Navigate</span>
               <span style={{ color: "#0f172a" }}>·</span>

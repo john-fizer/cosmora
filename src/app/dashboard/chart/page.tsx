@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -201,13 +201,13 @@ function AspectWeb({ chart }: { chart: ChartData }) {
       {/* Controls */}
       <div className="flex-shrink-0 flex items-center gap-2 px-6 py-3 flex-wrap"
         style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-        <span className="text-[8px] font-bold tracking-widest mr-2" style={{ color: "#334155" }}>SHOW</span>
+        <span className="text-[13px] font-bold tracking-widest mr-2" style={{ color: "#334155" }}>SHOW</span>
         {Object.entries(ASPECT_WEB_COLORS).map(([type, color]) => (
           <motion.button
             key={type}
             whileTap={{ scale: 0.92 }}
             onClick={() => toggleType(type)}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[8px] font-bold cursor-pointer transition-all"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[13px] font-bold cursor-pointer transition-all"
             style={{
               background: activeTypes.has(type) ? `${color}18` : "rgba(255,255,255,0.03)",
               border: `1px solid ${activeTypes.has(type) ? color + "40" : "rgba(255,255,255,0.06)"}`,
@@ -219,7 +219,7 @@ function AspectWeb({ chart }: { chart: ChartData }) {
           </motion.button>
         ))}
         {hoveredPlanet && (
-          <span className="ml-auto text-[8px] font-bold" style={{ color: PLANET_WEB_COLORS[hoveredPlanet] ?? "#94a3b8" }}>
+          <span className="ml-auto text-[13px] font-bold" style={{ color: PLANET_WEB_COLORS[hoveredPlanet] ?? "#94a3b8" }}>
             {PLANET_SYMBOLS[hoveredPlanet]} {hoveredPlanet} aspects
           </span>
         )}
@@ -366,8 +366,8 @@ function AspectarianGrid({ chart }: { chart: ChartData }) {
       className="flex-1 overflow-auto p-6"
     >
       <div className="mb-4">
-        <p className="text-[8px] font-bold tracking-widest" style={{ color: "#64748b" }}>ASPECTARIAN — NATAL ASPECT MATRIX</p>
-        <p className="text-[10px] mt-1" style={{ color: "#334155" }}>Upper triangle · Hover for orb detail</p>
+        <p className="text-[13px] font-bold tracking-widest" style={{ color: "#64748b" }}>ASPECTARIAN — NATAL ASPECT MATRIX</p>
+        <p className="text-[14px] mt-1" style={{ color: "#334155" }}>Upper triangle · Hover for orb detail</p>
       </div>
 
       <div className="overflow-auto">
@@ -608,10 +608,10 @@ function DispositorTree({ chart }: { chart: ChartData }) {
       className="flex-1 flex flex-col min-h-0 overflow-auto p-6"
     >
       <div className="mb-5">
-        <p className="text-[9px] font-bold tracking-widest mb-1" style={{ color: "#475569" }}>
+        <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#475569" }}>
           DISPOSITOR TREE — TRADITIONAL RULERSHIP CHAINS
         </p>
-        <p className="text-[10px] leading-relaxed" style={{ color: "#334155" }}>
+        <p className="text-[14px] leading-relaxed" style={{ color: "#334155" }}>
           Each planet is ruled by the lord of its sign, forming chains that lead to self-dispositing planets (shown in gold). Mutual receptions are highlighted.
         </p>
       </div>
@@ -621,7 +621,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
         {selfDispositors.map(p => {
           const color = DISP_PLANET_COLORS[p.name] ?? "#94a3b8";
           return (
-            <div key={p.name} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold"
+            <div key={p.name} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[14px] font-bold"
               style={{ background: `${color}18`, border: `1px solid ${color}35`, color }}>
               <span style={{ fontSize: 14 }}>{PLANET_SYMBOLS[p.name]}</span>
               {p.name} — self-dispositing in {p.sign}
@@ -632,7 +632,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
           const ac = DISP_PLANET_COLORS[a] ?? "#94a3b8";
           const bc = DISP_PLANET_COLORS[b] ?? "#94a3b8";
           return (
-            <div key={`${a}${b}`} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold"
+            <div key={`${a}${b}`} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[14px] font-bold"
               style={{ background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.3)", color: "#818cf8" }}>
               <span style={{ color: ac }}>{PLANET_SYMBOLS[a]}</span>
               ⇄
@@ -769,11 +769,11 @@ function DispositorTree({ chart }: { chart: ChartData }) {
                 <span style={{ fontSize: 22, color }}>{PLANET_SYMBOLS[hovered]}</span>
                 <p className="text-sm font-bold" style={{ color }}>{hovered} in {p.sign}</p>
                 {selfNames.has(hovered) && (
-                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full"
+                  <span className="text-[13px] font-bold px-2 py-0.5 rounded-full"
                     style={{ background: `${color}20`, color }}>SELF-DISPOSITING ✦</span>
                 )}
               </div>
-              <p className="text-[10px]" style={{ color: "#64748b" }}>
+              <p className="text-[14px]" style={{ color: "#64748b" }}>
                 Chain: {chain.map(n => {
                   const pc = DISP_PLANET_COLORS[n] ?? "#94a3b8";
                   return `${PLANET_SYMBOLS[n]} ${n}`;
@@ -786,7 +786,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
       </AnimatePresence>
 
       {/* Legend */}
-      <div className="mt-5 flex flex-wrap gap-4 text-[9px]" style={{ color: "#334155" }}>
+      <div className="mt-5 flex flex-wrap gap-4 text-[13px]" style={{ color: "#334155" }}>
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-px" style={{ background: "#fbbf24", opacity: 0.6 }} />
           Arrow = "ruled by" direction
@@ -856,10 +856,10 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <p className="text-[8px] font-bold tracking-widest" style={{ color: "#fbbf24" }}>
+          <p className="text-[13px] font-bold tracking-widest" style={{ color: "#fbbf24" }}>
             FIXED STARS — NATAL CONJUNCTIONS
           </p>
-          <p className="text-[9px] mt-0.5" style={{ color: "#334155" }}>
+          <p className="text-[13px] mt-0.5" style={{ color: "#334155" }}>
             Stars within 1°30′ of natal planets and angles · Traditional Hellenistic interpretation
           </p>
         </div>
@@ -867,7 +867,7 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
           <span className="text-2xl font-bold" style={{ color: totalConjunctions > 0 ? "#fbbf24" : "#334155" }}>
             {totalConjunctions}
           </span>
-          <span className="text-[8px] font-bold tracking-widest" style={{ color: "#475569" }}>
+          <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>
             CONJUNCTIONS
           </span>
         </div>
@@ -877,7 +877,7 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
         <div className="flex flex-col items-center justify-center py-16 gap-3">
           <span className="text-3xl" style={{ color: "#1e293b" }}>✦</span>
           <p className="text-sm" style={{ color: "#334155" }}>No fixed star conjunctions within 1°30′</p>
-          <p className="text-[9px]" style={{ color: "#1e293b" }}>Your chart has rare planetary freedom from stellar influence</p>
+          <p className="text-[13px]" style={{ color: "#1e293b" }}>Your chart has rare planetary freedom from stellar influence</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -900,11 +900,11 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
                       {planet.name} · {planet.signDegree.toFixed(1)}° {planet.sign}
                       {planet.retrograde ? " ℞" : ""}
                     </p>
-                    <p className="text-[8px]" style={{ color: "#475569" }}>
+                    <p className="text-[13px]" style={{ color: "#475569" }}>
                       House {planet.house} · {planet.dignity && planet.dignity !== "peregrine" ? planet.dignity : "peregrine"}
                     </p>
                   </div>
-                  <span className="text-[8px] font-bold px-2 py-0.5 rounded-full"
+                  <span className="text-[13px] font-bold px-2 py-0.5 rounded-full"
                     style={{ background: `${pColor}15`, color: pColor }}>
                     {stars.length} star{stars.length !== 1 ? "s" : ""}
                   </span>
@@ -933,7 +933,7 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
                           {/* Star glyph */}
                           <div className="flex flex-col items-center gap-0.5 flex-shrink-0 w-10 pt-0.5">
                             <span style={{ color: sColor, fontSize: 16 }}>✦</span>
-                            <span className="text-[6px] font-mono" style={{ color: "#334155" }}>
+                            <span className="text-[14px] font-mono" style={{ color: "#334155" }}>
                               {orb.toFixed(1)}°
                             </span>
                           </div>
@@ -941,18 +941,18 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                               <span className="text-xs font-bold" style={{ color: sColor }}>{star.name}</span>
-                              <span className="text-[8px] font-medium px-1.5 py-0.5 rounded"
+                              <span className="text-[13px] font-medium px-1.5 py-0.5 rounded"
                                 style={{ background: "rgba(255,255,255,0.04)", color: "#475569" }}>
                                 {star.nature}
                               </span>
-                              <span className="text-[7px] tracking-widest font-bold" style={{ color: "#334155" }}>
+                              <span className="text-[14px] tracking-widest font-bold" style={{ color: "#334155" }}>
                                 {star.magnitude < 0 ? "" : star.magnitude < 1.5 ? "1st mag" : star.magnitude < 2.5 ? "2nd mag" : "3rd mag"}
                               </span>
                             </div>
-                            <p className="text-[9px] font-medium mb-1" style={{ color: "#64748b" }}>
+                            <p className="text-[13px] font-medium mb-1" style={{ color: "#64748b" }}>
                               {star.keywords}
                             </p>
-                            <p className="text-[9px] leading-relaxed" style={{ color: "#475569" }}>
+                            <p className="text-[13px] leading-relaxed" style={{ color: "#475569" }}>
                               {star.interpretation}
                             </p>
                           </div>
@@ -976,10 +976,10 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
             >
               <div className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: "1px solid rgba(6,182,212,0.1)" }}>
                 <span className="text-sm font-bold" style={{ color: "#06b6d4" }}>{label}</span>
-                <p className="text-[9px] flex-1" style={{ color: "#475569" }}>
+                <p className="text-[13px] flex-1" style={{ color: "#475569" }}>
                   {(lon % 30).toFixed(1)}° {ZODIAC_SIGNS[Math.floor(((lon % 360) + 360) % 360 / 30)]}
                 </p>
-                <span className="text-[8px] font-bold px-2 py-0.5 rounded-full"
+                <span className="text-[13px] font-bold px-2 py-0.5 rounded-full"
                   style={{ background: "rgba(6,182,212,0.12)", color: "#06b6d4" }}>
                   {stars.length} star{stars.length !== 1 ? "s" : ""}
                 </span>
@@ -994,18 +994,18 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
                       <div className="flex items-start gap-3">
                         <div className="flex flex-col items-center gap-0.5 flex-shrink-0 w-10 pt-0.5">
                           <span style={{ color: sColor, fontSize: 16 }}>✦</span>
-                          <span className="text-[6px] font-mono" style={{ color: "#334155" }}>{orb.toFixed(1)}°</span>
+                          <span className="text-[14px] font-mono" style={{ color: "#334155" }}>{orb.toFixed(1)}°</span>
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                             <span className="text-xs font-bold" style={{ color: sColor }}>{star.name}</span>
-                            <span className="text-[8px] px-1.5 py-0.5 rounded"
+                            <span className="text-[13px] px-1.5 py-0.5 rounded"
                               style={{ background: "rgba(255,255,255,0.04)", color: "#475569" }}>
                               {star.nature}
                             </span>
                           </div>
-                          <p className="text-[9px] font-medium mb-1" style={{ color: "#64748b" }}>{star.keywords}</p>
-                          <p className="text-[9px] leading-relaxed" style={{ color: "#475569" }}>{star.interpretation}</p>
+                          <p className="text-[13px] font-medium mb-1" style={{ color: "#64748b" }}>{star.keywords}</p>
+                          <p className="text-[13px] leading-relaxed" style={{ color: "#475569" }}>{star.interpretation}</p>
                         </div>
                       </div>
                     </div>
@@ -1017,11 +1017,11 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
 
           {/* Magnitude legend */}
           <div className="flex items-center gap-4 pt-2 pb-4">
-            <span className="text-[7px] tracking-widest font-bold" style={{ color: "#1e293b" }}>MAGNITUDE</span>
+            <span className="text-[14px] tracking-widest font-bold" style={{ color: "#1e293b" }}>MAGNITUDE</span>
             {MAGNITUDE_COLORS.slice(0, 3).map(m => (
               <div key={m.label} className="flex items-center gap-1.5">
-                <span style={{ color: m.color, fontSize: 10 }}>✦</span>
-                <span className="text-[7px]" style={{ color: "#334155" }}>{m.label}</span>
+                <span style={{ color: m.color, fontSize: 13 }}>✦</span>
+                <span className="text-[14px]" style={{ color: "#334155" }}>{m.label}</span>
               </div>
             ))}
           </div>
@@ -1345,7 +1345,7 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
         className="rounded-2xl p-5 mb-5"
         style={{ background: `${shape.color}0a`, border: `1px solid ${shape.color}22` }}
       >
-        <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>
+        <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>
           CHART SHAPE — JONES PATTERN
         </p>
         <div className="flex items-center gap-4">
@@ -1358,19 +1358,19 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <p className="text-base font-bold" style={{ color: "#e2e8f0", fontFamily: "'Space Grotesk', sans-serif" }}>{shape.name}</p>
-              <span className="text-[7px] font-bold tracking-widest px-1.5 py-0.5 rounded" style={{ background: `${shape.color}15`, color: shape.color }}>{shape.keyword}</span>
+              <span className="text-[14px] font-bold tracking-widest px-1.5 py-0.5 rounded" style={{ background: `${shape.color}15`, color: shape.color }}>{shape.keyword}</span>
             </div>
-            <p className="text-[10px] leading-relaxed" style={{ color: "#64748b" }}>{shape.desc}</p>
+            <p className="text-[14px] leading-relaxed" style={{ color: "#64748b" }}>{shape.desc}</p>
           </div>
         </div>
       </motion.div>
 
       <div className="flex items-center justify-between mb-5">
         <div>
-          <p className="text-[8px] font-bold tracking-widest" style={{ color: "#a78bfa" }}>
+          <p className="text-[13px] font-bold tracking-widest" style={{ color: "#a78bfa" }}>
             ASPECT CONFIGURATIONS
           </p>
-          <p className="text-[9px] mt-0.5" style={{ color: "#334155" }}>
+          <p className="text-[13px] mt-0.5" style={{ color: "#334155" }}>
             Stelliums, Grand Trines, T-Squares, Yods, Grand Crosses, Mystic Rectangles
           </p>
         </div>
@@ -1378,7 +1378,7 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
           <span className="text-2xl font-bold" style={{ color: patterns.length > 0 ? "#a78bfa" : "#334155" }}>
             {patterns.length}
           </span>
-          <span className="text-[8px] font-bold tracking-widest" style={{ color: "#475569" }}>
+          <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>
             PATTERNS
           </span>
         </div>
@@ -1417,7 +1417,7 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
                       {pattern.name}
                     </p>
                     <span
-                      className="text-[7px] font-bold tracking-widest px-1.5 py-0.5 rounded"
+                      className="text-[14px] font-bold tracking-widest px-1.5 py-0.5 rounded"
                       style={{ background: `${RARITY_COLORS[pattern.rarity]}15`, color: RARITY_COLORS[pattern.rarity] }}
                     >
                       {pattern.rarity.toUpperCase()}
@@ -1444,13 +1444,13 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
               </div>
 
               {/* Description */}
-              <p className="text-[10px] leading-relaxed" style={{ color: "#64748b" }}>{pattern.desc}</p>
+              <p className="text-[14px] leading-relaxed" style={{ color: "#64748b" }}>{pattern.desc}</p>
             </motion.div>
           ))}
 
           {/* Pattern glossary */}
           <div className="rounded-xl p-4 mt-2" style={{ background: "rgba(4,4,28,0.5)", border: "1px solid rgba(255,255,255,0.04)" }}>
-            <p className="text-[7px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>PATTERN GUIDE</p>
+            <p className="text-[14px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>PATTERN GUIDE</p>
             <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
               {[
                 { glyph: "✦", name: "Stellium", rarity: "Uncommon" },
@@ -1463,7 +1463,7 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
                 <div key={g.name} className="flex items-center gap-2">
                   <span style={{ fontSize: 11, color: "#334155" }}>{g.glyph}</span>
                   <span style={{ fontSize: 9, color: "#475569" }}>{g.name}</span>
-                  <span className="ml-auto text-[7px]" style={{ color: RARITY_COLORS[g.rarity] }}>{g.rarity}</span>
+                  <span className="ml-auto text-[14px]" style={{ color: RARITY_COLORS[g.rarity] }}>{g.rarity}</span>
                 </div>
               ))}
             </div>
@@ -1515,8 +1515,8 @@ function ArabicLots({ chart }: { chart: ChartData }) {
       {/* Left: Lots table */}
       <div className="flex-1 flex flex-col min-h-0 overflow-y-auto px-6 py-5">
         <div className="mb-5">
-          <p className="text-[9px] font-bold tracking-widest mb-1" style={{ color: "#475569" }}>ARABIC LOTS · HERMETIC LOTS</p>
-          <p className="text-[10px] leading-relaxed" style={{ color: "#334155" }}>
+          <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#475569" }}>ARABIC LOTS · HERMETIC LOTS</p>
+          <p className="text-[14px] leading-relaxed" style={{ color: "#334155" }}>
             Sensitive points derived from three chart factors — each amplifies a specific life domain.
             Sect determines Fortune/Spirit orientation: {isDay ? "Day chart — Fortune leads." : "Night chart — Fortune and Spirit swap."}
           </p>
@@ -1550,10 +1550,10 @@ function ArabicLots({ chart }: { chart: ChartData }) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className="text-xs font-bold" style={{ color: "#e2e8f0" }}>Lot of {lot.name}</span>
-                    <span className="text-[10px] font-mono" style={{ color: "#475569" }}>{lot.signDeg.toFixed(1)}°</span>
-                    <span className="text-[11px]" style={{ color: lot.color }}>{lot.sigSym}</span>
-                    <span className="text-[10px]" style={{ color: "#64748b" }}>{lot.sign}</span>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-md font-bold" style={{ background: "rgba(99,102,241,0.12)", color: "#818cf8" }}>H{lot.house}</span>
+                    <span className="text-[14px] font-mono" style={{ color: "#475569" }}>{lot.signDeg.toFixed(1)}°</span>
+                    <span className="text-[13px]" style={{ color: lot.color }}>{lot.sigSym}</span>
+                    <span className="text-[14px]" style={{ color: "#64748b" }}>{lot.sign}</span>
+                    <span className="text-[13px] px-1.5 py-0.5 rounded-md font-bold" style={{ background: "rgba(99,102,241,0.12)", color: "#818cf8" }}>H{lot.house}</span>
                   </div>
                   <AnimatePresence>
                     {selected === lot.key && (
@@ -1561,7 +1561,7 @@ function ArabicLots({ chart }: { chart: ChartData }) {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        className="text-[10px] leading-relaxed overflow-hidden"
+                        className="text-[14px] leading-relaxed overflow-hidden"
                         style={{ color: "#64748b" }}
                       >
                         {lot.description}
@@ -1571,7 +1571,7 @@ function ArabicLots({ chart }: { chart: ChartData }) {
                 </div>
 
                 {/* Longitude */}
-                <span className="text-[9px] font-mono flex-shrink-0" style={{ color: "#334155" }}>
+                <span className="text-[13px] font-mono flex-shrink-0" style={{ color: "#334155" }}>
                   {lot.lon.toFixed(2)}°
                 </span>
               </div>
@@ -1581,7 +1581,7 @@ function ArabicLots({ chart }: { chart: ChartData }) {
 
         {/* Formula reference */}
         <div className="mt-6 rounded-xl p-4" style={{ background: "rgba(4,4,28,0.5)", border: "1px solid rgba(99,102,241,0.1)" }}>
-          <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>FORMULAE ({isDay ? "DAY SECT" : "NIGHT SECT"})</p>
+          <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>FORMULAE ({isDay ? "DAY SECT" : "NIGHT SECT"})</p>
           <div className="grid grid-cols-2 gap-x-6 gap-y-1">
             {[
               ["Fortune", isDay ? "ASC + ☽ − ☉" : "ASC + ☉ − ☽"],
@@ -1593,8 +1593,8 @@ function ArabicLots({ chart }: { chart: ChartData }) {
               ["Nemesis", "ASC + Fortune − ♄"],
             ].map(([name, formula]) => (
               <div key={name} className="flex items-center gap-1">
-                <span className="text-[9px] font-bold w-20" style={{ color: "#475569" }}>{name}</span>
-                <span className="text-[9px] font-mono" style={{ color: "#334155" }}>{formula}</span>
+                <span className="text-[13px] font-bold w-20" style={{ color: "#475569" }}>{name}</span>
+                <span className="text-[13px] font-mono" style={{ color: "#334155" }}>{formula}</span>
               </div>
             ))}
           </div>
@@ -1603,7 +1603,7 @@ function ArabicLots({ chart }: { chart: ChartData }) {
 
       {/* Right: Zodiac ring mini-map */}
       <div className="flex-shrink-0 flex flex-col items-center justify-center w-72 border-l" style={{ borderColor: "rgba(99,102,241,0.1)" }}>
-        <p className="text-[8px] font-bold tracking-widest mb-4" style={{ color: "#334155" }}>LOT POSITIONS</p>
+        <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "#334155" }}>LOT POSITIONS</p>
         <svg width={260} height={260} viewBox="0 0 260 260">
           {/* Zodiac ring */}
           <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(99,102,241,0.12)" strokeWidth={1} />
@@ -1788,7 +1788,7 @@ export default function ChartPage() {
             </svg>
           </motion.div>
           <div className="text-center">
-            <p className="text-[10px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
+            <p className="text-[14px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
             <h2 className="text-base font-bold mb-2" style={{ color: "#e2e8f0", fontFamily: "'Space Grotesk', sans-serif" }}>
               Cosmic instruments standing by.
             </h2>
@@ -1986,7 +1986,7 @@ export default function ChartPage() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.5 }}
-                    className="absolute bottom-5 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-[10px] font-bold tracking-widest"
+                    className="absolute bottom-5 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-[14px] font-bold tracking-widest"
                     style={{ background: "rgba(4,4,28,0.75)", border: "1px solid rgba(99,102,241,0.2)", color: "#475569", backdropFilter: "blur(12px)", pointerEvents: "none", whiteSpace: "nowrap" }}
                   >
                     DRAG TO ORBIT · SCROLL TO ZOOM · CLICK PLANET TO EXPLORE
@@ -2065,7 +2065,7 @@ export default function ChartPage() {
                               { label: "DIGNITY", value: p.dignity ?? "—" },
                             ].map(item => (
                               <div key={item.label}>
-                                <p className="text-[8px] tracking-widest" style={{ color: "#475569" }}>{item.label}</p>
+                                <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>{item.label}</p>
                                 <p className="text-xs font-semibold capitalize" style={{ color: "#c4b5fd" }}>{item.value}</p>
                               </div>
                             ))}

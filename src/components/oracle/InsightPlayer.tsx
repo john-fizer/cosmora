@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -152,7 +152,7 @@ export function InsightPlayer({ text, messageId, planet, aspects = [], autoPlay 
             <rect x="6" y="1" width="2.5" height="8" rx="0.5" />
           </svg>
         ) : playState === "error" ? (
-          <span style={{ fontSize: 9 }}>!</span>
+          <span style={{ fontSize: 13 }}>!</span>
         ) : (
           // Play icon
           <svg viewBox="0 0 10 10" fill="currentColor" style={{ width: 8, height: 8 }}>
@@ -197,7 +197,7 @@ export function InsightPlayer({ text, messageId, planet, aspects = [], autoPlay 
             initial={{ opacity: 0, x: -4 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -4 }}
-            style={{ fontSize: 11, color: profile.color, flexShrink: 0 }}
+            style={{ fontSize: 13, color: profile.color, flexShrink: 0 }}
             title={`${profile.planet} — ${profile.archetype}`}
           >
             {profile.symbol}
@@ -207,7 +207,7 @@ export function InsightPlayer({ text, messageId, planet, aspects = [], autoPlay 
 
       {/* Error label */}
       {playState === "error" && (
-        <span style={{ fontSize: 8, color: "#ef4444", letterSpacing: 0.5 }}>TTS unavailable</span>
+        <span style={{ fontSize: 13, color: "#ef4444", letterSpacing: 0.5 }}>TTS unavailable</span>
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -270,7 +270,7 @@ function ActivityCard({ activity, selected, onClick }: {
       }}
     >
       <span className="text-xl" style={{ color: selected ? activity.color : "#475569" }}>{activity.icon}</span>
-      <span className="text-[9px] font-bold leading-tight" style={{ color: selected ? activity.color : "#475569" }}>
+      <span className="text-[13px] font-bold leading-tight" style={{ color: selected ? activity.color : "#475569" }}>
         {activity.name}
       </span>
     </motion.button>
@@ -351,19 +351,19 @@ function HourTimeline({ hours, now, activity, moonSign, isVoid }: {
             {/* Info */}
             <div className="flex-1 min-w-0 relative z-10">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold" style={{ color: isCurrent ? pColor : "#64748b" }}>
+                <span className="text-[14px] font-bold" style={{ color: isCurrent ? pColor : "#64748b" }}>
                   Hour of {h.planet}
                 </span>
                 {isCurrent && (
-                  <span className="text-[7px] font-bold tracking-widest px-1.5 py-0.5 rounded" style={{ background: `${pColor}20`, color: pColor }}>
+                  <span className="text-[14px] font-bold tracking-widest px-1.5 py-0.5 rounded" style={{ background: `${pColor}20`, color: pColor }}>
                     NOW
                   </span>
                 )}
                 {isCurrent && remMins !== null && (
-                  <span className="text-[8px]" style={{ color: "#475569" }}>~{remMins}m left</span>
+                  <span className="text-[13px]" style={{ color: "#475569" }}>~{remMins}m left</span>
                 )}
               </div>
-              <p className="text-[8px]" style={{ color: "#334155" }}>
+              <p className="text-[13px]" style={{ color: "#334155" }}>
                 {fmtTime(h.start)} – {fmtTime(h.end)} · {h.isDay ? "☀" : "☽"}
               </p>
             </div>
@@ -371,7 +371,7 @@ function HourTimeline({ hours, now, activity, moonSign, isVoid }: {
             {/* Score badge */}
             <div className="flex-shrink-0 relative z-10">
               <span
-                className="text-[8px] font-bold px-2 py-1 rounded-lg"
+                className="text-[13px] font-bold px-2 py-1 rounded-lg"
                 style={{ background: `${color}15`, color, border: `1px solid ${color}25` }}
               >
                 {label}
@@ -406,7 +406,7 @@ function BestWindows({ hours, now, activity, moonSign, isVoid }: {
     return (
       <div className="rounded-xl px-4 py-3" style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)" }}>
         <p className="text-xs font-bold mb-1" style={{ color: "#ef4444" }}>No optimal windows today</p>
-        <p className="text-[9px]" style={{ color: "#475569" }}>
+        <p className="text-[13px]" style={{ color: "#475569" }}>
           Current conditions are not ideal for {activity.name.toLowerCase()}. Consider tomorrow or adjust your timing.
         </p>
       </div>
@@ -435,13 +435,13 @@ function BestWindows({ hours, now, activity, moonSign, isVoid }: {
             <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: color, boxShadow: `0 0 6px ${color}` }} />
             <span className="text-lg flex-shrink-0" style={{ color: pColor }}>{PLANET_SYMBOLS[h.planet]}</span>
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-bold" style={{ color: pColor }}>
+              <p className="text-[14px] font-bold" style={{ color: pColor }}>
                 Hour of {h.planet}
-                {isCurrent && <span className="ml-1.5 text-[8px]" style={{ color }}>· ACTIVE NOW</span>}
+                {isCurrent && <span className="ml-1.5 text-[13px]" style={{ color }}>· ACTIVE NOW</span>}
               </p>
-              <p className="text-[8px]" style={{ color: "#475569" }}>{fmtTime(h.start)} – {fmtTime(h.end)}</p>
+              <p className="text-[13px]" style={{ color: "#475569" }}>{fmtTime(h.start)} – {fmtTime(h.end)}</p>
             </div>
-            <span className="text-[8px] font-bold px-2 py-0.5 rounded" style={{ background: `${color}20`, color }}>{label}</span>
+            <span className="text-[13px] font-bold px-2 py-0.5 rounded" style={{ background: `${color}20`, color }}>{label}</span>
           </motion.div>
         );
       })}
@@ -533,13 +533,13 @@ function TimingOracle({
             className="w-1.5 h-1.5 rounded-full"
             style={{ background: streaming ? "#7c3aed" : "#334155" }}
           />
-          <span className="text-[8px] font-bold tracking-widest" style={{ color: "#475569" }}>TIMING ORACLE</span>
+          <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>TIMING ORACLE</span>
         </div>
         {!started && (
           <motion.button
             whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
             onClick={generate}
-            className="text-[8px] font-bold tracking-wider px-3 py-1.5 rounded-lg cursor-pointer"
+            className="text-[13px] font-bold tracking-wider px-3 py-1.5 rounded-lg cursor-pointer"
             style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)", color: "#a78bfa" }}
           >
             ✦ ASK ORACLE
@@ -548,7 +548,7 @@ function TimingOracle({
         {started && !streaming && (
           <button
             onClick={() => { setText(""); setStarted(false); }}
-            className="text-[8px] tracking-wider px-3 py-1.5 rounded-lg cursor-pointer"
+            className="text-[13px] tracking-wider px-3 py-1.5 rounded-lg cursor-pointer"
             style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", color: "#475569" }}
           >
             ↺ NEW
@@ -557,7 +557,7 @@ function TimingOracle({
       </div>
 
       {!started && !text && (
-        <p className="text-[9px] leading-relaxed" style={{ color: "#334155" }}>
+        <p className="text-[13px] leading-relaxed" style={{ color: "#334155" }}>
           Get a personalized timing reading for {activity.name.toLowerCase()} based on the current planetary hour, Moon position, and your chart.
         </p>
       )}
@@ -663,7 +663,7 @@ export default function ElectionalPage() {
             </svg>
           </motion.div>
           <div className="text-center">
-            <p className="text-[10px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
+            <p className="text-[14px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
             <h2 className="text-2xl font-bold mb-3" style={{ fontFamily: "Space Grotesk, sans-serif", color: "#e2e8f0" }}>Cosmic instruments standing by.</h2>
             <p className="text-sm max-w-xs mx-auto" style={{ color: "#475569" }}>Enter your birth data to unlock electional timing and all its cosmic layers.</p>
           </div>
@@ -726,13 +726,13 @@ export default function ElectionalPage() {
             {currentHour && (
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: `${PLANET_COLORS[currentHour.planet]}12`, border: `1px solid ${PLANET_COLORS[currentHour.planet]}25` }}>
                 <span className="text-sm" style={{ color: PLANET_COLORS[currentHour.planet] }}>{PLANET_SYMBOLS[currentHour.planet]}</span>
-                <span className="text-[8px] font-bold" style={{ color: PLANET_COLORS[currentHour.planet] }}>Hour of {currentHour.planet}</span>
+                <span className="text-[13px] font-bold" style={{ color: PLANET_COLORS[currentHour.planet] }}>Hour of {currentHour.planet}</span>
               </div>
             )}
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: `${SIGN_COLORS[moonSign]}10`, border: `1px solid ${SIGN_COLORS[moonSign]}20` }}>
               <span className="text-sm" style={{ color: SIGN_COLORS[moonSign] }}>{SIGN_SYMBOLS[moonSign]}</span>
-              <span className="text-[8px] font-bold" style={{ color: SIGN_COLORS[moonSign] }}>☽ {moonSign}</span>
-              {isVoid && <span className="text-[7px] font-bold" style={{ color: "#f97316" }}>VoC</span>}
+              <span className="text-[13px] font-bold" style={{ color: SIGN_COLORS[moonSign] }}>☽ {moonSign}</span>
+              {isVoid && <span className="text-[14px] font-bold" style={{ color: "#f97316" }}>VoC</span>}
             </div>
           </div>
         </motion.div>
@@ -756,7 +756,7 @@ export default function ElectionalPage() {
 
                 {/* Activity grid */}
                 <div>
-                  <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>SELECT ACTIVITY</p>
+                  <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>SELECT ACTIVITY</p>
                   <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
                     {ACTIVITIES.map(activity => (
                       <ActivityCard
@@ -792,7 +792,7 @@ export default function ElectionalPage() {
                         <p className="text-xs mb-3" style={{ color: "#475569" }}>{selectedActivity.description}</p>
                         <div className="flex flex-wrap gap-2">
                           {selectedActivity.bestPlanets.slice(0, 3).map(p => (
-                            <span key={p} className="flex items-center gap-1 text-[8px] px-2 py-1 rounded-lg" style={{ background: `${PLANET_COLORS[p] ?? "#64748b"}12`, color: PLANET_COLORS[p] ?? "#64748b", border: `1px solid ${PLANET_COLORS[p] ?? "#64748b"}20` }}>
+                            <span key={p} className="flex items-center gap-1 text-[13px] px-2 py-1 rounded-lg" style={{ background: `${PLANET_COLORS[p] ?? "#64748b"}12`, color: PLANET_COLORS[p] ?? "#64748b", border: `1px solid ${PLANET_COLORS[p] ?? "#64748b"}20` }}>
                               {PLANET_SYMBOLS[p]} Best: {p}
                             </span>
                           ))}
@@ -801,7 +801,7 @@ export default function ElectionalPage() {
 
                       {/* Right: current moment rating */}
                       <div className="flex flex-col items-end gap-2">
-                        <p className="text-[8px] tracking-widest" style={{ color: "#334155" }}>RIGHT NOW</p>
+                        <p className="text-[13px] tracking-widest" style={{ color: "#334155" }}>RIGHT NOW</p>
                         <div
                           className="flex flex-col items-center px-4 py-3 rounded-2xl"
                           style={{
@@ -811,10 +811,10 @@ export default function ElectionalPage() {
                           }}
                         >
                           <span className="text-2xl font-bold" style={{ color: overallColor }}>{overallScore > 0 ? "+" : ""}{overallScore}</span>
-                          <span className="text-[9px] font-bold tracking-wider mt-0.5" style={{ color: overallColor }}>{overallLabel.toUpperCase()}</span>
+                          <span className="text-[13px] font-bold tracking-wider mt-0.5" style={{ color: overallColor }}>{overallLabel.toUpperCase()}</span>
                         </div>
                         {isVoid && selectedActivity.avoidVoid && (
-                          <span className="text-[8px] px-2 py-1 rounded" style={{ background: "rgba(249,115,22,0.1)", color: "#f97316" }}>
+                          <span className="text-[13px] px-2 py-1 rounded" style={{ background: "rgba(249,115,22,0.1)", color: "#f97316" }}>
                             ⚠ Moon Void
                           </span>
                         )}
@@ -823,12 +823,12 @@ export default function ElectionalPage() {
 
                     {/* Tips */}
                     <div className="mt-4 pt-4" style={{ borderTop: `1px solid ${selectedActivity.color}12` }}>
-                      <p className="text-[7px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>TIMING WISDOM</p>
+                      <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>TIMING WISDOM</p>
                       <div className="space-y-1">
                         {selectedActivity.tips.map((tip, i) => (
                           <div key={i} className="flex items-start gap-2">
-                            <span className="text-[8px] mt-0.5 flex-shrink-0" style={{ color: selectedActivity.color }}>◈</span>
-                            <p className="text-[9px] leading-relaxed" style={{ color: "#475569" }}>{tip}</p>
+                            <span className="text-[13px] mt-0.5 flex-shrink-0" style={{ color: selectedActivity.color }}>◈</span>
+                            <p className="text-[13px] leading-relaxed" style={{ color: "#475569" }}>{tip}</p>
                           </div>
                         ))}
                       </div>
@@ -838,7 +838,7 @@ export default function ElectionalPage() {
 
                 {/* Best windows */}
                 <div>
-                  <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>BEST WINDOWS TODAY</p>
+                  <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>BEST WINDOWS TODAY</p>
                   <BestWindows
                     hours={hours}
                     now={now}
@@ -855,12 +855,12 @@ export default function ElectionalPage() {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-base" style={{ color: SIGN_COLORS[moonSign] }}>☽ {SIGN_SYMBOLS[moonSign]}</span>
-                    <p className="text-[8px] font-bold tracking-widest" style={{ color: "#334155" }}>
+                    <p className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>
                       MOON IN {moonSign.toUpperCase()}
                       {isVoid && " · VOID OF COURSE"}
                     </p>
                   </div>
-                  <p className="text-[9px] leading-relaxed" style={{ color: "#64748b" }}>
+                  <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>
                     {selectedActivity.bestMoonSigns.includes(moonSign)
                       ? `Moon in ${moonSign} is favorable for ${selectedActivity.name.toLowerCase()}. The lunar energy supports this type of activity.`
                       : selectedActivity.avoidMoonSigns?.includes(moonSign)
@@ -893,8 +893,8 @@ export default function ElectionalPage() {
                 className="flex-shrink-0 flex items-center gap-2 px-4 py-3"
                 style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
               >
-                <span className="text-[8px] font-bold tracking-widest" style={{ color: "#334155" }}>HOUR-BY-HOUR</span>
-                <span className="text-[8px] ml-1" style={{ color: "#1e293b" }}>· {selectedActivity.name}</span>
+                <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>HOUR-BY-HOUR</span>
+                <span className="text-[13px] ml-1" style={{ color: "#1e293b" }}>· {selectedActivity.name}</span>
               </div>
 
               <div className="flex-1 overflow-y-auto p-3" style={{ scrollbarWidth: "thin" }}>
@@ -921,7 +921,7 @@ export default function ElectionalPage() {
                 ].map(({ label, color }) => (
                   <div key={label} className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
-                    <span className="text-[7px]" style={{ color: "#334155" }}>{label}</span>
+                    <span className="text-[14px]" style={{ color: "#334155" }}>{label}</span>
                   </div>
                 ))}
               </div>

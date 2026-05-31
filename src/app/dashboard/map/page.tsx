@@ -101,7 +101,7 @@ const SAMPLE_SPOTS = [
 function EnergyBar({ label, score, color, icon }: { label: string; score: number; color: string; icon: string }) {
   return (
     <div className="flex items-center gap-2">
-      <span style={{ color, fontSize: 10, width: 14 }}>{icon}</span>
+      <span style={{ color, fontSize: 13, width: 14 }}>{icon}</span>
       <span style={{ color: "#8899BB", fontSize: 9, letterSpacing: "0.12em", width: 80, fontFamily: "'Fragment Mono', monospace" }}>
         {label.toUpperCase()}
       </span>
@@ -179,7 +179,7 @@ function LocationPanel({
           <span style={{ color: "#32D5FF", fontSize: 9, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace" }}>
             LOCATION ANALYSIS
           </span>
-          <p style={{ color: "#556688", fontSize: 10, fontFamily: "'Fragment Mono', monospace", marginTop: 2 }}>
+          <p style={{ color: "#556688", fontSize: 13, fontFamily: "'Fragment Mono', monospace", marginTop: 2 }}>
             {lat.toFixed(2)}°{lat >= 0 ? "N" : "S"} · {Math.abs(lon).toFixed(2)}°{lon >= 0 ? "E" : "W"}
           </p>
         </div>
@@ -296,7 +296,7 @@ function VortexPanel({ node, onClose }: { node: VortexNodePublic; onClose: () =>
         <p style={{ color: "#C0D0FF", fontSize: 12, marginBottom: 4, fontFamily: "'Fragment Mono', monospace" }}>
           {node.lines.map(l => `${l.planet} ${l.angle}`).join(" × ")}
         </p>
-        <p style={{ color: "#667799", fontSize: 10, fontFamily: "'Fragment Mono', monospace" }}>
+        <p style={{ color: "#667799", fontSize: 13, fontFamily: "'Fragment Mono', monospace" }}>
           {node.lat.toFixed(1)}° {node.lat >= 0 ? "N" : "S"} · {Math.abs(node.lon).toFixed(1)}° {node.lon >= 0 ? "E" : "W"}
         </p>
       </div>
@@ -439,7 +439,7 @@ function MapOracle({
             />
             <span style={{ color: "#7B61FF", fontSize: 24 }}>✦</span>
           </motion.div>
-          <p style={{ color: "#445577", fontSize: 10, textAlign: "center", lineHeight: 1.5, marginBottom: 14 }}>
+          <p style={{ color: "#445577", fontSize: 13, textAlign: "center", lineHeight: 1.5, marginBottom: 14 }}>
             Ask about your planetary lines, power spots, and where to be.
           </p>
           <button
@@ -474,7 +474,7 @@ function MapOracle({
       {/* Messages */}
       <div style={{ flex: 1, overflowY: "auto", padding: "8px 14px", display: "flex", flexDirection: "column", gap: 8, scrollbarWidth: "none" }}>
         {history.length === 0 && (
-          <p style={{ color: "#334466", fontSize: 10, textAlign: "center", marginTop: 12, lineHeight: 1.5 }}>
+          <p style={{ color: "#334466", fontSize: 13, textAlign: "center", marginTop: 12, lineHeight: 1.5 }}>
             Ask about your lines, a city, or what energy is calling you.
           </p>
         )}
@@ -487,7 +487,7 @@ function MapOracle({
             borderRadius: msg.role === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
             padding: "8px 11px",
           }}>
-            <p style={{ color: msg.role === "user" ? "#7CCFEF" : "#A89AFF", fontSize: 10.5, lineHeight: 1.6, margin: 0 }}>
+            <p style={{ color: msg.role === "user" ? "#7CCFEF" : "#A89AFF", fontSize: 13, lineHeight: 1.6, margin: 0 }}>
               {msg.content}
             </p>
           </div>
@@ -498,7 +498,7 @@ function MapOracle({
             background: "rgba(123,97,255,0.08)", border: "1px solid rgba(123,97,255,0.2)",
             borderRadius: "12px 12px 12px 2px", padding: "8px 11px",
           }}>
-            <p style={{ color: "#A89AFF", fontSize: 10.5, lineHeight: 1.6, margin: 0 }}>
+            <p style={{ color: "#A89AFF", fontSize: 13, lineHeight: 1.6, margin: 0 }}>
               {streamText}
               <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.7, repeat: Infinity }}
                 style={{ display: "inline-block", width: 5, height: 10, background: "#7B61FF", borderRadius: 1, marginLeft: 2, verticalAlign: "middle" }} />
@@ -521,7 +521,7 @@ function MapOracle({
             background: "rgba(10,15,35,0.8)",
             border: "1px solid rgba(50,80,160,0.3)",
             borderRadius: 8, color: "#8899CC",
-            fontSize: 10, fontFamily: "'Fragment Mono', monospace",
+            fontSize: 13, fontFamily: "'Fragment Mono', monospace",
             outline: "none",
           }}
         />
@@ -678,7 +678,7 @@ export default function AstrocartographyPage() {
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
             style={{ width: 64, height: 64, border: "1px solid #1A3A8A", borderTopColor: "#32D5FF", borderRadius: "50%", margin: "0 auto 16px" }}
           />
-          <p style={{ color: "#445577", fontSize: 10, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace" }}>
+          <p style={{ color: "#445577", fontSize: 13, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace" }}>
             CALCULATING ENERGY FIELDS
           </p>
         </div>
@@ -897,7 +897,7 @@ export default function AstrocartographyPage() {
                   {i + 1}
                 </span>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ color: "#C0D4FF", fontSize: 10.5, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <p style={{ color: "#C0D4FF", fontSize: 13, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {spot.city}
                   </p>
                   <p style={{ color: "#334466", fontSize: 8.5, fontFamily: "'Fragment Mono', monospace" }}>

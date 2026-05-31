@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -202,7 +202,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
             transition={{ ...SPRING, delay: expanded ? 0.06 : 0 }}
             style={{
               fontFamily: "'Fragment Mono', monospace",
-              fontSize: 12, letterSpacing: "0.18em",
+              fontSize: 14, letterSpacing: "0.18em",
               color: "var(--solar)", textTransform: "uppercase",
               whiteSpace: "nowrap",
             }}
@@ -285,7 +285,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                 >
                   <div style={{
                     fontFamily: "'Fragment Mono', monospace",
-                    fontSize: 11, letterSpacing: "0.10em",
+                    fontSize: 13, letterSpacing: "0.10em",
                     color: active ? "var(--solar)" : "rgba(240,237,232,0.88)",
                     textTransform: "uppercase",
                     marginBottom: 2,
@@ -294,7 +294,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                   </div>
                   <div style={{
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: 12, letterSpacing: "0.02em",
+                    fontSize: 14, letterSpacing: "0.02em",
                     color: "rgba(200,190,178,0.38)",
                     fontStyle: "italic",
                   }}>
@@ -316,7 +316,7 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
             animate={{ opacity: expanded ? 0.5 : 0, x: expanded ? 0 : -4 }}
             transition={{ ...SPRING, delay: expanded ? 0.08 : 0 }}
             style={{
-              fontSize: 7, letterSpacing: 0.5,
+              fontSize: 14, letterSpacing: 0.5,
               color: "var(--text-3)",
               background: "rgba(255,255,255,0.03)",
               border: "1px solid var(--border)",
@@ -370,7 +370,7 @@ function MobileNav({ pathname }: { pathname: string }) {
               <span
                 style={{
                   fontFamily: "'Fragment Mono', monospace",
-                  fontSize: 11, letterSpacing: "0.10em",
+                  fontSize: 13, letterSpacing: "0.10em",
                   overflow: "hidden", textOverflow: "ellipsis",
                   whiteSpace: "nowrap", maxWidth: 52,
                 }}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -38,11 +38,11 @@ function ConfidenceMeter({ value, color, label }: { value: number; color: string
         })}
       </div>
       <div>
-        <span style={{ color, fontSize: 11, fontFamily: "'Fragment Mono', monospace", fontWeight: "bold" }}>
+        <span style={{ color, fontSize: 13, fontFamily: "'Fragment Mono', monospace", fontWeight: "bold" }}>
           {pct}%
         </span>
         {label && (
-          <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 11, fontFamily: "'Fragment Mono', monospace", marginLeft: 4 }}>
+          <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 13, fontFamily: "'Fragment Mono', monospace", marginLeft: 4 }}>
             {label}
           </span>
         )}
@@ -76,7 +76,7 @@ function SectionCard({
             <div>
               {section.subheading && (
                 <p style={{
-                  color: color + "99", fontSize: 11, letterSpacing: "0.2em",
+                  color: color + "99", fontSize: 13, letterSpacing: "0.2em",
                   fontFamily: "'Fragment Mono', monospace", marginBottom: 5,
                   textTransform: "uppercase",
                 }}>
@@ -103,7 +103,7 @@ function SectionCard({
               background: `${color}0E`, border: `1px solid ${color}25`,
               borderRadius: 4, padding: "3px 10px", marginBottom: 16,
             }}>
-              <span style={{ color, fontSize: 11, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em" }}>
+              <span style={{ color, fontSize: 13, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em" }}>
                 ◷ {section.timeWindow.label}
               </span>
             </div>
@@ -125,7 +125,7 @@ function SectionCard({
           {/* Technique tag */}
           <div style={{ marginTop: 18 }}>
             <span style={{
-              fontSize: 11, color: "rgba(255,255,255,0.18)",
+              fontSize: 13, color: "rgba(255,255,255,0.18)",
               fontFamily: "'Fragment Mono', monospace",
               background: "rgba(255,255,255,0.03)",
               border: "1px solid rgba(255,255,255,0.05)",
@@ -214,7 +214,7 @@ function FeedbackModal({
       >
         {/* Header */}
         <div style={{ padding: "24px 28px 20px", borderBottom: "1px solid rgba(255,255,255,0.05)", flexShrink: 0 }}>
-          <p style={{ color: meta.color, fontSize: 11, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 6 }}>
+          <p style={{ color: meta.color, fontSize: 13, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 6 }}>
             ACCURACY REVIEW
           </p>
           <h3 style={{ color: "#EDE8DC", fontSize: 22, fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
@@ -246,7 +246,7 @@ function FeedbackModal({
 
           {/* Overall */}
           <div style={{ marginBottom: 20 }}>
-            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, letterSpacing: "0.14em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>
+            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, letterSpacing: "0.14em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>
               OVERALL ACCURACY
             </p>
             <StarRow value={overall} onChange={setOverall} />
@@ -288,9 +288,9 @@ function FeedbackModal({
               display: "flex", alignItems: "center", justifyContent: "center",
               transition: "all 0.15s",
             }}>
-              {consent && <span style={{ color: "#000", fontSize: 11, lineHeight: 1 }}>✓</span>}
+              {consent && <span style={{ color: "#000", fontSize: 13, lineHeight: 1 }}>✓</span>}
             </div>
-            <p style={{ color: "rgba(200,190,178,0.55)", fontSize: 11, fontFamily: "'Cormorant Garamond', serif", lineHeight: 1.5 }}>
+            <p style={{ color: "rgba(200,190,178,0.55)", fontSize: 13, fontFamily: "'Cormorant Garamond', serif", lineHeight: 1.5 }}>
               I consent to this feedback being used to improve future readings. My data will be anonymized and stored with a quality flag.
             </p>
           </div>
@@ -305,7 +305,7 @@ function FeedbackModal({
               background: "transparent",
               border: "1px solid rgba(255,255,255,0.08)",
               borderRadius: 8, color: "rgba(255,255,255,0.3)",
-              fontSize: 11, letterSpacing: "0.1em",
+              fontSize: 13, letterSpacing: "0.1em",
               fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
             }}
           >
@@ -319,7 +319,7 @@ function FeedbackModal({
               background: allRated ? `linear-gradient(135deg, ${meta.color}28, ${meta.color}14)` : "rgba(255,255,255,0.03)",
               border: `1px solid ${allRated ? meta.color + "50" : "rgba(255,255,255,0.06)"}`,
               borderRadius: 8, color: allRated ? meta.color : "rgba(255,255,255,0.2)",
-              fontSize: 11, letterSpacing: "0.1em",
+              fontSize: 13, letterSpacing: "0.1em",
               fontFamily: "'Fragment Mono', monospace",
               cursor: allRated ? "pointer" : "not-allowed",
               transition: "all 0.15s",
@@ -423,7 +423,7 @@ export default function ReportPage() {
               onClick={() => router.push("/dashboard/reports")}
               style={{
                 background: "none", border: "none", cursor: "pointer",
-                color: "rgba(255,255,255,0.25)", fontSize: 11,
+                color: "rgba(255,255,255,0.25)", fontSize: 13,
                 fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em",
                 marginBottom: 20, padding: 0, display: "flex", alignItems: "center", gap: 6,
               }}
@@ -434,7 +434,7 @@ export default function ReportPage() {
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 20 }}>
               <div>
                 <p style={{
-                  color: meta.color, fontSize: 11, letterSpacing: "0.24em",
+                  color: meta.color, fontSize: 13, letterSpacing: "0.24em",
                   fontFamily: "'Fragment Mono', monospace", marginBottom: 8,
                   textTransform: "uppercase",
                 }}>
@@ -448,7 +448,7 @@ export default function ReportPage() {
                   {meta.title}
                 </h1>
                 <p style={{
-                  color: "rgba(255,255,255,0.22)", fontSize: 11,
+                  color: "rgba(255,255,255,0.22)", fontSize: 13,
                   fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
                 }}>
                   Generated {new Date(report.generatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
@@ -468,11 +468,11 @@ export default function ReportPage() {
                 border: `1px solid ${meta.color}25`,
                 borderRadius: 12,
               }}>
-                <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 11, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em", marginBottom: 8 }}>
+                <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em", marginBottom: 8 }}>
                   OVERALL CONFIDENCE
                 </p>
                 <ConfidenceMeter value={report.overallConfidence} color={meta.color} />
-                <p style={{ color: "rgba(255,255,255,0.2)", fontSize: 11, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.08em", marginTop: 8 }}>
+                <p style={{ color: "rgba(255,255,255,0.2)", fontSize: 13, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.08em", marginTop: 8 }}>
                   {report.sections.length} technique agents
                 </p>
               </div>
@@ -542,7 +542,7 @@ export default function ReportPage() {
                   background: `${meta.color}15`,
                   border: `1px solid ${meta.color}40`,
                   borderRadius: 8, color: meta.color,
-                  fontSize: 11, letterSpacing: "0.12em",
+                  fontSize: 13, letterSpacing: "0.12em",
                   fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
                 }}
               >
@@ -561,7 +561,7 @@ export default function ReportPage() {
                 background: "transparent",
                 border: "1px solid rgba(255,255,255,0.08)",
                 borderRadius: 8, color: "rgba(255,255,255,0.3)",
-                fontSize: 11, letterSpacing: "0.12em",
+                fontSize: 13, letterSpacing: "0.12em",
                 fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
               }}
             >

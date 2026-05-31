@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { use, useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
@@ -361,7 +361,7 @@ export default function PlanetDetailPage({
               { label: "BODY", value: meta.body, color: "#94a3b8" },
             ].map(row => (
               <div key={row.label}>
-                <p className="text-[8px] font-bold tracking-widest mb-1" style={{ color: "#334155" }}>{row.label}</p>
+                <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#334155" }}>{row.label}</p>
                 <p className="text-sm font-semibold" style={{ color: row.color }}>{row.value}</p>
               </div>
             ))}
@@ -406,7 +406,7 @@ export default function PlanetDetailPage({
             transition={{ delay: 0.3 }}
             className="mb-10"
           >
-            <p className="text-[9px] font-bold tracking-widest mb-4" style={{ color: "#334155" }}>
+            <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "#334155" }}>
               ASPECTS — {myAspects.length} CONNECTION{myAspects.length !== 1 ? "S" : ""}
             </p>
             <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
@@ -435,7 +435,7 @@ export default function PlanetDetailPage({
                       <span className="text-sm font-bold" style={{ color: aspColor }}>
                         {ASPECT_GLYPHS[a.type] ?? "~"}
                       </span>
-                      <span className="text-[8px] font-mono" style={{ color: "#334155" }}>
+                      <span className="text-[13px] font-mono" style={{ color: "#334155" }}>
                         {a.orb.toFixed(1)}°
                       </span>
                     </div>
@@ -448,14 +448,14 @@ export default function PlanetDetailPage({
                     <div className="flex gap-1">
                       {a.exact && (
                         <span
-                          className="text-[7px] font-bold px-1.5 py-0.5 rounded"
+                          className="text-[12px] font-bold px-1.5 py-0.5 rounded"
                           style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}
                         >
                           EX
                         </span>
                       )}
                       <span
-                        className="text-[7px] font-bold px-1.5 py-0.5 rounded"
+                        className="text-[12px] font-bold px-1.5 py-0.5 rounded"
                         style={{ background: `${aspColor}15`, color: aspColor }}
                       >
                         {a.type.slice(0, 3).toUpperCase()}
@@ -477,7 +477,7 @@ export default function PlanetDetailPage({
             className="mb-10"
           >
             <div className="flex items-center gap-3 mb-4">
-              <p className="text-[9px] font-bold tracking-widest" style={{ color: "#334155" }}>
+              <p className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>
                 LIVE TRANSITS TO {planetName.toUpperCase()}
               </p>
               <motion.div
@@ -508,17 +508,17 @@ export default function PlanetDetailPage({
                       {PLANET_SYMBOLS[t.transitPlanet] ?? "?"}
                     </span>
                     {t.transitRetrograde && (
-                      <span className="text-[8px] font-bold" style={{ color: "#f97316" }}>℞</span>
+                      <span className="text-[13px] font-bold" style={{ color: "#f97316" }}>℞</span>
                     )}
                     <span className="text-xs font-bold" style={{ color: aspColor }}>
                       {ASPECT_GLYPHS[t.type] ?? "~"}
                     </span>
-                    <span className="text-[10px] font-mono" style={{ color: "#475569" }}>
+                    <span className="text-[14px] font-mono" style={{ color: "#475569" }}>
                       {t.orb.toFixed(1)}°
                     </span>
                     {t.exact && (
                       <span
-                        className="text-[7px] font-bold px-1 py-0.5 rounded"
+                        className="text-[12px] font-bold px-1 py-0.5 rounded"
                         style={{ background: "rgba(34,197,94,0.15)", color: "#22c55e" }}
                       >
                         EXACT
@@ -526,14 +526,14 @@ export default function PlanetDetailPage({
                     )}
                     {!t.exact && t.applying && t.daysToExact !== null && t.daysToExact <= 30 && (
                       <span
-                        className="text-[7px] font-bold px-1 py-0.5 rounded"
+                        className="text-[12px] font-bold px-1 py-0.5 rounded"
                         style={{ background: "rgba(6,182,212,0.12)", color: "#06b6d4" }}
                       >
                         {t.daysToExact < 1 ? "&lt;1d" : `${Math.round(t.daysToExact)}d`}
                       </span>
                     )}
                     {!t.exact && !t.applying && (
-                      <span className="text-[7px]" style={{ color: "#334155" }}>sep</span>
+                      <span className="text-[12px]" style={{ color: "#334155" }}>sep</span>
                     )}
                   </motion.div>
                 );
@@ -549,7 +549,7 @@ export default function PlanetDetailPage({
           transition={{ delay: 0.4 }}
           className="mb-12"
         >
-          <p className="text-[9px] font-bold tracking-widest mb-4" style={{ color: "#334155" }}>
+          <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "#334155" }}>
             ORACLE READING
           </p>
           <OraclePanel text={oracleText} loading={oracleLoading} />
@@ -570,7 +570,7 @@ export default function PlanetDetailPage({
                     warpTo(`/dashboard/oracle?q=${q}`);
                   }
                 }}
-                className="flex items-center gap-1.5 text-[9px] font-bold tracking-widest cursor-pointer"
+                className="flex items-center gap-1.5 text-[13px] font-bold tracking-widest cursor-pointer"
                 style={{ color: "#475569" }}
               >
                 CONTINUE IN ORACLE

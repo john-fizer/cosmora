@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -178,7 +178,7 @@ function SectionHeader({ label, sub }: { label: string; sub?: string }) {
   return (
     <div className="flex items-center gap-3 mb-4">
       <div className="flex flex-col gap-0.5">
-        <span className="text-[9px] font-bold tracking-[0.2em] uppercase" style={{ color: "#06b6d4" }}>
+        <span className="text-[13px] font-bold tracking-[0.2em] uppercase" style={{ color: "#06b6d4" }}>
           {label}
         </span>
         {sub && <span className="text-xs" style={{ color: "#334155" }}>{sub}</span>}
@@ -207,7 +207,7 @@ function CurrentTimingCard({ profection, chart }: { profection: ProfectionYear; 
     >
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <p className="text-[8px] font-bold tracking-widest mb-1" style={{ color: "#7c3aed" }}>
+          <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#7c3aed" }}>
             CURRENT PROFECTION YEAR
           </p>
           <h2 className="text-2xl font-bold font-title" style={{ color: "#e2e8f0" }}>
@@ -227,7 +227,7 @@ function CurrentTimingCard({ profection, chart }: { profection: ProfectionYear; 
         </div>
 
         <div className="flex flex-col items-end gap-1">
-          <p className="text-[8px] tracking-widest font-bold" style={{ color: "#475569" }}>LORD OF THE YEAR</p>
+          <p className="text-[13px] tracking-widest font-bold" style={{ color: "#475569" }}>LORD OF THE YEAR</p>
           <div className="flex items-center gap-1.5">
             <span className="text-xl" style={{ color: lordColor }}>
               {PLANET_SYMBOLS[profection.lordOfYear]}
@@ -237,7 +237,7 @@ function CurrentTimingCard({ profection, chart }: { profection: ProfectionYear; 
             </span>
           </div>
           {lordPlanet && (
-            <span className="text-[9px]" style={{ color: "#475569" }}>
+            <span className="text-[13px]" style={{ color: "#475569" }}>
               {SIGN_SYMBOLS[lordPlanet.sign]} {lordPlanet.sign} · H{lordPlanet.house}
               {lordPlanet.dignity === "domicile" && " · Domicile"}
               {lordPlanet.dignity === "exaltation" && " · Exalted"}
@@ -248,19 +248,19 @@ function CurrentTimingCard({ profection, chart }: { profection: ProfectionYear; 
 
       <div className="mt-4 pt-4 grid grid-cols-2 md:grid-cols-4 gap-3" style={{ borderTop: "1px solid rgba(124,58,237,0.1)" }}>
         <div>
-          <p className="text-[7px] tracking-widest mb-1" style={{ color: "#334155" }}>STARTED</p>
+          <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>STARTED</p>
           <p className="text-xs font-medium" style={{ color: "#94a3b8" }}>{formatDate(profection.yearStart)}</p>
         </div>
         <div>
-          <p className="text-[7px] tracking-widest mb-1" style={{ color: "#334155" }}>ENDS</p>
+          <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>ENDS</p>
           <p className="text-xs font-medium" style={{ color: "#94a3b8" }}>{formatDate(profection.yearEnd)}</p>
         </div>
         <div>
-          <p className="text-[7px] tracking-widest mb-1" style={{ color: "#334155" }}>ELEMENT</p>
+          <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>ELEMENT</p>
           <p className="text-xs font-medium" style={{ color: signColor }}>{ELEMENT_LABEL[profection.activatedSign]}</p>
         </div>
         <div>
-          <p className="text-[7px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
+          <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
           <p className="text-xs font-medium" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
             {chart.sect === "day" ? "Day" : "Night"}
           </p>
@@ -304,7 +304,7 @@ function ProfectionCard({ year, onClick, isSelected }: {
       }}
     >
       <span
-        className="text-[7px] font-bold tracking-widest"
+        className="text-[14px] font-bold tracking-widest"
         style={{ color: year.isCurrent ? "#a78bfa" : "#334155" }}
       >
         AGE {year.age}
@@ -312,11 +312,11 @@ function ProfectionCard({ year, onClick, isSelected }: {
       <span className="text-base leading-none" style={{ color: signColor }}>
         {SIGN_SYMBOLS[year.activatedSign]}
       </span>
-      <span className="text-[8px] font-medium" style={{ color: lordColor }}>
+      <span className="text-[13px] font-medium" style={{ color: lordColor }}>
         {year.lordOfYear.substring(0, 3).toUpperCase()}
       </span>
       <span
-        className="text-[6px] tracking-wider font-bold"
+        className="text-[14px] tracking-wider font-bold"
         style={{ color: year.isCurrent ? "#7c3aed" : "#1e293b" }}
       >
         H{year.activatedHouse}
@@ -343,7 +343,7 @@ function ProfectionDetail({ year, chart }: { year: ProfectionYear; chart: ChartD
     >
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <p className="text-[8px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>
+          <p className="text-[13px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>
             AGE {year.age} · {formatDate(year.yearStart)} – {formatDate(year.yearEnd)}
           </p>
           <div className="flex items-center gap-2 flex-wrap">
@@ -353,7 +353,7 @@ function ProfectionDetail({ year, chart }: { year: ProfectionYear; chart: ChartD
             <span className="text-xs" style={{ color: "#475569" }}>
               House {year.activatedHouse} · {HOUSE_THEMES[year.activatedHouse]}
             </span>
-            <span className="text-[9px] px-1.5 py-0.5 rounded" style={{
+            <span className="text-[13px] px-1.5 py-0.5 rounded" style={{
               background: `${signColor}15`, color: signColor,
             }}>
               {ELEMENT_LABEL[year.activatedSign]}
@@ -361,12 +361,12 @@ function ProfectionDetail({ year, chart }: { year: ProfectionYear; chart: ChartD
           </div>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[8px] tracking-widest" style={{ color: "#334155" }}>LORD</span>
+          <span className="text-[13px] tracking-widest" style={{ color: "#334155" }}>LORD</span>
           <span className="text-lg" style={{ color: lordColor }}>{PLANET_SYMBOLS[year.lordOfYear]}</span>
           <div>
             <p className="text-xs font-bold" style={{ color: lordColor }}>{year.lordOfYear}</p>
             {lordPlanet && (
-              <p className="text-[9px]" style={{ color: "#475569" }}>
+              <p className="text-[13px]" style={{ color: "#475569" }}>
                 {SIGN_SYMBOLS[lordPlanet.sign]} {lordPlanet.sign} H{lordPlanet.house}
                 {lordPlanet.dignity && ` · ${lordPlanet.dignity}`}
               </p>
@@ -388,7 +388,7 @@ function ZRBar({ periods, level, title }: {
 
   return (
     <div className="mb-5">
-      <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: level === 1 ? "#06b6d4" : "#a855f7" }}>
+      <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: level === 1 ? "#06b6d4" : "#a855f7" }}>
         {title}
       </p>
       <div className="rounded-xl overflow-hidden flex" style={{ height: level === 1 ? 36 : 24, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
@@ -424,7 +424,7 @@ function ZRBar({ periods, level, title }: {
               )}
               {widthPct > 6 && (
                 <span
-                  className="relative z-10 text-[7px] font-bold pointer-events-none select-none"
+                  className="relative z-10 text-[14px] font-bold pointer-events-none select-none"
                   style={{ color: p.isCurrent ? color : `${color}60` }}
                 >
                   {SIGN_SYMBOLS[p.sign]}
@@ -447,7 +447,7 @@ function ZRBar({ periods, level, title }: {
       {periods.filter(p => p.isCurrent).map((p, i) => (
         <div key={i} className="mt-2 flex items-center gap-2 flex-wrap">
           <span
-            className="text-[8px] font-bold px-2 py-0.5 rounded"
+            className="text-[13px] font-bold px-2 py-0.5 rounded"
             style={{
               background: `${SIGN_COLORS[p.sign]}18`,
               color: SIGN_COLORS[p.sign],
@@ -456,10 +456,10 @@ function ZRBar({ periods, level, title }: {
           >
             {SIGN_SYMBOLS[p.sign]} {p.sign}
           </span>
-          <span className="text-[9px]" style={{ color: "#475569" }}>
+          <span className="text-[13px]" style={{ color: "#475569" }}>
             {p.years}yr period · {formatDate(p.start)} → {formatDate(p.end)}
           </span>
-          <span className="text-[9px]" style={{ color: "#334155" }}>
+          <span className="text-[13px]" style={{ color: "#334155" }}>
             Lord: <span style={{ color: PLANET_COLORS[TRADITIONAL_RULERS[p.sign]] ?? "#94a3b8" }}>
               {TRADITIONAL_RULERS[p.sign]}
             </span>
@@ -647,14 +647,14 @@ function TwelveYearCycle({ chart }: { chart: ChartData }) {
               boxShadow: isActive ? "0 0 16px rgba(124,58,237,0.15)" : "none",
             }}
           >
-            <span className="text-[7px] font-bold tracking-wider" style={{ color: isActive ? "#a78bfa" : "#334155" }}>
+            <span className="text-[14px] font-bold tracking-wider" style={{ color: isActive ? "#a78bfa" : "#334155" }}>
               H{house}
             </span>
             <span className="text-base" style={{ color: signColor }}>{SIGN_SYMBOLS[sign]}</span>
-            <span className="text-[7px] font-bold" style={{ color: lordColor }}>
+            <span className="text-[14px] font-bold" style={{ color: lordColor }}>
               {PLANET_SYMBOLS[lord]}
             </span>
-            <span className="text-[6px] tracking-wide" style={{ color: "#334155" }}>
+            <span className="text-[14px] tracking-wide" style={{ color: "#334155" }}>
               {HOUSE_THEMES[house].substring(0, 4).toUpperCase()}
             </span>
           </motion.div>
@@ -745,7 +745,7 @@ Write 3 focused paragraphs: (1) The overarching theme this profection year bring
       >
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex-1 min-w-0">
-            <p className="text-[8px] font-bold tracking-widest mb-1" style={{ color: "#f59e0b" }}>
+            <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#f59e0b" }}>
               ✦ YEAR AHEAD ORACLE
             </p>
             <p className="text-sm" style={{ color: "#475569" }}>
@@ -757,7 +757,7 @@ Write 3 focused paragraphs: (1) The overarching theme this profection year bring
             whileHover={{ scale: 1.03, boxShadow: "0 0 30px rgba(245,158,11,0.25)" }}
             whileTap={{ scale: 0.97 }}
             onClick={generate}
-            className="flex-shrink-0 px-5 py-2.5 rounded-xl text-[10px] font-bold tracking-widest cursor-pointer"
+            className="flex-shrink-0 px-5 py-2.5 rounded-xl text-[14px] font-bold tracking-widest cursor-pointer"
             style={{
               background: "rgba(245,158,11,0.15)",
               border: "1px solid rgba(245,158,11,0.35)",
@@ -797,7 +797,7 @@ Write 3 focused paragraphs: (1) The overarching theme this profection year bring
             className="w-1.5 h-1.5 rounded-full"
             style={{ background: streaming ? "#f59e0b" : "#22c55e" }}
           />
-          <p className="text-[8px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>
+          <p className="text-[13px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>
             YEAR AHEAD ORACLE · Age {profection.age} · H{profection.activatedHouse}
           </p>
         </div>
@@ -921,7 +921,7 @@ export default function TimelinePage() {
             </svg>
           </motion.div>
           <div className="text-center">
-            <p className="text-[10px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
+            <p className="text-[14px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
             <h2 className="text-2xl font-bold mb-3" style={{ fontFamily: "Space Grotesk, sans-serif", color: "#e2e8f0" }}>Cosmic instruments standing by.</h2>
             <p className="text-sm max-w-xs mx-auto" style={{ color: "#475569" }}>Enter your birth data to unlock your life timeline and all its cosmic layers.</p>
           </div>
@@ -985,7 +985,7 @@ export default function TimelinePage() {
 
           {/* compact breadcrumb right */}
           {profile && (
-            <span className="text-[9px] hidden md:block" style={{ color: "#334155" }}>{profile.name}</span>
+            <span className="text-[13px] hidden md:block" style={{ color: "#334155" }}>{profile.name}</span>
           )}
         </motion.div>
 
@@ -1006,7 +1006,7 @@ export default function TimelinePage() {
               key={id}
               whileTap={{ scale: 0.95 }}
               onClick={() => setActiveTab(id)}
-              className="flex-shrink-0 px-3 py-1.5 rounded-lg text-[9px] font-bold tracking-widest cursor-pointer transition-all duration-200"
+              className="flex-shrink-0 px-3 py-1.5 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer transition-all duration-200"
               style={{
                 background: activeTab === id ? "rgba(124,58,237,0.25)" : "transparent",
                 color: activeTab === id ? "#a78bfa" : "#334155",
@@ -1098,8 +1098,8 @@ export default function TimelinePage() {
                           className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
                           style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}
                         >
-                          <span className="text-[8px] font-bold tracking-wider" style={{ color: "#334155" }}>H{h}</span>
-                          <span className="text-[9px]" style={{ color: "#475569" }}>{theme}</span>
+                          <span className="text-[13px] font-bold tracking-wider" style={{ color: "#334155" }}>H{h}</span>
+                          <span className="text-[13px]" style={{ color: "#475569" }}>{theme}</span>
                         </div>
                       ))}
                     </div>
@@ -1126,7 +1126,7 @@ export default function TimelinePage() {
                       border: "1px solid rgba(6,182,212,0.18)",
                     }}
                   >
-                    <p className="text-[8px] font-bold tracking-widest mb-1" style={{ color: "#06b6d4" }}>
+                    <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#06b6d4" }}>
                       ZODIACAL RELEASING · FROM LOT OF FORTUNE
                     </p>
                     <p className="text-xs leading-relaxed" style={{ color: "#64748b" }}>
@@ -1135,7 +1135,7 @@ export default function TimelinePage() {
                       The current periods reveal the dominant life theme and sub-theme.
                     </p>
                     <div className="flex items-center gap-2 mt-3">
-                      <span className="text-[8px] font-bold tracking-widest" style={{ color: "#475569" }}>
+                      <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>
                         FORTUNE LOT
                       </span>
                       <span
@@ -1167,7 +1167,7 @@ export default function TimelinePage() {
                           border: `1px solid ${SIGN_COLORS[zr.currentL1.sign]}25`,
                         }}
                       >
-                        <p className="text-[7px] font-bold tracking-widest mb-2" style={{ color: "#06b6d4" }}>
+                        <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#06b6d4" }}>
                           L1 · MAJOR PERIOD
                         </p>
                         <div className="flex items-start justify-between">
@@ -1178,22 +1178,22 @@ export default function TimelinePage() {
                             <p className="text-sm font-bold mt-0.5" style={{ color: SIGN_COLORS[zr.currentL1.sign] }}>
                               {zr.currentL1.sign}
                             </p>
-                            <p className="text-[9px] mt-0.5" style={{ color: "#475569" }}>
+                            <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
                               {ELEMENT_LABEL[zr.currentL1.sign]} · {zr.currentL1.years}yr period
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="text-[7px] tracking-widest" style={{ color: "#334155" }}>LORD</p>
+                            <p className="text-[14px] tracking-widest" style={{ color: "#334155" }}>LORD</p>
                             <p className="text-base" style={{ color: PLANET_COLORS[TRADITIONAL_RULERS[zr.currentL1.sign]] ?? "#94a3b8" }}>
                               {PLANET_SYMBOLS[TRADITIONAL_RULERS[zr.currentL1.sign]]}
                             </p>
-                            <p className="text-[9px] font-bold" style={{ color: PLANET_COLORS[TRADITIONAL_RULERS[zr.currentL1.sign]] ?? "#94a3b8" }}>
+                            <p className="text-[13px] font-bold" style={{ color: PLANET_COLORS[TRADITIONAL_RULERS[zr.currentL1.sign]] ?? "#94a3b8" }}>
                               {TRADITIONAL_RULERS[zr.currentL1.sign]}
                             </p>
                           </div>
                         </div>
                         <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${SIGN_COLORS[zr.currentL1.sign]}15` }}>
-                          <p className="text-[9px]" style={{ color: "#475569" }}>
+                          <p className="text-[13px]" style={{ color: "#475569" }}>
                             {formatDate(zr.currentL1.start)} → {formatDate(zr.currentL1.end)}
                           </p>
                         </div>
@@ -1209,7 +1209,7 @@ export default function TimelinePage() {
                               border: `1px solid ${SIGN_COLORS[l2curr.sign]}20`,
                             }}
                           >
-                            <p className="text-[7px] font-bold tracking-widest mb-2" style={{ color: "#a855f7" }}>
+                            <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#a855f7" }}>
                               L2 · MINOR PERIOD
                             </p>
                             <div className="flex items-start justify-between">
@@ -1220,22 +1220,22 @@ export default function TimelinePage() {
                                 <p className="text-sm font-bold mt-0.5" style={{ color: SIGN_COLORS[l2curr.sign] }}>
                                   {l2curr.sign}
                                 </p>
-                                <p className="text-[9px] mt-0.5" style={{ color: "#475569" }}>
+                                <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
                                   {ELEMENT_LABEL[l2curr.sign]} · sub-period
                                 </p>
                               </div>
                               <div className="text-right">
-                                <p className="text-[7px] tracking-widest" style={{ color: "#334155" }}>LORD</p>
+                                <p className="text-[14px] tracking-widest" style={{ color: "#334155" }}>LORD</p>
                                 <p className="text-base" style={{ color: PLANET_COLORS[TRADITIONAL_RULERS[l2curr.sign]] ?? "#94a3b8" }}>
                                   {PLANET_SYMBOLS[TRADITIONAL_RULERS[l2curr.sign]]}
                                 </p>
-                                <p className="text-[9px] font-bold" style={{ color: PLANET_COLORS[TRADITIONAL_RULERS[l2curr.sign]] ?? "#94a3b8" }}>
+                                <p className="text-[13px] font-bold" style={{ color: PLANET_COLORS[TRADITIONAL_RULERS[l2curr.sign]] ?? "#94a3b8" }}>
                                   {TRADITIONAL_RULERS[l2curr.sign]}
                                 </p>
                               </div>
                             </div>
                             <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${SIGN_COLORS[l2curr.sign]}15` }}>
-                              <p className="text-[9px]" style={{ color: "#475569" }}>
+                              <p className="text-[13px]" style={{ color: "#475569" }}>
                                 {formatDate(l2curr.start)} → {formatDate(l2curr.end)}
                               </p>
                             </div>
@@ -1292,20 +1292,20 @@ export default function TimelinePage() {
                               <p className="text-xs font-semibold" style={{ color: p.isCurrent ? color : "#94a3b8" }}>
                                 {p.sign}
                                 {p.isCurrent && (
-                                  <span className="ml-2 text-[7px] tracking-widest font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}20`, color }}>
+                                  <span className="ml-2 text-[14px] tracking-widest font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}20`, color }}>
                                     CURRENT
                                   </span>
                                 )}
                               </p>
-                              <p className="text-[9px]" style={{ color: "#334155" }}>
+                              <p className="text-[13px]" style={{ color: "#334155" }}>
                                 {formatDate(p.start)} → {formatDate(p.end)}
                               </p>
                             </div>
                             <div className="text-right flex-shrink-0">
-                              <p className="text-[9px] font-bold" style={{ color: PLANET_COLORS[lord] ?? "#94a3b8" }}>
+                              <p className="text-[13px] font-bold" style={{ color: PLANET_COLORS[lord] ?? "#94a3b8" }}>
                                 {PLANET_SYMBOLS[lord]} {lord}
                               </p>
-                              <p className="text-[8px]" style={{ color: "#334155" }}>{p.years} yrs</p>
+                              <p className="text-[13px]" style={{ color: "#334155" }}>{p.years} yrs</p>
                             </div>
                           </motion.div>
                         );
@@ -1331,13 +1331,13 @@ export default function TimelinePage() {
                     className="rounded-2xl p-4 mb-6"
                     style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.18)" }}
                   >
-                    <p className="text-[8px] font-bold tracking-widest mb-1" style={{ color: "#a78bfa" }}>
+                    <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#a78bfa" }}>
                       SECONDARY PROGRESSIONS · DAY FOR A YEAR
                     </p>
                     <p className="text-xs leading-relaxed" style={{ color: "#64748b" }}>
                       Each day after birth represents one year of life. The sky on the day equal to your current age in years is your progressed chart. Inner planets (Sun, Moon, Mercury, Venus, Mars) move meaningfully; outer planets move less than a degree in a lifetime.
                     </p>
-                    <p className="text-[8px] mt-2" style={{ color: "#334155" }}>
+                    <p className="text-[13px] mt-2" style={{ color: "#334155" }}>
                       Shown as of today · {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                     </p>
                   </motion.div>
@@ -1350,7 +1350,7 @@ export default function TimelinePage() {
                   >
                     {/* Header row */}
                     <div
-                      className="grid grid-cols-5 px-4 py-2 text-[7px] font-bold tracking-widest"
+                      className="grid grid-cols-5 px-4 py-2 text-[14px] font-bold tracking-widest"
                       style={{ color: "#334155", borderBottom: "1px solid rgba(255,255,255,0.05)" }}
                     >
                       <span>PLANET</span>
@@ -1381,29 +1381,29 @@ export default function TimelinePage() {
                           {/* Planet */}
                           <div className="flex items-center gap-1.5">
                             <span className="text-sm" style={{ color }}>{PLANET_SYMBOLS[p.name]}</span>
-                            <span className="text-[9px] font-medium" style={{ color: "#94a3b8" }}>{p.name}</span>
+                            <span className="text-[13px] font-medium" style={{ color: "#94a3b8" }}>{p.name}</span>
                           </div>
                           {/* Natal */}
                           <div>
-                            <span className="text-[9px]" style={{ color: SIGN_COLORS[natalSign] }}>
+                            <span className="text-[13px]" style={{ color: SIGN_COLORS[natalSign] }}>
                               {SIGN_SYMBOLS[natalSign]} {(p.natalLon % 30).toFixed(1)}°
                             </span>
                           </div>
                           {/* Progressed */}
                           <div>
-                            <span className="text-[9px] font-semibold" style={{ color: signColor }}>
+                            <span className="text-[13px] font-semibold" style={{ color: signColor }}>
                               {SIGN_SYMBOLS[p.sign]} {p.signDegree.toFixed(1)}°
                               {p.retrograde && <span style={{ color: "#ef4444" }}> ℞</span>}
                             </span>
                             {signChanged && (
-                              <span className="ml-1 text-[7px] px-1 rounded" style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b" }}>
+                              <span className="ml-1 text-[14px] px-1 rounded" style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b" }}>
                                 NEW SIGN
               </span>
                             )}
                           </div>
                           {/* Movement */}
                           <div className="flex items-center gap-1">
-                            <span className="text-[9px]" style={{ color: p.movement > 0 ? "#22c55e" : "#ef4444" }}>
+                            <span className="text-[13px]" style={{ color: p.movement > 0 ? "#22c55e" : "#ef4444" }}>
                               {p.movement >= 0 ? "+" : ""}{p.movement.toFixed(2)}°
                             </span>
                           </div>
@@ -1447,11 +1447,11 @@ export default function TimelinePage() {
                               <span className="text-lg" style={{ color }}>{PLANET_SYMBOLS[p.name]}</span>
                               <div className="flex-1">
                                 <p className="text-xs font-bold" style={{ color: "#e2e8f0" }}>{p.name}</p>
-                                <p className="text-[9px]" style={{ color: "#64748b" }}>
+                                <p className="text-[13px]" style={{ color: "#64748b" }}>
                                   Natal: {SIGN_SYMBOLS[natalSign]} {natalSign} → Progressed: {SIGN_SYMBOLS[p.sign]} {p.sign}
                                 </p>
                               </div>
-                              <span className="text-[8px] font-bold px-2 py-1 rounded" style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b" }}>
+                              <span className="text-[13px] font-bold px-2 py-1 rounded" style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b" }}>
                                 INGRESS
                               </span>
                             </motion.div>
@@ -1479,7 +1479,7 @@ export default function TimelinePage() {
                     className="rounded-2xl p-4 mb-6"
                     style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.18)" }}
                   >
-                    <p className="text-[8px] font-bold tracking-widest mb-1" style={{ color: "#06b6d4" }}>
+                    <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#06b6d4" }}>
                       FIRDARIA · HELLENISTIC TIME LORDS
                     </p>
                     <p className="text-xs leading-relaxed" style={{ color: "#64748b" }}>
@@ -1487,11 +1487,11 @@ export default function TimelinePage() {
                     </p>
                     {chart && (
                       <div className="flex items-center gap-2 mt-3">
-                        <span className="text-[8px] font-bold tracking-widest" style={{ color: "#475569" }}>SECT</span>
+                        <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>SECT</span>
                         <span className="text-xs font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
                           {chart.sect === "day" ? "☀ Day" : "☽ Night"}
                         </span>
-                        <span className="text-[8px]" style={{ color: "#334155" }}>
+                        <span className="text-[13px]" style={{ color: "#334155" }}>
                           — using {chart.sect === "day" ? "Sun" : "Moon"}-led sequence
                         </span>
                       </div>
@@ -1517,7 +1517,7 @@ export default function TimelinePage() {
                           className="rounded-2xl p-4"
                           style={{ background: `${mainColor}10`, border: `1px solid ${mainColor}28` }}
                         >
-                          <p className="text-[7px] font-bold tracking-widest mb-2" style={{ color: "#06b6d4" }}>
+                          <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#06b6d4" }}>
                             CURRENT FIRDAR · MAIN PERIOD
                           </p>
                           <div className="flex items-center justify-between">
@@ -1527,7 +1527,7 @@ export default function TimelinePage() {
                               </span>
                               <div>
                                 <p className="text-sm font-bold" style={{ color: mainColor }}>{mainCurr.lord}</p>
-                                <p className="text-[9px]" style={{ color: "#475569" }}>{mainCurr.years} yr period</p>
+                                <p className="text-[13px]" style={{ color: "#475569" }}>{mainCurr.years} yr period</p>
                               </div>
                             </div>
                             {chart && (() => {
@@ -1535,17 +1535,17 @@ export default function TimelinePage() {
                               if (!pl) return null;
                               return (
                                 <div className="text-right">
-                                  <p className="text-[7px] tracking-widest" style={{ color: "#334155" }}>NATAL POSITION</p>
+                                  <p className="text-[14px] tracking-widest" style={{ color: "#334155" }}>NATAL POSITION</p>
                                   <p className="text-xs font-semibold" style={{ color: SIGN_COLORS[pl.sign] }}>
                                     {SIGN_SYMBOLS[pl.sign]} {pl.sign}
                                   </p>
-                                  <p className="text-[9px]" style={{ color: "#475569" }}>H{pl.house}</p>
+                                  <p className="text-[13px]" style={{ color: "#475569" }}>H{pl.house}</p>
                                 </div>
                               );
                             })()}
                           </div>
                           <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${mainColor}15` }}>
-                            <p className="text-[9px]" style={{ color: "#475569" }}>
+                            <p className="text-[13px]" style={{ color: "#475569" }}>
                               {formatDate(mainCurr.start)} → {formatDate(mainCurr.end)}
                             </p>
                           </div>
@@ -1557,7 +1557,7 @@ export default function TimelinePage() {
                             className="rounded-2xl p-4"
                             style={{ background: `${subColor}08`, border: `1px solid ${subColor}20` }}
                           >
-                            <p className="text-[7px] font-bold tracking-widest mb-2" style={{ color: "#a855f7" }}>
+                            <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#a855f7" }}>
                               CURRENT SUB-PERIOD
                             </p>
                             <div className="flex items-center justify-between">
@@ -1569,7 +1569,7 @@ export default function TimelinePage() {
                                   <p className="text-sm font-bold" style={{ color: subColor }}>
                                     {subCurr.subLord ?? subCurr.lord}
                                   </p>
-                                  <p className="text-[9px]" style={{ color: "#475569" }}>
+                                  <p className="text-[13px]" style={{ color: "#475569" }}>
                                     sub-lord of {mainCurr.lord}
                                   </p>
                                 </div>
@@ -1579,17 +1579,17 @@ export default function TimelinePage() {
                                 if (!pl) return null;
                                 return (
                                   <div className="text-right">
-                                    <p className="text-[7px] tracking-widest" style={{ color: "#334155" }}>NATAL</p>
+                                    <p className="text-[14px] tracking-widest" style={{ color: "#334155" }}>NATAL</p>
                                     <p className="text-xs font-semibold" style={{ color: SIGN_COLORS[pl.sign] }}>
                                       {SIGN_SYMBOLS[pl.sign]} {pl.sign}
                                     </p>
-                                    <p className="text-[9px]" style={{ color: "#475569" }}>H{pl.house}</p>
+                                    <p className="text-[13px]" style={{ color: "#475569" }}>H{pl.house}</p>
                                   </div>
                                 );
                               })()}
                             </div>
                             <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${subColor}15` }}>
-                              <p className="text-[9px]" style={{ color: "#475569" }}>
+                              <p className="text-[13px]" style={{ color: "#475569" }}>
                                 {formatDate(subCurr.start)} → {formatDate(subCurr.end)}
                               </p>
                             </div>
@@ -1675,13 +1675,13 @@ export default function TimelinePage() {
                               <div className="flex-1 min-w-0">
                                 <p className="text-xs font-semibold" style={{ color: f.isCurrent ? color : f.isPast ? "#334155" : "#64748b" }}>
                                   {sl}
-                                  {f.isCurrent && <span className="ml-2 text-[7px] tracking-widest font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}20`, color }}>NOW</span>}
+                                  {f.isCurrent && <span className="ml-2 text-[14px] tracking-widest font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}20`, color }}>NOW</span>}
                                 </p>
-                                <p className="text-[9px]" style={{ color: "#334155" }}>
+                                <p className="text-[13px]" style={{ color: "#334155" }}>
                                   {formatDate(f.start)} → {formatDate(f.end)}
                                 </p>
                               </div>
-                              <span className="text-[9px] text-right flex-shrink-0" style={{ color: "#334155" }}>
+                              <span className="text-[13px] text-right flex-shrink-0" style={{ color: "#334155" }}>
                                 {(f.years * 12).toFixed(0)} mo
                               </span>
                             </motion.div>
@@ -1713,13 +1713,13 @@ export default function TimelinePage() {
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-semibold" style={{ color: f.isCurrent ? color : "#64748b" }}>
                               {f.lord}
-                              {f.isCurrent && <span className="ml-2 text-[7px] tracking-widest font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}20`, color }}>CURRENT</span>}
+                              {f.isCurrent && <span className="ml-2 text-[14px] tracking-widest font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}20`, color }}>CURRENT</span>}
                             </p>
-                            <p className="text-[9px]" style={{ color: "#334155" }}>
+                            <p className="text-[13px]" style={{ color: "#334155" }}>
                               {formatDate(f.start)} → {formatDate(f.end)}
                             </p>
                           </div>
-                          <span className="text-[9px]" style={{ color: "#475569" }}>{f.years} yrs</span>
+                          <span className="text-[13px]" style={{ color: "#475569" }}>{f.years} yrs</span>
                         </motion.div>
                       );
                     })}
@@ -1743,7 +1743,7 @@ export default function TimelinePage() {
                     className="rounded-2xl p-4 mb-6"
                     style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.18)" }}
                   >
-                    <p className="text-[8px] font-bold tracking-widest mb-1" style={{ color: "#06b6d4" }}>
+                    <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#06b6d4" }}>
                       SOLAR ARC DIRECTIONS · 1° PER YEAR
                     </p>
                     <p className="text-xs leading-relaxed" style={{ color: "#64748b" }}>
@@ -1814,16 +1814,16 @@ export default function TimelinePage() {
                                     )}
                                     <div className="flex items-center gap-1.5">
                                       <span className="text-base" style={{ color: dColor }}>{PLANET_SYMBOLS[t.dir.name as PlanetName]}</span>
-                                      <span className="text-[9px] font-bold" style={{ color: dColor }}>{t.dir.name}</span>
-                                      <span className="text-[9px]" style={{ color: "#475569" }}>arc ☌</span>
+                                      <span className="text-[13px] font-bold" style={{ color: dColor }}>{t.dir.name}</span>
+                                      <span className="text-[13px]" style={{ color: "#475569" }}>arc ☌</span>
                                       <span className="text-base" style={{ color: nColor }}>{PLANET_SYMBOLS[t.natal.name as PlanetName]}</span>
-                                      <span className="text-[9px] font-bold" style={{ color: nColor }}>natal {t.natal.name}</span>
+                                      <span className="text-[13px] font-bold" style={{ color: nColor }}>natal {t.natal.name}</span>
                                     </div>
-                                    <span className="ml-auto text-[9px] font-mono" style={{ color: t.orb <= 0.5 ? dColor : "#475569" }}>
+                                    <span className="ml-auto text-[13px] font-mono" style={{ color: t.orb <= 0.5 ? dColor : "#475569" }}>
                                       {t.orb.toFixed(2)}° orb
                                     </span>
                                     {t.orb <= 0.5 && (
-                                      <span className="text-[7px] font-bold px-1.5 py-0.5 rounded" style={{ background: `${dColor}20`, color: dColor }}>PEAK</span>
+                                      <span className="text-[14px] font-bold px-1.5 py-0.5 rounded" style={{ background: `${dColor}20`, color: dColor }}>PEAK</span>
                                     )}
                                   </motion.div>
                                 );
@@ -1839,7 +1839,7 @@ export default function TimelinePage() {
                             sub="All planets advanced by solar arc · click to compare"
                           />
                           <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.06)", background: "rgba(4,4,28,0.6)" }}>
-                            <div className="grid grid-cols-4 px-4 py-2 text-[7px] font-bold tracking-widest"
+                            <div className="grid grid-cols-4 px-4 py-2 text-[14px] font-bold tracking-widest"
                               style={{ color: "#334155", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                               <span>PLANET</span>
                               <span>NATAL</span>
@@ -1866,22 +1866,22 @@ export default function TimelinePage() {
                                 >
                                   <div className="flex items-center gap-1.5">
                                     <span className="text-sm" style={{ color }}>{PLANET_SYMBOLS[p.name as PlanetName]}</span>
-                                    <span className="text-[9px] font-medium" style={{ color: "#94a3b8" }}>{p.name}</span>
+                                    <span className="text-[13px] font-medium" style={{ color: "#94a3b8" }}>{p.name}</span>
                                   </div>
-                                  <span className="text-[9px]" style={{ color: SIGN_COLORS[nSign] }}>
+                                  <span className="text-[13px]" style={{ color: SIGN_COLORS[nSign] }}>
                                     {SIGN_SYMBOLS[nSign]} {(p.natalLon % 30).toFixed(1)}°
                                   </span>
                                   <div>
-                                    <span className="text-[9px] font-semibold" style={{ color: signChanged ? "#06b6d4" : SIGN_COLORS[dSign] }}>
+                                    <span className="text-[13px] font-semibold" style={{ color: signChanged ? "#06b6d4" : SIGN_COLORS[dSign] }}>
                                       {SIGN_SYMBOLS[dSign]} {p.directedDeg.toFixed(1)}°
                                     </span>
                                     {signChanged && (
-                                      <span className="ml-1 text-[7px] px-1 rounded" style={{ background: "rgba(6,182,212,0.15)", color: "#06b6d4" }}>
+                                      <span className="ml-1 text-[14px] px-1 rounded" style={{ background: "rgba(6,182,212,0.15)", color: "#06b6d4" }}>
                                         NEW
                                       </span>
                                     )}
                                   </div>
-                                  <span className="text-[9px] font-mono" style={{ color: "#475569" }}>+{arc.toFixed(1)}°</span>
+                                  <span className="text-[13px] font-mono" style={{ color: "#475569" }}>+{arc.toFixed(1)}°</span>
                                 </motion.div>
                               );
                             })}
@@ -1918,11 +1918,11 @@ export default function TimelinePage() {
                                       <span className="text-lg" style={{ color }}>{PLANET_SYMBOLS[p.name as PlanetName]}</span>
                                       <div className="flex-1">
                                         <p className="text-xs font-bold" style={{ color: "#e2e8f0" }}>{p.name}</p>
-                                        <p className="text-[9px]" style={{ color: "#64748b" }}>
+                                        <p className="text-[13px]" style={{ color: "#64748b" }}>
                                           Natal: {SIGN_SYMBOLS[nSign]} {nSign} → Directed: {SIGN_SYMBOLS[dSign]} {dSign}
                                         </p>
                                       </div>
-                                      <span className="text-[8px] font-bold px-2 py-1 rounded" style={{ background: "rgba(6,182,212,0.15)", color: "#06b6d4" }}>
+                                      <span className="text-[13px] font-bold px-2 py-1 rounded" style={{ background: "rgba(6,182,212,0.15)", color: "#06b6d4" }}>
                                         INGRESS
                                       </span>
                                     </motion.div>
@@ -2000,8 +2000,8 @@ export default function TimelinePage() {
                       <>
                         {/* Header */}
                         <div>
-                          <p className="text-[9px] font-bold tracking-widest mb-1" style={{ color: "#475569" }}>COSMIC LIFE TIMELINE</p>
-                          <p className="text-[10px]" style={{ color: "#334155" }}>
+                          <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#475569" }}>COSMIC LIFE TIMELINE</p>
+                          <p className="text-[14px]" style={{ color: "#334155" }}>
                             Your astrological cycles from birth to age 84 · Born {birthYear} · Currently age {currentAge}
                           </p>
                         </div>
@@ -2104,8 +2104,8 @@ export default function TimelinePage() {
                                 style={{ background: "rgba(4,4,28,0.5)", border: `1px solid ${m.color}18` }}>
                                 <div className="flex-shrink-0 mt-0.5 w-2 h-2 rounded-full" style={{ background: m.color, boxShadow: `0 0 4px ${m.color}` }} />
                                 <div>
-                                  <p className="text-[9px] font-bold" style={{ color: m.color }}>{m.label}</p>
-                                  <p className="text-[8px] leading-relaxed" style={{ color: "#334155" }}>{m.sublabel}</p>
+                                  <p className="text-[13px] font-bold" style={{ color: m.color }}>{m.label}</p>
+                                  <p className="text-[13px] leading-relaxed" style={{ color: "#334155" }}>{m.sublabel}</p>
                                 </div>
                               </div>
                             ))}
@@ -2113,7 +2113,7 @@ export default function TimelinePage() {
 
                         {/* Profection cycle for current 12-year block */}
                         <div>
-                          <p className="text-[9px] font-bold tracking-widest mb-3" style={{ color: "#475569" }}>
+                          <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#475569" }}>
                             CURRENT PROFECTION CYCLE · Ages {Math.floor(currentAge / 12) * 12}–{Math.floor(currentAge / 12) * 12 + 11}
                           </p>
                           <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
@@ -2136,16 +2136,16 @@ export default function TimelinePage() {
                                       boxShadow: isCurrent ? "0 0 20px rgba(245,158,11,0.12)" : "none",
                                     }}
                                   >
-                                    <p className="text-[7px] font-bold mb-0.5" style={{ color: isCurrent ? "#f59e0b" : "#334155" }}>
+                                    <p className="text-[14px] font-bold mb-0.5" style={{ color: isCurrent ? "#f59e0b" : "#334155" }}>
                                       {birthYear + age}
                                     </p>
-                                    <p className="text-[10px] font-black" style={{ color: isCurrent ? "#fbbf24" : "#64748b" }}>
+                                    <p className="text-[14px] font-black" style={{ color: isCurrent ? "#fbbf24" : "#64748b" }}>
                                       Age {age}
                                     </p>
-                                    <p className="text-[8px] mt-1 font-bold" style={{ color: signColor }}>
+                                    <p className="text-[13px] mt-1 font-bold" style={{ color: signColor }}>
                                       H{house}
                                     </p>
-                                    <p className="text-[8px]" style={{ color: lordColor }}>
+                                    <p className="text-[13px]" style={{ color: lordColor }}>
                                       {PLANET_SYMBOLS[lord as PlanetName]} {lord}
                                     </p>
                                     {isCurrent && (

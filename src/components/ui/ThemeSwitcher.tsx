@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
@@ -54,7 +54,7 @@ export function ThemeSwitcher() {
           >
             {/* Header */}
             <div style={{
-              fontSize: 7,
+              fontSize: 14,
               letterSpacing: 2.5,
               color: "rgba(100,116,139,0.5)",
               textAlign: "center",
@@ -104,7 +104,7 @@ export function ThemeSwitcher() {
                   </div>
 
                   <span style={{
-                    fontSize: 10,
+                    fontSize: 14,
                     letterSpacing: 0.3,
                     fontWeight: 600,
                     color: active ? t.primary : "rgba(148,163,184,0.8)",
@@ -187,7 +187,7 @@ export function ThemeSwitcher() {
       </motion.button>
 
       <span style={{
-        fontSize: 7,
+        fontSize: 14,
         letterSpacing: 0.5,
         color: "#334155",
         fontWeight: "bold",

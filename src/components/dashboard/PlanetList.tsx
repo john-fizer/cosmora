@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import type { ChartData, PlanetName } from "@/lib/astrology/types";
@@ -32,7 +32,7 @@ export function PlanetList({ chart, loading }: PlanetListProps) {
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-xs font-bold tracking-widest" style={{ color: "#94a3b8" }}>CURRENT ENERGIES</h3>
         {chart && (
-          <span className="text-[8px] tracking-widest capitalize" style={{ color: "#475569" }}>
+          <span className="text-[13px] tracking-widest capitalize" style={{ color: "#475569" }}>
             {chart.sect} chart
           </span>
         )}
@@ -60,16 +60,16 @@ export function PlanetList({ chart, loading }: PlanetListProps) {
               <span className="text-sm w-5 text-center" style={{ color: PLANET_COLORS[p.name] }}>
                 {PLANET_SYMBOLS[p.name]}
               </span>
-              <span className="text-[10px] font-semibold tracking-wider flex-1" style={{ color: "#cbd5e1" }}>
+              <span className="text-[14px] font-semibold tracking-wider flex-1" style={{ color: "#cbd5e1" }}>
                 {p.name.toUpperCase()}{p.retrograde ? " ℞" : ""}
               </span>
-              <span className="text-[10px]" style={{ color: "#94a3b8" }}>
+              <span className="text-[14px]" style={{ color: "#94a3b8" }}>
                 {p.signDegree.toFixed(0)}°
               </span>
-              <span className="text-[11px]" style={{ color: PLANET_COLORS[p.name] }}>
+              <span className="text-[13px]" style={{ color: PLANET_COLORS[p.name] }}>
                 {SIGN_SYMBOLS[p.sign]}
               </span>
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full" style={{ background:"rgba(99,102,241,0.15)", color:"#818cf8" }}>
+              <span className="text-[13px] px-1.5 py-0.5 rounded-full" style={{ background:"rgba(99,102,241,0.15)", color:"#818cf8" }}>
                 H{p.house}
               </span>
               {p.dignity && p.dignity !== "peregrine" && (

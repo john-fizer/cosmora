@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,7 +28,7 @@ function ConfidenceGauge({ value, color }: { value: number; color: string }) {
           alignSelf: "flex-end",
         }} />
       ))}
-      <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 11, marginLeft: 4, fontFamily: "'Fragment Mono', monospace" }}>
+      <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, marginLeft: 4, fontFamily: "'Fragment Mono', monospace" }}>
         {Math.round(value * 100)}%
       </span>
     </div>
@@ -128,7 +128,7 @@ function ReportTypeCard({
               }}
               transition={CARD_SPRING}
               style={{
-                color: meta.color, fontSize: 11,
+                color: meta.color, fontSize: 13,
                 fontFamily: "'Fragment Mono', monospace", marginBottom: 3,
                 textTransform: "uppercase",
               }}
@@ -160,7 +160,7 @@ function ReportTypeCard({
             style={{
               background: `${meta.color}18`, border: `1px solid ${meta.color}35`,
               borderRadius: 20, padding: "3px 10px",
-              color: meta.color, fontSize: 11,
+              color: meta.color, fontSize: 13,
               fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
               flexShrink: 0,
             }}
@@ -175,7 +175,7 @@ function ReportTypeCard({
             style={{
               background: "rgba(255,100,50,0.1)", border: "1px solid rgba(255,100,50,0.3)",
               borderRadius: 20, padding: "3px 10px",
-              color: "#FF8060", fontSize: 11,
+              color: "#FF8060", fontSize: 13,
               fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
               flexShrink: 0,
             }}
@@ -192,7 +192,7 @@ function ReportTypeCard({
         style={{ overflow: "hidden", marginBottom: hovered ? 0 : 12 }}
       >
         <span style={{
-          fontSize: 11, color: "rgba(255,255,255,0.4)",
+          fontSize: 13, color: "rgba(255,255,255,0.4)",
           fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
         }}>
           {meta.techniques.length} techniques · {meta.expiryDays >= 3650 ? "permanent" : `${meta.expiryDays}d validity`}
@@ -229,7 +229,7 @@ function ReportTypeCard({
       >
         {meta.techniques.slice(0, 5).map(t => (
           <span key={t} style={{
-            fontSize: 11, color: "rgba(255,255,255,0.36)",
+            fontSize: 13, color: "rgba(255,255,255,0.36)",
             fontFamily: "'Fragment Mono', monospace",
             background: "rgba(255,255,255,0.04)",
             border: "1px solid rgba(255,255,255,0.07)",
@@ -240,7 +240,7 @@ function ReportTypeCard({
           </span>
         ))}
         {meta.techniques.length > 5 && (
-          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", padding: "2px 4px" }}>
+          <span style={{ fontSize: 13, color: "rgba(255,255,255,0.2)", padding: "2px 4px" }}>
             +{meta.techniques.length - 5}
           </span>
         )}
@@ -257,13 +257,13 @@ function ReportTypeCard({
       >
         <div style={{ display: "flex", gap: 14 }}>
           <span style={{
-            color: "rgba(255,255,255,0.28)", fontSize: 11,
+            color: "rgba(255,255,255,0.28)", fontSize: 13,
             fontFamily: "'Fragment Mono', monospace",
           }}>
             ~{meta.estimatedMinutes} min
           </span>
           <span style={{
-            color: "rgba(255,255,255,0.28)", fontSize: 11,
+            color: "rgba(255,255,255,0.28)", fontSize: 13,
             fontFamily: "'Fragment Mono', monospace",
           }}>
             {meta.expiryDays >= 3650 ? "permanent" : `${meta.expiryDays}d`}
@@ -280,7 +280,7 @@ function ReportTypeCard({
               background: `${meta.color}18`,
               border: `1px solid ${meta.color}40`,
               borderRadius: 7, color: meta.color,
-              fontSize: 11, letterSpacing: "0.12em",
+              fontSize: 13, letterSpacing: "0.12em",
               fontFamily: "'Fragment Mono', monospace",
               cursor: "pointer",
             }}
@@ -301,7 +301,7 @@ function ReportTypeCard({
               border: `1px solid ${generating ? "rgba(255,255,255,0.08)" : meta.color + "50"}`,
               borderRadius: 7,
               color: generating ? "rgba(255,255,255,0.25)" : meta.color,
-              fontSize: 11, letterSpacing: "0.12em",
+              fontSize: 13, letterSpacing: "0.12em",
               fontFamily: "'Fragment Mono', monospace",
               cursor: generating ? "not-allowed" : "pointer",
             }}
@@ -380,7 +380,7 @@ function GeneratingOverlay({
         </motion.div>
 
         <p style={{
-          color: meta.color, fontSize: 11, letterSpacing: "0.25em",
+          color: meta.color, fontSize: 13, letterSpacing: "0.25em",
           fontFamily: "'Fragment Mono', monospace", marginBottom: 6,
         }}>
           GENERATING REPORT
@@ -406,7 +406,7 @@ function GeneratingOverlay({
             />
           </div>
           <p style={{
-            color: "rgba(255,255,255,0.4)", fontSize: 11,
+            color: "rgba(255,255,255,0.4)", fontSize: 13,
             fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
           }}>
             {progress.phase}
@@ -414,7 +414,7 @@ function GeneratingOverlay({
         </div>
 
         <p style={{
-          color: "rgba(200,190,178,0.35)", fontSize: 11,
+          color: "rgba(200,190,178,0.35)", fontSize: 13,
           fontFamily: "'Cormorant Garamond', serif",
           fontStyle: "italic", lineHeight: 1.5,
         }}>
@@ -452,15 +452,15 @@ function HistoryRow({ report, onClick }: { report: Report; onClick: () => void }
       <span style={{ fontSize: 16, color: meta.color, width: 24, textAlign: "center" }}>{meta.icon}</span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{ color: "#D4CEBD", fontSize: 14, fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}>{meta.title}</p>
-        <p style={{ color: "rgba(255,255,255,0.25)", fontSize: 11, fontFamily: "'Fragment Mono', monospace" }}>
+        <p style={{ color: "rgba(255,255,255,0.25)", fontSize: 13, fontFamily: "'Fragment Mono', monospace" }}>
           {age === 0 ? "Today" : `${age}d ago`}
         </p>
       </div>
       <ConfidenceGauge value={report.overallConfidence} color={meta.color} />
       {isExpired && (
-        <span style={{ fontSize: 11, color: "#FF8060", fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.08em" }}>EXPIRED</span>
+        <span style={{ fontSize: 13, color: "#FF8060", fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.08em" }}>EXPIRED</span>
       )}
-      <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 12 }}>→</span>
+      <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 14 }}>→</span>
     </motion.div>
   );
 }
@@ -621,7 +621,7 @@ export default function ReportsPage() {
         }}>
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <p style={{
-              color: "#C8A55B", fontSize: 11, letterSpacing: "0.28em",
+              color: "#C8A55B", fontSize: 13, letterSpacing: "0.28em",
               fontFamily: "'Fragment Mono', monospace", marginBottom: 12,
               textTransform: "uppercase",
             }}>
@@ -655,7 +655,7 @@ export default function ReportsPage() {
               style={{ marginBottom: 48 }}
             >
               <p style={{
-                color: "rgba(255,255,255,0.25)", fontSize: 11, letterSpacing: "0.18em",
+                color: "rgba(255,255,255,0.25)", fontSize: 13, letterSpacing: "0.18em",
                 fontFamily: "'Fragment Mono', monospace", marginBottom: 14,
                 textTransform: "uppercase",
               }}>
@@ -676,7 +676,7 @@ export default function ReportsPage() {
           <div>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
               <p style={{
-                color: "rgba(255,255,255,0.25)", fontSize: 11, letterSpacing: "0.18em",
+                color: "rgba(255,255,255,0.25)", fontSize: 13, letterSpacing: "0.18em",
                 fontFamily: "'Fragment Mono', monospace",
                 textTransform: "uppercase",
               }}>
@@ -685,7 +685,7 @@ export default function ReportsPage() {
 
               {/* Persona selector */}
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 11, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em" }}>
+                <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 13, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em" }}>
                   VOICE
                 </span>
                 <div style={{ display: "flex", gap: 4 }}>
@@ -704,7 +704,7 @@ export default function ReportsPage() {
                           background: isActive ? `${p.color}20` : "rgba(255,255,255,0.03)",
                           border: `1px solid ${isActive ? p.color + "50" : "rgba(255,255,255,0.06)"}`,
                           color: isActive ? p.color : "rgba(255,255,255,0.25)",
-                          fontSize: 11,
+                          fontSize: 13,
                           fontFamily: "'Fragment Mono', monospace",
                           letterSpacing: "0.08em",
                           cursor: "pointer",

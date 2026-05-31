@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { ReactNode } from "react";
@@ -90,11 +90,11 @@ export function DataRow({
 }) {
   return (
     <div className="flex items-center justify-between gap-4 py-0.5">
-      <span className="text-[9px] tracking-widest uppercase" style={{ color: "rgba(148,163,184,0.6)" }}>
+      <span className="text-[13px] tracking-widest uppercase" style={{ color: "rgba(148,163,184,0.6)" }}>
         {label}
       </span>
       <span
-        className="text-[11px] font-semibold"
+        className="text-[13px] font-semibold"
         style={{ color, fontFamily: mono ? "'Share Tech Mono', 'Fira Code', monospace" : undefined }}
       >
         {value}

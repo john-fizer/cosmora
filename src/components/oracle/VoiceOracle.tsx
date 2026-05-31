@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -67,7 +67,7 @@ export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle, onLiveV
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
         onClick={handleToggle}
-        className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-bold tracking-wider cursor-pointer"
+        className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[13px] font-bold tracking-wider cursor-pointer"
         style={{
           background: enabled ? `${profile.color}18` : "rgba(255,255,255,0.03)",
           border: `1px solid ${enabled ? (isConnected ? profile.color + "88" : profile.color + "55") : "rgba(255,255,255,0.08)"}`,
@@ -86,7 +86,7 @@ export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle, onLiveV
             userVolume={userVolume}
           />
         ) : (
-          <span style={{ fontSize: 11, lineHeight: 1 }}>◎</span>
+          <span style={{ fontSize: 13, lineHeight: 1 }}>◎</span>
         )}
         <span className="hidden sm:inline">
           {buttonLabel}
@@ -129,8 +129,8 @@ export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle, onLiveV
                 <div className="flex items-center gap-2">
                   <span style={{ fontSize: 16, color: profile.color }}>{profile.symbol}</span>
                   <div>
-                    <p style={{ fontSize: 8, letterSpacing: 2, color: "#475569", fontWeight: 700 }}>{providerLabel}</p>
-                    <p style={{ fontSize: 7, color: profile.color + "99" }}>{profile.voiceName} · {profile.archetype}</p>
+                    <p style={{ fontSize: 13, letterSpacing: 2, color: "#475569", fontWeight: 700 }}>{providerLabel}</p>
+                    <p style={{ fontSize: 14, color: profile.color + "99" }}>{profile.voiceName} · {profile.archetype}</p>
                   </div>
                 </div>
 
@@ -167,10 +167,10 @@ export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle, onLiveV
                           />
                         )}
                         <span style={{ fontSize: 18, color: prof.color, lineHeight: 1 }}>{prof.symbol}</span>
-                        <span style={{ fontSize: 7, letterSpacing: 1, color: active ? prof.color : "#475569", fontWeight: 700, position: "relative" }}>
+                        <span style={{ fontSize: 14, letterSpacing: 1, color: active ? prof.color : "#475569", fontWeight: 700, position: "relative" }}>
                           {p.toUpperCase()}
                         </span>
-                        <span style={{ fontSize: 10, color: active ? prof.color + "80" : "#334155", letterSpacing: 0.3, position: "relative" }}>
+                        <span style={{ fontSize: 14, color: active ? prof.color + "80" : "#334155", letterSpacing: 0.3, position: "relative" }}>
                           {prof.voiceName}
                         </span>
                       </motion.button>
@@ -180,15 +180,15 @@ export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle, onLiveV
 
                 {/* Selected voice description */}
                 <div className="px-3 py-2 rounded-xl" style={{ background: `${profile.color}0a`, border: `1px solid ${profile.color}20` }}>
-                  <p style={{ fontSize: 8, color: profile.color, fontWeight: 700, letterSpacing: 0.5 }}>
+                  <p style={{ fontSize: 13, color: profile.color, fontWeight: 700, letterSpacing: 0.5 }}>
                     {profile.symbol} {profile.planet} — {profile.archetype}
                   </p>
-                  <p style={{ fontSize: 7, color: "#64748b", marginTop: 2, lineHeight: 1.4 }}>
+                  <p style={{ fontSize: 14, color: "#64748b", marginTop: 2, lineHeight: 1.4 }}>
                     {profile.description}
                   </p>
                 </div>
 
-                <p style={{ fontSize: 7, color: "#1e293b", letterSpacing: 0.3, textAlign: "center" }}>
+                <p style={{ fontSize: 14, color: "#1e293b", letterSpacing: 0.3, textAlign: "center" }}>
                   {footerNote}
                 </p>
               </div>

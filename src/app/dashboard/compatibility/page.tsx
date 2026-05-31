@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -263,7 +263,7 @@ Write 3 paragraphs: (1) the overall nature and dynamic of this relationship base
       style={{ border: "1px solid rgba(244,114,182,0.2)", background: "rgba(244,114,182,0.04)" }}
     >
       <div className="px-5 py-3" style={{ borderBottom: "1px solid rgba(244,114,182,0.1)" }}>
-        <p className="text-[8px] font-bold tracking-widest" style={{ color: "#f472b6" }}>
+        <p className="text-[13px] font-bold tracking-widest" style={{ color: "#f472b6" }}>
           ✦ ORACLE — {profileA.name} & {profileB.name}
         </p>
       </div>
@@ -310,7 +310,7 @@ function ProfileSelector({
 }) {
   return (
     <div className="flex-1 min-w-0">
-      <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: accentColor }}>
+      <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: accentColor }}>
         {label}
       </p>
       <div className="flex flex-col gap-1.5">
@@ -340,7 +340,7 @@ function ProfileSelector({
               <p className="text-xs font-semibold truncate" style={{ color: selectedId === p.id ? "#e2e8f0" : "#94a3b8" }}>
                 {p.name}
               </p>
-              <p className="text-[9px] truncate" style={{ color: "#334155" }}>
+              <p className="text-[13px] truncate" style={{ color: "#334155" }}>
                 {p.birthDate} · {p.birthPlace}
               </p>
             </div>
@@ -420,7 +420,7 @@ function AspectRow({ aspect, nameA, nameB }: {
       {/* Person A planet */}
       <div className="flex items-center gap-1 min-w-[64px]">
         <span className="text-sm" style={{ color: colorA }}>{PLANET_SYMBOLS[aspect.personAplanet]}</span>
-        <span className="text-[9px] font-medium" style={{ color: colorA }}>
+        <span className="text-[13px] font-medium" style={{ color: colorA }}>
           {aspect.personAplanet.substring(0, 3)}
         </span>
       </div>
@@ -430,7 +430,7 @@ function AspectRow({ aspect, nameA, nameB }: {
         <span className="text-base leading-none" style={{ color: aspectColor }}>
           {ASPECT_GLYPHS[aspect.type]}
         </span>
-        <span className="text-[6px] tracking-wider" style={{ color: "#334155" }}>
+        <span className="text-[14px] tracking-wider" style={{ color: "#334155" }}>
           {aspect.orb.toFixed(1)}°
         </span>
       </div>
@@ -438,13 +438,13 @@ function AspectRow({ aspect, nameA, nameB }: {
       {/* Person B planet */}
       <div className="flex items-center gap-1 min-w-[64px]">
         <span className="text-sm" style={{ color: colorB }}>{PLANET_SYMBOLS[aspect.personBplanet]}</span>
-        <span className="text-[9px] font-medium" style={{ color: colorB }}>
+        <span className="text-[13px] font-medium" style={{ color: colorB }}>
           {aspect.personBplanet.substring(0, 3)}
         </span>
       </div>
 
       {/* Type */}
-      <span className="flex-1 text-[8px] font-bold tracking-wider capitalize" style={{ color: aspectColor }}>
+      <span className="flex-1 text-[13px] font-bold tracking-wider capitalize" style={{ color: aspectColor }}>
         {aspect.type}
       </span>
 
@@ -663,16 +663,16 @@ function PlanetOverlay({ chartA, chartB, nameA, nameB }: {
           >
             <span className="text-base" style={{ color }}>{PLANET_SYMBOLS[planet as PlanetName]}</span>
             <div className="flex-1">
-              <span className="text-[9px] font-medium" style={{ color }}>
+              <span className="text-[13px] font-medium" style={{ color }}>
                 {person}&apos;s {planet}
               </span>
-              <span className="text-[9px] mx-1" style={{ color: "#334155" }}>→</span>
-              <span className="text-[9px]" style={{ color: "#475569" }}>
+              <span className="text-[13px] mx-1" style={{ color: "#334155" }}>→</span>
+              <span className="text-[13px]" style={{ color: "#475569" }}>
                 falls in {targetName}&apos;s H{houseInTarget > 0 ? houseInTarget : "?"} ({pl.sign})
               </span>
             </div>
             <span
-              className="text-[7px] px-1.5 py-0.5 rounded"
+              className="text-[14px] px-1.5 py-0.5 rounded"
               style={{
                 background: `${SIGN_COLORS[pl.sign]}15`,
                 color: SIGN_COLORS[pl.sign],
@@ -837,7 +837,7 @@ export default function CompatibilityPage() {
                     key={tab}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setActiveTab(tab)}
-                    className="px-2.5 py-1 rounded-lg text-[8px] font-bold tracking-widest cursor-pointer transition-all duration-200"
+                    className="px-2.5 py-1 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer transition-all duration-200"
                     style={{
                       background: activeTab === tab ? "rgba(244,114,182,0.2)" : "transparent",
                       color: activeTab === tab ? "#f9a8d4" : "#334155",
@@ -875,7 +875,7 @@ export default function CompatibilityPage() {
                 <motion.div
                   animate={{ scale: [1, 1.12, 1] }}
                   transition={{ duration: 3, repeat: Infinity }}
-                  className="w-8 h-8 rounded-xl flex items-center justify-center text-[8px] font-bold tracking-widest"
+                  className="w-8 h-8 rounded-xl flex items-center justify-center text-[13px] font-bold tracking-widest"
                   style={{
                     background: "rgba(244,114,182,0.1)",
                     border: "1px solid rgba(244,114,182,0.25)",
@@ -910,7 +910,7 @@ export default function CompatibilityPage() {
                   <p className="text-sm" style={{ color: "#475569" }}>
                     Missing chart data for one or more profiles.
                     <br />
-                    <span className="text-[11px]">Charts are generated during onboarding. Try re-entering that profile.</span>
+                    <span className="text-[13px]">Charts are generated during onboarding. Try re-entering that profile.</span>
                   </p>
                 </motion.div>
               )}
@@ -964,15 +964,15 @@ export default function CompatibilityPage() {
                           </p>
                           <div className="flex gap-4">
                             <div>
-                              <p className="text-[7px] tracking-widest mb-0.5" style={{ color: "#334155" }}>HARMONIOUS</p>
+                              <p className="text-[14px] tracking-widest mb-0.5" style={{ color: "#334155" }}>HARMONIOUS</p>
                               <p className="text-sm font-bold" style={{ color: "#22c55e" }}>{harmoniousAspects.length} aspects</p>
                             </div>
                             <div>
-                              <p className="text-[7px] tracking-widest mb-0.5" style={{ color: "#334155" }}>CHALLENGING</p>
+                              <p className="text-[14px] tracking-widest mb-0.5" style={{ color: "#334155" }}>CHALLENGING</p>
                               <p className="text-sm font-bold" style={{ color: "#f59e0b" }}>{challengingAspects.length} aspects</p>
                             </div>
                             <div>
-                              <p className="text-[7px] tracking-widest mb-0.5" style={{ color: "#334155" }}>TOTAL</p>
+                              <p className="text-[14px] tracking-widest mb-0.5" style={{ color: "#334155" }}>TOTAL</p>
                               <p className="text-sm font-bold" style={{ color: "#94a3b8" }}>{synastry.length} aspects</p>
                             </div>
                           </div>
@@ -993,9 +993,9 @@ export default function CompatibilityPage() {
                             style={{ background: `${archetype.color}15`, color: archetype.color }}
                           >✦</div>
                           <div>
-                            <p className="text-[7px] font-bold tracking-widest mb-0.5" style={{ color: archetype.color }}>RELATIONSHIP ARCHETYPE</p>
+                            <p className="text-[14px] font-bold tracking-widest mb-0.5" style={{ color: archetype.color }}>RELATIONSHIP ARCHETYPE</p>
                             <p className="text-sm font-bold" style={{ color: "#e2e8f0" }}>{archetype.name}</p>
-                            <p className="text-[10px] mt-0.5 leading-relaxed" style={{ color: "#64748b" }}>{archetype.description}</p>
+                            <p className="text-[14px] mt-0.5 leading-relaxed" style={{ color: "#64748b" }}>{archetype.description}</p>
                           </div>
                         </motion.div>
                       )}
@@ -1014,7 +1014,7 @@ export default function CompatibilityPage() {
                               border: "1px solid rgba(255,255,255,0.06)",
                             }}
                           >
-                            <p className="text-[7px] font-bold tracking-widest mb-1" style={{ color: "#334155" }}>
+                            <p className="text-[14px] font-bold tracking-widest mb-1" style={{ color: "#334155" }}>
                               {cat.label.toUpperCase()}
                             </p>
                             <div className="flex items-center gap-2 mb-2">
@@ -1023,7 +1023,7 @@ export default function CompatibilityPage() {
                               }}>
                                 {cat.score}
                               </span>
-                              <span className="text-[8px]" style={{ color: "#475569" }}>/ 100</span>
+                              <span className="text-[13px]" style={{ color: "#475569" }}>/ 100</span>
                             </div>
                             <div
                               className="h-1 rounded-full overflow-hidden"
@@ -1044,7 +1044,7 @@ export default function CompatibilityPage() {
                       </div>
 
                       {/* Top aspects */}
-                      <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#475569" }}>
+                      <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#475569" }}>
                         STRONGEST CONNECTIONS
                       </p>
                       <div className="space-y-1.5">
@@ -1078,9 +1078,9 @@ export default function CompatibilityPage() {
                               }}
                             >
                               <span style={{ color }}>{ASPECT_GLYPHS[type]}</span>
-                              <span className="text-[9px] font-bold capitalize" style={{ color }}>{type}</span>
+                              <span className="text-[13px] font-bold capitalize" style={{ color }}>{type}</span>
                               <span
-                                className="text-[7px] px-1 py-0.5 rounded"
+                                className="text-[14px] px-1 py-0.5 rounded"
                                 style={{ background: `${color}20`, color }}
                               >{count}</span>
                             </div>
@@ -1091,7 +1091,7 @@ export default function CompatibilityPage() {
                       {/* Harmonious */}
                       {harmoniousAspects.length > 0 && (
                         <div className="mb-5">
-                          <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: "#22c55e" }}>
+                          <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#22c55e" }}>
                             HARMONIOUS · {harmoniousAspects.length}
                           </p>
                           <div className="space-y-1.5">
@@ -1105,7 +1105,7 @@ export default function CompatibilityPage() {
                       {/* Challenging */}
                       {challengingAspects.length > 0 && (
                         <div>
-                          <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: "#f59e0b" }}>
+                          <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#f59e0b" }}>
                             CHALLENGING · {challengingAspects.length}
                           </p>
                           <div className="space-y-1.5">
@@ -1128,10 +1128,10 @@ export default function CompatibilityPage() {
                     >
                       {/* Bi-wheel */}
                       <div className="mb-6 rounded-2xl p-4" style={{ background: "rgba(4,4,28,0.6)", border: "1px solid rgba(244,114,182,0.12)" }}>
-                        <p className="text-[8px] font-bold tracking-widest mb-1" style={{ color: "#f472b6" }}>
+                        <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#f472b6" }}>
                           SYNASTRY BI-WHEEL
                         </p>
-                        <p className="text-[9px] mb-4" style={{ color: "#334155" }}>
+                        <p className="text-[13px] mb-4" style={{ color: "#334155" }}>
                           {profileA.name} inner · {profileB.name} outer
                         </p>
                         <SynastryBiWheel
@@ -1142,7 +1142,7 @@ export default function CompatibilityPage() {
                       </div>
 
                       <div className="mb-4">
-                        <p className="text-[8px] font-bold tracking-widest mb-1" style={{ color: "#06b6d4" }}>
+                        <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#06b6d4" }}>
                           PLANET HOUSE OVERLAYS
                         </p>
                         <p className="text-xs" style={{ color: "#334155" }}>
@@ -1152,14 +1152,14 @@ export default function CompatibilityPage() {
 
                       <div className="space-y-5">
                         <div>
-                          <p className="text-[9px] font-bold tracking-widest mb-3" style={{ color: "#a855f7" }}>
+                          <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#a855f7" }}>
                             {profileB.name}&apos;s planets in {profileA.name}&apos;s chart
                           </p>
                           <PlanetOverlay chartA={chartA} chartB={chartB} nameA={profileA.name} nameB={profileB.name} />
                         </div>
 
                         <div>
-                          <p className="text-[9px] font-bold tracking-widest mb-3" style={{ color: "#06b6d4" }}>
+                          <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#06b6d4" }}>
                             {profileA.name}&apos;s planets in {profileB.name}&apos;s chart
                           </p>
                           <PlanetOverlay chartA={chartB} chartB={chartA} nameA={profileB.name} nameB={profileA.name} />
@@ -1171,7 +1171,7 @@ export default function CompatibilityPage() {
                         background: "rgba(255,255,255,0.02)",
                         border: "1px solid rgba(255,255,255,0.05)",
                       }}>
-                        <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#475569" }}>
+                        <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#475569" }}>
                           ELEMENT COMPARISON
                         </p>
                         <div className="grid grid-cols-2 gap-4">
@@ -1188,10 +1188,10 @@ export default function CompatibilityPage() {
                             chart.planets.slice(0, 10).forEach(p => { elements[signEl[p.sign]]++; });
                             return (
                               <div key={prof.id}>
-                                <p className="text-[8px] font-bold mb-2" style={{ color: "#475569" }}>{prof.name}</p>
+                                <p className="text-[13px] font-bold mb-2" style={{ color: "#475569" }}>{prof.name}</p>
                                 {Object.entries(elements).map(([el, count]) => (
                                   <div key={el} className="flex items-center gap-2 mb-1">
-                                    <span className="text-[8px] w-10" style={{ color: elColors[el as keyof typeof elColors] }}>{el}</span>
+                                    <span className="text-[13px] w-10" style={{ color: elColors[el as keyof typeof elColors] }}>{el}</span>
                                     <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
                                       <div
                                         className="h-full rounded-full"
@@ -1201,7 +1201,7 @@ export default function CompatibilityPage() {
                                         }}
                                       />
                                     </div>
-                                    <span className="text-[8px] w-3" style={{ color: "#334155" }}>{count}</span>
+                                    <span className="text-[13px] w-3" style={{ color: "#334155" }}>{count}</span>
                                   </div>
                                 ))}
                               </div>
@@ -1221,8 +1221,8 @@ export default function CompatibilityPage() {
                       exit={{ opacity: 0 }}
                     >
                       <div className="mb-4">
-                        <p className="text-[8px] font-bold tracking-widest mb-1" style={{ color: "#f472b6" }}>COMPOSITE MIDPOINT CHART</p>
-                        <p className="text-[9px]" style={{ color: "#334155" }}>
+                        <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#f472b6" }}>COMPOSITE MIDPOINT CHART</p>
+                        <p className="text-[13px]" style={{ color: "#334155" }}>
                           The relationship&apos;s own planetary identity — midpoints between {profileA.name} & {profileB.name}
                         </p>
                       </div>
@@ -1241,14 +1241,14 @@ export default function CompatibilityPage() {
                             >
                               <div className="flex items-center gap-1.5">
                                 <span className="text-sm" style={{ color }}>{PLANET_SYMBOLS[cp.name]}</span>
-                                <span className="text-[8px] font-medium" style={{ color }}>{cp.name}</span>
+                                <span className="text-[13px] font-medium" style={{ color }}>{cp.name}</span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <span className="text-sm" style={{ color: signColor }}>{SIGN_SYMBOLS[cp.sign]}</span>
-                                <span className="text-[9px]" style={{ color: signColor }}>{cp.sign.substring(0, 3)}</span>
+                                <span className="text-[13px]" style={{ color: signColor }}>{cp.sign.substring(0, 3)}</span>
                               </div>
-                              <p className="text-[9px]" style={{ color: "#475569" }}>{cp.signDegree.toFixed(1)}°</p>
-                              <p className="text-[8px]" style={{ color: "#334155" }}>H{cp.house}</p>
+                              <p className="text-[13px]" style={{ color: "#475569" }}>{cp.signDegree.toFixed(1)}°</p>
+                              <p className="text-[13px]" style={{ color: "#334155" }}>H{cp.house}</p>
                             </motion.div>
                           );
                         })}
@@ -1263,24 +1263,24 @@ export default function CompatibilityPage() {
                           <div className="mt-5 rounded-2xl p-4 grid grid-cols-2 gap-4"
                             style={{ background: "rgba(244,114,182,0.05)", border: "1px solid rgba(244,114,182,0.15)" }}>
                             <div>
-                              <p className="text-[7px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>COMPOSITE SUN</p>
+                              <p className="text-[14px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>COMPOSITE SUN</p>
                               <p className="text-sm font-bold" style={{ color: "#fbbf24" }}>
                                 {SIGN_SYMBOLS[compSun.sign]} {compSun.sign}
                               </p>
-                              <p className="text-[9px] mt-0.5" style={{ color: "#475569" }}>
+                              <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
                                 House {compSun.house} · {compSun.signDegree.toFixed(1)}°
                               </p>
-                              <p className="text-[8px] mt-1" style={{ color: "#334155" }}>The relationship&apos;s core purpose</p>
+                              <p className="text-[13px] mt-1" style={{ color: "#334155" }}>The relationship&apos;s core purpose</p>
                             </div>
                             <div>
-                              <p className="text-[7px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>COMPOSITE MOON</p>
+                              <p className="text-[14px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>COMPOSITE MOON</p>
                               <p className="text-sm font-bold" style={{ color: "#c4b5fd" }}>
                                 {SIGN_SYMBOLS[compMoon.sign]} {compMoon.sign}
                               </p>
-                              <p className="text-[9px] mt-0.5" style={{ color: "#475569" }}>
+                              <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
                                 House {compMoon.house} · {compMoon.signDegree.toFixed(1)}°
                               </p>
-                              <p className="text-[8px] mt-1" style={{ color: "#334155" }}>The emotional tone of the bond</p>
+                              <p className="text-[13px] mt-1" style={{ color: "#334155" }}>The emotional tone of the bond</p>
                             </div>
                           </div>
                         );

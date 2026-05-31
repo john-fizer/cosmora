@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -42,7 +42,7 @@ function SectionHeader({ label, action }: { label: string; action?: React.ReactN
   return (
     <div className="flex items-center justify-between gap-3 mb-3">
       <div className="flex items-center gap-3">
-        <span className="text-[9px] font-bold tracking-[0.18em] uppercase" style={{ color: "#06b6d4" }}>
+        <span className="text-[13px] font-bold tracking-[0.18em] uppercase" style={{ color: "#06b6d4" }}>
           {label}
         </span>
         <div className="h-px w-16" style={{ background: "rgba(6,182,212,0.15)" }} />
@@ -80,7 +80,7 @@ function OptionButton({
       </div>
       <div>
         <p className="text-xs font-semibold" style={{ color: selected ? "#c4b5fd" : "#94a3b8" }}>{label}</p>
-        {desc && <p className="text-[9px]" style={{ color: "#334155" }}>{desc}</p>}
+        {desc && <p className="text-[13px]" style={{ color: "#334155" }}>{desc}</p>}
       </div>
     </motion.button>
   );
@@ -139,22 +139,22 @@ function ProfileCard({
             </p>
             {isActive && (
               <span
-                className="text-[7px] font-bold tracking-widest px-1.5 py-0.5 rounded"
+                className="text-[14px] font-bold tracking-widest px-1.5 py-0.5 rounded"
                 style={{ background: "rgba(124,58,237,0.2)", color: "#a78bfa", border: "1px solid rgba(124,58,237,0.3)" }}
               >
                 ACTIVE
               </span>
             )}
           </div>
-          <p className="text-[10px] mt-0.5" style={{ color: "#475569" }}>
+          <p className="text-[14px] mt-0.5" style={{ color: "#475569" }}>
             {profile.birthDate} · {profile.birthTime ? profile.birthTime.substring(0, 5) : "Time unknown"}
           </p>
-          <p className="text-[10px] truncate" style={{ color: "#334155" }}>{profile.birthPlace}</p>
+          <p className="text-[14px] truncate" style={{ color: "#334155" }}>{profile.birthPlace}</p>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
-            <span className="text-[8px] px-1.5 py-0.5 rounded" style={{ background: "rgba(255,255,255,0.04)", color: "#475569" }}>
+            <span className="text-[13px] px-1.5 py-0.5 rounded" style={{ background: "rgba(255,255,255,0.04)", color: "#475569" }}>
               {HOUSE_SYSTEMS.find(h => h.value === profile.houseSystem)?.label ?? profile.houseSystem}
             </span>
-            <span className="text-[8px] px-1.5 py-0.5 rounded" style={{ background: "rgba(6,182,212,0.06)", color: "#06b6d4", border: "1px solid rgba(6,182,212,0.15)" }}>
+            <span className="text-[13px] px-1.5 py-0.5 rounded" style={{ background: "rgba(6,182,212,0.06)", color: "#06b6d4", border: "1px solid rgba(6,182,212,0.15)" }}>
               {profile.timezone}
             </span>
           </div>
@@ -171,8 +171,8 @@ function ProfileCard({
                   { label: "ASC", value: asc ? `${SIGN_SYMBOLS[asc.sign]} ${asc.sign.substring(0,3)}`  : "—",  color: "#06b6d4" },
                 ].map(({ label, value, color }) => (
                   <div key={label} className="flex items-center gap-1">
-                    <span className="text-[8px] font-bold" style={{ color: "#334155" }}>{label}</span>
-                    <span className="text-[9px] font-medium" style={{ color }}>{value}</span>
+                    <span className="text-[13px] font-bold" style={{ color: "#334155" }}>{label}</span>
+                    <span className="text-[13px] font-medium" style={{ color }}>{value}</span>
                   </div>
                 ))}
               </div>
@@ -186,7 +186,7 @@ function ProfileCard({
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={onSetActive}
-              className="text-[8px] font-bold tracking-widest px-2.5 py-1 rounded-lg cursor-pointer"
+              className="text-[13px] font-bold tracking-widest px-2.5 py-1 rounded-lg cursor-pointer"
               style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)", color: "#a78bfa" }}
             >
               SET ACTIVE
@@ -195,7 +195,7 @@ function ProfileCard({
           <motion.button
             whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
             onClick={onRecalculate}
-            className="text-[8px] font-bold tracking-widest px-2.5 py-1 rounded-lg cursor-pointer"
+            className="text-[13px] font-bold tracking-widest px-2.5 py-1 rounded-lg cursor-pointer"
             style={{ background: "rgba(6,182,212,0.08)", border: "1px solid rgba(6,182,212,0.2)", color: "#06b6d4" }}
           >
             RECALC
@@ -203,7 +203,7 @@ function ProfileCard({
           <motion.button
             whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
             onClick={onEdit}
-            className="text-[8px] font-bold tracking-widest px-2.5 py-1 rounded-lg cursor-pointer"
+            className="text-[13px] font-bold tracking-widest px-2.5 py-1 rounded-lg cursor-pointer"
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#64748b" }}
           >
             EDIT
@@ -213,7 +213,7 @@ function ProfileCard({
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => { onDelete(); setConfirmDelete(false); }}
-                className="text-[8px] font-bold px-2 py-1 rounded-lg cursor-pointer"
+                className="text-[13px] font-bold px-2 py-1 rounded-lg cursor-pointer"
                 style={{ background: "rgba(239,68,68,0.2)", border: "1px solid rgba(239,68,68,0.3)", color: "#f87171" }}
               >
                 CONFIRM
@@ -221,7 +221,7 @@ function ProfileCard({
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setConfirmDelete(false)}
-                className="text-[8px] px-2 py-1 rounded-lg cursor-pointer"
+                className="text-[13px] px-2 py-1 rounded-lg cursor-pointer"
                 style={{ background: "rgba(255,255,255,0.04)", color: "#475569", border: "1px solid rgba(255,255,255,0.06)" }}
               >
                 ✕
@@ -231,7 +231,7 @@ function ProfileCard({
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={() => setConfirmDelete(true)}
-              className="text-[8px] font-bold tracking-widest px-2.5 py-1 rounded-lg cursor-pointer"
+              className="text-[13px] font-bold tracking-widest px-2.5 py-1 rounded-lg cursor-pointer"
               style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)", color: "#ef4444" }}
             >
               DELETE
@@ -286,12 +286,12 @@ function EditPanel({
       <div className="flex items-center justify-between mb-4">
         <div>
           <p className="text-xs font-bold" style={{ color: "#e2e8f0" }}>Editing: {profile.name}</p>
-          <p className="text-[10px]" style={{ color: "#475569" }}>{profile.birthDate} · {profile.birthPlace}</p>
+          <p className="text-[14px]" style={{ color: "#475569" }}>{profile.birthDate} · {profile.birthPlace}</p>
         </div>
         <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={onCancel}
-          className="text-[9px] px-2.5 py-1 rounded-lg cursor-pointer"
+          className="text-[13px] px-2.5 py-1 rounded-lg cursor-pointer"
           style={{ background: "rgba(255,255,255,0.04)", color: "#475569", border: "1px solid rgba(255,255,255,0.06)" }}
         >
           Cancel
@@ -301,7 +301,7 @@ function EditPanel({
       <div className="space-y-5">
         {/* House System */}
         <div>
-          <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: "#64748b" }}>
+          <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#64748b" }}>
             HOUSE SYSTEM
           </p>
           <div className="grid grid-cols-2 gap-1.5">
@@ -316,7 +316,7 @@ function EditPanel({
             ))}
           </div>
           {needsRecalc && (
-            <p className="text-[9px] mt-1.5" style={{ color: "#f59e0b" }}>
+            <p className="text-[13px] mt-1.5" style={{ color: "#f59e0b" }}>
               Changing house system will recalculate your chart.
             </p>
           )}
@@ -324,7 +324,7 @@ function EditPanel({
 
         {/* Astrology Mode */}
         <div>
-          <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: "#64748b" }}>
+          <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#64748b" }}>
             ASTROLOGY MODE
           </p>
           <div className="grid grid-cols-1 gap-1.5 md:grid-cols-3">
@@ -342,7 +342,7 @@ function EditPanel({
 
         {/* Birth Time Confidence */}
         <div>
-          <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: "#64748b" }}>
+          <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#64748b" }}>
             BIRTH TIME CONFIDENCE
           </p>
           <div className="grid grid-cols-2 gap-1.5">
@@ -392,12 +392,12 @@ function ClearAllButton({ onConfirm }: { onConfirm: () => void }) {
       <p className="flex-1 text-xs" style={{ color: "#f87171" }}>This wipes all profiles, charts, and chat history from this device. Cannot be undone.</p>
       <div className="flex gap-2 flex-shrink-0">
         <motion.button whileTap={{ scale: 0.95 }} onClick={onConfirm}
-          className="text-[8px] font-bold px-2.5 py-1 rounded-lg cursor-pointer"
+          className="text-[13px] font-bold px-2.5 py-1 rounded-lg cursor-pointer"
           style={{ background: "rgba(239,68,68,0.25)", color: "#f87171", border: "1px solid rgba(239,68,68,0.3)" }}>
           WIPE
         </motion.button>
         <motion.button whileTap={{ scale: 0.95 }} onClick={() => setConfirm(false)}
-          className="text-[8px] px-2.5 py-1 rounded-lg cursor-pointer"
+          className="text-[13px] px-2.5 py-1 rounded-lg cursor-pointer"
           style={{ background: "rgba(255,255,255,0.05)", color: "#475569", border: "1px solid rgba(255,255,255,0.08)" }}>
           Cancel
         </motion.button>
@@ -413,7 +413,7 @@ function ClearAllButton({ onConfirm }: { onConfirm: () => void }) {
       </svg>
       <div>
         <p className="text-xs font-semibold" style={{ color: "#f87171" }}>Clear All Data</p>
-        <p className="text-[9px]" style={{ color: "#334155" }}>Permanently wipes all profiles, charts, and chat history from this device.</p>
+        <p className="text-[13px]" style={{ color: "#334155" }}>Permanently wipes all profiles, charts, and chat history from this device.</p>
       </div>
     </motion.button>
   );
@@ -620,7 +620,7 @@ export default function SettingsPage() {
           <Link href="/onboarding">
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-              className="flex items-center gap-1.5 text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-lg cursor-pointer"
+              className="flex items-center gap-1.5 text-[13px] font-bold tracking-widest px-3 py-1.5 rounded-lg cursor-pointer"
               style={{
                 background: "rgba(124,58,237,0.12)",
                 border: "1px solid rgba(124,58,237,0.25)",
@@ -644,7 +644,7 @@ export default function SettingsPage() {
               <SectionHeader
                 label="Profiles"
                 action={
-                  <span className="text-[9px]" style={{ color: "#334155" }}>
+                  <span className="text-[13px]" style={{ color: "#334155" }}>
                     {profiles.length} profile{profiles.length !== 1 ? "s" : ""}
                   </span>
                 }
@@ -723,7 +723,7 @@ export default function SettingsPage() {
                   </div>
                   <div>
                     <p className="text-sm font-bold" style={{ color: "#e2e8f0" }}>Cosmora</p>
-                    <p className="text-[10px]" style={{ color: "#334155" }}>
+                    <p className="text-[14px]" style={{ color: "#334155" }}>
                       Precision astrology · Hellenistic foundations
                     </p>
                   </div>
@@ -737,8 +737,8 @@ export default function SettingsPage() {
                     { label: "AI Model", value: "Claude (Anthropic)" },
                   ].map(({ label, value }) => (
                     <div key={label}>
-                      <p className="text-[7px] tracking-widest mb-0.5" style={{ color: "#1e293b" }}>{label.toUpperCase()}</p>
-                      <p className="text-[10px] font-medium" style={{ color: "#475569" }}>{value}</p>
+                      <p className="text-[14px] tracking-widest mb-0.5" style={{ color: "#1e293b" }}>{label.toUpperCase()}</p>
+                      <p className="text-[14px] font-medium" style={{ color: "#475569" }}>{value}</p>
                     </div>
                   ))}
                 </div>
@@ -749,7 +749,7 @@ export default function SettingsPage() {
             <div>
               <SectionHeader label="Privacy & Storage" />
               <div className="rounded-xl p-4 mb-3" style={{ background: "rgba(6,182,212,0.04)", border: "1px solid rgba(6,182,212,0.12)" }}>
-                <p className="text-[10px] leading-relaxed" style={{ color: "#475569" }}>
+                <p className="text-[14px] leading-relaxed" style={{ color: "#475569" }}>
                   Everything is stored <strong style={{ color: "#06b6d4" }}>on this device only</strong> — your browser&apos;s localStorage. No birth data, charts, or chat history is ever sent to or stored on any server. AI chat sends only the current message and recent chat history to the Claude API per request.
                 </p>
               </div>
@@ -760,7 +760,7 @@ export default function SettingsPage() {
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   onClick={handleExportData}
                   disabled={profiles.length === 0}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[9px] font-bold tracking-widest cursor-pointer disabled:opacity-40"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer disabled:opacity-40"
                   style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", color: "#22c55e" }}
                 >
                   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3.5 h-3.5">
@@ -772,7 +772,7 @@ export default function SettingsPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   onClick={() => importRef.current?.click()}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[9px] font-bold tracking-widest cursor-pointer"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
                   style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", color: "#f59e0b" }}
                 >
                   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3.5 h-3.5">
@@ -806,7 +806,7 @@ export default function SettingsPage() {
                   </svg>
                   <div>
                     <p className="text-xs font-semibold" style={{ color: "#94a3b8" }}>Switch Profile / Sign Out</p>
-                    <p className="text-[9px]" style={{ color: "#334155" }}>Returns to onboarding. Your profiles stay saved on this device.</p>
+                    <p className="text-[13px]" style={{ color: "#334155" }}>Returns to onboarding. Your profiles stay saved on this device.</p>
                   </div>
                 </motion.button>
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
@@ -167,7 +167,7 @@ function AnimatedStat({ value, suffix, label, color, delay }: {
       }}>
         {count.toLocaleString()}{suffix}
       </span>
-      <span style={{ fontSize: 8, letterSpacing: "0.18em", color: "var(--text-3)", fontFamily: "'Fragment Mono', monospace", textTransform: "uppercase" }}>{label}</span>
+      <span style={{ fontSize: 13, letterSpacing: "0.18em", color: "var(--text-3)", fontFamily: "'Fragment Mono', monospace", textTransform: "uppercase" }}>{label}</span>
     </div>
   );
 }
@@ -267,15 +267,15 @@ function HudViewportOverlay() {
         <div style={{ width: 24, height: 24, borderTop: "1px solid rgba(200,165,91,0.30)", borderLeft: "1px solid rgba(200,165,91,0.30)" }} />
       </div>
       <div style={{ position: "absolute", top: 76, left: 48 }}>
-        <p style={{ fontSize: 8, color: "rgba(200,165,91,0.45)", fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em", margin: 0 }}>COSMORA OS</p>
-        <p style={{ fontSize: 7, color: "rgba(122,118,144,0.45)", fontFamily: "'Fragment Mono', monospace", margin: 0 }}>v2070.01</p>
+        <p style={{ fontSize: 13, color: "rgba(200,165,91,0.45)", fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em", margin: 0 }}>COSMORA OS</p>
+        <p style={{ fontSize: 14, color: "rgba(122,118,144,0.45)", fontFamily: "'Fragment Mono', monospace", margin: 0 }}>v2070.01</p>
       </div>
       <div style={{ position: "absolute", top: 72, right: 20 }}>
         <div style={{ width: 24, height: 24, borderTop: "1px solid rgba(200,165,91,0.30)", borderRight: "1px solid rgba(200,165,91,0.30)" }} />
       </div>
       <div style={{ position: "absolute", top: 76, right: 48, textAlign: "right" }}>
-        <p style={{ fontSize: 8, color: "rgba(200,165,91,0.45)", fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em", margin: 0 }}>{utc} UTC</p>
-        <p style={{ fontSize: 7, color: "rgba(122,118,144,0.45)", fontFamily: "'Fragment Mono', monospace", margin: 0 }}>SYSTEM ACTIVE</p>
+        <p style={{ fontSize: 13, color: "rgba(200,165,91,0.45)", fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em", margin: 0 }}>{utc} UTC</p>
+        <p style={{ fontSize: 14, color: "rgba(122,118,144,0.45)", fontFamily: "'Fragment Mono', monospace", margin: 0 }}>SYSTEM ACTIVE</p>
       </div>
       <div style={{ position: "absolute", bottom: 24, left: 20 }}>
         <div style={{ width: 24, height: 24, borderBottom: "1px solid rgba(123,111,212,0.18)", borderLeft: "1px solid rgba(123,111,212,0.18)" }} />
@@ -411,7 +411,7 @@ export default function LandingPage() {
           </div>
           <span
           className="font-semibold tracking-[0.22em] uppercase"
-          style={{ fontFamily: "'Fragment Mono', monospace", fontSize: 12, color: "var(--solar)" }}
+          style={{ fontFamily: "'Fragment Mono', monospace", fontSize: 14, color: "var(--solar)" }}
         >
           COSMORA
         </span>
@@ -499,7 +499,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mb-8 px-4 py-1.5 rounded-full text-[9px] tracking-[0.22em] uppercase"
+            className="mb-8 px-4 py-1.5 rounded-full text-[13px] tracking-[0.22em] uppercase"
             style={{
               background: "rgba(200,165,91,0.08)",
               border: "1px solid rgba(200,165,91,0.24)",
@@ -555,7 +555,7 @@ export default function LandingPage() {
               transition={{ duration: 1.4, repeat: Infinity }}
               style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--data)", boxShadow: "0 0 6px rgba(78,205,196,0.6)", flexShrink: 0 }}
             />
-            <span style={{ fontSize: 8, color: "rgba(78,205,196,0.55)", fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.15em" }}>
+            <span style={{ fontSize: 13, color: "rgba(78,205,196,0.55)", fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.15em" }}>
               CHART ENGINE READY · SWISS EPHEMERIS v2.10
             </span>
           </motion.div>
@@ -611,7 +611,7 @@ export default function LandingPage() {
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
           style={{ zIndex: 2, pointerEvents: "none" }}
         >
-          <span className="text-[9px] font-bold tracking-widest" style={{ color: "#334155" }}>SCROLL</span>
+          <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>SCROLL</span>
           <motion.div
             animate={{ y: [0, 6, 0] }}
             transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
@@ -716,7 +716,7 @@ export default function LandingPage() {
                       className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center"
                       style={{ background: `${step.color}22`, border: `1px solid ${step.color}50` }}
                     >
-                      <span className="text-[9px] font-bold" style={{ color: step.color }}>{step.num}</span>
+                      <span className="text-[13px] font-bold" style={{ color: step.color }}>{step.num}</span>
                     </div>
                   </div>
                   <h3
@@ -795,7 +795,7 @@ export default function LandingPage() {
               </div>
               <div style={{ display: "flex", gap: "0.5rem" }}>
                 {["☿", "♀", "♂"].map(g => (
-                  <div key={g} style={{ width: 22, height: 22, borderRadius: 6, background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#a5b4fc" }}>{g}</div>
+                  <div key={g} style={{ width: 22, height: 22, borderRadius: 6, background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: "#a5b4fc" }}>{g}</div>
                 ))}
               </div>
             </div>
@@ -826,7 +826,7 @@ export default function LandingPage() {
 
               {/* Left panel — planet positions */}
               <div style={{ width: 200, borderRight: "1px solid rgba(99,102,241,0.1)", padding: "0.75rem 0.625rem", display: "flex", flexDirection: "column", gap: "0.375rem", overflow: "hidden" }}>
-                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", color: "#475569", marginBottom: "0.25rem" }}>NATAL POSITIONS</div>
+                <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.12em", color: "#475569", marginBottom: "0.25rem" }}>NATAL POSITIONS</div>
                 {[
                   { name: "Sun", glyph: "☉", sign: "Scorpio", color: "#fbbf24", deg: "14°" },
                   { name: "Moon", glyph: "☽", sign: "Pisces", color: "#c4b5fd", deg: "28°" },
@@ -840,10 +840,10 @@ export default function LandingPage() {
                   { name: "Pluto", glyph: "♇", sign: "Scorpio", color: "#8b5cf6", deg: "22°" },
                 ].map(p => (
                   <div key={p.name} style={{ display: "flex", alignItems: "center", gap: "0.375rem", padding: "0.25rem 0.375rem", borderRadius: 6, background: "rgba(99,102,241,0.04)" }}>
-                    <span style={{ fontSize: 11, color: p.color, width: 14, textAlign: "center" }}>{p.glyph}</span>
-                    <span style={{ fontSize: 9, color: "#64748b", flex: 1 }}>{p.name}</span>
-                    <span style={{ fontSize: 9, color: "#94a3b8", fontFamily: "monospace" }}>{p.deg}</span>
-                    <span style={{ fontSize: 9, color: "#475569" }}>{p.sign.slice(0, 3)}</span>
+                    <span style={{ fontSize: 13, color: p.color, width: 14, textAlign: "center" }}>{p.glyph}</span>
+                    <span style={{ fontSize: 13, color: "#64748b", flex: 1 }}>{p.name}</span>
+                    <span style={{ fontSize: 13, color: "#94a3b8", fontFamily: "monospace" }}>{p.deg}</span>
+                    <span style={{ fontSize: 13, color: "#475569" }}>{p.sign.slice(0, 3)}</span>
                   </div>
                 ))}
               </div>
@@ -900,38 +900,38 @@ export default function LandingPage() {
 
               {/* Right panel */}
               <div style={{ width: 220, borderLeft: "1px solid rgba(99,102,241,0.1)", padding: "0.75rem 0.625rem", display: "flex", flexDirection: "column", gap: "0.5rem", overflow: "hidden" }}>
-                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", color: "#475569", marginBottom: "0.125rem" }}>LIVE TRANSITS</div>
+                <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.12em", color: "#475569", marginBottom: "0.125rem" }}>LIVE TRANSITS</div>
                 {[
                   { transit: "♃", natal: "☉", type: "△", label: "Jup △ Sun", applying: true, color: "#f59e0b" },
                   { transit: "♄", natal: "☽", type: "□", label: "Sat □ Moon", applying: false, color: "#94a3b8" },
                   { transit: "♇", natal: "☿", type: "⚹", label: "Plu ⚹ Merc", applying: true, color: "#8b5cf6" },
                 ].map((t, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.375rem", padding: "0.375rem 0.5rem", borderRadius: 6, border: `1px solid ${t.color}20`, background: `${t.color}08` }}>
-                    <span style={{ fontSize: 11, color: t.color }}>{t.transit}</span>
-                    <span style={{ fontSize: 10, color: t.color }}>{t.type}</span>
-                    <span style={{ fontSize: 9, color: "#94a3b8", flex: 1 }}>{t.label}</span>
-                    <span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 4, background: t.applying ? "rgba(6,182,212,0.15)" : "transparent", color: t.applying ? "#06b6d4" : "#334155", border: `1px solid ${t.applying ? "rgba(6,182,212,0.3)" : "rgba(51,65,85,0.5)"}` }}>
+                    <span style={{ fontSize: 13, color: t.color }}>{t.transit}</span>
+                    <span style={{ fontSize: 14, color: t.color }}>{t.type}</span>
+                    <span style={{ fontSize: 13, color: "#94a3b8", flex: 1 }}>{t.label}</span>
+                    <span style={{ fontSize: 13, padding: "1px 4px", borderRadius: 4, background: t.applying ? "rgba(6,182,212,0.15)" : "transparent", color: t.applying ? "#06b6d4" : "#334155", border: `1px solid ${t.applying ? "rgba(6,182,212,0.3)" : "rgba(51,65,85,0.5)"}` }}>
                       {t.applying ? "appl" : "sep"}
                     </span>
                   </div>
                 ))}
 
-                <div style={{ marginTop: "0.25rem", fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", color: "#475569" }}>ORACLE</div>
+                <div style={{ marginTop: "0.25rem", fontSize: 13, fontWeight: 700, letterSpacing: "0.12em", color: "#475569" }}>ORACLE</div>
                 <div style={{ borderRadius: 8, border: "1px solid rgba(99,102,241,0.2)", background: "rgba(99,102,241,0.05)", padding: "0.5rem 0.625rem" }}>
-                  <p style={{ fontSize: 9, lineHeight: 1.6, color: "#64748b" }}>
+                  <p style={{ fontSize: 13, lineHeight: 1.6, color: "#64748b" }}>
                     Jupiter trines your natal Sun — a rare moment of expansion and alignment. The next 14 days carry unusual momentum for long-term decisions...
                   </p>
                   <div style={{ marginTop: "0.375rem", display: "flex", gap: "0.25rem" }}>
                     {["Identity", "Growth", "Timing"].map(k => (
-                      <span key={k} style={{ fontSize: 8, padding: "1px 5px", borderRadius: 4, background: "rgba(99,102,241,0.12)", color: "#a5b4fc", border: "1px solid rgba(99,102,241,0.2)" }}>{k}</span>
+                      <span key={k} style={{ fontSize: 13, padding: "1px 5px", borderRadius: 4, background: "rgba(99,102,241,0.12)", color: "#a5b4fc", border: "1px solid rgba(99,102,241,0.2)" }}>{k}</span>
                     ))}
                   </div>
                 </div>
 
-                <div style={{ marginTop: "0.125rem", fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", color: "#475569" }}>ANNUAL PROFECTION</div>
+                <div style={{ marginTop: "0.125rem", fontSize: 13, fontWeight: 700, letterSpacing: "0.12em", color: "#475569" }}>ANNUAL PROFECTION</div>
                 <div style={{ borderRadius: 8, border: "1px solid rgba(251,191,36,0.2)", background: "rgba(251,191,36,0.05)", padding: "0.375rem 0.5rem" }}>
-                  <p style={{ fontSize: 9, color: "#fbbf24" }}>Year 32 · House IX · Jupiter rules</p>
-                  <p style={{ fontSize: 8, color: "#64748b", marginTop: 2 }}>Travel, philosophy, expansion</p>
+                  <p style={{ fontSize: 13, color: "#fbbf24" }}>Year 32 · House IX · Jupiter rules</p>
+                  <p style={{ fontSize: 13, color: "#64748b", marginTop: 2 }}>Travel, philosophy, expansion</p>
                 </div>
               </div>
             </div>
@@ -940,11 +940,11 @@ export default function LandingPage() {
             <div style={{ borderTop: "1px solid rgba(99,102,241,0.1)", background: "rgba(10,10,25,0.7)", padding: "0.5rem 1rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
               <div style={{ display: "flex", gap: "0.375rem" }}>
                 {["Chart", "Transits", "Timeline", "Synastry"].map((tab, i) => (
-                  <div key={tab} style={{ fontSize: 9, padding: "3px 8px", borderRadius: 4, background: i === 0 ? "rgba(99,102,241,0.2)" : "transparent", border: i === 0 ? "1px solid rgba(99,102,241,0.4)" : "1px solid transparent", color: i === 0 ? "#a5b4fc" : "#334155" }}>{tab}</div>
+                  <div key={tab} style={{ fontSize: 13, padding: "3px 8px", borderRadius: 4, background: i === 0 ? "rgba(99,102,241,0.2)" : "transparent", border: i === 0 ? "1px solid rgba(99,102,241,0.4)" : "1px solid transparent", color: i === 0 ? "#a5b4fc" : "#334155" }}>{tab}</div>
                 ))}
               </div>
               <div style={{ flex: 1, height: 1, background: "rgba(99,102,241,0.08)" }} />
-              <span style={{ fontSize: 9, color: "#334155", fontFamily: "monospace" }}>Last updated: just now</span>
+              <span style={{ fontSize: 13, color: "#334155", fontFamily: "monospace" }}>Last updated: just now</span>
             </div>
           </motion.div>
 
@@ -962,8 +962,8 @@ export default function LandingPage() {
               { label: "AI Oracle", desc: "Streams context-aware guidance", color: "#8b5cf6" },
             ].map(c => (
               <div key={c.label} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: c.color, marginBottom: 2 }}>↑ {c.label}</div>
-                <div style={{ fontSize: 10, color: "#475569" }}>{c.desc}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: c.color, marginBottom: 2 }}>↑ {c.label}</div>
+                <div style={{ fontSize: 14, color: "#475569" }}>{c.desc}</div>
               </div>
             ))}
           </motion.div>
@@ -1093,8 +1093,8 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <p className="text-xs font-semibold" style={{ color: "#e2e8f0" }}>{t.name}</p>
-                      <p className="text-[10px]" style={{ color: "#475569" }}>{t.title}</p>
-                      <p className="text-[10px] font-medium" style={{ color: t.color }}>{t.planet}</p>
+                      <p className="text-[14px]" style={{ color: "#475569" }}>{t.title}</p>
+                      <p className="text-[14px] font-medium" style={{ color: t.color }}>{t.planet}</p>
                     </div>
                   </div>
                 </div>
@@ -1261,7 +1261,7 @@ export default function LandingPage() {
                 <div className="p-7 flex flex-col h-full">
                   <div className="flex items-start justify-between mb-5">
                     <div>
-                      <p className="text-[9px] font-bold tracking-widest mb-1" style={{ color: plan.color }}>{plan.name}</p>
+                      <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: plan.color }}>{plan.name}</p>
                       <div className="flex items-end gap-1">
                         <span className="font-bold" style={{
                           fontFamily: "'Cormorant Garamond', Georgia, serif",
@@ -1278,7 +1278,7 @@ export default function LandingPage() {
                       </div>
                     </div>
                     {plan.accent && (
-                      <span className="text-[8px] tracking-widest px-2.5 py-1 rounded-lg"
+                      <span className="text-[13px] tracking-widest px-2.5 py-1 rounded-lg"
                         style={{ background: "rgba(200,165,91,0.12)", border: "1px solid rgba(200,165,91,0.28)", color: "var(--solar)", flexShrink: 0, whiteSpace: "nowrap", fontFamily: "'Fragment Mono', monospace" }}>
                         MOST DEPTH
                       </span>
@@ -1434,7 +1434,7 @@ export default function LandingPage() {
                 "Dignities & Debilities", "3D Orrery", "Aspect Patterns", "Dispositor Trees",
               ].map((item, i) => (
                 <span key={i} className="flex items-center gap-4">
-                  <span style={{ fontSize: 9, letterSpacing: "0.16em", color: "var(--text-3)", fontFamily: "'Fragment Mono', monospace" }}>{item}</span>
+                  <span style={{ fontSize: 13, letterSpacing: "0.16em", color: "var(--text-3)", fontFamily: "'Fragment Mono', monospace" }}>{item}</span>
                   <span style={{ color: "var(--text-3)", fontSize: "0.4rem", opacity: 0.5 }}>◆</span>
                 </span>
               ))}
@@ -1455,12 +1455,12 @@ export default function LandingPage() {
                 <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
               </svg>
             </div>
-            <span style={{ fontFamily: "'Fragment Mono', monospace", fontSize: 11, letterSpacing: "0.18em", color: "var(--solar)" }}>COSMORA</span>
+            <span style={{ fontFamily: "'Fragment Mono', monospace", fontSize: 13, letterSpacing: "0.18em", color: "var(--solar)" }}>COSMORA</span>
           </div>
           <p className="text-xs text-center" style={{ color: "var(--text-3)", fontFamily: "'Outfit', sans-serif" }}>
             Astrology as symbolic intelligence — not prediction, not fate.
           </p>
-          <p style={{ fontSize: 10, color: "var(--text-3)", fontFamily: "'Fragment Mono', monospace" }}>© 2026 Cosmora</p>
+          <p style={{ fontSize: 14, color: "var(--text-3)", fontFamily: "'Fragment Mono', monospace" }}>© 2026 Cosmora</p>
         </div>
       </footer>
     </div>

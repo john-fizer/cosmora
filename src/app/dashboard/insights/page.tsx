@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -130,8 +130,8 @@ function SectionHeader({ label, sub }: { label: string; sub?: string }) {
   return (
     <div className="flex items-center gap-3 mb-4">
       <div className="flex flex-col gap-0.5">
-        <span className="text-[9px] font-bold tracking-[0.2em] uppercase" style={{ color: "#06b6d4" }}>{label}</span>
-        {sub && <span className="text-[10px]" style={{ color: "#334155" }}>{sub}</span>}
+        <span className="text-[13px] font-bold tracking-[0.2em] uppercase" style={{ color: "#06b6d4" }}>{label}</span>
+        {sub && <span className="text-[14px]" style={{ color: "#334155" }}>{sub}</span>}
       </div>
       <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, rgba(6,182,212,0.2), transparent)" }} />
     </div>
@@ -163,8 +163,8 @@ function ChartSnapshot({ chart }: { chart: ChartData }) {
       {pills.map(p => (
         <div key={p.label} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
           style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <span className="text-[8px] tracking-widest font-bold" style={{ color: "#475569" }}>{p.label}</span>
-          <span className="text-[10px] font-semibold" style={{ color: p.color }}>{p.value}</span>
+          <span className="text-[13px] tracking-widest font-bold" style={{ color: "#475569" }}>{p.label}</span>
+          <span className="text-[14px] font-semibold" style={{ color: p.color }}>{p.value}</span>
         </div>
       ))}
     </div>
@@ -216,7 +216,7 @@ function ConvergenceRadar({ chart }: { chart: ChartData }) {
       className="rounded-2xl p-5"
       style={{ background: "rgba(4,4,28,0.7)", border: "1px solid rgba(99,102,241,0.18)" }}
     >
-      <p className="text-[8px] font-bold tracking-widest mb-4" style={{ color: "#64748b" }}>
+      <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "#64748b" }}>
         CONVERGENCE SCORE — HOUSE ACTIVATION MAP
       </p>
       <div className="flex flex-col md:flex-row gap-6 items-center">
@@ -300,10 +300,10 @@ function ConvergenceRadar({ chart }: { chart: ChartData }) {
 
         {/* Top houses list */}
         <div className="flex-1 space-y-3">
-          <p className="text-[8px] tracking-widest font-bold" style={{ color: "#475569" }}>TOP ACTIVATED HOUSES</p>
+          <p className="text-[13px] tracking-widest font-bold" style={{ color: "#475569" }}>TOP ACTIVATED HOUSES</p>
           {ranked.map(({ h, score }, idx) => (
             <div key={h} className="flex items-center gap-3">
-              <span className="text-[9px] font-bold w-6 text-right flex-shrink-0"
+              <span className="text-[13px] font-bold w-6 text-right flex-shrink-0"
                 style={{ color: idx === 0 ? "#a5b4fc" : "#475569" }}>
                 H{h}
               </span>
@@ -317,16 +317,16 @@ function ConvergenceRadar({ chart }: { chart: ChartData }) {
                 />
               </div>
               <div className="flex-shrink-0 text-right" style={{ minWidth: 90 }}>
-                <p className="text-[9px] font-semibold" style={{ color: idx === 0 ? "#e2e8f0" : "#64748b" }}>
+                <p className="text-[13px] font-semibold" style={{ color: idx === 0 ? "#e2e8f0" : "#64748b" }}>
                   {HOUSE_THEMES[h]?.name}
                 </p>
-                <p className="text-[7px]" style={{ color: "#334155" }}>
+                <p className="text-[14px]" style={{ color: "#334155" }}>
                   {HOUSE_THEMES[h]?.keywords.split(" · ")[0]}
                 </p>
               </div>
             </div>
           ))}
-          <p className="text-[8px] leading-relaxed mt-2" style={{ color: "#334155" }}>
+          <p className="text-[13px] leading-relaxed mt-2" style={{ color: "#334155" }}>
             Scores blend profection timing, lord placement,<br />
             and natal planet concentrations.
           </p>
@@ -390,7 +390,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
           boxShadow: "0 0 60px rgba(124,58,237,0.08)",
         }}
       >
-        <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#7c3aed" }}>CHART SIGNATURE</p>
+        <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#7c3aed" }}>CHART SIGNATURE</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: "SUN",       value: sun?.sign,           color: "#fbbf24", symbol: PLANET_SYMBOLS.Sun },
@@ -400,12 +400,12 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                                                               color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd", symbol: chart.sect === "day" ? "☀" : "☽" },
           ].map(({ label, value, color, symbol }) => value ? (
             <div key={label}>
-              <p className="text-[7px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>{label}</p>
+              <p className="text-[14px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>{label}</p>
               <div className="flex items-center gap-1.5">
                 <span className="text-lg" style={{ color }}>{symbol}</span>
                 <div>
                   <p className="text-sm font-bold" style={{ color }}>{value}</p>
-                  <p className="text-[8px]" style={{ color: "#475569" }}>{SIGN_KEYWORDS[value as ZodiacSign]?.split(" · ")[0]}</p>
+                  <p className="text-[13px]" style={{ color: "#475569" }}>{SIGN_KEYWORDS[value as ZodiacSign]?.split(" · ")[0]}</p>
                 </div>
               </div>
             </div>
@@ -413,16 +413,16 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
         </div>
 
         <div className="mt-4 pt-4 flex flex-wrap gap-2" style={{ borderTop: "1px solid rgba(124,58,237,0.1)" }}>
-          <span className="text-[8px] px-2.5 py-1 rounded-full font-bold"
+          <span className="text-[13px] px-2.5 py-1 rounded-full font-bold"
             style={{ background: `${ELEMENT_COLORS[dominantElement as keyof typeof ELEMENT_COLORS]}18`, color: ELEMENT_COLORS[dominantElement as keyof typeof ELEMENT_COLORS] }}>
             {dominantElement} dominant
           </span>
-          <span className="text-[8px] px-2.5 py-1 rounded-full font-bold"
+          <span className="text-[13px] px-2.5 py-1 rounded-full font-bold"
             style={{ background: `${MODALITY_COLORS[dominantModality as keyof typeof MODALITY_COLORS]}18`, color: MODALITY_COLORS[dominantModality as keyof typeof MODALITY_COLORS] }}>
             {dominantModality} modality
           </span>
           {dignifiedPlanets.map(p => (
-            <span key={p.name} className="text-[8px] px-2.5 py-1 rounded-full font-bold"
+            <span key={p.name} className="text-[13px] px-2.5 py-1 rounded-full font-bold"
               style={{ background: "rgba(34,197,94,0.1)", color: "#22c55e" }}>
               {PLANET_SYMBOLS[p.name]} {p.name} {p.dignity}
             </span>
@@ -440,20 +440,20 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
           className="rounded-2xl p-4"
           style={{ background: `${lordColor}0d`, border: `1px solid ${lordColor}25` }}
         >
-          <p className="text-[7px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>LORD OF THE YEAR</p>
+          <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>LORD OF THE YEAR</p>
           <div className="flex items-center gap-2 mb-2">
             <span className="text-2xl" style={{ color: lordColor }}>{PLANET_SYMBOLS[prof.lordOfYear]}</span>
             <div>
               <p className="text-sm font-bold" style={{ color: lordColor }}>{prof.lordOfYear}</p>
-              <p className="text-[9px]" style={{ color: "#475569" }}>Age {prof.age} · H{prof.activatedHouse}</p>
+              <p className="text-[13px]" style={{ color: "#475569" }}>Age {prof.age} · H{prof.activatedHouse}</p>
             </div>
           </div>
-          <p className="text-[9px] leading-relaxed" style={{ color: "#64748b" }}>
+          <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>
             {prof.activatedSign} house activated · {HOUSE_THEMES[prof.activatedHouse]?.name} themes dominate this year.
           </p>
           <button
             onClick={() => onAskOracle(READING_PROMPTS.find(r => r.id === "timing")!.prompt)}
-            className="mt-3 text-[8px] font-bold tracking-widest cursor-pointer"
+            className="mt-3 text-[13px] font-bold tracking-widest cursor-pointer"
             style={{ color: lordColor }}
           >
             ASK ORACLE →
@@ -469,7 +469,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
             className="rounded-2xl p-4"
             style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)" }}
           >
-            <p className="text-[7px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>STRONGEST PLACEMENT</p>
+            <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>STRONGEST PLACEMENT</p>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-2xl" style={{ color: PLANET_COLORS[dignifiedPlanets[0].name] ?? "#94a3b8" }}>
                 {PLANET_SYMBOLS[dignifiedPlanets[0].name]}
@@ -478,16 +478,16 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                 <p className="text-sm font-bold" style={{ color: PLANET_COLORS[dignifiedPlanets[0].name] ?? "#94a3b8" }}>
                   {dignifiedPlanets[0].name}
                 </p>
-                <p className="text-[9px]" style={{ color: "#475569" }}>
+                <p className="text-[13px]" style={{ color: "#475569" }}>
                   {SIGN_SYMBOLS[dignifiedPlanets[0].sign]} {dignifiedPlanets[0].sign} · H{dignifiedPlanets[0].house}
                 </p>
               </div>
             </div>
-            <span className="text-[8px] px-2 py-0.5 rounded font-bold" style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e" }}>
+            <span className="text-[13px] px-2 py-0.5 rounded font-bold" style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e" }}>
               In {dignifiedPlanets[0].dignity}
             </span>
             {dignifiedPlanets.length > 1 && (
-              <p className="text-[9px] mt-2" style={{ color: "#475569" }}>
+              <p className="text-[13px] mt-2" style={{ color: "#475569" }}>
                 +{dignifiedPlanets.length - 1} more dignified planet{dignifiedPlanets.length > 2 ? "s" : ""}
               </p>
             )}
@@ -503,12 +503,12 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
             className="rounded-2xl p-4"
             style={{ background: "rgba(168,85,247,0.06)", border: "1px solid rgba(168,85,247,0.2)" }}
           >
-            <p className="text-[7px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>STELLIUM</p>
+            <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>STELLIUM</p>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-lg" style={{ color: SIGN_COLORS[stelliums[0][0]] }}>{SIGN_SYMBOLS[stelliums[0][0]]}</span>
               <div>
                 <p className="text-sm font-bold" style={{ color: SIGN_COLORS[stelliums[0][0]] }}>{stelliums[0][0]}</p>
-                <p className="text-[9px]" style={{ color: "#475569" }}>{stelliums[0][1].length} planets concentrated</p>
+                <p className="text-[13px]" style={{ color: "#475569" }}>{stelliums[0][1].length} planets concentrated</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-1 mt-1">
@@ -527,7 +527,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
             className="rounded-2xl p-4"
             style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.15)" }}
           >
-            <p className="text-[7px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>ASPECTS OVERVIEW</p>
+            <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>ASPECTS OVERVIEW</p>
             <div className="space-y-1.5">
               {(["trine", "conjunction", "square", "opposition", "sextile"] as const).map(type => {
                 const count = chart.aspects.filter(a => a.type === type).length;
@@ -535,9 +535,9 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                 const color = ASPECT_COLORS[type];
                 return (
                   <div key={type} className="flex items-center gap-2">
-                    <span className="text-[9px] w-4" style={{ color }}>{ASPECT_GLYPHS[type]}</span>
-                    <span className="text-[9px] flex-1 capitalize" style={{ color: "#475569" }}>{type}</span>
-                    <span className="text-[9px] font-bold" style={{ color }}>{count}</span>
+                    <span className="text-[13px] w-4" style={{ color }}>{ASPECT_GLYPHS[type]}</span>
+                    <span className="text-[13px] flex-1 capitalize" style={{ color: "#475569" }}>{type}</span>
+                    <span className="text-[13px] font-bold" style={{ color }}>{count}</span>
                   </div>
                 );
               })}
@@ -592,13 +592,13 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                   <p className="text-xs font-bold" style={{ color: sectLightColor }}>
                     {isDay ? "Day Chart — Sun is your Sect Light" : "Night Chart — Moon is your Sect Light"}
                   </p>
-                  <p className="text-[9px] mt-0.5 leading-relaxed" style={{ color: "#475569" }}>
+                  <p className="text-[13px] mt-0.5 leading-relaxed" style={{ color: "#475569" }}>
                     {isDay
                       ? "Born with the Sun above the horizon. Solar principles dominate: will, clarity, conscious purpose."
                       : "Born with the Sun below the horizon. Lunar principles guide: emotion, instinct, receptive wisdom."}
                   </p>
                   {sectLightPlanet && (
-                    <p className="text-[8px] mt-1 font-mono" style={{ color: "#334155" }}>
+                    <p className="text-[13px] mt-1 font-mono" style={{ color: "#334155" }}>
                       {sectLight} in {SIGN_SYMBOLS[sectLightPlanet.sign]} {sectLightPlanet.sign} · H{sectLightPlanet.house}
                       {sectLightPlanet.dignity && sectLightPlanet.dignity !== "peregrine" ? ` · ${sectLightPlanet.dignity}` : ""}
                     </p>
@@ -617,15 +617,15 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                   return (
                     <div key={label} className="rounded-xl p-3 text-center"
                       style={{ background: `${color}0a`, border: `1px solid ${color}20` }}>
-                      <p className="text-[6px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>{label}</p>
+                      <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>{label}</p>
                       <span className="text-2xl block mb-1" style={{ color }}>{PLANET_SYMBOLS[name]}</span>
-                      <p className="text-[9px] font-bold" style={{ color }}>{name}</p>
+                      <p className="text-[13px] font-bold" style={{ color }}>{name}</p>
                       {planet && (
-                        <p className="text-[7px] mt-0.5" style={{ color: "#475569" }}>
+                        <p className="text-[14px] mt-0.5" style={{ color: "#475569" }}>
                           {SIGN_SYMBOLS[planet.sign]} {planet.sign} · H{planet.house}
                         </p>
                       )}
-                      <p className="text-[7px] mt-1.5 leading-tight" style={{ color: "#334155" }}>{desc}</p>
+                      <p className="text-[14px] mt-1.5 leading-tight" style={{ color: "#334155" }}>{desc}</p>
                     </div>
                   );
                 })}
@@ -633,7 +633,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
 
               {/* All 7 planets sect grid */}
               <div>
-                <p className="text-[7px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>TRADITIONAL 7 — SECT STATUS</p>
+                <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>TRADITIONAL 7 — SECT STATUS</p>
                 <div className="grid grid-cols-7 gap-1.5">
                   {sevenPlanets.map(name => {
                     const planet = chart.planets.find(p => p.name === name);
@@ -649,10 +649,10 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                         <span className="text-lg leading-none" style={{ color: inSect ? color : `${color}45` }}>
                           {PLANET_SYMBOLS[name]}
                         </span>
-                        <span className="text-[6px]" style={{ color: inSect ? color : "#334155" }}>
+                        <span className="text-[14px]" style={{ color: inSect ? color : "#334155" }}>
                           {name.substring(0, 3).toUpperCase()}
                         </span>
-                        <span className="text-[7px] font-bold" style={{ color: inSect ? "#22c55e" : "#475569" }}>
+                        <span className="text-[14px] font-bold" style={{ color: inSect ? "#22c55e" : "#475569" }}>
                           {inSect ? "✓" : "○"}
                         </span>
                       </div>
@@ -664,26 +664,26 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
               {/* Out-of-sect implications */}
               <div className="grid md:grid-cols-2 gap-3 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                 <div className="rounded-xl p-3" style={{ background: `${outSectMalColor}08`, border: `1px solid ${outSectMalColor}20` }}>
-                  <p className="text-[8px] font-bold mb-1.5" style={{ color: outSectMalColor }}>
+                  <p className="text-[13px] font-bold mb-1.5" style={{ color: outSectMalColor }}>
                     {PLANET_SYMBOLS[outSectMalefic]} {outSectMalefic} — Out-of-Sect Malefic
                   </p>
-                  <p className="text-[8px] leading-relaxed" style={{ color: "#475569" }}>
+                  <p className="text-[13px] leading-relaxed" style={{ color: "#475569" }}>
                     {isDay
                       ? "Mars is contrary to sect and may act with excess or aggression. Its drive lacks moderation — channel it consciously."
                       : "Saturn is contrary to sect and tends toward excessive restriction. Isolation and harsh limits must be actively balanced."}
                   </p>
                   {outSectMalPlanet && (
-                    <p className="text-[7px] mt-2 font-mono" style={{ color: "#334155" }}>
+                    <p className="text-[14px] mt-2 font-mono" style={{ color: "#334155" }}>
                       Currently in {outSectMalPlanet.sign} · H{outSectMalPlanet.house}
                       {outSectMalPlanet.retrograde ? " · ℞" : ""}
                     </p>
                   )}
                 </div>
                 <div className="rounded-xl p-3" style={{ background: "rgba(99,102,241,0.05)", border: "1px solid rgba(99,102,241,0.15)" }}>
-                  <p className="text-[8px] font-bold mb-1.5" style={{ color: "#a78bfa" }}>
+                  <p className="text-[13px] font-bold mb-1.5" style={{ color: "#a78bfa" }}>
                     {PLANET_SYMBOLS[outSectBenefic]} {outSectBenefic} — Out-of-Sect Benefic
                   </p>
-                  <p className="text-[8px] leading-relaxed" style={{ color: "#475569" }}>
+                  <p className="text-[13px] leading-relaxed" style={{ color: "#475569" }}>
                     {isDay
                       ? "Venus brings gifts that may need cultivation — love, beauty, and pleasure require active engagement rather than passive reception."
                       : "Jupiter's expansion may scatter without focus — wisdom and abundance come through deliberate structure rather than blind faith."}
@@ -698,11 +698,11 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
       {/* Element & modality bars */}
       <div className="grid md:grid-cols-2 gap-4">
         <div className="rounded-2xl p-4" style={{ background: "rgba(4,4,28,0.6)", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>ELEMENT BALANCE</p>
+          <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>ELEMENT BALANCE</p>
           <div className="space-y-2.5">
             {(Object.entries(elements) as [keyof typeof elements, number][]).map(([el, count]) => (
               <div key={el} className="flex items-center gap-2">
-                <span className="text-[8px] font-bold w-10 flex-shrink-0" style={{ color: ELEMENT_COLORS[el] }}>{el}</span>
+                <span className="text-[13px] font-bold w-10 flex-shrink-0" style={{ color: ELEMENT_COLORS[el] }}>{el}</span>
                 <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
                   <motion.div
                     initial={{ width: 0 }}
@@ -712,18 +712,18 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                     style={{ background: ELEMENT_COLORS[el], boxShadow: `0 0 4px ${ELEMENT_COLORS[el]}` }}
                   />
                 </div>
-                <span className="text-[9px] font-bold w-4 text-right" style={{ color: ELEMENT_COLORS[el] }}>{count}</span>
+                <span className="text-[13px] font-bold w-4 text-right" style={{ color: ELEMENT_COLORS[el] }}>{count}</span>
               </div>
             ))}
           </div>
         </div>
 
         <div className="rounded-2xl p-4" style={{ background: "rgba(4,4,28,0.6)", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>MODALITY BALANCE</p>
+          <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>MODALITY BALANCE</p>
           <div className="space-y-2.5">
             {(Object.entries(modalities) as [keyof typeof modalities, number][]).map(([mod, count]) => (
               <div key={mod} className="flex items-center gap-2">
-                <span className="text-[8px] font-bold w-14 flex-shrink-0" style={{ color: MODALITY_COLORS[mod] }}>{mod}</span>
+                <span className="text-[13px] font-bold w-14 flex-shrink-0" style={{ color: MODALITY_COLORS[mod] }}>{mod}</span>
                 <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
                   <motion.div
                     initial={{ width: 0 }}
@@ -733,7 +733,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                     style={{ background: MODALITY_COLORS[mod], boxShadow: `0 0 4px ${MODALITY_COLORS[mod]}` }}
                   />
                 </div>
-                <span className="text-[9px] font-bold w-4 text-right" style={{ color: MODALITY_COLORS[mod] }}>{count}</span>
+                <span className="text-[13px] font-bold w-4 text-right" style={{ color: MODALITY_COLORS[mod] }}>{count}</span>
               </div>
             ))}
           </div>
@@ -759,8 +759,8 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
               {emphasized.map(({ house, planets }) => (
                 <div key={house} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(99,102,241,0.12)" }}>
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-[8px] font-bold tracking-widest" style={{ color: "#4f46e5" }}>H{house}</span>
-                    <span className="text-[9px] font-semibold" style={{ color: "#94a3b8" }}>
+                    <span className="text-[13px] font-bold tracking-widest" style={{ color: "#4f46e5" }}>H{house}</span>
+                    <span className="text-[13px] font-semibold" style={{ color: "#94a3b8" }}>
                       {HOUSE_THEMES[house]?.name}
                     </span>
                   </div>
@@ -771,7 +771,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                       </span>
                     ))}
                   </div>
-                  <p className="text-[8px] mt-1.5" style={{ color: "#334155" }}>
+                  <p className="text-[13px] mt-1.5" style={{ color: "#334155" }}>
                     {HOUSE_THEMES[house]?.keywords}
                   </p>
                 </div>
@@ -826,13 +826,13 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-sm font-bold" style={{ color: crColor }}>{chartRulerName}</span>
-                      <span className="text-[9px] px-2 py-0.5 rounded-full font-bold" style={{ background: `${crColor}15`, color: crColor }}>CHART RULER</span>
+                      <span className="text-[13px] px-2 py-0.5 rounded-full font-bold" style={{ background: `${crColor}15`, color: crColor }}>CHART RULER</span>
                     </div>
-                    <p className="text-[10px]" style={{ color: "#64748b" }}>
+                    <p className="text-[14px]" style={{ color: "#64748b" }}>
                       {chartRuler.sign} · House {chartRuler.house} · {chartRuler.dignity ? chartRuler.dignity.charAt(0).toUpperCase() + chartRuler.dignity.slice(1) : "Peregrine"}
                       {chartRuler.retrograde ? " · ℞" : ""}
                     </p>
-                    <p className="text-[9px] mt-1" style={{ color: "#475569" }}>
+                    <p className="text-[13px] mt-1" style={{ color: "#475569" }}>
                       Rules the {HOUSE_THEMES[1]?.name} — the most personal planet in your chart, coloring your entire life expression.
                     </p>
                   </div>
@@ -859,22 +859,22 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                       >
                         <div className="flex items-center gap-1.5">
                           <span className="text-xl" style={{ color: aColor }}>{PLANET_SYMBOLS[a.name]}</span>
-                          <span className="text-[9px]" style={{ color: "#475569" }}>in {SIGN_SYMBOLS[b.sign as ZodiacSign]} {bSign}</span>
+                          <span className="text-[13px]" style={{ color: "#475569" }}>in {SIGN_SYMBOLS[b.sign as ZodiacSign]} {bSign}</span>
                         </div>
                         <span className="text-base" style={{ color: "#334155" }}>⇄</span>
                         <div className="flex items-center gap-1.5">
                           <span className="text-xl" style={{ color: bColor }}>{PLANET_SYMBOLS[b.name]}</span>
-                          <span className="text-[9px]" style={{ color: "#475569" }}>in {SIGN_SYMBOLS[a.sign as ZodiacSign]} {aSign}</span>
+                          <span className="text-[13px]" style={{ color: "#475569" }}>in {SIGN_SYMBOLS[a.sign as ZodiacSign]} {aSign}</span>
                         </div>
                         <div className="ml-auto">
-                          <span className="text-[8px] font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.1)", color: "#22c55e" }}>
+                          <span className="text-[13px] font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.1)", color: "#22c55e" }}>
                             MUTUAL RX
                           </span>
                         </div>
                       </motion.div>
                     );
                   })}
-                  <p className="text-[8px] px-1" style={{ color: "#334155" }}>
+                  <p className="text-[13px] px-1" style={{ color: "#334155" }}>
                     These planets act as if in their own domicile — each gains strength and purpose through the other.
                   </p>
                 </div>
@@ -897,8 +897,8 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
               className="text-left p-3 rounded-xl cursor-pointer transition-all duration-200"
               style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.06)" }}
             >
-              <p className="text-[9px] font-bold tracking-wider" style={{ color: "#a78bfa" }}>{rp.label}</p>
-              <p className="text-[8px] mt-1 leading-relaxed" style={{ color: "#475569" }}>
+              <p className="text-[13px] font-bold tracking-wider" style={{ color: "#a78bfa" }}>{rp.label}</p>
+              <p className="text-[13px] mt-1 leading-relaxed" style={{ color: "#475569" }}>
                 {rp.prompt.substring(0, 60)}…
               </p>
             </motion.button>
@@ -988,8 +988,8 @@ function DispositorTree({ chart }: { chart: ChartData }) {
       style={{ background: "rgba(4,4,28,0.7)", border: "1px solid rgba(99,102,241,0.15)" }}
     >
       <div className="flex items-center justify-between mb-4">
-        <p className="text-[8px] font-bold tracking-widest" style={{ color: "#64748b" }}>DISPOSITOR TREE — RULERSHIP FLOW</p>
-        <div className="flex items-center gap-3 text-[7px] tracking-widest font-bold" style={{ color: "#334155" }}>
+        <p className="text-[13px] font-bold tracking-widest" style={{ color: "#64748b" }}>DISPOSITOR TREE — RULERSHIP FLOW</p>
+        <div className="flex items-center gap-3 text-[14px] tracking-widest font-bold" style={{ color: "#334155" }}>
           <span>→ DISPOSITS</span>
           <span style={{ color: "#fbbf24" }}>◎ FINAL</span>
         </div>
@@ -1127,7 +1127,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
       </div>
 
       {/* Legend */}
-      <div className="mt-4 flex flex-wrap items-center gap-4 text-[7px] tracking-widest" style={{ color: "#334155" }}>
+      <div className="mt-4 flex flex-wrap items-center gap-4 text-[14px] tracking-widest" style={{ color: "#334155" }}>
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-px" style={{ background: "rgba(99,102,241,0.5)", border: "none" }} />
           <span style={{ background: "rgba(99,102,241,0.35)", height: 1, display: "inline-block", width: 16, borderBottom: "1px dashed rgba(99,102,241,0.5)" }} />
@@ -1146,7 +1146,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
           exaltation
         </div>
         <div className="flex items-center gap-1.5">
-          <span style={{ fontSize: 9, color: "#f97316" }}>℞</span>
+          <span style={{ fontSize: 13, color: "#f97316" }}>℞</span>
           retrograde
         </div>
       </div>
@@ -1196,21 +1196,21 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold" style={{ color: "#e2e8f0" }}>{p.name}</span>
-                    {p.retrograde && <span className="text-[8px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(239,68,68,0.12)", color: "#ef4444" }}>℞</span>}
+                    {p.retrograde && <span className="text-[13px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(239,68,68,0.12)", color: "#ef4444" }}>℞</span>}
                   </div>
                   <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="text-[10px]" style={{ color: signColor }}>{SIGN_SYMBOLS[p.sign]} {p.sign}</span>
-                    <span className="text-[8px]" style={{ color: "#334155" }}>·</span>
-                    <span className="text-[9px]" style={{ color: "#475569" }}>{p.signDegree.toFixed(1)}°</span>
-                    <span className="text-[8px]" style={{ color: "#334155" }}>·</span>
-                    <span className="text-[9px]" style={{ color: "#4f46e5" }}>H{p.house}</span>
+                    <span className="text-[14px]" style={{ color: signColor }}>{SIGN_SYMBOLS[p.sign]} {p.sign}</span>
+                    <span className="text-[13px]" style={{ color: "#334155" }}>·</span>
+                    <span className="text-[13px]" style={{ color: "#475569" }}>{p.signDegree.toFixed(1)}°</span>
+                    <span className="text-[13px]" style={{ color: "#334155" }}>·</span>
+                    <span className="text-[13px]" style={{ color: "#4f46e5" }}>H{p.house}</span>
                   </div>
                 </div>
 
                 {/* Dignity badge */}
                 <div className="flex flex-col items-end gap-1 flex-shrink-0">
                   {dignity && (
-                    <span className="text-[7px] font-bold px-2 py-0.5 rounded"
+                    <span className="text-[14px] font-bold px-2 py-0.5 rounded"
                       style={{ background: dignity.bg, color: dignity.color }}>
                       {dignity.label}
                     </span>
@@ -1236,14 +1236,14 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                     <div className="px-4 pb-4 pt-1" style={{ borderTop: `1px solid ${color}18` }}>
                       <div className="grid grid-cols-2 gap-3 mb-3">
                         <div>
-                          <p className="text-[7px] tracking-widest mb-1" style={{ color: "#334155" }}>PLANET ROLE</p>
-                          <p className="text-[9px] leading-relaxed" style={{ color: "#64748b" }}>
+                          <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>PLANET ROLE</p>
+                          <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>
                             {PLANET_KEYWORDS[p.name]}
                           </p>
                         </div>
                         <div>
-                          <p className="text-[7px] tracking-widest mb-1" style={{ color: "#334155" }}>IN {p.sign.toUpperCase()}</p>
-                          <p className="text-[9px] leading-relaxed" style={{ color: signColor }}>
+                          <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>IN {p.sign.toUpperCase()}</p>
+                          <p className="text-[13px] leading-relaxed" style={{ color: signColor }}>
                             {SIGN_KEYWORDS[p.sign]}
                           </p>
                         </div>
@@ -1255,8 +1255,8 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                           { label: "DIGNITY", value: p.dignity ? p.dignity.charAt(0).toUpperCase() + p.dignity.slice(1) : "Peregrine" },
                         ].map(r => (
                           <div key={r.label}>
-                            <p className="text-[7px] tracking-widest mb-0.5" style={{ color: "#334155" }}>{r.label}</p>
-                            <p className="text-[9px] font-medium" style={{ color: "#94a3b8" }}>{r.value}</p>
+                            <p className="text-[14px] tracking-widest mb-0.5" style={{ color: "#334155" }}>{r.label}</p>
+                            <p className="text-[13px] font-medium" style={{ color: "#94a3b8" }}>{r.value}</p>
                           </div>
                         ))}
                       </div>
@@ -1264,7 +1264,7 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                         onClick={(e) => { e.stopPropagation(); warpTo(`/dashboard/chart/${p.name.toLowerCase()}`); }}
                         whileHover={{ scale: 1.02, borderColor: `${color}50` }}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full py-2 rounded-xl text-[9px] font-bold tracking-widest cursor-pointer"
+                        className="w-full py-2 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
                         style={{
                           background: `${color}10`,
                           border: `1px solid ${color}25`,
@@ -1304,7 +1304,7 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                   className="flex items-center gap-3"
                 >
                   <span className="text-base w-5 flex-shrink-0" style={{ color }}>{PLANET_SYMBOLS[p.name]}</span>
-                  <span className="text-[9px] font-medium w-16 flex-shrink-0" style={{ color: "#94a3b8" }}>{p.name}</span>
+                  <span className="text-[13px] font-medium w-16 flex-shrink-0" style={{ color: "#94a3b8" }}>{p.name}</span>
                   <div className="flex-1 h-2 rounded-full overflow-hidden relative" style={{ background: "rgba(255,255,255,0.05)" }}>
                     {/* Midpoint marker at "0" */}
                     <div className="absolute top-0 bottom-0 w-px" style={{ left: "50%", background: "rgba(255,255,255,0.08)" }} />
@@ -1321,17 +1321,17 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                       transition={{ duration: 0.7, ease: "easeOut", delay: i * 0.04 }}
                     />
                   </div>
-                  <span className="text-[9px] font-bold w-16 text-right flex-shrink-0" style={{ color: barColor }}>
+                  <span className="text-[13px] font-bold w-16 text-right flex-shrink-0" style={{ color: barColor }}>
                     {p.dignity ? p.dignity.charAt(0).toUpperCase() + p.dignity.slice(1) : "Peregrine"}
                   </span>
-                  <span className="text-[9px] font-mono w-6 text-right flex-shrink-0" style={{ color: barColor }}>
+                  <span className="text-[13px] font-mono w-6 text-right flex-shrink-0" style={{ color: barColor }}>
                     {score > 0 ? "+" : ""}{score}
                   </span>
                 </motion.div>
               );
             })}
           </div>
-          <p className="text-[7px] mt-3 pt-3 tracking-widest" style={{ color: "#1e293b", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+          <p className="text-[14px] mt-3 pt-3 tracking-widest" style={{ color: "#1e293b", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
             DOMICILE +10 · EXALTATION +8 · PEREGRINE 0 · DETRIMENT −5 · FALL −7
           </p>
         </div>
@@ -1385,14 +1385,14 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-lg font-black" style={{ color: winnerColor }}>{winner.planet.name}</span>
-                    <span className="text-[9px] font-bold px-2 py-0.5 rounded-full" style={{ background: `${winnerColor}18`, color: winnerColor }}>ALMUTEN</span>
-                    <span className="text-[9px] font-mono font-bold" style={{ color: "#475569" }}>Score {winner.total > 0 ? "+" : ""}{winner.total}</span>
+                    <span className="text-[13px] font-bold px-2 py-0.5 rounded-full" style={{ background: `${winnerColor}18`, color: winnerColor }}>ALMUTEN</span>
+                    <span className="text-[13px] font-mono font-bold" style={{ color: "#475569" }}>Score {winner.total > 0 ? "+" : ""}{winner.total}</span>
                   </div>
-                  <p className="text-[10px] leading-relaxed" style={{ color: "#64748b" }}>
+                  <p className="text-[14px] leading-relaxed" style={{ color: "#64748b" }}>
                     {winner.planet.sign} · House {winner.planet.house} · {winner.planet.dignity ? winner.planet.dignity.charAt(0).toUpperCase() + winner.planet.dignity.slice(1) : "Peregrine"}
                     {winner.planet.retrograde ? " · ℞ Retrograde" : ""}
                   </p>
-                  <p className="text-[9px] mt-1" style={{ color: "#334155" }}>
+                  <p className="text-[13px] mt-1" style={{ color: "#334155" }}>
                     Essential {winner.essential > 0 ? "+" : ""}{winner.essential}  ·  Angular +{winner.angular}  ·  Sect +{winner.sectBonus}{winner.retroPenalty ? `  ·  Rx ${winner.retroPenalty}` : ""}
                   </p>
                 </div>
@@ -1413,7 +1413,7 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                         className="flex items-center gap-2"
                       >
                         <span className="text-sm w-5 flex-shrink-0" style={{ color }}>{PLANET_SYMBOLS[s.planet.name]}</span>
-                        <span className="text-[8px] w-14 flex-shrink-0" style={{ color: i === 0 ? color : "#475569", fontWeight: i === 0 ? "700" : "400" }}>{s.planet.name}</span>
+                        <span className="text-[13px] w-14 flex-shrink-0" style={{ color: i === 0 ? color : "#475569", fontWeight: i === 0 ? "700" : "400" }}>{s.planet.name}</span>
                         <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.04)" }}>
                           <motion.div
                             className="h-full rounded-full"
@@ -1423,14 +1423,14 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                             transition={{ duration: 0.7, ease: "easeOut", delay: i * 0.04 }}
                           />
                         </div>
-                        <span className="text-[8px] font-mono w-8 text-right flex-shrink-0" style={{ color: i === 0 ? color : "#334155" }}>
+                        <span className="text-[13px] font-mono w-8 text-right flex-shrink-0" style={{ color: i === 0 ? color : "#334155" }}>
                           {s.total > 0 ? "+" : ""}{s.total}
                         </span>
                       </motion.div>
                     );
                   })}
                 </div>
-                <p className="text-[7px] mt-3 pt-3 tracking-widest" style={{ color: "#1e293b", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+                <p className="text-[14px] mt-3 pt-3 tracking-widest" style={{ color: "#1e293b", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
                   ESSENTIAL DIGNITY + ANGULAR HOUSE + SECT BONUS − RETROGRADE PENALTY
                 </p>
               </div>
@@ -1461,14 +1461,14 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                 }}>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[8px] font-bold" style={{ color: isAngular ? "#a78bfa" : "#334155" }}>H{i + 1}</span>
-                    {angleLabel && <span className="text-[7px] font-bold" style={{ color: "#7c3aed" }}>{angleLabel}</span>}
+                    <span className="text-[13px] font-bold" style={{ color: isAngular ? "#a78bfa" : "#334155" }}>H{i + 1}</span>
+                    {angleLabel && <span className="text-[14px] font-bold" style={{ color: "#7c3aed" }}>{angleLabel}</span>}
                   </div>
                 </div>
                 <span className="text-base" style={{ color: signColor }}>{SIGN_SYMBOLS[h.sign]}</span>
                 <div>
-                  <p className="text-[9px] font-semibold" style={{ color: signColor }}>{h.sign}</p>
-                  <p className="text-[8px]" style={{ color: "#334155" }}>{h.longitude.toFixed(1)}°</p>
+                  <p className="text-[13px] font-semibold" style={{ color: signColor }}>{h.sign}</p>
+                  <p className="text-[13px]" style={{ color: "#334155" }}>{h.longitude.toFixed(1)}°</p>
                 </div>
               </div>
             );
@@ -1690,7 +1690,7 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
                   )}
                 </div>
                 {p.element && (
-                  <span className="text-[7px] font-bold tracking-widest" style={{ color: p.color }}>
+                  <span className="text-[14px] font-bold tracking-widest" style={{ color: p.color }}>
                     {p.element.substring(0, 4).toUpperCase()}
                   </span>
                 )}
@@ -1701,14 +1701,14 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
                   <span className="text-xs font-bold" style={{ color: p.color }}>{p.type}</span>
                   <div className="flex gap-1 flex-wrap">
                     {p.planets.map(name => (
-                      <span key={name} className="text-[9px] px-1.5 py-0.5 rounded-md"
+                      <span key={name} className="text-[13px] px-1.5 py-0.5 rounded-md"
                         style={{ background: `${PLANET_COLORS[name] ?? "#94a3b8"}18`, color: PLANET_COLORS[name] ?? "#94a3b8", border: `1px solid ${PLANET_COLORS[name] ?? "#94a3b8"}25` }}>
                         {PLANET_SYMBOLS[name]} {name}
                       </span>
                     ))}
                   </div>
                 </div>
-                <p className="text-[9px] leading-relaxed" style={{ color: "#64748b" }}>{p.description}</p>
+                <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>{p.description}</p>
               </div>
             </div>
           </motion.div>
@@ -1752,7 +1752,7 @@ function AspectsTab({ chart }: { chart: ChartData }) {
             style={{ background: `${color}0a`, border: `1px solid ${color}20` }}
           >
             <p className="text-2xl font-bold" style={{ color }}>{value}</p>
-            <p className="text-[7px] tracking-widest mt-0.5 font-bold" style={{ color: "#475569" }}>{label}</p>
+            <p className="text-[14px] tracking-widest mt-0.5 font-bold" style={{ color: "#475569" }}>{label}</p>
           </motion.div>
         ))}
       </div>
@@ -1760,7 +1760,7 @@ function AspectsTab({ chart }: { chart: ChartData }) {
       {/* Exact aspects highlight */}
       {exactAspects.length > 0 && (
         <div className="rounded-2xl p-4" style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.2)" }}>
-          <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#7c3aed" }}>EXACT ASPECTS · MOST POWERFUL</p>
+          <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#7c3aed" }}>EXACT ASPECTS · MOST POWERFUL</p>
           <div className="flex flex-wrap gap-2">
             {exactAspects.map((a, i) => {
               const color = ASPECT_COLORS[a.type] ?? "#94a3b8";
@@ -1768,9 +1768,9 @@ function AspectsTab({ chart }: { chart: ChartData }) {
                 <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl"
                   style={{ background: `${color}12`, border: `1px solid ${color}25` }}>
                   <span style={{ color: PLANET_COLORS[a.planet1] ?? "#94a3b8" }}>{PLANET_SYMBOLS[a.planet1]}</span>
-                  <span className="text-[10px] font-bold" style={{ color }}>{ASPECT_GLYPHS[a.type]}</span>
+                  <span className="text-[14px] font-bold" style={{ color }}>{ASPECT_GLYPHS[a.type]}</span>
                   <span style={{ color: PLANET_COLORS[a.planet2] ?? "#94a3b8" }}>{PLANET_SYMBOLS[a.planet2]}</span>
-                  <span className="text-[8px] font-bold" style={{ color }}>{a.orb.toFixed(2)}°</span>
+                  <span className="text-[13px] font-bold" style={{ color }}>{a.orb.toFixed(2)}°</span>
                 </div>
               );
             })}
@@ -1821,14 +1821,14 @@ function AspectsTab({ chart }: { chart: ChartData }) {
                     style={{ background: `${color}08`, border: `1px solid ${color}20` }}
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-[9px] font-black w-4" style={{ color: "#475569" }}>#{i + 1}</span>
+                      <span className="text-[13px] font-black w-4" style={{ color: "#475569" }}>#{i + 1}</span>
                       <span className="text-lg" style={{ color: p1Color }}>{PLANET_SYMBOLS[a.planet1]}</span>
                       <span className="text-base font-bold" style={{ color }}>{ASPECT_GLYPHS[a.type]}</span>
                       <span className="text-lg" style={{ color: p2Color }}>{PLANET_SYMBOLS[a.planet2]}</span>
-                      <span className="text-[9px] font-bold capitalize ml-1" style={{ color }}>{a.type}</span>
-                      <span className="text-[9px] font-mono ml-auto" style={{ color: "#475569" }}>{a.orb.toFixed(2)}°</span>
-                      {a.exact && <span className="text-[7px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(124,58,237,0.15)", color: "#a78bfa" }}>EXACT</span>}
-                      {a.applying && !a.exact && <span className="text-[7px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(34,197,94,0.1)", color: "#22c55e" }}>APPL.</span>}
+                      <span className="text-[13px] font-bold capitalize ml-1" style={{ color }}>{a.type}</span>
+                      <span className="text-[13px] font-mono ml-auto" style={{ color: "#475569" }}>{a.orb.toFixed(2)}°</span>
+                      {a.exact && <span className="text-[14px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(124,58,237,0.15)", color: "#a78bfa" }}>EXACT</span>}
+                      {a.applying && !a.exact && <span className="text-[14px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(34,197,94,0.1)", color: "#22c55e" }}>APPL.</span>}
                     </div>
                     <div className="h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
                       <motion.div
@@ -1851,7 +1851,7 @@ function AspectsTab({ chart }: { chart: ChartData }) {
       <div className="flex gap-1 flex-wrap">
         {types.map(t => (
           <button key={t} onClick={() => setFilter(t)}
-            className="px-2.5 py-1 rounded-lg text-[8px] font-bold tracking-widest cursor-pointer transition-all duration-200"
+            className="px-2.5 py-1 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer transition-all duration-200"
             style={{
               background: filter === t ? "rgba(124,58,237,0.25)" : "rgba(255,255,255,0.03)",
               border: filter === t ? "1px solid rgba(124,58,237,0.4)" : "1px solid rgba(255,255,255,0.06)",
@@ -1883,15 +1883,15 @@ function AspectsTab({ chart }: { chart: ChartData }) {
               {/* Planets */}
               <div className="flex items-center gap-1.5 min-w-0 flex-shrink-0" style={{ width: 120 }}>
                 <span className="text-base" style={{ color: PLANET_COLORS[a.planet1] ?? "#94a3b8" }}>{PLANET_SYMBOLS[a.planet1]}</span>
-                <span className="text-[9px] font-medium" style={{ color: "#475569" }}>{a.planet1}</span>
+                <span className="text-[13px] font-medium" style={{ color: "#475569" }}>{a.planet1}</span>
                 <span className="text-sm font-bold mx-1" style={{ color }}>{ASPECT_GLYPHS[a.type]}</span>
                 <span className="text-base" style={{ color: PLANET_COLORS[a.planet2] ?? "#94a3b8" }}>{PLANET_SYMBOLS[a.planet2]}</span>
-                <span className="text-[9px] font-medium" style={{ color: "#475569" }}>{a.planet2}</span>
+                <span className="text-[13px] font-medium" style={{ color: "#475569" }}>{a.planet2}</span>
               </div>
 
               {/* Quality */}
               <div className="flex-1 min-w-0 hidden md:block">
-                <p className="text-[9px] truncate" style={{ color: quality?.color ?? "#94a3b8" }}>
+                <p className="text-[13px] truncate" style={{ color: quality?.color ?? "#94a3b8" }}>
                   {quality?.label}
                 </p>
               </div>
@@ -1899,10 +1899,10 @@ function AspectsTab({ chart }: { chart: ChartData }) {
               {/* Orb + exact */}
               <div className="flex items-center gap-2 flex-shrink-0">
                 {a.exact && (
-                  <span className="text-[7px] font-bold px-1.5 py-0.5 rounded"
+                  <span className="text-[14px] font-bold px-1.5 py-0.5 rounded"
                     style={{ background: `${color}18`, color }}>EXACT</span>
                 )}
-                <span className="text-[9px]" style={{ color: "#475569" }}>{a.orb.toFixed(2)}°</span>
+                <span className="text-[13px]" style={{ color: "#475569" }}>{a.orb.toFixed(2)}°</span>
               </div>
             </motion.div>
           );
@@ -2005,7 +2005,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
           boxShadow: `0 0 40px ${lordColor}0a`,
         }}
       >
-        <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#475569" }}>
+        <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#475569" }}>
           CURRENT PROFECTION YEAR · AGE {prof.age}
         </p>
         <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -2014,7 +2014,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
               <span className="text-3xl" style={{ color: lordColor }}>{PLANET_SYMBOLS[prof.lordOfYear]}</span>
               <div>
                 <p className="text-xl font-bold" style={{ color: lordColor }}>{prof.lordOfYear}</p>
-                <p className="text-[9px]" style={{ color: "#475569" }}>Lord of the Year</p>
+                <p className="text-[13px]" style={{ color: "#475569" }}>Lord of the Year</p>
               </div>
             </div>
             <div className="flex items-center gap-2 mt-2 flex-wrap">
@@ -2022,7 +2022,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
                 style={{ background: `${signColor}15`, color: signColor }}>
                 {SIGN_SYMBOLS[prof.activatedSign]} {prof.activatedSign}
               </span>
-              <span className="text-[9px]" style={{ color: "#475569" }}>
+              <span className="text-[13px]" style={{ color: "#475569" }}>
                 House {prof.activatedHouse} activated
               </span>
             </div>
@@ -2030,13 +2030,13 @@ function TimingTab({ chart }: { chart: ChartData }) {
 
           {lordPlanet && (
             <div className="text-right">
-              <p className="text-[7px] tracking-widest mb-1" style={{ color: "#334155" }}>LORD IN YOUR CHART</p>
+              <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>LORD IN YOUR CHART</p>
               <p className="text-xs font-semibold" style={{ color: SIGN_COLORS[lordPlanet.sign] }}>
                 {SIGN_SYMBOLS[lordPlanet.sign]} {lordPlanet.sign}
               </p>
-              <p className="text-[9px]" style={{ color: "#475569" }}>H{lordPlanet.house}</p>
+              <p className="text-[13px]" style={{ color: "#475569" }}>H{lordPlanet.house}</p>
               {lordPlanet.dignity && lordPlanet.dignity !== "peregrine" && (
-                <p className="text-[8px] mt-0.5 font-bold"
+                <p className="text-[13px] mt-0.5 font-bold"
                   style={{ color: DIGNITY_LABELS[lordPlanet.dignity]?.color }}>
                   {DIGNITY_LABELS[lordPlanet.dignity]?.label}
                 </p>
@@ -2047,18 +2047,18 @@ function TimingTab({ chart }: { chart: ChartData }) {
 
         <div className="mt-4 pt-4 grid grid-cols-3 gap-3" style={{ borderTop: `1px solid ${lordColor}15` }}>
           <div>
-            <p className="text-[7px] tracking-widest mb-1" style={{ color: "#334155" }}>THEME</p>
-            <p className="text-[9px] font-medium" style={{ color: "#94a3b8" }}>
+            <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>THEME</p>
+            <p className="text-[13px] font-medium" style={{ color: "#94a3b8" }}>
               {HOUSE_THEMES[prof.activatedHouse]?.name}
             </p>
           </div>
           <div>
-            <p className="text-[7px] tracking-widest mb-1" style={{ color: "#334155" }}>DAYS LEFT</p>
-            <p className="text-[9px] font-bold" style={{ color: "#94a3b8" }}>{daysUntilNext} days</p>
+            <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>DAYS LEFT</p>
+            <p className="text-[13px] font-bold" style={{ color: "#94a3b8" }}>{daysUntilNext} days</p>
           </div>
           <div>
-            <p className="text-[7px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
-            <p className="text-[9px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
+            <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
+            <p className="text-[13px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
               {chart.sect === "day" ? "☀ Day" : "☽ Night"}
             </p>
           </div>
@@ -2073,7 +2073,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
         className="rounded-2xl p-4"
         style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
       >
-        <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>
+        <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>
           NEXT PROFECTION YEAR · AGE {prof.age + 1}
         </p>
         <div className="flex items-center gap-3">
@@ -2084,7 +2084,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
             <p className="text-sm font-bold" style={{ color: "#94a3b8" }}>
               {nextLord} year · {SIGN_SYMBOLS[nextSign]} {nextSign}
             </p>
-            <p className="text-[9px]" style={{ color: "#475569" }}>
+            <p className="text-[13px]" style={{ color: "#475569" }}>
               Begins {formatDate(nextBirthday)} · {daysUntilNext} days away
             </p>
           </div>
@@ -2112,9 +2112,9 @@ function TimingTab({ chart }: { chart: ChartData }) {
                   boxShadow: isActive ? "0 0 16px rgba(124,58,237,0.15)" : "none",
                 }}
               >
-                <span className="text-[7px] font-bold tracking-wider" style={{ color: isActive ? "#a78bfa" : "#334155" }}>H{i + 1}</span>
+                <span className="text-[14px] font-bold tracking-wider" style={{ color: isActive ? "#a78bfa" : "#334155" }}>H{i + 1}</span>
                 <span className="text-base" style={{ color: signColor2 }}>{SIGN_SYMBOLS[sign]}</span>
-                <span className="text-[7px] font-bold" style={{ color: PLANET_COLORS[lord] ?? "#94a3b8" }}>
+                <span className="text-[14px] font-bold" style={{ color: PLANET_COLORS[lord] ?? "#94a3b8" }}>
                   {PLANET_SYMBOLS[lord]}
                 </span>
               </motion.div>
@@ -2144,15 +2144,15 @@ function TimingTab({ chart }: { chart: ChartData }) {
             return (
               <div key={label} className="rounded-xl p-3.5"
                 style={{ background: `${color}0a`, border: `1px solid ${color}20` }}>
-                <p className="text-[7px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>{label.toUpperCase()}</p>
+                <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>{label.toUpperCase()}</p>
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className="text-xl" style={{ color: SIGN_COLORS[sign] }}>{SIGN_SYMBOLS[sign]}</span>
                   <div>
                     <p className="text-xs font-bold" style={{ color: SIGN_COLORS[sign] }}>{sign}</p>
-                    <p className="text-[9px]" style={{ color: "#475569" }}>{degree.toFixed(1)}° · H{house > 0 ? house : 1}</p>
+                    <p className="text-[13px]" style={{ color: "#475569" }}>{degree.toFixed(1)}° · H{house > 0 ? house : 1}</p>
                   </div>
                 </div>
-                <p className="text-[8px] leading-relaxed" style={{ color: "#64748b" }}>{desc}</p>
+                <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>{desc}</p>
               </div>
             );
           })}
@@ -2174,7 +2174,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
             className="rounded-2xl p-5"
             style={{ background: `${color}0a`, border: `1px solid ${color}18` }}
           >
-            <p className="text-[8px] font-bold tracking-widest mb-4" style={{ color }}>
+            <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color }}>
               LIVE TIMING ALIGNMENT — TRANSIT-BASED CONVERGENCE
             </p>
             <div className="flex items-center gap-4">
@@ -2200,12 +2200,12 @@ function TimingTab({ chart }: { chart: ChartData }) {
               {/* Factors */}
               <div className="flex-1 min-w-0 space-y-1.5">
                 {factors.length === 0 ? (
-                  <p className="text-[9px]" style={{ color: "#334155" }}>No major alignments active right now. This is normal — windows of high convergence are relatively brief.</p>
+                  <p className="text-[13px]" style={{ color: "#334155" }}>No major alignments active right now. This is normal — windows of high convergence are relatively brief.</p>
                 ) : factors.slice(0, 4).map((f, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <div className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: color }} />
-                    <span className="text-[9px] leading-snug flex-1" style={{ color: "#475569" }}>{f.text}</span>
-                    <span className="text-[7px] font-bold flex-shrink-0" style={{ color }}>+{f.pts}</span>
+                    <span className="text-[13px] leading-snug flex-1" style={{ color: "#475569" }}>{f.text}</span>
+                    <span className="text-[14px] font-bold flex-shrink-0" style={{ color }}>+{f.pts}</span>
                   </div>
                 ))}
               </div>
@@ -2218,7 +2218,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
       <Link href="/dashboard/timeline">
         <motion.button
           whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-          className="w-full py-3 rounded-xl text-[9px] font-bold tracking-widest cursor-pointer"
+          className="w-full py-3 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
           style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.25)", color: "#a78bfa" }}
         >
           VIEW FULL TIMELINE → PROFECTIONS · ZOD. RELEASING · PROGRESSIONS · FIRDARIA
@@ -2245,7 +2245,7 @@ function MessageBubble({ role, content, streaming = false }: { role: "user" | "a
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex gap-3">
       <div className="w-7 h-7 rounded-xl flex-shrink-0 flex items-center justify-center mt-1"
         style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 16px rgba(124,58,237,0.5)" }}>
-        <span className="text-[9px] text-white font-bold">✦</span>
+        <span className="text-[13px] text-white font-bold">✦</span>
       </div>
       <div className="flex-1 px-4 py-3 rounded-2xl rounded-tl-sm text-sm leading-relaxed"
         style={{ background: "rgba(4,4,28,0.8)", border: "1px solid rgba(99,102,241,0.2)", color: "#cbd5e1", whiteSpace: "pre-wrap" }}>
@@ -2335,8 +2335,8 @@ function OracleTab({
                     className="flex flex-col items-start gap-1.5 p-3 rounded-xl cursor-pointer text-left disabled:opacity-40"
                     style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
                   >
-                    <p className="text-[9px] font-bold tracking-wider" style={{ color: "#a78bfa" }}>{rp.label}</p>
-                    <p className="text-[8px] leading-relaxed" style={{ color: "#475569" }}>
+                    <p className="text-[13px] font-bold tracking-wider" style={{ color: "#a78bfa" }}>{rp.label}</p>
+                    <p className="text-[13px] leading-relaxed" style={{ color: "#475569" }}>
                       {rp.prompt.substring(0, 55)}…
                     </p>
                   </motion.button>
@@ -2365,7 +2365,7 @@ function OracleTab({
             {READING_PROMPTS.map(rp => (
               <motion.button key={rp.id} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                 onClick={() => send(rp.prompt)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-bold tracking-widest cursor-pointer whitespace-nowrap"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer whitespace-nowrap"
                 style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(99,102,241,0.15)", color: "#64748b" }}>
                 {rp.label.toUpperCase()}
               </motion.button>
@@ -2379,7 +2379,7 @@ function OracleTab({
         <div className="flex justify-end pb-1">
           <button
             onClick={() => { setMessages([]); if (profileId) localStorage.removeItem(`cosmora_chat_${profileId}`); }}
-            className="text-[8px] font-bold tracking-widest px-2.5 py-1 rounded-lg cursor-pointer"
+            className="text-[13px] font-bold tracking-widest px-2.5 py-1 rounded-lg cursor-pointer"
             style={{ color: "#475569", border: "1px solid rgba(239,68,68,0.15)" }}
           >
             CLEAR CHAT
@@ -2394,7 +2394,7 @@ function OracleTab({
           style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(124,58,237,0.2)" }}>
           <div className="w-7 h-7 rounded-xl flex-shrink-0 flex items-center justify-center mb-0.5"
             style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 14px rgba(124,58,237,0.4)" }}>
-            <span className="text-[8px] text-white font-bold">✦</span>
+            <span className="text-[13px] text-white font-bold">✦</span>
           </div>
           <textarea
             ref={inputRef} rows={1} value={input}
@@ -2425,7 +2425,7 @@ function OracleTab({
             }
           </motion.button>
         </div>
-        <p className="text-[8px] text-center mt-1.5" style={{ color: "#1e293b" }}>Shift+Enter for new line · Enter to send</p>
+        <p className="text-[13px] text-center mt-1.5" style={{ color: "#1e293b" }}>Shift+Enter for new line · Enter to send</p>
       </div>
     </div>
   );
@@ -2550,7 +2550,7 @@ export default function InsightsPage() {
           </div>
           <Link href="/dashboard/chart">
             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-              className="text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-lg cursor-pointer"
+              className="text-[13px] font-bold tracking-widest px-3 py-1.5 rounded-lg cursor-pointer"
               style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#64748b" }}>
               VIEW CHART
             </motion.button>
@@ -2570,7 +2570,7 @@ export default function InsightsPage() {
           {TABS.map(({ id, label }) => (
             <motion.button key={id} whileTap={{ scale: 0.95 }}
               onClick={() => setActiveTab(id)}
-              className="flex-shrink-0 px-3 py-1.5 rounded-lg text-[9px] font-bold tracking-widest cursor-pointer transition-all duration-200"
+              className="flex-shrink-0 px-3 py-1.5 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer transition-all duration-200"
               style={{
                 background: activeTab === id ? "rgba(124,58,237,0.25)" : "transparent",
                 color: activeTab === id ? "#a78bfa" : "#334155",
@@ -2578,7 +2578,7 @@ export default function InsightsPage() {
               }}>
               {label}
               {label === "ORACLE" && messages.length > 0 && (
-                <span className="ml-1.5 text-[7px] px-1 rounded-full align-middle"
+                <span className="ml-1.5 text-[14px] px-1 rounded-full align-middle"
                   style={{ background: "rgba(124,58,237,0.3)", color: "#a78bfa" }}>
                   {messages.filter(m => m.role === "assistant").length}
                 </span>
@@ -2614,7 +2614,7 @@ export default function InsightsPage() {
                   </svg>
                 </motion.div>
                 <div className="text-center">
-                  <p className="text-[10px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
+                  <p className="text-[14px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
                   <h3 className="text-xl font-bold mb-2" style={{ fontFamily: "Space Grotesk, sans-serif", color: "#e2e8f0" }}>Cosmic instruments standing by.</h3>
                   <p className="text-sm max-w-xs mx-auto" style={{ color: "#475569" }}>Enter your birth data to unlock natal insights and all their cosmic layers.</p>
                 </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -110,8 +110,8 @@ function InsightCard({ planet, sign, house, color, delay, onClick }: {
     >
       <span className="text-base" style={{ color }}>{PLANET_SYMBOLS[planet as PlanetName] ?? "✦"}</span>
       <div className="flex-1">
-        <p className="text-[8px] font-bold tracking-widest" style={{ color: "#64748b" }}>{planet.toUpperCase()}</p>
-        <p className="text-[10px] font-medium" style={{ color }}>
+        <p className="text-[13px] font-bold tracking-widest" style={{ color: "#64748b" }}>{planet.toUpperCase()}</p>
+        <p className="text-[14px] font-medium" style={{ color }}>
           {SIGN_SYMBOLS[sign as keyof typeof SIGN_SYMBOLS] ?? ""} {sign} · H{house}
         </p>
       </div>
@@ -149,7 +149,7 @@ function ToolCallCard({ toolCall }: { toolCall: ToolCallEvent }) {
           <motion.span
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            style={{ fontSize: 10, color: "#00e5ff" }}
+            style={{ fontSize: 14, color: "#00e5ff" }}
           >
             ✓
           </motion.span>
@@ -157,14 +157,14 @@ function ToolCallCard({ toolCall }: { toolCall: ToolCallEvent }) {
           <motion.span
             animate={{ opacity: [0.4, 1, 0.4] }}
             transition={{ duration: 1.2, repeat: Infinity }}
-            style={{ fontSize: 10, color: "#06b6d4" }}
+            style={{ fontSize: 14, color: "#06b6d4" }}
           >
             {meta.icon}
           </motion.span>
         )}
       </div>
       <span style={{
-        fontSize: 9,
+        fontSize: 13,
         letterSpacing: 1.5,
         fontFamily: "'Share Tech Mono', monospace",
         color: toolCall.done ? "rgba(0,229,255,0.6)" : "rgba(6,182,212,0.7)",
@@ -229,7 +229,7 @@ function SaveMemoryPanel({
         <p className="text-center text-xs" style={{ color: "#22c55e", padding: "8px 0" }}>✓ Saved to Oracle Memory</p>
       ) : (
         <>
-          <p className="text-[8px] tracking-widest mb-2" style={{ color: "#475569" }}>SAVE TO MEMORY</p>
+          <p className="text-[13px] tracking-widest mb-2" style={{ color: "#475569" }}>SAVE TO MEMORY</p>
           <input
             value={title}
             onChange={e => setTitle(e.target.value)}
@@ -241,7 +241,7 @@ function SaveMemoryPanel({
           <div className="flex flex-wrap gap-1.5 mb-3">
             {MEMORY_CATS.map(c => (
               <button key={c.id} onClick={() => setCat(c.id)} style={{
-                padding: "3px 10px", borderRadius: 20, fontSize: 9,
+                padding: "3px 10px", borderRadius: 20, fontSize: 13,
                 background: cat === c.id ? `${c.color}22` : "rgba(255,255,255,0.03)",
                 border: `1px solid ${cat === c.id ? c.color + "55" : "rgba(255,255,255,0.06)"}`,
                 color: cat === c.id ? c.color : "#475569", cursor: "pointer",
@@ -253,12 +253,12 @@ function SaveMemoryPanel({
               flex: 1, padding: "7px 0", borderRadius: 10,
               background: "linear-gradient(135deg, #4c1d95, #1e3a5f)",
               border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa",
-              fontSize: 9.5, letterSpacing: "0.1em", cursor: "pointer",
+              fontSize: 12, letterSpacing: "0.1em", cursor: "pointer",
             }}>SAVE</button>
             <button onClick={onCancel} style={{
               padding: "7px 14px", borderRadius: 10,
               background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
-              color: "#475569", fontSize: 9.5, cursor: "pointer",
+              color: "#475569", fontSize: 12, cursor: "pointer",
             }}>✕</button>
           </div>
         </>
@@ -290,7 +290,7 @@ function OracleBubble({ message, isStreaming, voicePlanet, chartAspects, autoPla
       onMouseLeave={() => setHovered(false)}
     >
       {isOracle && (
-        <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-[9px] font-bold mt-0.5"
+        <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-[13px] font-bold mt-0.5"
           style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 12px rgba(124,58,237,0.5)" }}>
           ✦
         </div>
@@ -359,7 +359,7 @@ function OracleBubble({ message, isStreaming, voicePlanet, chartAspects, autoPla
                 style={{
                   alignSelf: "flex-start", marginTop: 4, padding: "3px 10px",
                   background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.22)",
-                  borderRadius: 20, color: "#7c3aed", fontSize: 9,
+                  borderRadius: 20, color: "#7c3aed", fontSize: 13,
                   letterSpacing: "0.1em", cursor: "pointer",
                   fontFamily: "'Fragment Mono', monospace",
                 }}
@@ -400,7 +400,7 @@ function FollowUpSuggestions({ suggestions, onSelect }: {
       transition={{ duration: 0.3, delay: 0.15 }}
       className="flex flex-col gap-2 ml-10"
     >
-      <p className="text-[8px] font-bold tracking-[0.2em]" style={{ color: "#475569" }}>
+      <p className="text-[13px] font-bold tracking-[0.2em]" style={{ color: "#475569" }}>
         CONTINUE THE READING
       </p>
       {suggestions.map((s, i) => (
@@ -416,12 +416,12 @@ function FollowUpSuggestions({ suggestions, onSelect }: {
           style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.14)" }}
         >
           <span
-            className="flex-shrink-0 w-4 h-4 rounded-md text-[8px] font-black flex items-center justify-center mt-0.5"
+            className="flex-shrink-0 w-4 h-4 rounded-md text-[13px] font-black flex items-center justify-center mt-0.5"
             style={{ background: "rgba(124,58,237,0.2)", color: "#a78bfa" }}
           >
             {labels[i]}
           </span>
-          <span className="text-[10px] leading-snug" style={{ color: "#94a3b8" }}>{s}</span>
+          <span className="text-[14px] leading-snug" style={{ color: "#94a3b8" }}>{s}</span>
         </motion.button>
       ))}
     </motion.div>
@@ -443,7 +443,7 @@ function ModelSelector({ currentModelId, availability, onChange }: {
       <motion.button
         whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[8px] font-bold tracking-wider cursor-pointer"
+        className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[13px] font-bold tracking-wider cursor-pointer"
         style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", color: current.color }}
       >
         <span>{current.icon}</span>
@@ -471,7 +471,7 @@ function ModelSelector({ currentModelId, availability, onChange }: {
               }}
             >
               <div className="p-2">
-                <p className="text-[8px] font-bold tracking-widest px-3 py-2" style={{ color: "#334155" }}>ORACLE MODEL</p>
+                <p className="text-[13px] font-bold tracking-widest px-3 py-2" style={{ color: "#334155" }}>ORACLE MODEL</p>
                 {ORACLE_MODELS.map(model => {
                   const isAvailable = availability[model.id]?.available ?? (model.provider === "anthropic");
                   const isActive = model.id === currentModelId;
@@ -490,24 +490,24 @@ function ModelSelector({ currentModelId, availability, onChange }: {
                       <span className="text-base mt-0.5 flex-shrink-0" style={{ color: model.color }}>{model.icon}</span>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <p className="text-[10px] font-bold" style={{ color: isActive ? model.color : "#94a3b8" }}>{model.name}</p>
+                          <p className="text-[14px] font-bold" style={{ color: isActive ? model.color : "#94a3b8" }}>{model.name}</p>
                           {!isAvailable && (
-                            <span className="text-[7px] font-bold tracking-wider px-1.5 py-0.5 rounded"
+                            <span className="text-[14px] font-bold tracking-wider px-1.5 py-0.5 rounded"
                               style={{ background: "rgba(255,255,255,0.05)", color: "#334155" }}>NEEDS KEY</span>
                           )}
                           {isActive && (
-                            <span className="text-[7px] font-bold tracking-wider px-1.5 py-0.5 rounded"
+                            <span className="text-[14px] font-bold tracking-wider px-1.5 py-0.5 rounded"
                               style={{ background: `${model.color}20`, color: model.color }}>ACTIVE</span>
                           )}
                         </div>
-                        <p className="text-[8px] mt-0.5" style={{ color: "#64748b" }}>{model.tagline}</p>
-                        <p className="text-[8px] mt-0.5 leading-snug" style={{ color: "#475569" }}>{model.description}</p>
+                        <p className="text-[13px] mt-0.5" style={{ color: "#64748b" }}>{model.tagline}</p>
+                        <p className="text-[13px] mt-0.5 leading-snug" style={{ color: "#475569" }}>{model.description}</p>
                       </div>
                     </motion.button>
                   );
                 })}
                 <div className="px-3 pt-2 pb-1 mt-1" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                  <p className="text-[7px] leading-relaxed" style={{ color: "#475569" }}>
+                  <p className="text-[14px] leading-relaxed" style={{ color: "#475569" }}>
                     OpenAI & Google models require API keys in .env.local (OPENAI_API_KEY, GOOGLE_AI_KEY).
                   </p>
                 </div>
@@ -534,10 +534,10 @@ function PersonaSelector({ currentPersonaId, onChange }: {
       <motion.button
         whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-bold tracking-wider cursor-pointer"
+        className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[13px] font-bold tracking-wider cursor-pointer"
         style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${current.color}30`, color: current.color }}
       >
-        <span style={{ fontSize: 12 }}>{current.icon}</span>
+        <span style={{ fontSize: 14 }}>{current.icon}</span>
         <span className="hidden sm:inline">{current.name}</span>
         <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-2.5 h-2.5 opacity-40">
           <path d="M3 4.5l3 3 3-3" />
@@ -562,7 +562,7 @@ function PersonaSelector({ currentPersonaId, onChange }: {
               }}
             >
               <div className="p-2">
-                <p className="text-[11px] font-bold tracking-widest px-3 py-2" style={{ color: "#334155" }}>VOICE & PERSONA</p>
+                <p className="text-[13px] font-bold tracking-widest px-3 py-2" style={{ color: "#334155" }}>VOICE & PERSONA</p>
                 {ORACLE_PERSONAS.map(persona => {
                   const isActive = persona.id === currentPersonaId;
                   return (
@@ -579,14 +579,14 @@ function PersonaSelector({ currentPersonaId, onChange }: {
                       <span className="text-lg mt-0.5 flex-shrink-0" style={{ color: persona.color }}>{persona.icon}</span>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-[12px] font-bold" style={{ color: isActive ? persona.color : "#94a3b8" }}>{persona.name}</p>
+                          <p className="text-[14px] font-bold" style={{ color: isActive ? persona.color : "#94a3b8" }}>{persona.name}</p>
                           {isActive && (
-                            <span className="text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded"
+                            <span className="text-[14px] font-bold tracking-wider px-1.5 py-0.5 rounded"
                               style={{ background: `${persona.color}20`, color: persona.color }}>ACTIVE</span>
                           )}
                         </div>
-                        <p className="text-[11px] mt-0.5" style={{ color: "#64748b" }}>{persona.tagline}</p>
-                        <p className="text-[11px] mt-0.5 leading-snug" style={{ color: "#475569" }}>{persona.description}</p>
+                        <p className="text-[13px] mt-0.5" style={{ color: "#64748b" }}>{persona.tagline}</p>
+                        <p className="text-[13px] mt-0.5 leading-snug" style={{ color: "#475569" }}>{persona.description}</p>
                       </div>
                     </motion.button>
                   );
@@ -943,7 +943,7 @@ export default function OraclePage() {
           <Link href="/dashboard/oracle/memories">
             <motion.button
               whileHover={{ opacity: 0.8 }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] tracking-[0.12em] font-bold"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] tracking-[0.12em] font-bold"
               style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.18)", color: "#7c3aed" }}
             >
               ✦ MEMORIES
@@ -955,7 +955,7 @@ export default function OraclePage() {
               <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 1.5, repeat: Infinity }}
                 className="w-1.5 h-1.5 rounded-full"
                 style={{ background: orbState === "idle" ? "#334155" : orbState === "thinking" ? "#f59e0b" : "#06b6d4", boxShadow: orbState !== "idle" ? `0 0 6px ${orbState === "thinking" ? "#f59e0b" : "#06b6d4"}` : "none" }} />
-              <span className="text-[9px] font-bold tracking-widest hidden sm:block"
+              <span className="text-[13px] font-bold tracking-widest hidden sm:block"
                 style={{ color: orbState === "idle" ? "#334155" : orbState === "thinking" ? "#f59e0b" : "#06b6d4" }}>
                 {orbState === "idle" ? "STANDBY" : orbState === "thinking" ? "PROCESSING" : "TRANSMITTING"}
               </span>
@@ -973,7 +973,7 @@ export default function OraclePage() {
                 onLiveVoice={setLiveVoiceActive}
               />
               {voiceEnabled && streamTTS.activeProvider && (
-                <span style={{ fontSize: 7, color: "#475569", letterSpacing: 0.5 }}>
+                <span style={{ fontSize: 14, color: "#475569", letterSpacing: 0.5 }}>
                   via {streamTTS.activeProvider}
                 </span>
               )}
@@ -983,7 +983,7 @@ export default function OraclePage() {
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
               onClick={() => setDualMode(v => !v)}
-              className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[8px] font-bold tracking-wider cursor-pointer"
+              className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[13px] font-bold tracking-wider cursor-pointer"
               style={{
                 background: dualMode ? "rgba(124,58,237,0.2)" : "rgba(255,255,255,0.03)",
                 border: dualMode ? "1px solid rgba(124,58,237,0.5)" : "1px solid rgba(255,255,255,0.08)",
@@ -992,7 +992,7 @@ export default function OraclePage() {
               }}
               title="Run Claude + Llama in parallel, synthesize results"
             >
-              <span style={{ fontSize: 10 }}>⚡</span>
+              <span style={{ fontSize: 14 }}>⚡</span>
               <span className="hidden sm:inline">DUAL ORACLE</span>
             </motion.button>
 
@@ -1000,7 +1000,7 @@ export default function OraclePage() {
             <ModelSelector currentModelId={modelId} availability={modelAvailability} onChange={handleModelChange} />
             {messages.length > 0 && orbState === "idle" && (
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={clearHistory}
-                className="text-[8px] font-bold tracking-widest px-2 py-1 rounded-lg cursor-pointer"
+                className="text-[13px] font-bold tracking-widest px-2 py-1 rounded-lg cursor-pointer"
                 style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#334155" }}>
                 CLEAR
               </motion.button>
@@ -1019,9 +1019,9 @@ export default function OraclePage() {
             <div className="flex flex-col items-center gap-3">
               <LiquidMetalOrb state={orbState} size={240} />
               <div className="text-center">
-                <p className="text-[10px] font-bold tracking-[0.25em]" style={{ color: "#64748b" }}>COSMORA ORACLE</p>
+                <p className="text-[14px] font-bold tracking-[0.25em]" style={{ color: "#64748b" }}>COSMORA ORACLE</p>
                 <motion.p key={orbState} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                  className="text-[8px] tracking-widest mt-0.5"
+                  className="text-[13px] tracking-widest mt-0.5"
                   style={{ color: orbState === "idle" ? "#475569" : orbState === "thinking" ? "#f59e0b" : "#06b6d4" }}>
                   {orbState === "idle" ? "AWAITING QUERY" : orbState === "thinking" ? "READING THE COSMOS" : "CHANNELING INSIGHT"}
                 </motion.p>
@@ -1033,7 +1033,7 @@ export default function OraclePage() {
             {chart && (
               <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={sendDailyBriefing}
                 disabled={orbState !== "idle"}
-                className="w-full py-2.5 rounded-xl text-[9px] font-bold tracking-widest cursor-pointer disabled:opacity-40"
+                className="w-full py-2.5 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer disabled:opacity-40"
                 style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.2))", border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa" }}>
                 ✦ TODAY&apos;S COSMIC BRIEFING
               </motion.button>
@@ -1045,8 +1045,8 @@ export default function OraclePage() {
                 style={{ background: "rgba(168,85,247,0.06)", border: "1px solid rgba(168,85,247,0.15)" }}>
                 <span className="text-xs" style={{ color: "#c4b5fd" }}>✦</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[8px] font-bold tracking-widest" style={{ color: "#c4b5fd" }}>NATAL REPORT</p>
-                  <p className="text-[8px]" style={{ color: "#334155" }}>Full AI chart interpretation</p>
+                  <p className="text-[13px] font-bold tracking-widest" style={{ color: "#c4b5fd" }}>NATAL REPORT</p>
+                  <p className="text-[13px]" style={{ color: "#334155" }}>Full AI chart interpretation</p>
                 </div>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3 h-3 flex-shrink-0" style={{ color: "#334155" }}>
                   <path d="M3 8h10M9 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
@@ -1056,7 +1056,7 @@ export default function OraclePage() {
 
             {keyPlanets.length > 0 && (
               <div className="w-full">
-                <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>KEY PLACEMENTS · click to ask</p>
+                <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>KEY PLACEMENTS · click to ask</p>
                 <div className="flex flex-col gap-2">
                   {keyPlanets.map((p, i) => (
                     <InsightCard key={p.name} planet={p.name} sign={p.sign} house={p.house}
@@ -1069,12 +1069,12 @@ export default function OraclePage() {
 
             {ORACLE_PROMPT_CATEGORIES.map(cat => (
               <div key={cat.label} className="w-full">
-                <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: cat.color }}>{cat.label}</p>
+                <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: cat.color }}>{cat.label}</p>
                 <div className="flex flex-col gap-1.5">
                   {cat.prompts.map((p, i) => (
                     <motion.button key={i} whileHover={{ x: 3 }} whileTap={{ scale: 0.97 }}
                       onClick={() => sendMessage(p)} disabled={orbState !== "idle"}
-                      className="text-left text-[10px] leading-snug px-3 py-1.5 rounded-lg cursor-pointer disabled:opacity-40"
+                      className="text-left text-[14px] leading-snug px-3 py-1.5 rounded-lg cursor-pointer disabled:opacity-40"
                       style={{ color: "#64748b", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
                       {p}
                     </motion.button>
@@ -1156,11 +1156,11 @@ export default function OraclePage() {
                                       style={{ borderColor: color }}
                                     />
                                   ) : status === "done" ? (
-                                    <span style={{ color, fontSize: 10 }}>✓</span>
+                                    <span style={{ color, fontSize: 14 }}>✓</span>
                                   ) : (
                                     <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: "rgba(255,255,255,0.05)" }} />
                                   )}
-                                  <span style={{ fontSize: 9, letterSpacing: 1, fontFamily: "'Share Tech Mono', monospace", color: status === "done" ? color : "#475569" }}>
+                                  <span style={{ fontSize: 13, letterSpacing: 1, fontFamily: "'Share Tech Mono', monospace", color: status === "done" ? color : "#475569" }}>
                                     {label}
                                   </span>
                                 </motion.div>
@@ -1181,7 +1181,7 @@ export default function OraclePage() {
                                 transition={{ duration: 1.2, repeat: Infinity }}
                                 style={{ width: 6, height: 6, borderRadius: "50%", background: "#a78bfa", flexShrink: 0 }}
                               />
-                              <span style={{ fontSize: 9, letterSpacing: 1.5, fontFamily: "'Share Tech Mono', monospace", color: "#a78bfa" }}>
+                              <span style={{ fontSize: 13, letterSpacing: 1.5, fontFamily: "'Share Tech Mono', monospace", color: "#a78bfa" }}>
                                 SYNTHESIZING · FINDING CONSENSUS
                               </span>
                             </motion.div>
@@ -1220,7 +1220,7 @@ export default function OraclePage() {
                 <motion.div
                   animate={{ scale: orbState !== "idle" ? [1, 1.3, 1] : 1, boxShadow: orbState === "thinking" ? ["0 0 8px rgba(245,158,11,0.4)", "0 0 18px rgba(245,158,11,0.7)", "0 0 8px rgba(245,158,11,0.4)"] : orbState === "speaking" ? ["0 0 8px rgba(6,182,212,0.4)", "0 0 18px rgba(6,182,212,0.7)", "0 0 8px rgba(6,182,212,0.4)"] : "0 0 10px rgba(124,58,237,0.4)" }}
                   transition={{ duration: 1.2, repeat: orbState !== "idle" ? Infinity : 0 }}
-                  className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold"
+                  className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-[14px] font-bold"
                   style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)" }}>
                   ✦
                 </motion.div>
@@ -1250,7 +1250,7 @@ export default function OraclePage() {
                   )}
                 </AnimatePresence>
               </div>
-              <p className="text-center text-[9px] mt-2" style={{ color: "#1e293b" }}>
+              <p className="text-center text-[13px] mt-2" style={{ color: "#1e293b" }}>
                 COSMORA ORACLE · {getModelById(modelId).name.toUpperCase()} · SYMBOLIC INTERPRETATION ONLY
               </p>
             </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef } from "react";
@@ -418,12 +418,12 @@ export default function OnboardingPage() {
                   <span style={{ fontSize: "1.25rem", color: r.color, filter: `drop-shadow(0 0 8px ${r.color})` }}>{r.symbol}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[8px] font-bold tracking-[0.18em]" style={{ color: "#334155" }}>{r.label}</p>
+                  <p className="text-[13px] font-bold tracking-[0.18em]" style={{ color: "#334155" }}>{r.label}</p>
                   <p className="text-base font-bold" style={{ color: r.signColor, fontFamily: "'Space Grotesk', sans-serif" }}>
                     {SIGN_SYMBOLS[r.value as keyof typeof SIGN_SYMBOLS] ?? ""} {r.value}
                   </p>
                 </div>
-                <p className="text-[10px] text-right flex-shrink-0" style={{ color: "#475569" }}>{r.subtext}</p>
+                <p className="text-[14px] text-right flex-shrink-0" style={{ color: "#475569" }}>{r.subtext}</p>
               </motion.div>
             ))}
           </div>
@@ -460,7 +460,7 @@ export default function OnboardingPage() {
             >
               Enter My Cosmos →
             </motion.button>
-            <p className="text-center text-[10px] mt-3" style={{ color: "#1e293b" }}>
+            <p className="text-center text-[14px] mt-3" style={{ color: "#1e293b" }}>
               All data stored locally on your device
             </p>
           </motion.div>

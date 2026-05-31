@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo } from "react";
@@ -75,7 +75,7 @@ function SkyStrip({ planets }: { planets: TransitsData["transitPlanets"] }) {
         scrollbarWidth: "none",
       }}
     >
-      <span className="text-[8px] font-bold tracking-widest flex-shrink-0 mr-1" style={{ color: "#334155" }}>
+      <span className="text-[13px] font-bold tracking-widest flex-shrink-0 mr-1" style={{ color: "#334155" }}>
         SKY NOW
       </span>
       {ordered.map((p, i) => {
@@ -94,9 +94,9 @@ function SkyStrip({ planets }: { planets: TransitsData["transitPlanets"] }) {
           >
             <span className="text-sm leading-none" style={{ color }}>{PLANET_SYMBOLS[p.name as PlanetName]}</span>
             <div>
-              <span className="text-[9px] font-bold" style={{ color }}>{p.name}</span>
-              {p.retrograde && <span className="text-[8px] ml-0.5" style={{ color: "#f97316" }}>℞</span>}
-              <p className="text-[8px]" style={{ color: "#64748b" }}>
+              <span className="text-[13px] font-bold" style={{ color }}>{p.name}</span>
+              {p.retrograde && <span className="text-[13px] ml-0.5" style={{ color: "#f97316" }}>℞</span>}
+              <p className="text-[13px]" style={{ color: "#64748b" }}>
                 {formatDeg(p.longitude)} {SIGN_SYMBOLS[p.sign as ZodiacSign]} · H{p.house}
               </p>
             </div>
@@ -129,7 +129,7 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           onClick={e => { e.stopPropagation(); onOracleClick(); }}
-          className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[8px] font-bold tracking-wider px-2 py-1 rounded-lg z-10 cursor-pointer"
+          className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[13px] font-bold tracking-wider px-2 py-1 rounded-lg z-10 cursor-pointer"
           style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa" }}
         >
           ✦ Ask
@@ -159,9 +159,9 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
         <div>
           <span className="text-xs font-semibold" style={{ color: tColor }}>
             {aspect.transitPlanet}
-            {aspect.transitRetrograde && <span className="ml-1 text-[9px]" style={{ color: "#f97316" }}>℞</span>}
+            {aspect.transitRetrograde && <span className="ml-1 text-[13px]" style={{ color: "#f97316" }}>℞</span>}
           </span>
-          <p className="text-[8px]" style={{ color: "#475569" }}>
+          <p className="text-[13px]" style={{ color: "#475569" }}>
             {SIGN_SYMBOLS[aspect.transitSign]} {formatDeg(aspect.transitLon)}
           </p>
         </div>
@@ -183,7 +183,7 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
           <span className="text-xs font-semibold" style={{ color: nColor }}>
             {aspect.natalPlanet}
           </span>
-          <p className="text-[8px]" style={{ color: "#475569" }}>
+          <p className="text-[13px]" style={{ color: "#475569" }}>
             {SIGN_SYMBOLS[aspect.natalSign]} · H{aspect.natalHouse}
           </p>
         </div>
@@ -203,14 +203,14 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
       <div className="flex items-center gap-1">
         {aspect.exact ? (
           <span
-            className="text-[8px] font-bold px-1.5 py-0.5 rounded"
+            className="text-[13px] font-bold px-1.5 py-0.5 rounded"
             style={{ background: `${cfg?.color}20`, color: cfg?.color }}
           >
             EXACT
           </span>
         ) : (
           <span
-            className="text-[9px] font-medium"
+            className="text-[13px] font-medium"
             style={{ color: aspect.applying ? "#22c55e" : "#475569" }}
           >
             {aspect.applying ? "▲ Appl." : "▼ Sep."}
@@ -221,7 +221,7 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
       {/* Days to exact */}
       <div className="flex items-center">
         {aspect.daysToExact !== null && (
-          <span className="text-[9px]" style={{ color: "#22c55e" }}>
+          <span className="text-[13px]" style={{ color: "#22c55e" }}>
             {aspect.daysToExact === 0 ? "today" : `${aspect.daysToExact}d`}
           </span>
         )}
@@ -256,14 +256,14 @@ function IngressCard({ ingress, index }: { ingress: Ingress; index: number }) {
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-semibold" style={{ color }}>
             {ingress.planet}
-            {ingress.retrograde && <span className="ml-1 text-[9px]" style={{ color: "#f97316" }}>℞</span>}
+            {ingress.retrograde && <span className="ml-1 text-[13px]" style={{ color: "#f97316" }}>℞</span>}
           </span>
-          <span className="text-[9px]" style={{ color: "#334155" }}>→</span>
+          <span className="text-[13px]" style={{ color: "#334155" }}>→</span>
           <span className="text-xs font-semibold" style={{ color: toColor }}>
             {SIGN_SYMBOLS[ingress.toSign]} {ingress.toSign}
           </span>
         </div>
-        <p className="text-[9px] mt-0.5" style={{ color: "#475569" }}>
+        <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
           {ingress.date} · in {ingress.daysUntil} day{ingress.daysUntil === 1 ? "" : "s"}
         </p>
       </div>
@@ -328,10 +328,10 @@ function TransitHeatmap({ data, baseDate }: { data: TransitsData; baseDate: Date
   return (
     <div className="flex flex-col h-full px-4 py-4 gap-4 overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
       <div>
-        <p className="text-[8px] font-bold tracking-widest mb-1" style={{ color: "#475569" }}>
+        <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#475569" }}>
           90-DAY TRANSIT INTENSITY
         </p>
-        <p className="text-[8px]" style={{ color: "#334155" }}>
+        <p className="text-[13px]" style={{ color: "#334155" }}>
           Bar height = cumulative transit pressure · hover for details
         </p>
       </div>
@@ -376,7 +376,7 @@ function TransitHeatmap({ data, baseDate }: { data: TransitsData; baseDate: Date
             const date = new Date(today);
             date.setDate(date.getDate() + d);
             return (
-              <span key={d} className="text-[7px]" style={{ color: "#1e293b" }}>
+              <span key={d} className="text-[14px]" style={{ color: "#1e293b" }}>
                 {date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
               </span>
             );
@@ -397,20 +397,20 @@ function TransitHeatmap({ data, baseDate }: { data: TransitsData; baseDate: Date
               const d = new Date(today);
               d.setDate(d.getDate() + hoveredDay);
               return (
-                <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: "#7c3aed" }}>
+                <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#7c3aed" }}>
                   {d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
                   {hoveredDay === 0 && " · TODAY"}
                 </p>
               );
             })()}
             {hov.score === 0 ? (
-              <p className="text-[10px]" style={{ color: "#334155" }}>No significant transits</p>
+              <p className="text-[14px]" style={{ color: "#334155" }}>No significant transits</p>
             ) : (
               <div className="space-y-1">
                 {hov.aspects.slice(0, 5).map((a, i) => {
                   const cfg = ASPECT_CONFIG[a.type];
                   return (
-                    <div key={i} className="flex items-center gap-2 text-[9px]">
+                    <div key={i} className="flex items-center gap-2 text-[13px]">
                       <span style={{ color: PLANET_COLORS[a.transitPlanet] ?? "#94a3b8" }}>
                         {PLANET_SYMBOLS[a.transitPlanet as PlanetName]}
                       </span>
@@ -425,21 +425,21 @@ function TransitHeatmap({ data, baseDate }: { data: TransitsData; baseDate: Date
                   );
                 })}
                 {hov.aspects.length > 5 && (
-                  <p className="text-[8px]" style={{ color: "#334155" }}>+{hov.aspects.length - 5} more</p>
+                  <p className="text-[13px]" style={{ color: "#334155" }}>+{hov.aspects.length - 5} more</p>
                 )}
               </div>
             )}
           </motion.div>
         ) : (
           <div className="flex items-center justify-center h-16">
-            <p className="text-[8px]" style={{ color: "#1e293b" }}>Hover a day to inspect</p>
+            <p className="text-[13px]" style={{ color: "#1e293b" }}>Hover a day to inspect</p>
           </div>
         )}
       </div>
 
       {/* Peak days list */}
       <div>
-        <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>PEAK TRANSIT DAYS</p>
+        <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>PEAK TRANSIT DAYS</p>
         <div className="space-y-1.5">
           {buckets
             .map((b, i) => ({ ...b, day: i }))
@@ -462,11 +462,11 @@ function TransitHeatmap({ data, baseDate }: { data: TransitsData; baseDate: Date
                   }}
                 >
                   <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: color, boxShadow: `0 0 4px ${color}` }} />
-                  <span className="text-[9px] font-medium" style={{ color: "#94a3b8" }}>
+                  <span className="text-[13px] font-medium" style={{ color: "#94a3b8" }}>
                     {d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
                     {day === 0 && " · Today"}
                   </span>
-                  <span className="ml-auto text-[8px]" style={{ color }}>
+                  <span className="ml-auto text-[13px]" style={{ color }}>
                     {aspects.length} transit{aspects.length !== 1 ? "s" : ""}
                   </span>
                 </motion.div>
@@ -612,16 +612,16 @@ function TransitBiWheel({ natal, data }: { natal: ChartData; data: TransitsData 
       </svg>
 
       {/* Legend */}
-      <div className="flex gap-4 text-[8px]">
+      <div className="flex gap-4 text-[13px]">
         <div className="flex items-center gap-1.5">
           <div className="w-6 h-6 rounded-full flex items-center justify-center border" style={{ background: "rgba(4,4,28,0.9)", borderColor: "rgba(99,102,241,0.4)" }}>
-            <span style={{ color: "#a78bfa", fontSize: 9 }}>☉</span>
+            <span style={{ color: "#a78bfa", fontSize: 13 }}>☉</span>
           </div>
           <span style={{ color: "#475569" }}>Natal (inner)</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-6 h-6 rounded-full flex items-center justify-center border" style={{ background: "rgba(245,158,11,0.1)", borderColor: "rgba(245,158,11,0.5)" }}>
-            <span style={{ color: "#fbbf24", fontSize: 9 }}>☉</span>
+            <span style={{ color: "#fbbf24", fontSize: 13 }}>☉</span>
           </div>
           <span style={{ color: "#475569" }}>Transit (outer)</span>
         </div>
@@ -677,14 +677,14 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex-shrink-0 p-4">
-        <p className="text-[8px] font-bold tracking-widest mb-3 text-center" style={{ color: "#475569" }}>
+        <p className="text-[13px] font-bold tracking-widest mb-3 text-center" style={{ color: "#475569" }}>
           {baseDate.toLocaleDateString("en-US", { month: "long", year: "numeric" }).toUpperCase()}
         </p>
 
         {/* Weekday headers */}
         <div className="grid grid-cols-7 mb-1">
           {["SUN","MON","TUE","WED","THU","FRI","SAT"].map(d => (
-            <div key={d} className="text-center text-[7px] font-bold tracking-widest py-1" style={{ color: "#334155" }}>{d}</div>
+            <div key={d} className="text-center text-[14px] font-bold tracking-widest py-1" style={{ color: "#334155" }}>{d}</div>
           ))}
         </div>
 
@@ -710,7 +710,7 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
                   opacity: isPast ? 0.45 : 1,
                 }}
               >
-                <span className="text-[10px] font-bold leading-tight" style={{
+                <span className="text-[14px] font-bold leading-tight" style={{
                   color: isToday ? "#c4b5fd" : isSelected ? "#e2e8f0" : "#64748b",
                 }}>{day}</span>
 
@@ -734,7 +734,7 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
           {Object.entries(ASPECT_CONFIG).map(([type, cfg]) => (
             <div key={type} className="flex items-center gap-1">
               <div className="w-2 h-2 rounded-full" style={{ background: cfg.color }} />
-              <span className="text-[7px]" style={{ color: "#334155" }}>{cfg.symbol} {type.substring(0,3)}</span>
+              <span className="text-[14px]" style={{ color: "#334155" }}>{cfg.symbol} {type.substring(0,3)}</span>
             </div>
           ))}
         </div>
@@ -749,12 +749,12 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
             className="rounded-xl p-4"
             style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(99,102,241,0.12)" }}
           >
-            <p className="text-[9px] font-bold tracking-widest mb-3" style={{ color: "#7c3aed" }}>
+            <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#7c3aed" }}>
               {new Date(year, month, selectedDay).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }).toUpperCase()}
             </p>
 
             {!selectedEvents && (
-              <p className="text-[11px]" style={{ color: "#334155" }}>No projected exact transits.</p>
+              <p className="text-[13px]" style={{ color: "#334155" }}>No projected exact transits.</p>
             )}
 
             {selectedEvents?.aspects.map((asp, i) => {
@@ -766,10 +766,10 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
                   <span className="text-sm" style={{ color: tColor }}>{PLANET_SYMBOLS[asp.transitPlanet]}</span>
                   <span className="text-base font-bold" style={{ color: cfg?.color }}>{cfg?.symbol}</span>
                   <span className="text-sm" style={{ color: nColor }}>{PLANET_SYMBOLS[asp.natalPlanet]}</span>
-                  <span className="text-[9px] capitalize flex-1" style={{ color: "#94a3b8" }}>
+                  <span className="text-[13px] capitalize flex-1" style={{ color: "#94a3b8" }}>
                     {asp.transitPlanet} {asp.type} natal {asp.natalPlanet}
                   </span>
-                  <span className="text-[8px] px-1.5 py-0.5 rounded" style={{ background: `${cfg?.color}20`, color: cfg?.color }}>EXACT</span>
+                  <span className="text-[13px] px-1.5 py-0.5 rounded" style={{ background: `${cfg?.color}20`, color: cfg?.color }}>EXACT</span>
                 </div>
               );
             })}
@@ -780,18 +780,18 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
               return (
                 <div key={`ing-${i}`} className="flex items-center gap-2 py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                   <span className="text-sm" style={{ color: pColor }}>{PLANET_SYMBOLS[ing.planet as PlanetName]}</span>
-                  <span className="text-[9px] font-semibold" style={{ color: pColor }}>{ing.planet}</span>
-                  <span className="text-[9px]" style={{ color: "#334155" }}>enters</span>
-                  <span className="text-[9px] font-bold flex-1" style={{ color: sColor }}>{SIGN_SYMBOLS[ing.toSign as ZodiacSign]} {ing.toSign}</span>
-                  {ing.retrograde && <span className="text-[8px]" style={{ color: "#f97316" }}>℞</span>}
-                  <span className="text-[8px] px-1.5 py-0.5 rounded" style={{ background: `${pColor}15`, color: pColor }}>INGRESS</span>
+                  <span className="text-[13px] font-semibold" style={{ color: pColor }}>{ing.planet}</span>
+                  <span className="text-[13px]" style={{ color: "#334155" }}>enters</span>
+                  <span className="text-[13px] font-bold flex-1" style={{ color: sColor }}>{SIGN_SYMBOLS[ing.toSign as ZodiacSign]} {ing.toSign}</span>
+                  {ing.retrograde && <span className="text-[13px]" style={{ color: "#f97316" }}>℞</span>}
+                  <span className="text-[13px] px-1.5 py-0.5 rounded" style={{ background: `${pColor}15`, color: pColor }}>INGRESS</span>
                 </div>
               );
             })}
           </motion.div>
         ) : (
           <div className="flex items-center justify-center h-16">
-            <p className="text-[9px]" style={{ color: "#334155" }}>Select a day to see projected exact transits</p>
+            <p className="text-[13px]" style={{ color: "#334155" }}>Select a day to see projected exact transits</p>
           </div>
         )}
       </div>
@@ -906,7 +906,7 @@ export default function TransitsPage() {
               </svg>
             </motion.div>
             <div>
-              <p className="text-[10px] font-bold tracking-[0.3em] mb-2" style={{ color: "#06b6d4" }}>NO CHART DATA</p>
+              <p className="text-[14px] font-bold tracking-[0.3em] mb-2" style={{ color: "#06b6d4" }}>NO CHART DATA</p>
               <h2 className="text-3xl font-bold mb-3 font-title" style={{ color: "#f0f4ff" }}>Transit Radar Offline</h2>
               <p className="text-sm max-w-sm leading-relaxed" style={{ color: "#64748b" }}>
                 Enter your birth data to activate planetary transit tracking and real-time cosmic alerts.
@@ -1000,7 +1000,7 @@ export default function TransitsPage() {
             </motion.button>
 
             {!isToday(date) && (
-              <span className="text-[9px]" style={{ color: "#475569" }}>{formatDate(date)}</span>
+              <span className="text-[13px]" style={{ color: "#475569" }}>{formatDate(date)}</span>
             )}
 
             <motion.button
@@ -1021,7 +1021,7 @@ export default function TransitsPage() {
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={() => setFilterOuter(v => !v)}
-              className="px-3 py-1.5 rounded-lg text-[9px] font-bold tracking-wide cursor-pointer transition-all"
+              className="px-3 py-1.5 rounded-lg text-[13px] font-bold tracking-wide cursor-pointer transition-all"
               style={{
                 background: filterOuter ? "rgba(139,92,246,0.2)" : "rgba(255,255,255,0.03)",
                 border: filterOuter ? "1px solid rgba(139,92,246,0.4)" : "1px solid rgba(255,255,255,0.06)",
@@ -1035,7 +1035,7 @@ export default function TransitsPage() {
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={() => setFilterApplying(v => !v)}
-              className="px-3 py-1.5 rounded-lg text-[9px] font-bold tracking-wide cursor-pointer transition-all"
+              className="px-3 py-1.5 rounded-lg text-[13px] font-bold tracking-wide cursor-pointer transition-all"
               style={{
                 background: filterApplying ? "rgba(34,197,94,0.15)" : "rgba(255,255,255,0.03)",
                 border: filterApplying ? "1px solid rgba(34,197,94,0.3)" : "1px solid rgba(255,255,255,0.06)",
@@ -1096,21 +1096,21 @@ export default function TransitsPage() {
                 className="flex-shrink-0 flex items-center gap-3 px-4 py-2"
                 style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
               >
-                <span className="text-[9px] font-bold tracking-widest" style={{ color: "#475569" }}>
+                <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>
                   {viewMode === "list" ? "TRANSIT ASPECTS" : viewMode === "calendar" ? "TRANSIT CALENDAR" : viewMode === "heat" ? "90-DAY INTENSITY" : "TRANSIT BI-WHEEL"}
                 </span>
                 {viewMode === "list" && (
                   <>
-                    <span className="text-[9px] px-2 py-0.5 rounded-md" style={{ background: "rgba(99,102,241,0.15)", color: "#818cf8" }}>
+                    <span className="text-[13px] px-2 py-0.5 rounded-md" style={{ background: "rgba(99,102,241,0.15)", color: "#818cf8" }}>
                       {aspects.length} active
                     </span>
                     {applyingCount > 0 && (
-                      <span className="text-[9px] px-2 py-0.5 rounded-md" style={{ background: "rgba(34,197,94,0.1)", color: "#4ade80" }}>
+                      <span className="text-[13px] px-2 py-0.5 rounded-md" style={{ background: "rgba(34,197,94,0.1)", color: "#4ade80" }}>
                         {applyingCount} applying
                       </span>
                     )}
                     {exactCount > 0 && (
-                      <span className="text-[9px] px-2 py-0.5 rounded-md" style={{ background: "rgba(168,85,247,0.15)", color: "#c4b5fd" }}>
+                      <span className="text-[13px] px-2 py-0.5 rounded-md" style={{ background: "rgba(168,85,247,0.15)", color: "#c4b5fd" }}>
                         {exactCount} exact
                       </span>
                     )}
@@ -1123,7 +1123,7 @@ export default function TransitsPage() {
                       key={mode}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setViewMode(mode)}
-                      className="px-2.5 py-1 rounded-md text-[8px] font-bold tracking-widest cursor-pointer transition-all"
+                      className="px-2.5 py-1 rounded-md text-[13px] font-bold tracking-widest cursor-pointer transition-all"
                       style={{
                         background: viewMode === mode ? "rgba(124,58,237,0.25)" : "transparent",
                         color: viewMode === mode ? "#c4b5fd" : "#334155",
@@ -1140,7 +1140,7 @@ export default function TransitsPage() {
               {viewMode === "list" && (
                 <>
                   <div
-                    className="flex-shrink-0 grid gap-3 px-4 py-2 text-[9px] font-bold tracking-widest"
+                    className="flex-shrink-0 grid gap-3 px-4 py-2 text-[13px] font-bold tracking-widest"
                     style={{
                       color: "#334155",
                       borderBottom: "1px solid rgba(255,255,255,0.04)",
@@ -1226,14 +1226,14 @@ export default function TransitsPage() {
                     style={{ background: `${stat.color}0d`, border: `1px solid ${stat.color}20` }}
                   >
                     <span className="text-lg font-bold" style={{ color: stat.color }}>{stat.value}</span>
-                    <span className="text-[7px] font-bold tracking-widest" style={{ color: "#475569" }}>{stat.label}</span>
+                    <span className="text-[14px] font-bold tracking-widest" style={{ color: "#475569" }}>{stat.label}</span>
                   </div>
                 ))}
               </motion.div>
 
               {/* Aspect type breakdown */}
               <div className="flex-shrink-0 p-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>
+                <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>
                   BY ASPECT TYPE
                 </p>
                 <div className="space-y-1.5">
@@ -1246,8 +1246,8 @@ export default function TransitsPage() {
                     return (
                       <div key={type} className="flex items-center gap-2">
                         <span className="text-sm w-5 text-center" style={{ color: cfg.color }}>{cfg.symbol}</span>
-                        <span className="text-[9px] flex-1" style={{ color: "#475569" }}>{cfg.label}</span>
-                        <span className="text-[9px] font-bold" style={{ color: count > 0 ? cfg.color : "#334155" }}>
+                        <span className="text-[13px] flex-1" style={{ color: "#475569" }}>{cfg.label}</span>
+                        <span className="text-[13px] font-bold" style={{ color: count > 0 ? cfg.color : "#334155" }}>
                           {count}
                         </span>
                       </div>
@@ -1274,7 +1274,7 @@ export default function TransitsPage() {
                 const moonColor = "#c4b5fd";
                 return (
                   <div className="flex-shrink-0 p-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                    <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>LUNAR PHASE</p>
+                    <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>LUNAR PHASE</p>
                     <div className="flex items-center gap-3">
                       <svg width={44} height={44} viewBox="0 0 44 44">
                         <circle cx={22} cy={22} r={arcR} fill="rgba(196,181,253,0.08)" stroke="rgba(196,181,253,0.2)" strokeWidth={1} />
@@ -1297,11 +1297,11 @@ export default function TransitsPage() {
                         <circle cx={22} cy={22} r={arcR} fill="none" stroke="rgba(196,181,253,0.25)" strokeWidth={1} />
                       </svg>
                       <div>
-                        <p className="text-[10px] font-bold" style={{ color: moonColor }}>{phaseName}</p>
-                        <p className="text-[8px]" style={{ color: "#475569" }}>
+                        <p className="text-[14px] font-bold" style={{ color: moonColor }}>{phaseName}</p>
+                        <p className="text-[13px]" style={{ color: "#475569" }}>
                           {illumination}% illuminated
                         </p>
-                        <p className="text-[8px]" style={{ color: "#334155" }}>
+                        <p className="text-[13px]" style={{ color: "#334155" }}>
                           ☽ {SIGN_SYMBOLS[moon.sign as import("@/lib/astrology/types").ZodiacSign]} {moon.sign} · H{moon.house}
                         </p>
                       </div>
@@ -1342,19 +1342,19 @@ export default function TransitsPage() {
                     <div className="flex items-center gap-2 mb-2">
                       <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0`}
                         style={{ background: isVoid ? "#f97316" : "#22c55e", boxShadow: `0 0 4px ${isVoid ? "#f97316" : "#22c55e"}` }} />
-                      <p className="text-[8px] font-bold tracking-widest" style={{ color: "#334155" }}>VOID OF COURSE MOON</p>
+                      <p className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>VOID OF COURSE MOON</p>
                     </div>
                     <div className="rounded-xl px-3 py-2"
                       style={{ background: isVoid ? "rgba(249,115,22,0.08)" : "rgba(34,197,94,0.06)", border: `1px solid ${isVoid ? "rgba(249,115,22,0.2)" : "rgba(34,197,94,0.15)"}` }}>
-                      <p className="text-[10px] font-bold mb-0.5" style={{ color: isVoid ? "#f97316" : "#22c55e" }}>
+                      <p className="text-[14px] font-bold mb-0.5" style={{ color: isVoid ? "#f97316" : "#22c55e" }}>
                         {isVoid ? "VOID OF COURSE" : "Moon is Active"}
                       </p>
-                      <p className="text-[8px]" style={{ color: "#475569" }}>
+                      <p className="text-[13px]" style={{ color: "#475569" }}>
                         {isVoid
                           ? `No applying aspects · Avoid major decisions`
                           : `${moonAspects.length} applying aspect${moonAspects.length > 1 ? "s" : ""} remaining`}
                       </p>
-                      <p className="text-[8px] mt-1" style={{ color: "#334155" }}>
+                      <p className="text-[13px] mt-1" style={{ color: "#334155" }}>
                         Enters {nextSignName} in {fmtHours(hoursToNextSign)} · {nextSignDate.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
                       </p>
                     </div>
@@ -1371,7 +1371,7 @@ export default function TransitsPage() {
                 if (!upcoming.length) return null;
                 return (
                   <div className="flex-shrink-0 p-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                    <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>NEXT EXACT</p>
+                    <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>NEXT EXACT</p>
                     <div className="space-y-1.5">
                       {upcoming.map((asp) => {
                         const tColor = PLANET_COLORS[asp.transitPlanet] ?? "#64748b";
@@ -1387,10 +1387,10 @@ export default function TransitsPage() {
                             <span className="text-sm" style={{ color: PLANET_COLORS[asp.natalPlanet] ?? "#64748b" }}>{PLANET_SYMBOLS[asp.natalPlanet]}</span>
                             <div className="flex-1 flex items-center justify-end gap-1">
                               {days === 0 ? (
-                                <span className="text-[8px] font-black" style={{ color: "#a855f7" }}>TODAY</span>
+                                <span className="text-[13px] font-black" style={{ color: "#a855f7" }}>TODAY</span>
                               ) : (
                                 <>
-                                  <span className="text-[9px] font-bold" style={{ color: "#22c55e" }}>{days}d</span>
+                                  <span className="text-[13px] font-bold" style={{ color: "#22c55e" }}>{days}d</span>
                                 </>
                               )}
                             </div>
@@ -1404,7 +1404,7 @@ export default function TransitsPage() {
 
               {/* Ingresses */}
               <div className="flex-1 overflow-y-auto p-4" style={{ scrollbarWidth: "thin" }}>
-                <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>
+                <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>
                   UPCOMING INGRESSES
                 </p>
                 {data.ingresses.length === 0 ? (

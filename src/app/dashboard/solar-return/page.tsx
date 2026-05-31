@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -72,7 +72,7 @@ function computeSRNatalAspects(srChart: ChartData, natalChart: ChartData): SRAsp
 
 function SRNatalAspects({ srChart, natalChart }: { srChart: ChartData; natalChart: ChartData }) {
   const aspects = useMemo(() => computeSRNatalAspects(srChart, natalChart), [srChart, natalChart]);
-  if (aspects.length === 0) return <p className="text-[10px]" style={{ color: "#334155" }}>No cross-chart aspects found.</p>;
+  if (aspects.length === 0) return <p className="text-[14px]" style={{ color: "#334155" }}>No cross-chart aspects found.</p>;
   return (
     <div className="space-y-1.5">
       {aspects.slice(0, 24).map((asp, i) => {
@@ -84,23 +84,23 @@ function SRNatalAspects({ srChart, natalChart }: { srChart: ChartData; natalChar
             style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
             <div className="flex items-center gap-1 w-28 flex-shrink-0">
               <span className="text-xs" style={{ color: srColor }}>{PLANET_SYMBOLS[asp.srPlanet]}</span>
-              <span className="text-[8px] font-medium" style={{ color: srColor }}>{asp.srPlanet}</span>
-              <span className="text-[6px] font-bold ml-1 px-1 py-0.5 rounded" style={{ background: "rgba(245,158,11,0.12)", color: "#f59e0b" }}>SR</span>
+              <span className="text-[13px] font-medium" style={{ color: srColor }}>{asp.srPlanet}</span>
+              <span className="text-[14px] font-bold ml-1 px-1 py-0.5 rounded" style={{ background: "rgba(245,158,11,0.12)", color: "#f59e0b" }}>SR</span>
             </div>
             <div className="flex flex-col items-center w-10 flex-shrink-0">
               <span className="text-base font-bold" style={{ color: asp.type.color }}>{asp.type.glyph}</span>
-              <span className="text-[6px]" style={{ color: "#334155" }}>{asp.orb.toFixed(1)}°</span>
+              <span className="text-[14px]" style={{ color: "#334155" }}>{asp.orb.toFixed(1)}°</span>
             </div>
             <div className="flex items-center gap-1 flex-1">
               <span className="text-xs" style={{ color: natColor }}>{PLANET_SYMBOLS[asp.natalPlanet]}</span>
-              <span className="text-[8px] font-medium" style={{ color: natColor }}>{asp.natalPlanet}</span>
-              <span className="text-[6px] font-bold ml-1 px-1 py-0.5 rounded" style={{ background: "rgba(124,58,237,0.12)", color: "#a78bfa" }}>NATAL</span>
+              <span className="text-[13px] font-medium" style={{ color: natColor }}>{asp.natalPlanet}</span>
+              <span className="text-[14px] font-bold ml-1 px-1 py-0.5 rounded" style={{ background: "rgba(124,58,237,0.12)", color: "#a78bfa" }}>NATAL</span>
             </div>
-            <span className="text-[8px] hidden md:block flex-shrink-0" style={{ color: "#334155" }}>{asp.type.name}</span>
+            <span className="text-[13px] hidden md:block flex-shrink-0" style={{ color: "#334155" }}>{asp.type.name}</span>
           </motion.div>
         );
       })}
-      <p className="text-[8px] text-center pt-2" style={{ color: "#334155" }}>
+      <p className="text-[13px] text-center pt-2" style={{ color: "#334155" }}>
         {aspects.length} cross-chart aspects · sorted by exactness
       </p>
     </div>
@@ -116,9 +116,9 @@ function PlanetCompare({ natalChart, srChart }: { natalChart: ChartData; srChart
     <div className="space-y-1.5">
       {/* Header */}
       <div className="grid grid-cols-3 gap-2 px-2 mb-2">
-        <span className="text-[7px] font-bold tracking-widest" style={{ color: "#334155" }}>PLANET</span>
-        <span className="text-[7px] font-bold tracking-widest" style={{ color: "#7c3aed" }}>NATAL</span>
-        <span className="text-[7px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>SOLAR RETURN</span>
+        <span className="text-[14px] font-bold tracking-widest" style={{ color: "#334155" }}>PLANET</span>
+        <span className="text-[14px] font-bold tracking-widest" style={{ color: "#7c3aed" }}>NATAL</span>
+        <span className="text-[14px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>SOLAR RETURN</span>
       </div>
       {natalChart.planets.slice(0, 10).map(np => {
         const srP = srChart.planets.find(p => p.name === np.name);
@@ -139,19 +139,19 @@ function PlanetCompare({ natalChart, srChart }: { natalChart: ChartData; srChart
           >
             <div className="flex items-center gap-1.5">
               <span style={{ color }}>{PLANET_SYMBOLS[np.name]}</span>
-              <span className="text-[9px] font-medium" style={{ color }}>{np.name}</span>
+              <span className="text-[13px] font-medium" style={{ color }}>{np.name}</span>
             </div>
             <div>
-              <p className="text-[10px] font-medium" style={{ color: "#94a3b8" }}>
+              <p className="text-[14px] font-medium" style={{ color: "#94a3b8" }}>
                 {SIGN_SYMBOLS[np.sign]} {np.sign.substring(0, 3)} H{np.house}
               </p>
-              <p className="text-[8px]" style={{ color: "#334155" }}>{np.signDegree.toFixed(1)}°</p>
+              <p className="text-[13px]" style={{ color: "#334155" }}>{np.signDegree.toFixed(1)}°</p>
             </div>
             <div>
-              <p className="text-[10px] font-medium" style={{ color: signChanged ? "#f59e0b" : "#94a3b8" }}>
+              <p className="text-[14px] font-medium" style={{ color: signChanged ? "#f59e0b" : "#94a3b8" }}>
                 {SIGN_SYMBOLS[srP.sign]} {srP.sign.substring(0, 3)} H{srP.house}
               </p>
-              <p className="text-[8px]" style={{ color: "#334155" }}>{srP.signDegree.toFixed(1)}°</p>
+              <p className="text-[13px]" style={{ color: "#334155" }}>{srP.signDegree.toFixed(1)}°</p>
             </div>
           </motion.div>
         );
@@ -162,10 +162,10 @@ function PlanetCompare({ natalChart, srChart }: { natalChart: ChartData; srChart
         <div className="flex items-center gap-1.5">
           <span style={{ color: "#06b6d4" }}>ASC</span>
         </div>
-        <p className="text-[10px] font-medium" style={{ color: "#94a3b8" }}>
+        <p className="text-[14px] font-medium" style={{ color: "#94a3b8" }}>
           {SIGN_SYMBOLS[natalChart.houses[0].sign]} {natalChart.houses[0].sign}
         </p>
-        <p className="text-[10px] font-medium" style={{ color: "#06b6d4" }}>
+        <p className="text-[14px] font-medium" style={{ color: "#06b6d4" }}>
           {SIGN_SYMBOLS[srChart.houses[0].sign]} {srChart.houses[0].sign}
         </p>
       </div>
@@ -187,7 +187,7 @@ function HouseEmphasis({ srChart }: { srChart: ChartData }) {
     .sort((a, b) => b[1].length - a[1].length);
 
   if (emphasized.length === 0) {
-    return <p className="text-[10px]" style={{ color: "#334155" }}>No heavily occupied houses this year.</p>;
+    return <p className="text-[14px]" style={{ color: "#334155" }}>No heavily occupied houses this year.</p>;
   }
 
   return (
@@ -200,10 +200,10 @@ function HouseEmphasis({ srChart }: { srChart: ChartData }) {
         >
           <div className="flex-shrink-0">
             <p className="text-xs font-bold" style={{ color: "#a78bfa" }}>H{house}</p>
-            <p className="text-[8px]" style={{ color: "#334155" }}>{planets.length} planets</p>
+            <p className="text-[13px]" style={{ color: "#334155" }}>{planets.length} planets</p>
           </div>
           <div className="flex-1">
-            <p className="text-[9px] mb-1" style={{ color: "#64748b" }}>{HOUSE_THEMES[Number(house)]}</p>
+            <p className="text-[13px] mb-1" style={{ color: "#64748b" }}>{HOUSE_THEMES[Number(house)]}</p>
             <div className="flex gap-1.5 flex-wrap">
               {planets.map(name => (
                 <span key={name} className="text-xs" style={{ color: PLANET_COLORS[name as PlanetName] ?? "#94a3b8" }}>
@@ -283,7 +283,7 @@ Write 3 paragraphs: (1) the overarching yearly theme from the SR Ascendant and i
       style={{ border: "1px solid rgba(245,158,11,0.2)", background: "rgba(245,158,11,0.04)" }}
     >
       <div className="px-5 py-3" style={{ borderBottom: "1px solid rgba(245,158,11,0.1)" }}>
-        <p className="text-[8px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>
+        <p className="text-[13px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>
           ✦ ORACLE — {year} SOLAR RETURN
         </p>
       </div>
@@ -402,7 +402,7 @@ export default function SolarReturnPage() {
             </svg>
           </motion.div>
           <div className="text-center">
-            <p className="text-[10px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
+            <p className="text-[14px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
             <h2 className="text-2xl font-bold mb-3" style={{ fontFamily: "Space Grotesk, sans-serif", color: "#e2e8f0" }}>Cosmic instruments standing by.</h2>
             <p className="text-sm max-w-xs mx-auto" style={{ color: "#475569" }}>Enter your birth data to unlock your solar return and all its cosmic layers.</p>
           </div>
@@ -454,7 +454,7 @@ export default function SolarReturnPage() {
             <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
               {(["overview", "planets", "aspects", "houses", "oracle"] as const).map(tab => (
                 <motion.button key={tab} whileTap={{ scale: 0.95 }} onClick={() => setActiveTab(tab)}
-                  className="px-2.5 py-1 rounded-lg text-[8px] font-bold tracking-widest cursor-pointer transition-all duration-200"
+                  className="px-2.5 py-1 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer transition-all duration-200"
                   style={{
                     background: activeTab === tab ? "rgba(245,158,11,0.2)" : "transparent",
                     color: activeTab === tab ? "#fbbf24" : "#334155",
@@ -473,7 +473,7 @@ export default function SolarReturnPage() {
             {/* Year selector */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
               className="flex items-center gap-3 mb-6 flex-wrap">
-              <p className="text-[9px] font-bold tracking-widest" style={{ color: "#64748b" }}>SELECT YEAR</p>
+              <p className="text-[13px] font-bold tracking-widest" style={{ color: "#64748b" }}>SELECT YEAR</p>
               <div className="flex items-center gap-2">
                 <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                   onClick={() => { const y = selectedYear - 1; setSelectedYear(y); fetchSolarReturn(y); }}
@@ -501,7 +501,7 @@ export default function SolarReturnPage() {
                   className="w-4 h-4 rounded-full border border-t-transparent" style={{ borderColor: "#f59e0b" }} />
               )}
               {srDatetime && !loading && (
-                <span className="text-[9px]" style={{ color: "#475569" }}>
+                <span className="text-[13px]" style={{ color: "#475569" }}>
                   ☉ returns {formatDatetime(srDatetime)}
                 </span>
               )}
@@ -523,7 +523,7 @@ export default function SolarReturnPage() {
                       {/* SR Ascendant + key placements */}
                       <div className="rounded-2xl p-5"
                         style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.18)", boxShadow: "0 0 40px rgba(245,158,11,0.06)" }}>
-                        <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#f59e0b" }}>
+                        <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#f59e0b" }}>
                           {selectedYear} SOLAR RETURN · KEY PLACEMENTS
                         </p>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -534,7 +534,7 @@ export default function SolarReturnPage() {
                             { label: "SR SECT", value: srChart.sect.toUpperCase(), color: srChart.sect === "day" ? "#fbbf24" : "#c4b5fd" },
                           ].map(({ label, value, color }) => (
                             <div key={label} className="flex flex-col gap-1">
-                              <p className="text-[7px] tracking-widest font-bold" style={{ color: "#334155" }}>{label}</p>
+                              <p className="text-[14px] tracking-widest font-bold" style={{ color: "#334155" }}>{label}</p>
                               <p className="text-sm font-bold" style={{ color }}>{value}</p>
                             </div>
                           ))}
@@ -543,7 +543,7 @@ export default function SolarReturnPage() {
 
                       {/* House emphasis */}
                       <div>
-                        <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>ACTIVATED HOUSES</p>
+                        <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>ACTIVATED HOUSES</p>
                         <HouseEmphasis srChart={srChart} />
                       </div>
 
@@ -555,19 +555,19 @@ export default function SolarReturnPage() {
                         const color = PLANET_COLORS[srLord] ?? "#94a3b8";
                         return (
                           <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                            <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: "#64748b" }}>SR LORD OF THE YEAR</p>
+                            <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#64748b" }}>SR LORD OF THE YEAR</p>
                             <div className="flex items-center gap-3">
                               <span className="text-3xl" style={{ color }}>{PLANET_SYMBOLS[srLord]}</span>
                               <div>
                                 <p className="text-sm font-bold" style={{ color }}>{srLord}</p>
                                 {srLordPlanet && (
-                                  <p className="text-[10px]" style={{ color: "#475569" }}>
+                                  <p className="text-[14px]" style={{ color: "#475569" }}>
                                     {SIGN_SYMBOLS[srLordPlanet.sign]} {srLordPlanet.sign} · House {srLordPlanet.house}
                                     {srLordPlanet.dignity && srLordPlanet.dignity !== "peregrine" && ` · ${srLordPlanet.dignity}`}
                                     {srLordPlanet.retrograde && " · Rx"}
                                   </p>
                                 )}
-                                <p className="text-[9px] mt-0.5" style={{ color: "#334155" }}>
+                                <p className="text-[13px] mt-0.5" style={{ color: "#334155" }}>
                                   Ruler of SR {srAscSign} Ascendant
                                 </p>
                               </div>
@@ -587,32 +587,32 @@ export default function SolarReturnPage() {
                         const lordColor = PLANET_COLORS[profLord] ?? "#94a3b8";
                         return (
                           <div className="rounded-2xl p-4" style={{ background: "rgba(6,182,212,0.05)", border: "1px solid rgba(6,182,212,0.18)" }}>
-                            <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#06b6d4" }}>
+                            <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#06b6d4" }}>
                               ✦ ANNUAL PROFECTION × SOLAR RETURN
                             </p>
                             <div className="grid grid-cols-2 gap-4">
                               <div>
-                                <p className="text-[7px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>NATAL PROFECTION YEAR</p>
+                                <p className="text-[14px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>NATAL PROFECTION YEAR</p>
                                 <p className="text-sm font-bold" style={{ color: "#06b6d4" }}>Age {profectionAge} → House {profHouse}</p>
-                                <p className="text-[9px] mt-0.5" style={{ color: "#475569" }}>{profSign} · {HOUSE_THEMES[profHouse]}</p>
-                                <p className="text-[8px] mt-1" style={{ color: "#334155" }}>
+                                <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>{profSign} · {HOUSE_THEMES[profHouse]}</p>
+                                <p className="text-[13px] mt-1" style={{ color: "#334155" }}>
                                   Lord: <span style={{ color: lordColor }}>{PLANET_SYMBOLS[profLord]} {profLord}</span>
                                 </p>
                               </div>
                               <div>
-                                <p className="text-[7px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>PROFECTION LORD IN SR</p>
+                                <p className="text-[14px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>PROFECTION LORD IN SR</p>
                                 {srProfLordPlanet ? (
                                   <>
                                     <p className="text-sm font-bold" style={{ color: lordColor }}>
                                       {SIGN_SYMBOLS[srProfLordPlanet.sign]} {srProfLordPlanet.sign}
                                     </p>
-                                    <p className="text-[9px] mt-0.5" style={{ color: "#475569" }}>
+                                    <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
                                       House {srProfLordPlanet.house}
                                       {srProfLordPlanet.dignity && srProfLordPlanet.dignity !== "peregrine" ? ` · ${srProfLordPlanet.dignity}` : ""}
                                       {srProfLordPlanet.retrograde ? " · Rx" : ""}
                                     </p>
                                     {srProfHouseCusp && (
-                                      <p className="text-[8px] mt-1" style={{ color: "#334155" }}>
+                                      <p className="text-[13px] mt-1" style={{ color: "#334155" }}>
                                         SR H{profHouse}: {SIGN_SYMBOLS[srProfHouseCusp.sign]} {srProfHouseCusp.sign}
                                       </p>
                                     )}
@@ -635,7 +635,7 @@ export default function SolarReturnPage() {
                         if (stelliums.length === 0) return null;
                         return (
                           <div className="rounded-2xl p-4" style={{ background: "rgba(168,85,247,0.05)", border: "1px solid rgba(168,85,247,0.18)" }}>
-                            <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#a855f7" }}>✦ SR STELLIUMS</p>
+                            <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#a855f7" }}>✦ SR STELLIUMS</p>
                             {stelliums.map(s => {
                               const signColor = SIGN_COLORS[s.sign];
                               return (
@@ -643,13 +643,13 @@ export default function SolarReturnPage() {
                                   <span className="text-xl" style={{ color: signColor }}>{SIGN_SYMBOLS[s.sign]}</span>
                                   <div>
                                     <p className="text-sm font-bold" style={{ color: signColor }}>{s.sign}</p>
-                                    <p className="text-[9px]" style={{ color: "#475569" }}>{s.planets.length} planets · concentrated energy</p>
+                                    <p className="text-[13px]" style={{ color: "#475569" }}>{s.planets.length} planets · concentrated energy</p>
                                   </div>
                                   <div className="flex gap-2 ml-2 flex-wrap">
                                     {s.planets.map(name => (
                                       <span key={name} className="flex items-center gap-0.5 text-sm" style={{ color: PLANET_COLORS[name] ?? "#94a3b8" }}>
                                         {PLANET_SYMBOLS[name]}
-                                        <span className="text-[8px]">{name}</span>
+                                        <span className="text-[13px]">{name}</span>
                                       </span>
                                     ))}
                                   </div>
@@ -665,7 +665,7 @@ export default function SolarReturnPage() {
                   {/* ─── PLANETS TAB ───────────────────────────────────────── */}
                   {activeTab === "planets" && (
                     <div>
-                      <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>
+                      <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>
                         NATAL vs SOLAR RETURN POSITIONS
                       </p>
                       <PlanetCompare natalChart={natalChart} srChart={srChart} />
@@ -677,12 +677,12 @@ export default function SolarReturnPage() {
                     <div>
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <p className="text-[8px] font-bold tracking-widest" style={{ color: "#64748b" }}>SR → NATAL CROSS-CHART ASPECTS</p>
-                          <p className="text-[7px] mt-0.5" style={{ color: "#334155" }}>Where {selectedYear} SR planets land on your natal positions</p>
+                          <p className="text-[13px] font-bold tracking-widest" style={{ color: "#64748b" }}>SR → NATAL CROSS-CHART ASPECTS</p>
+                          <p className="text-[14px] mt-0.5" style={{ color: "#334155" }}>Where {selectedYear} SR planets land on your natal positions</p>
                         </div>
                         <div className="flex gap-2 flex-wrap">
                           {SR_ASPECT_DEFS.map(def => (
-                            <span key={def.name} className="flex items-center gap-1 text-[7px]" style={{ color: def.color }}>
+                            <span key={def.name} className="flex items-center gap-1 text-[14px]" style={{ color: def.color }}>
                               {def.glyph} {def.name}
                             </span>
                           ))}
@@ -695,7 +695,7 @@ export default function SolarReturnPage() {
                   {/* ─── HOUSES TAB ────────────────────────────────────────── */}
                   {activeTab === "houses" && (
                     <div>
-                      <p className="text-[8px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>
+                      <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>
                         SOLAR RETURN HOUSE CUSPS
                       </p>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -715,11 +715,11 @@ export default function SolarReturnPage() {
                               }}
                             >
                               <div className="flex items-center justify-between mb-1">
-                                <span className="text-[8px] font-bold tracking-wider" style={{ color: "#334155" }}>H{h.house}</span>
+                                <span className="text-[13px] font-bold tracking-wider" style={{ color: "#334155" }}>H{h.house}</span>
                                 <span className="text-base" style={{ color: signColor }}>{SIGN_SYMBOLS[h.sign]}</span>
                               </div>
-                              <p className="text-[9px] font-medium" style={{ color: signColor }}>{h.sign}</p>
-                              <p className="text-[8px]" style={{ color: "#334155" }}>{h.signDegree.toFixed(1)}°</p>
+                              <p className="text-[13px] font-medium" style={{ color: signColor }}>{h.sign}</p>
+                              <p className="text-[13px]" style={{ color: "#334155" }}>{h.signDegree.toFixed(1)}°</p>
                               {planetsHere.length > 0 && (
                                 <div className="flex gap-1 mt-1.5 flex-wrap">
                                   {planetsHere.map(p => (

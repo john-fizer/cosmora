@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import type { ChartData, ZodiacSign, PlanetName } from "@/lib/astrology/types";
@@ -56,7 +56,7 @@ export function HousesTable({ chart, onSelectHouse, selectedHouse, onHouseNaviga
     <div className="h-full flex flex-col">
       {/* Headers */}
       <div
-        className="grid gap-3 px-4 py-2 text-[9px] font-bold tracking-widest flex-shrink-0"
+        className="grid gap-3 px-4 py-2 text-[13px] font-bold tracking-widest flex-shrink-0"
         style={{
           color: "#475569",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
@@ -126,7 +126,7 @@ export function HousesTable({ chart, onSelectHouse, selectedHouse, onHouseNaviga
                 <div>
                   <span className="text-xs" style={{ color: "#94a3b8" }}>{lord}</span>
                   {lordPlanet && (
-                    <span className="text-[9px] ml-1" style={{ color: "#475569" }}>
+                    <span className="text-[13px] ml-1" style={{ color: "#475569" }}>
                       H{lordPlanet.house}
                     </span>
                   )}
@@ -135,14 +135,14 @@ export function HousesTable({ chart, onSelectHouse, selectedHouse, onHouseNaviga
 
               {/* Topics */}
               <div className="flex flex-col justify-center">
-                <span className="text-[10px] font-semibold" style={{ color: "#e2e8f0" }}>{topic.title}</span>
-                <span className="text-[9px] leading-tight mt-0.5" style={{ color: "#475569" }}>{topic.keywords}</span>
+                <span className="text-[14px] font-semibold" style={{ color: "#e2e8f0" }}>{topic.title}</span>
+                <span className="text-[13px] leading-tight mt-0.5" style={{ color: "#475569" }}>{topic.keywords}</span>
               </div>
 
               {/* Occupants */}
               <div className="flex items-center gap-1 flex-wrap">
                 {occupants.length === 0 ? (
-                  <span className="text-[9px]" style={{ color: "#2d3748" }}>empty</span>
+                  <span className="text-[13px]" style={{ color: "#2d3748" }}>empty</span>
                 ) : (
                   occupants.map(pName => (
                     <span key={pName} className="text-sm" title={pName}
@@ -158,7 +158,7 @@ export function HousesTable({ chart, onSelectHouse, selectedHouse, onHouseNaviga
 
         {/* House system note */}
         <div className="px-4 py-3 flex items-center gap-2">
-          <span className="text-[9px] tracking-widest" style={{ color: "#334155" }}>
+          <span className="text-[13px] tracking-widest" style={{ color: "#334155" }}>
             USING {chart.houseSystem.replace("_", " ").toUpperCase()} HOUSE SYSTEM
             {chart.houseSystem === "whole_sign" && " — EACH HOUSE SPANS A FULL SIGN"}
           </span>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -277,7 +277,7 @@ Be specific, poetic but grounded. Max 200 words total. Avoid generic phrases.`;
           className="w-2 h-2 rounded-full flex-shrink-0"
           style={{ background: streaming ? "#f59e0b" : "#22c55e" }}
         />
-        <span className="text-[9px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>
+        <span className="text-[13px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>
           ✦ MORNING COSMIC BRIEFING
         </span>
         {streaming && (
@@ -321,7 +321,7 @@ Be specific, poetic but grounded. Max 200 words total. Avoid generic phrases.`;
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 onClick={() => { setText(""); generate(); }}
-                className="text-[9px] font-bold tracking-widest cursor-pointer px-3 py-1.5 rounded-lg mt-1"
+                className="text-[13px] font-bold tracking-widest cursor-pointer px-3 py-1.5 rounded-lg mt-1"
                 style={{ background: "rgba(245,158,11,0.08)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.2)" }}
               >
                 REGENERATE
@@ -380,10 +380,10 @@ function PlanetaryHoursPanel({ lat }: { lat: number }) {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-[8px] font-bold tracking-widest" style={{ color: "#334155" }}>
+              <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>
                 {current.isDay ? "DAY" : "NIGHT"} HOUR {current.number <= 12 ? current.number : current.number - 12}
               </span>
-              <span className="text-[8px] px-1.5 py-0.5 rounded" style={{ background: `${PLANET_COLORS[current.planet]}15`, color: PLANET_COLORS[current.planet] }}>
+              <span className="text-[13px] px-1.5 py-0.5 rounded" style={{ background: `${PLANET_COLORS[current.planet]}15`, color: PLANET_COLORS[current.planet] }}>
                 ACTIVE
               </span>
             </div>
@@ -391,15 +391,15 @@ function PlanetaryHoursPanel({ lat }: { lat: number }) {
               Hour of {current.planet}
             </p>
             {meaning && (
-              <p className="text-[10px] mt-0.5" style={{ color: "#64748b" }}>{meaning.keywords}</p>
+              <p className="text-[14px] mt-0.5" style={{ color: "#64748b" }}>{meaning.keywords}</p>
             )}
           </div>
           <div className="flex-shrink-0 text-right">
-            <p className="text-[8px] tracking-widest mb-0.5" style={{ color: "#334155" }}>ENDS IN</p>
+            <p className="text-[13px] tracking-widest mb-0.5" style={{ color: "#334155" }}>ENDS IN</p>
             <p className="text-lg font-mono font-bold tabular-nums" style={{ color: PLANET_COLORS[current.planet] }}>
               {String(remainMins).padStart(2, "0")}:{String(remainSecs).padStart(2, "0")}
             </p>
-            <p className="text-[8px]" style={{ color: "#334155" }}>{fmtTime(current.end)}</p>
+            <p className="text-[13px]" style={{ color: "#334155" }}>{fmtTime(current.end)}</p>
           </div>
         </div>
       )}
@@ -408,19 +408,19 @@ function PlanetaryHoursPanel({ lat }: { lat: number }) {
       {meaning && (
         <div className="grid grid-cols-2 gap-3 px-5 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
           <div>
-            <p className="text-[7px] font-bold tracking-widest mb-1.5" style={{ color: "#22c55e" }}>✓ GOOD FOR</p>
-            <p className="text-[10px] leading-relaxed" style={{ color: "#64748b" }}>{meaning.good}</p>
+            <p className="text-[14px] font-bold tracking-widest mb-1.5" style={{ color: "#22c55e" }}>✓ GOOD FOR</p>
+            <p className="text-[14px] leading-relaxed" style={{ color: "#64748b" }}>{meaning.good}</p>
           </div>
           <div>
-            <p className="text-[7px] font-bold tracking-widest mb-1.5" style={{ color: "#ef4444" }}>✗ AVOID</p>
-            <p className="text-[10px] leading-relaxed" style={{ color: "#64748b" }}>{meaning.avoid}</p>
+            <p className="text-[14px] font-bold tracking-widest mb-1.5" style={{ color: "#ef4444" }}>✗ AVOID</p>
+            <p className="text-[14px] leading-relaxed" style={{ color: "#64748b" }}>{meaning.avoid}</p>
           </div>
         </div>
       )}
 
       {/* Hour sequence */}
       <div className="px-4 py-3">
-        <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>HOUR SEQUENCE</p>
+        <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>HOUR SEQUENCE</p>
         <div className="space-y-1">
           {visibleHours.map((h, i) => {
             const isCurrent = h === current;
@@ -441,15 +441,15 @@ function PlanetaryHoursPanel({ lat }: { lat: number }) {
               >
                 <span className="text-sm w-5 text-center flex-shrink-0" style={{ color }}>{PLANET_SYMBOLS[h.planet]}</span>
                 <div className="flex-1 min-w-0">
-                  <span className="text-[10px] font-medium" style={{ color: isCurrent ? color : "#64748b" }}>
+                  <span className="text-[14px] font-medium" style={{ color: isCurrent ? color : "#64748b" }}>
                     {h.planet}
                   </span>
-                  {isCurrent && <span className="ml-1.5 text-[7px] font-bold tracking-widest" style={{ color }}>NOW</span>}
+                  {isCurrent && <span className="ml-1.5 text-[14px] font-bold tracking-widest" style={{ color }}>NOW</span>}
                 </div>
-                <span className="text-[8px] font-mono flex-shrink-0" style={{ color: "#334155" }}>
+                <span className="text-[13px] font-mono flex-shrink-0" style={{ color: "#334155" }}>
                   {fmtTime(h.start)} – {fmtTime(h.end)}
                 </span>
-                <span className="text-[7px] w-4 text-right flex-shrink-0" style={{ color: h.isDay ? "#fbbf24" : "#c4b5fd" }}>
+                <span className="text-[14px] w-4 text-right flex-shrink-0" style={{ color: h.isDay ? "#fbbf24" : "#c4b5fd" }}>
                   {h.isDay ? "☀" : "☽"}
                 </span>
               </motion.div>
@@ -502,20 +502,20 @@ function TransitSnapshot({ aspects, warpTo }: { aspects: TransitAspect[]; warpTo
               <p className="text-xs font-medium truncate" style={{ color: "#94a3b8" }}>
                 {asp.transitPlanet}{asp.transitRetrograde ? " ℞" : ""} {asp.type} natal {asp.natalPlanet}
               </p>
-              <p className="text-[9px]" style={{ color: "#475569" }}>
+              <p className="text-[13px]" style={{ color: "#475569" }}>
                 {SIGN_SYMBOLS[asp.transitSign]} {asp.transitSign} · orb {asp.orb.toFixed(1)}°
               </p>
             </div>
 
             <div className="flex-shrink-0 text-right">
               {asp.exact ? (
-                <span className="text-[8px] font-black px-2 py-1 rounded-lg" style={{ background: `${cfg?.color}20`, color: cfg?.color }}>
+                <span className="text-[13px] font-black px-2 py-1 rounded-lg" style={{ background: `${cfg?.color}20`, color: cfg?.color }}>
                   EXACT
                 </span>
               ) : days !== null ? (
                 <div>
                   <span className="text-sm font-bold" style={{ color: "#22c55e" }}>{days}</span>
-                  <span className="text-[8px] ml-0.5" style={{ color: "#334155" }}>d</span>
+                  <span className="text-[13px] ml-0.5" style={{ color: "#334155" }}>d</span>
                 </div>
               ) : null}
             </div>
@@ -546,13 +546,13 @@ function IngressBadges({ ingresses }: { ingresses: Ingress[] }) {
             style={{ background: `${pColor}0d`, border: `1px solid ${pColor}20` }}
           >
             <span className="text-sm" style={{ color: pColor }}>{PLANET_SYMBOLS[ing.planet as PlanetName]}</span>
-            <span className="text-[9px]" style={{ color: "#475569" }}>→</span>
+            <span className="text-[13px]" style={{ color: "#475569" }}>→</span>
             <span className="text-sm" style={{ color: sColor }}>{SIGN_SYMBOLS[ing.toSign]}</span>
             <div>
-              <p className="text-[9px] font-bold" style={{ color: pColor }}>
+              <p className="text-[13px] font-bold" style={{ color: pColor }}>
                 {ing.planet}{ing.retrograde ? " ℞" : ""} → {ing.toSign}
               </p>
-              <p className="text-[8px]" style={{ color: "#334155" }}>
+              <p className="text-[13px]" style={{ color: "#334155" }}>
                 in {ing.daysUntil} day{ing.daysUntil !== 1 ? "s" : ""}
               </p>
             </div>
@@ -622,7 +622,7 @@ function WeekForecast({ now, moonLon, ingresses, warpTo }: {
               }}
             >
               {/* Day name */}
-              <span className="text-[7px] font-bold tracking-widest" style={{ color: day.isToday ? "#a78bfa" : "#334155" }}>
+              <span className="text-[14px] font-bold tracking-widest" style={{ color: day.isToday ? "#a78bfa" : "#334155" }}>
                 {DAY_SHORT[day.date.getDay()]}
               </span>
 
@@ -678,17 +678,17 @@ function WeekForecast({ now, moonLon, ingresses, warpTo }: {
       >
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4 rounded flex items-center justify-center" style={{ background: "rgba(124,58,237,0.2)" }}>
-            <span className="text-[8px]" style={{ color: "#a78bfa" }}>☉</span>
+            <span className="text-[13px]" style={{ color: "#a78bfa" }}>☉</span>
           </div>
-          <span className="text-[7px]" style={{ color: "#334155" }}>Day ruler</span>
+          <span className="text-[14px]" style={{ color: "#334155" }}>Day ruler</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="text-sm" style={{ color: "#c4b5fd" }}>♈</span>
-          <span className="text-[7px]" style={{ color: "#334155" }}>Moon sign (approx)</span>
+          <span className="text-[14px]" style={{ color: "#334155" }}>Moon sign (approx)</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-1.5 h-1.5 rounded-full" style={{ background: "#f59e0b" }} />
-          <span className="text-[7px]" style={{ color: "#334155" }}>Planet ingress</span>
+          <span className="text-[14px]" style={{ color: "#334155" }}>Planet ingress</span>
         </div>
       </div>
     </div>
@@ -748,9 +748,9 @@ function DignityLeaderboard({ chart }: { chart: ChartData }) {
         className="flex items-center justify-between px-5 py-3"
         style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
       >
-        <span className="text-[8px] font-bold tracking-widest" style={{ color: "#334155" }}>ESSENTIAL DIGNITIES · 7 TRADITIONAL PLANETS</span>
+        <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>ESSENTIAL DIGNITIES · 7 TRADITIONAL PLANETS</span>
         <div className="flex items-center gap-2">
-          <span className="text-[8px]" style={{ color: "#334155" }}>CHART SCORE</span>
+          <span className="text-[13px]" style={{ color: "#334155" }}>CHART SCORE</span>
           <span
             className="text-sm font-bold px-2 py-0.5 rounded-lg"
             style={{ background: `${strengthColor}15`, color: strengthColor, border: `1px solid ${strengthColor}30` }}
@@ -778,7 +778,7 @@ function DignityLeaderboard({ chart }: { chart: ChartData }) {
               {/* Planet */}
               <div className="flex items-center gap-1.5 w-24 flex-shrink-0">
                 <span className="text-base" style={{ color: p.color }}>{PLANET_SYMBOLS[p.name]}</span>
-                <span className="text-[9px] font-medium" style={{ color: "#64748b" }}>{p.name}</span>
+                <span className="text-[13px] font-medium" style={{ color: "#64748b" }}>{p.name}</span>
               </div>
 
               {/* Bar */}
@@ -802,13 +802,13 @@ function DignityLeaderboard({ chart }: { chart: ChartData }) {
                 {/* Score + dignity label */}
                 <div className="flex-shrink-0 flex items-center gap-2 w-28">
                   <span
-                    className="text-[8px] font-bold w-6 text-right tabular-nums"
+                    className="text-[13px] font-bold w-6 text-right tabular-nums"
                     style={{ color: dColor }}
                   >
                     {p.score > 0 ? "+" : ""}{p.score}
                   </span>
                   <span
-                    className="text-[8px] px-1.5 py-0.5 rounded"
+                    className="text-[13px] px-1.5 py-0.5 rounded"
                     style={{ background: `${dColor}12`, color: dColor }}
                   >
                     {DIGNITY_LABELS[dignity] ?? dignity}
@@ -834,7 +834,7 @@ function DignityLeaderboard({ chart }: { chart: ChartData }) {
         ].map(({ label, color }) => (
           <div key={label} className="flex items-center gap-1">
             <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
-            <span className="text-[7px]" style={{ color: "#334155" }}>{label}</span>
+            <span className="text-[14px]" style={{ color: "#334155" }}>{label}</span>
           </div>
         ))}
       </div>
@@ -847,9 +847,9 @@ function DignityLeaderboard({ chart }: { chart: ChartData }) {
 function SectionLabel({ label, sub }: { label: string; sub?: string }) {
   return (
     <div className="flex items-center gap-3 mb-4">
-      <span className="text-[9px] font-bold tracking-[0.2em]" style={{ color: "#06b6d4" }}>{label}</span>
+      <span className="text-[13px] font-bold tracking-[0.2em]" style={{ color: "#06b6d4" }}>{label}</span>
       <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, rgba(6,182,212,0.2), transparent)" }} />
-      {sub && <span className="text-[8px]" style={{ color: "#334155" }}>{sub}</span>}
+      {sub && <span className="text-[13px]" style={{ color: "#334155" }}>{sub}</span>}
     </div>
   );
 }
@@ -930,7 +930,7 @@ export default function BriefingPage() {
             </svg>
           </motion.div>
           <div className="text-center">
-            <p className="text-[10px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
+            <p className="text-[14px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
             <h2 className="text-2xl font-bold mb-3" style={{ fontFamily: "Space Grotesk, sans-serif", color: "#e2e8f0" }}>Cosmic instruments standing by.</h2>
             <p className="text-sm max-w-xs mx-auto" style={{ color: "#475569" }}>Enter your birth data to unlock your daily briefing and all its cosmic layers.</p>
           </div>
@@ -991,7 +991,7 @@ export default function BriefingPage() {
           {/* Live clock */}
           <div className="text-right hidden md:block">
             <p className="text-xs font-mono font-bold tabular-nums" style={{ color: "#475569" }}>{timeStr}</p>
-            <p className="text-[8px] tracking-widest" style={{ color: "#1e293b" }}>{dayName.toUpperCase()} · {dateStr.toUpperCase()}</p>
+            <p className="text-[13px] tracking-widest" style={{ color: "#1e293b" }}>{dayName.toUpperCase()} · {dateStr.toUpperCase()}</p>
           </div>
         </motion.div>
 
@@ -1028,10 +1028,10 @@ export default function BriefingPage() {
                     <MoonOrb angle={moonPhase.angle} size={72} />
                     <div className="text-center">
                       <p className="text-sm font-bold" style={{ color: "#c4b5fd" }}>{moonPhase.name}</p>
-                      <p className="text-[9px] mt-0.5" style={{ color: "#475569" }}>
+                      <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
                         {moonPhase.illumination.toFixed(0)}% illuminated
                       </p>
-                      <p className="text-[9px] mt-0.5" style={{ color: "#64748b" }}>
+                      <p className="text-[13px] mt-0.5" style={{ color: "#64748b" }}>
                         ☽ {SIGN_SYMBOLS[moon.sign]} {moon.sign} H{moon.house}
                       </p>
                     </div>
@@ -1046,10 +1046,10 @@ export default function BriefingPage() {
                       <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
                         style={{ background: isVoid ? "#f97316" : "#22c55e" }} />
                       <div>
-                        <p className="text-[8px] font-bold" style={{ color: isVoid ? "#f97316" : "#22c55e" }}>
+                        <p className="text-[13px] font-bold" style={{ color: isVoid ? "#f97316" : "#22c55e" }}>
                           {isVoid ? "Void of Course" : "Moon Active"}
                         </p>
-                        <p className="text-[7px]" style={{ color: "#475569" }}>
+                        <p className="text-[14px]" style={{ color: "#475569" }}>
                           {isVoid ? "Avoid major decisions" : `${moonAspects.length} applying aspects`}
                         </p>
                       </div>
@@ -1067,28 +1067,28 @@ export default function BriefingPage() {
                     }}
                   >
                     <div>
-                      <p className="text-[8px] font-bold tracking-widest mb-2" style={{ color: "#7c3aed" }}>
+                      <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#7c3aed" }}>
                         TODAY'S CONTEXT
                       </p>
                       <div className="flex items-start gap-4 flex-wrap">
                         <div>
-                          <p className="text-[8px] tracking-widest mb-1" style={{ color: "#334155" }}>PROFECTION YEAR</p>
+                          <p className="text-[13px] tracking-widest mb-1" style={{ color: "#334155" }}>PROFECTION YEAR</p>
                           <p className="text-sm font-bold" style={{ color: "#a78bfa" }}>
                             Age {chart.annualProfection.age} · House {chart.annualProfection.activatedHouse}
                           </p>
-                          <p className="text-[9px]" style={{ color: "#64748b" }}>
+                          <p className="text-[13px]" style={{ color: "#64748b" }}>
                             Lord: {PLANET_SYMBOLS[chart.annualProfection.lordOfYear]} {chart.annualProfection.lordOfYear}
                           </p>
                         </div>
                         <div>
-                          <p className="text-[8px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
+                          <p className="text-[13px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
                           <p className="text-sm font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
                             {chart.sect === "day" ? "☀ Day Chart" : "☽ Night Chart"}
                           </p>
                         </div>
                         {sun && (
                           <div>
-                            <p className="text-[8px] tracking-widest mb-1" style={{ color: "#334155" }}>SUN NOW</p>
+                            <p className="text-[13px] tracking-widest mb-1" style={{ color: "#334155" }}>SUN NOW</p>
                             <p className="text-sm font-bold" style={{ color: "#fbbf24" }}>
                               ☉ {SIGN_SYMBOLS[sun.sign]} {sun.sign}
                             </p>
@@ -1100,7 +1100,7 @@ export default function BriefingPage() {
                     {/* Active transit planets row */}
                     {transitsData && (
                       <div className="mt-4 pt-4" style={{ borderTop: "1px solid rgba(124,58,237,0.08)" }}>
-                        <p className="text-[8px] tracking-widest mb-2" style={{ color: "#334155" }}>SKY SNAPSHOT</p>
+                        <p className="text-[13px] tracking-widest mb-2" style={{ color: "#334155" }}>SKY SNAPSHOT</p>
                         <div className="flex flex-wrap gap-2">
                           {transitsData.transitPlanets.slice(0, 7).map(p => {
                             const color = PLANET_COLORS[p.name] ?? "#64748b";
@@ -1111,8 +1111,8 @@ export default function BriefingPage() {
                                 style={{ background: `${color}10`, border: `1px solid ${color}20` }}
                               >
                                 <span className="text-sm" style={{ color }}>{PLANET_SYMBOLS[p.name as PlanetName]}</span>
-                                <span className="text-[8px]" style={{ color: SIGN_COLORS[p.sign] }}>{SIGN_SYMBOLS[p.sign]}</span>
-                                {p.retrograde && <span className="text-[7px]" style={{ color: "#f97316" }}>℞</span>}
+                                <span className="text-[13px]" style={{ color: SIGN_COLORS[p.sign] }}>{SIGN_SYMBOLS[p.sign]}</span>
+                                {p.retrograde && <span className="text-[14px]" style={{ color: "#f97316" }}>℞</span>}
                               </div>
                             );
                           })}

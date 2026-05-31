@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -268,7 +268,7 @@ function SectionBlock({
         {/* Labels */}
         <div className="flex-1 min-w-0">
           <p
-            className="text-[10px] font-black tracking-[0.25em] mb-0.5"
+            className="text-[14px] font-black tracking-[0.25em] mb-0.5"
             style={{ color: section.color }}
           >
             {section.label}
@@ -284,14 +284,14 @@ function SectionBlock({
             <motion.span
               animate={{ opacity: [1, 0, 1] }}
               transition={{ duration: 0.6, repeat: Infinity }}
-              className="text-[9px] font-bold tracking-widest"
+              className="text-[13px] font-bold tracking-widest"
               style={{ color: section.color }}
             >
               GENERATING
             </motion.span>
           )}
           {section.status === "done" && (
-            <span className="text-[9px] font-bold tracking-widest" style={{ color: "#334155" }}>
+            <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>
               COMPLETE
             </span>
           )}
@@ -318,7 +318,7 @@ function SectionBlock({
         ) : section.status === "pending" ? (
           <div className="flex items-center gap-2 py-4">
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.1)" }} />
-            <span className="text-[10px] tracking-widest" style={{ color: "#1e293b" }}>AWAITING SIGNAL</span>
+            <span className="text-[14px] tracking-widest" style={{ color: "#1e293b" }}>AWAITING SIGNAL</span>
           </div>
         ) : section.status === "streaming" ? (
           <div className="flex items-center gap-2 py-4">
@@ -328,7 +328,7 @@ function SectionBlock({
               className="w-1.5 h-1.5 rounded-full"
               style={{ background: section.color }}
             />
-            <span className="text-[10px] tracking-widest" style={{ color: section.color }}>INITIALIZING</span>
+            <span className="text-[14px] tracking-widest" style={{ color: section.color }}>INITIALIZING</span>
           </div>
         ) : null}
       </div>
@@ -408,7 +408,7 @@ function ReportLanding({
             >
               <span className="text-xs" style={{ color: item.color }}>{item.glyph}</span>
               <div>
-                <p className="text-[8px] font-bold tracking-widest" style={{ color: "#334155" }}>{item.label}</p>
+                <p className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>{item.label}</p>
                 <p className="text-xs font-medium" style={{ color: item.color }}>{item.value}</p>
               </div>
             </div>
@@ -437,7 +437,7 @@ function ReportLanding({
             style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}
           >
             <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: s.color }} />
-            <span className="text-[10px]" style={{ color: "#334155" }}>{s.label}</span>
+            <span className="text-[14px]" style={{ color: "#334155" }}>{s.label}</span>
           </motion.div>
         ))}
       </div>
@@ -468,7 +468,7 @@ function ReportLanding({
         </motion.button>
       )}
 
-      <p className="text-[9px] tracking-widest" style={{ color: "#1e293b" }}>
+      <p className="text-[13px] tracking-widest" style={{ color: "#1e293b" }}>
         8 SECTIONS · AI-GENERATED · STREAMS LIVE
       </p>
     </div>
@@ -605,7 +605,7 @@ export default function ReportPage() {
                     style={{ background: "linear-gradient(90deg, #7c3aed, #06b6d4)" }}
                   />
                 </div>
-                <span className="text-[9px] font-bold tracking-widest" style={{ color: "#475569" }}>
+                <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>
                   {progressPct}%
                 </span>
               </div>
@@ -617,7 +617,7 @@ export default function ReportPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={copyReport}
-                className="flex items-center gap-1.5 text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-lg cursor-pointer"
+                className="flex items-center gap-1.5 text-[13px] font-bold tracking-widest px-3 py-1.5 rounded-lg cursor-pointer"
                 style={{
                   background: copied ? "rgba(34,197,94,0.12)" : "rgba(168,85,247,0.12)",
                   border: `1px solid ${copied ? "rgba(34,197,94,0.3)" : "rgba(168,85,247,0.25)"}`,
@@ -649,7 +649,7 @@ export default function ReportPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={generateReport}
-                className="text-[9px] font-bold tracking-widest px-3 py-1.5 rounded-lg cursor-pointer"
+                className="text-[13px] font-bold tracking-widest px-3 py-1.5 rounded-lg cursor-pointer"
                 style={{
                   background: "rgba(255,255,255,0.03)",
                   border: "1px solid rgba(255,255,255,0.07)",
@@ -678,7 +678,7 @@ export default function ReportPage() {
                 scrollbarWidth: "none",
               }}
             >
-              <p className="text-[8px] font-bold tracking-[0.2em] px-5 mb-3" style={{ color: "#1e293b" }}>
+              <p className="text-[13px] font-bold tracking-[0.2em] px-5 mb-3" style={{ color: "#1e293b" }}>
                 SECTIONS
               </p>
               {sections.map((s, i) => (
@@ -696,12 +696,12 @@ export default function ReportPage() {
                   <StatusDot status={s.status} color={s.color} />
                   <div className="flex-1 min-w-0">
                     <p
-                      className="text-[8px] font-bold tracking-wider truncate"
+                      className="text-[13px] font-bold tracking-wider truncate"
                       style={{ color: s.status === "pending" ? "#1e293b" : s.color }}
                     >
                       {s.label}
                     </p>
-                    <p className="text-[8px] truncate" style={{ color: "#334155" }}>
+                    <p className="text-[13px] truncate" style={{ color: "#334155" }}>
                       {s.subtitle}
                     </p>
                   </div>
@@ -717,7 +717,7 @@ export default function ReportPage() {
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={copyReport}
-                    className="w-full text-[8px] font-bold tracking-widest py-2 rounded-xl cursor-pointer"
+                    className="w-full text-[13px] font-bold tracking-widest py-2 rounded-xl cursor-pointer"
                     style={{
                       background: "rgba(168,85,247,0.1)",
                       border: "1px solid rgba(168,85,247,0.2)",
@@ -764,7 +764,7 @@ export default function ReportPage() {
                     <motion.p
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="text-[9px] font-bold tracking-[0.3em] mb-3"
+                      className="text-[13px] font-bold tracking-[0.3em] mb-3"
                       style={{ color: "#334155" }}
                     >
                       COSMORA NATAL REPORT
@@ -821,11 +821,11 @@ export default function ReportPage() {
                         <svg viewBox="0 0 16 16" fill="none" className="w-3 h-3">
                           <path d="M2.5 8l4 4 7-7" stroke="#4ade80" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
-                        <span className="text-[9px] font-bold tracking-widest" style={{ color: "#4ade80" }}>
+                        <span className="text-[13px] font-bold tracking-widest" style={{ color: "#4ade80" }}>
                           REPORT COMPLETE
                         </span>
                       </div>
-                      <p className="text-[10px] leading-relaxed max-w-md mx-auto mb-6" style={{ color: "#334155" }}>
+                      <p className="text-[14px] leading-relaxed max-w-md mx-auto mb-6" style={{ color: "#334155" }}>
                         This report is an AI-generated symbolic interpretation. Always verify insights with a professional astrologer.
                       </p>
                       <div className="flex items-center justify-center gap-3 flex-wrap">

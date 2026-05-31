@@ -57,21 +57,69 @@ function deriveEnergyScores(): Record<EnergyCategory, number> {
 }
 
 const SAMPLE_SPOTS = [
-  { city: "Los Angeles, USA",   lat:  34.05, lon: -118.24 },
-  { city: "New York, USA",      lat:  40.71, lon:  -74.01 },
-  { city: "London, UK",         lat:  51.51, lon:   -0.13 },
-  { city: "Paris, France",      lat:  48.85, lon:    2.35 },
-  { city: "Tokyo, Japan",       lat:  35.68, lon:  139.69 },
-  { city: "Bali, Indonesia",    lat:  -8.34, lon:  115.09 },
-  { city: "Barcelona, Spain",   lat:  41.38, lon:    2.17 },
-  { city: "Cape Town, SA",      lat: -33.92, lon:   18.42 },
-  { city: "Rio de Janeiro",     lat: -22.90, lon:  -43.17 },
-  { city: "Reykjavik",          lat:  64.13, lon:  -21.94 },
-  { city: "Sydney, Australia",  lat: -33.87, lon:  151.21 },
-  { city: "Dubai, UAE",         lat:  25.20, lon:   55.27 },
-  { city: "Mexico City",        lat:  19.43, lon:  -99.13 },
-  { city: "Berlin, Germany",    lat:  52.52, lon:   13.41 },
-  { city: "Mumbai, India",      lat:  19.08, lon:   72.88 },
+  // Americas
+  { city: "Los Angeles",       lat:  34.05, lon: -118.24 },
+  { city: "San Francisco",     lat:  37.77, lon: -122.42 },
+  { city: "Seattle",           lat:  47.61, lon: -122.33 },
+  { city: "Las Vegas",         lat:  36.17, lon: -115.14 },
+  { city: "Denver",            lat:  39.74, lon: -104.98 },
+  { city: "Chicago",           lat:  41.88, lon:  -87.63 },
+  { city: "New York",          lat:  40.71, lon:  -74.01 },
+  { city: "Miami",             lat:  25.76, lon:  -80.19 },
+  { city: "Atlanta",           lat:  33.75, lon:  -84.39 },
+  { city: "Nashville",         lat:  36.17, lon:  -86.78 },
+  { city: "Vancouver",         lat:  49.28, lon: -123.12 },
+  { city: "Toronto",           lat:  43.65, lon:  -79.38 },
+  { city: "Mexico City",       lat:  19.43, lon:  -99.13 },
+  { city: "Havana",            lat:  23.14, lon:  -82.36 },
+  { city: "Bogotá",            lat:   4.71, lon:  -74.07 },
+  { city: "Lima",              lat: -12.05, lon:  -77.04 },
+  { city: "Rio de Janeiro",    lat: -22.90, lon:  -43.17 },
+  { city: "Buenos Aires",      lat: -34.60, lon:  -58.38 },
+  { city: "Santiago",          lat: -33.45, lon:  -70.67 },
+  // Europe
+  { city: "London",            lat:  51.51, lon:   -0.13 },
+  { city: "Paris",             lat:  48.85, lon:    2.35 },
+  { city: "Madrid",            lat:  40.42, lon:   -3.70 },
+  { city: "Barcelona",         lat:  41.38, lon:    2.17 },
+  { city: "Lisbon",            lat:  38.72, lon:   -9.14 },
+  { city: "Amsterdam",         lat:  52.37, lon:    4.90 },
+  { city: "Berlin",            lat:  52.52, lon:   13.41 },
+  { city: "Rome",              lat:  41.90, lon:   12.49 },
+  { city: "Athens",            lat:  37.98, lon:   23.73 },
+  { city: "Vienna",            lat:  48.21, lon:   16.37 },
+  { city: "Prague",            lat:  50.08, lon:   14.44 },
+  { city: "Stockholm",         lat:  59.33, lon:   18.07 },
+  { city: "Oslo",              lat:  59.91, lon:   10.75 },
+  { city: "Reykjavik",         lat:  64.13, lon:  -21.94 },
+  // Africa & Middle East
+  { city: "Istanbul",          lat:  41.01, lon:   28.98 },
+  { city: "Cairo",             lat:  30.04, lon:   31.24 },
+  { city: "Casablanca",        lat:  33.59, lon:   -7.62 },
+  { city: "Lagos",             lat:   6.52, lon:    3.38 },
+  { city: "Nairobi",           lat:  -1.29, lon:   36.82 },
+  { city: "Cape Town",         lat: -33.92, lon:   18.42 },
+  { city: "Johannesburg",      lat: -26.20, lon:   28.04 },
+  { city: "Dubai",             lat:  25.20, lon:   55.27 },
+  { city: "Tel Aviv",          lat:  32.08, lon:   34.78 },
+  { city: "Riyadh",            lat:  24.69, lon:   46.72 },
+  // Asia & Pacific
+  { city: "Moscow",            lat:  55.75, lon:   37.62 },
+  { city: "Mumbai",            lat:  19.08, lon:   72.88 },
+  { city: "Delhi",             lat:  28.66, lon:   77.22 },
+  { city: "Bangkok",           lat:  13.76, lon:  100.50 },
+  { city: "Singapore",         lat:   1.35, lon:  103.82 },
+  { city: "Bali",              lat:  -8.34, lon:  115.09 },
+  { city: "Jakarta",           lat:  -6.21, lon:  106.85 },
+  { city: "Hong Kong",         lat:  22.32, lon:  114.17 },
+  { city: "Shanghai",          lat:  31.23, lon:  121.47 },
+  { city: "Beijing",           lat:  39.90, lon:  116.41 },
+  { city: "Tokyo",             lat:  35.68, lon:  139.69 },
+  { city: "Osaka",             lat:  34.69, lon:  135.50 },
+  { city: "Seoul",             lat:  37.57, lon:  126.98 },
+  { city: "Sydney",            lat: -33.87, lon:  151.21 },
+  { city: "Melbourne",         lat: -37.81, lon:  144.96 },
+  { city: "Auckland",          lat: -36.85, lon:  174.76 },
 ];
 
 // ─── Eye icon ─────────────────────────────────────────────────────────────────
@@ -640,14 +688,18 @@ export default function AstrocartographyPage() {
   // ── Compute top power spots ───────────────────────────────────────────────────
   useEffect(() => {
     if (lines.length === 0) return;
-    const sorted = SAMPLE_SPOTS.map(s => {
+    const CLOSE_LINE_DEG = 5; // ~500 km — must have a line passing this close to show skyline
+    const scored = SAMPLE_SPOTS.map(s => {
       const scores = scoreLocation(lines, s.lat, s.lon);
       const power  = scores.reduce((acc, sc) => acc + sc.influence * 100, 0);
-      return { city: s.city, lat: s.lat, lon: s.lon, scores, power: Math.min(99, Math.round(power)) };
-    }).sort((a, b) => b.power - a.power);
+      const hasCloseLine = scores.some(sc => sc.distanceDeg <= CLOSE_LINE_DEG);
+      return { city: s.city, lat: s.lat, lon: s.lon, scores, power: Math.min(99, Math.round(power)), hasCloseLine };
+    });
+    // Only include cities with an actual line passing close by
+    const sorted = scored.filter(s => s.hasCloseLine).sort((a, b) => b.power - a.power);
     const deduped: typeof sorted = [];
     for (const spot of sorted) {
-      if (!deduped.some(k => angularDist(spot.lat, spot.lon, k.lat, k.lon) < 6)) deduped.push(spot);
+      if (!deduped.some(k => angularDist(spot.lat, spot.lon, k.lat, k.lon) < 5)) deduped.push(spot);
     }
     setTopSpots(deduped);
   }, [lines]);

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import type { ChartData, PlanetName } from "@/lib/astrology/types";
 import { PLANET_SYMBOLS, SIGN_SYMBOLS, TRADITIONAL_RULERS } from "@/lib/astrology/types";
+import { SignGlyph, PlanetGlyph } from "@/components/ui/AstroGlyph";
 
 const PLANET_COLORS: Record<PlanetName, string> = {
   Sun: "#fbbf24", Moon: "#94a3b8", Mercury: "#a78bfa", Venus: "#f472b6",
@@ -105,7 +106,7 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
             >
               {/* Planet */}
               <div className="flex items-center gap-2">
-                <span className="text-lg leading-none" style={{ color }}>{PLANET_SYMBOLS[p.name]}</span>
+                <PlanetGlyph planet={p.name} color={color} size={18} />
                 <div>
                   <span className="text-[13px] font-semibold" style={{ color: "#e2e8f0" }}>{p.name}</span>
                   {p.retrograde && (
@@ -127,8 +128,8 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
 
               {/* Sign */}
               <div className="flex items-center gap-1.5">
-                <span className="text-base leading-none" style={{ color }}>{SIGN_SYMBOLS[p.sign]}</span>
-                <span className="text-[13px]" style={{ color: "#cbd5e1" }}>{p.sign}</span>
+                <SignGlyph sign={p.sign} size={16} />
+                <span className="text-[13px]" style={{ color }}>{p.sign}</span>
               </div>
 
               {/* House */}
@@ -219,7 +220,8 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
               <div className="flex items-center">
                 <span className="text-[13px] font-mono" style={{ color: "#94a3b8" }}>{formatDegree(lot.lon)}</span>
               </div>
-              <div className="flex items-center">
+              <div className="flex items-center gap-1.5">
+                <SignGlyph sign={sign as import("@/lib/astrology/types").ZodiacSign} size={14} />
                 <span className="text-[13px]" style={{ color: "#cbd5e1" }}>{sign}</span>
               </div>
               <div className="flex items-center">

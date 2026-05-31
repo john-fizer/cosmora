@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Fragment+Mono&family=Outfit:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Fragment+Mono&family=Noto+Sans+Symbols+2&family=Outfit:wght@300;400;500;600&display=swap');
 @import "tailwindcss";
 
 html { overflow-x: hidden; }
@@ -327,6 +327,47 @@ body {
 /* legacy aliases */
 .font-hud     { font-family: 'Fragment Mono', 'Fira Code', monospace; }
 .font-title   { font-family: 'Cormorant Garamond', Georgia, serif; }
+
+/* ─── Astrology glyphs — Cosmora 2070 chrome treatment ─────────────────────── */
+
+/*
+ * Sign glyphs: silver-chrome gradient, depth shadow, subtle blue halo.
+ * Matches the metallic "Cosmora 2070 Astrology Glyphs" reference image.
+ */
+.glyph-sign {
+  font-family: 'Noto Sans Symbols 2', 'Apple Symbols', 'Segoe UI Symbol', serif;
+  display: inline-block;
+  line-height: 1;
+  background: linear-gradient(
+    160deg,
+    #ffffff  0%,
+    #c8d4f8 15%,
+    #ffffff 35%,
+    #96aad6 52%,
+    #d4dcf8 68%,
+    #ffffff 82%,
+    #b8c6ea 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter:
+    drop-shadow(0 1.5px 0 rgba(0,0,0,0.75))
+    drop-shadow(0 0 12px rgba(160,180,255,0.18));
+}
+
+/*
+ * Planet glyphs: keep their accent color, add depth shadow + subtle glow.
+ * Color is applied via inline style={{ color: "..." }} on the element.
+ */
+.glyph-planet {
+  font-family: 'Noto Sans Symbols 2', 'Apple Symbols', 'Segoe UI Symbol', serif;
+  display: inline-block;
+  line-height: 1;
+  filter:
+    drop-shadow(0 1px 2px rgba(0,0,0,0.85))
+    drop-shadow(0 0 6px rgba(255,255,255,0.08));
+}
 
 /* ─── Gradient text ─────────────────────────────────────────────────────────── */
 

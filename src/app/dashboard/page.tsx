@@ -6,6 +6,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import type { ChartData, PlanetPosition, ZodiacSign, PlanetName } from "@/lib/astrology/types";
 import { PLANET_SYMBOLS, SIGN_SYMBOLS } from "@/lib/astrology/types";
+import { SignGlyph, PlanetGlyph } from "@/components/ui/AstroGlyph";
 import type { Ingress } from "@/lib/astrology/transits";
 import { getActiveProfileId, getProfile, getCachedChart, setCachedChart } from "@/lib/storage";
 import { useWarpTo } from "@/components/ui/WarpTransition";
@@ -344,7 +345,7 @@ function PlanetPopup({ planet, onClose }: { planet: PlanetPosition; onClose: () 
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <span className="text-2xl" style={{ color }}>{PLANET_SYMBOLS[planet.name] ?? ""}</span>
+            <PlanetGlyph planet={planet.name} color={color} size={22} />
             <div>
               <p className="text-[14px] font-bold" style={{ color: "#e2e8f0" }}>{planet.name}{planet.retrograde ? " ℞" : ""}</p>
               <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>NATAL</p>
@@ -354,7 +355,7 @@ function PlanetPopup({ planet, onClose }: { planet: PlanetPosition; onClose: () 
         </div>
         <div className="space-y-1 text-[13px] mb-3">
           {[
-            { label: "Position", value: `${planet.signDegree.toFixed(1)}° ${SIGN_SYMBOLS[planet.sign]} ${planet.sign}` },
+            { label: "Position", value: <span className="flex items-center gap-1">{planet.signDegree.toFixed(1)}° <SignGlyph sign={planet.sign} size={13} />{planet.sign}</span> },
             { label: "House", value: `H${planet.house}` },
             { label: "Longitude", value: `${planet.longitude.toFixed(2)}°` },
             ...(planet.dignity && planet.dignity !== "peregrine" ? [{ label: "Dignity", value: planet.dignity }] : []),
@@ -688,12 +689,12 @@ function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet
                 onClick={() => onSelectPlanet(p)}
                 className="flex items-center gap-2 px-3 py-1.5 cursor-pointer transition-colors"
               >
-                <span className="text-[14px] w-5 flex-shrink-0" style={{ color }}>{PLANET_SYMBOLS[p.name]}</span>
+                <PlanetGlyph planet={p.name} color={color} size={14} className="w-5 flex-shrink-0" />
                 <span className="text-[14px] font-medium flex-1" style={{ color: "#94a3b8" }}>
                   {p.name}{p.retrograde ? " ℞" : ""}
                 </span>
-                <span className="text-[14px] font-bold" style={{ color: signColor }}>
-                  {p.signDegree.toFixed(0)}° {SIGN_SYMBOLS[p.sign]}
+                <span className="text-[14px] font-bold flex items-center gap-1" style={{ color: signColor }}>
+                  {p.signDegree.toFixed(0)}° <SignGlyph sign={p.sign} size={13} />
                 </span>
                 <span className="text-[13px] w-6 text-right" style={{ color: "#334155" }}>H{p.house}</span>
               </motion.div>
@@ -940,9 +941,9 @@ function SkyStatusWidget({ retrogrades, ingresses }: { retrogrades: PlanetName[]
               const color = PLANET_COLORS[ing.planet as PlanetName] ?? "#94a3b8";
               return (
                 <div key={i} className="flex items-center gap-2">
-                  <span style={{ fontSize: "0.8rem", color }}>{PLANET_SYMBOLS[ing.planet as PlanetName] ?? "○"}</span>
+                  <PlanetGlyph planet={ing.planet as PlanetName} color={color} size={13} />
                   <span className="text-[13px]" style={{ color: "#64748b" }}>→</span>
-                  <span className="text-[13px] font-medium" style={{ color: "#94a3b8" }}>{SIGN_SYMBOLS[ing.toSign]} {ing.toSign}</span>
+                  <span className="text-[13px] font-medium flex items-center gap-1" style={{ color: "#94a3b8" }}><SignGlyph sign={ing.toSign} size={13} />{ing.toSign}</span>
                   <span className="text-[13px] font-mono ml-auto" style={{ color: "#334155" }}>
                     {ing.daysUntil === 0 ? "today" : `${ing.daysUntil}d`}
                   </span>

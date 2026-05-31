@@ -1,8 +1,10 @@
 ﻿"use client";
 
+import React from "react";
 import { motion } from "framer-motion";
-import type { ChartData } from "@/lib/astrology/types";
+import type { ChartData, ZodiacSign } from "@/lib/astrology/types";
 import { SIGN_SYMBOLS, PLANET_SYMBOLS, TRADITIONAL_RULERS } from "@/lib/astrology/types";
+import { SignGlyph, PlanetGlyph } from "@/components/ui/AstroGlyph";
 
 function formatLon(lon: number) {
   const signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
@@ -25,13 +27,33 @@ export function ChartSummaryBar({ chart, profileName, onHouseSystemChange, recal
   const chartRuler = ascSign ? TRADITIONAL_RULERS[ascSign] : null;
   const rulerPlanet = chartRuler ? chart.planets.find(p => p.name === chartRuler) : null;
 
-  const summaryItems = [
+  const summaryItems: { label: string; value: React.ReactNode; sub: string | null }[] = [
     { label: "NATIVE", value: profileName, sub: null },
-    { label: "ASCENDANT", value: ascSign ? `${SIGN_SYMBOLS[ascSign]} ${ascSign}` : "—", sub: `${formatLon(chart.ascendant)}` },
-    { label: "SUN", value: sun ? `${SIGN_SYMBOLS[sun.sign]} ${sun.sign}` : "—", sub: sun ? `H${sun.house}` : null },
-    { label: "MOON", value: moon ? `${SIGN_SYMBOLS[moon.sign]} ${moon.sign}` : "—", sub: moon ? `H${moon.house}` : null },
-    { label: "CHART RULER", value: chartRuler ? `${PLANET_SYMBOLS[chartRuler]} ${chartRuler}` : "—", sub: rulerPlanet ? `${rulerPlanet.sign} H${rulerPlanet.house} · ${rulerPlanet.dignity}` : null },
-    { label: "SECT", value: chart.sect === "day" ? "☀ Day" : "☽ Night", sub: chart.sect === "day" ? "Jupiter leads" : "Venus leads" },
+    {
+      label: "ASCENDANT",
+      value: ascSign ? <span className="flex items-center gap-1"><SignGlyph sign={ascSign} size={13} />{ascSign}</span> : "—",
+      sub: `${formatLon(chart.ascendant)}`,
+    },
+    {
+      label: "SUN",
+      value: sun ? <span className="flex items-center gap-1"><SignGlyph sign={sun.sign} size={13} />{sun.sign}</span> : "—",
+      sub: sun ? `H${sun.house}` : null,
+    },
+    {
+      label: "MOON",
+      value: moon ? <span className="flex items-center gap-1"><SignGlyph sign={moon.sign} size={13} />{moon.sign}</span> : "—",
+      sub: moon ? `H${moon.house}` : null,
+    },
+    {
+      label: "CHART RULER",
+      value: chartRuler ? <span className="flex items-center gap-1"><PlanetGlyph planet={chartRuler} size={13} />{chartRuler}</span> : "—",
+      sub: rulerPlanet ? `${rulerPlanet.sign} H${rulerPlanet.house} · ${rulerPlanet.dignity}` : null,
+    },
+    {
+      label: "SECT",
+      value: chart.sect === "day" ? "☀ Day" : "☽ Night",
+      sub: chart.sect === "day" ? "Jupiter leads" : "Venus leads",
+    },
     { label: "MIDHEAVEN", value: formatLon(chart.midheaven), sub: null },
     {
       label: "PROFECTION",

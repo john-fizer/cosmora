@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { saveProfile, setActiveProfileId, setCachedChart, generateId } from "@/lib/storage";
 import { SIGN_SYMBOLS, PLANET_SYMBOLS } from "@/lib/astrology/types";
-import type { ChartData } from "@/lib/astrology/types";
+import type { ChartData, ZodiacSign } from "@/lib/astrology/types";
+import { SignGlyph, PlanetGlyph } from "@/components/ui/AstroGlyph";
 
 interface GeoResult {
   displayName: string;
@@ -419,8 +420,8 @@ export default function OnboardingPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[13px] font-bold tracking-[0.18em]" style={{ color: "#334155" }}>{r.label}</p>
-                  <p className="text-base font-bold" style={{ color: r.signColor, fontFamily: "'Space Grotesk', sans-serif" }}>
-                    {SIGN_SYMBOLS[r.value as keyof typeof SIGN_SYMBOLS] ?? ""} {r.value}
+                  <p className="text-base font-bold flex items-center gap-1.5" style={{ color: r.signColor, fontFamily: "'Cormorant Garamond', serif" }}>
+                    <SignGlyph sign={r.value as ZodiacSign} size={16} />{r.value}
                   </p>
                 </div>
                 <p className="text-[14px] text-right flex-shrink-0" style={{ color: "#475569" }}>{r.subtext}</p>

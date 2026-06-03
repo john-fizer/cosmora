@@ -48,6 +48,7 @@ cosmora.db-wal
 # claude personal memory (not project code)
 .claude/projects/
 .claude/jobs/
+.claude/settings.local.json
 
 # brainstorm mockups
 .superpowers/

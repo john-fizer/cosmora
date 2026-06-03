@@ -247,7 +247,7 @@ export default function PlanetDetailPage({
   const nextPlanet = PLANET_ORDER[(planetIdx + 1) % PLANET_ORDER.length];
 
   return (
-    <div className="relative min-h-screen" style={{ background: "#00000f" }}>
+    <div className="relative min-h-screen">
       <DashboardBg />
       <Sidebar />
 

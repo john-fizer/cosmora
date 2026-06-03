@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -141,7 +141,7 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   },
 ];
 
-// ─── Aspect Web ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Aspect Web â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const ASPECT_WEB_COLORS: Record<string, string> = {
   conjunction: "#a78bfa", opposition: "#ef4444", trine: "#22c55e",
@@ -250,7 +250,7 @@ function AspectWeb({ chart }: { chart: ChartData }) {
           <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(99,102,241,0.1)" strokeWidth={1} />
           <circle cx={CX} cy={CY} r={R - 8} fill="none" stroke="rgba(99,102,241,0.05)" strokeWidth={0.5} />
 
-          {/* 30° zodiac division ticks */}
+          {/* 30Â° zodiac division ticks */}
           {Array.from({ length: 12 }, (_, i) => {
             const a = (i / 12) * 2 * Math.PI - Math.PI / 2;
             const ix = CX + (R - 4) * Math.cos(a);
@@ -310,11 +310,11 @@ function AspectWeb({ chart }: { chart: ChartData }) {
                   fontSize={isHov ? 16 : 13} fill={color}
                   style={{ userSelect: "none", filter: isHov ? `drop-shadow(0 0 6px ${color})` : undefined }}
                 >
-                  {PLANET_SYMBOLS[planet.name as PlanetName] ?? "·"}
+                  {PLANET_SYMBOLS[planet.name as PlanetName] ?? "Â·"}
                 </text>
                 {/* Retrograde marker */}
                 {planet.retrograde && (
-                  <text x={gx + 8} y={gy - 6} fontSize={7} fill="#f97316" textAnchor="middle">℞</text>
+                  <text x={gx + 8} y={gy - 6} fontSize={7} fill="#f97316" textAnchor="middle">â„ž</text>
                 )}
               </g>
             );
@@ -333,10 +333,10 @@ function AspectWeb({ chart }: { chart: ChartData }) {
   );
 }
 
-// ─── Aspectarian Grid ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Aspectarian Grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const ASPECT_GLYPHS_GRID: Record<string, string> = {
-  conjunction: "☌", opposition: "☍", trine: "△", square: "□", sextile: "⚹", quincunx: "⚻",
+  conjunction: "â˜Œ", opposition: "â˜", trine: "â–³", square: "â–¡", sextile: "âš¹", quincunx: "âš»",
 };
 const ASPECT_COLORS_GRID: Record<string, string> = {
   conjunction: "#a78bfa", opposition: "#ef4444", trine: "#22c55e",
@@ -352,7 +352,7 @@ function AspectarianGrid({ chart }: { chart: ChartData }) {
   const [hovered, setHovered] = useState<{ r: number; c: number } | null>(null);
   const planets = chart.planets.slice(0, 10);
 
-  // Build lookup map: "planet1:planet2" → aspect
+  // Build lookup map: "planet1:planet2" â†’ aspect
   const aspectMap = new Map<string, typeof chart.aspects[number]>();
   for (const asp of chart.aspects) {
     aspectMap.set(`${asp.planet1}:${asp.planet2}`, asp);
@@ -366,8 +366,8 @@ function AspectarianGrid({ chart }: { chart: ChartData }) {
       className="flex-1 overflow-auto p-6"
     >
       <div className="mb-4">
-        <p className="text-[13px] font-bold tracking-widest" style={{ color: "#64748b" }}>ASPECTARIAN — NATAL ASPECT MATRIX</p>
-        <p className="text-[14px] mt-1" style={{ color: "#334155" }}>Upper triangle · Hover for orb detail</p>
+        <p className="text-[13px] font-bold tracking-widest" style={{ color: "#64748b" }}>ASPECTARIAN â€” NATAL ASPECT MATRIX</p>
+        <p className="text-[14px] mt-1" style={{ color: "#334155" }}>Upper triangle Â· Hover for orb detail</p>
       </div>
 
       <div className="overflow-auto">
@@ -423,7 +423,7 @@ function AspectarianGrid({ chart }: { chart: ChartData }) {
                           }}
                         >
                           <span style={{ fontSize: 9, color: PLANET_COLORS_GRID[rowPlanet.name] ?? "#94a3b8", fontWeight: "bold" }}>
-                            {rowPlanet.signDegree.toFixed(0)}°
+                            {rowPlanet.signDegree.toFixed(0)}Â°
                           </span>
                           <span style={{ fontSize: 8, color: "#334155" }}>
                             H{rowPlanet.house}
@@ -445,7 +445,7 @@ function AspectarianGrid({ chart }: { chart: ChartData }) {
                             const color = ASPECT_COLORS_GRID[asp.type] ?? "#94a3b8";
                             return (
                               <div className="flex items-center justify-center h-full">
-                                <span style={{ fontSize: 14, color }}>{ASPECT_GLYPHS_GRID[asp.type] ?? "·"}</span>
+                                <span style={{ fontSize: 14, color }}>{ASPECT_GLYPHS_GRID[asp.type] ?? "Â·"}</span>
                               </div>
                             );
                           })()}
@@ -463,7 +463,7 @@ function AspectarianGrid({ chart }: { chart: ChartData }) {
                           className="rounded-lg flex items-center justify-center"
                           style={{ width: 44, height: 40, margin: "auto", background: "rgba(255,255,255,0.01)", border: "1px solid rgba(255,255,255,0.03)" }}
                         >
-                          <span style={{ fontSize: 9, color: "#1e293b" }}>–</span>
+                          <span style={{ fontSize: 9, color: "#1e293b" }}>â€“</span>
                         </div>
                       </td>
                     );
@@ -487,8 +487,8 @@ function AspectarianGrid({ chart }: { chart: ChartData }) {
                       >
                         <span style={{ fontSize: 14, lineHeight: 1, color }}>{ASPECT_GLYPHS_GRID[asp.type] ?? "?"}</span>
                         <span style={{ fontSize: 7, color: isHov ? color : "#334155", fontWeight: "bold", marginTop: 1 }}>
-                          {asp.orb.toFixed(1)}°
-                          {asp.exact && " ✓"}
+                          {asp.orb.toFixed(1)}Â°
+                          {asp.exact && " âœ“"}
                         </span>
                         {isHov && (
                           <motion.span
@@ -518,15 +518,15 @@ function AspectarianGrid({ chart }: { chart: ChartData }) {
           </div>
         ))}
         <div className="flex items-center gap-1.5">
-          <span style={{ fontSize: 9, color: "#22c55e", fontWeight: "bold" }}>✓</span>
-          <span style={{ fontSize: 9, color: "#334155" }}>exact (&lt;1°)</span>
+          <span style={{ fontSize: 9, color: "#22c55e", fontWeight: "bold" }}>âœ“</span>
+          <span style={{ fontSize: 9, color: "#334155" }}>exact (&lt;1Â°)</span>
         </div>
       </div>
     </motion.div>
   );
 }
 
-// ─── Dispositor Tree ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Dispositor Tree â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const DISP_PLANET_COLORS: Partial<Record<PlanetName, string>> = {
   Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
@@ -609,7 +609,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
     >
       <div className="mb-5">
         <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#475569" }}>
-          DISPOSITOR TREE — TRADITIONAL RULERSHIP CHAINS
+          DISPOSITOR TREE â€” TRADITIONAL RULERSHIP CHAINS
         </p>
         <p className="text-[14px] leading-relaxed" style={{ color: "#334155" }}>
           Each planet is ruled by the lord of its sign, forming chains that lead to self-dispositing planets (shown in gold). Mutual receptions are highlighted.
@@ -624,7 +624,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
             <div key={p.name} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[14px] font-bold"
               style={{ background: `${color}18`, border: `1px solid ${color}35`, color }}>
               <span style={{ fontSize: 14 }}>{PLANET_SYMBOLS[p.name]}</span>
-              {p.name} — self-dispositing in {p.sign}
+              {p.name} â€” self-dispositing in {p.sign}
             </div>
           );
         })}
@@ -635,7 +635,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
             <div key={`${a}${b}`} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[14px] font-bold"
               style={{ background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.3)", color: "#818cf8" }}>
               <span style={{ color: ac }}>{PLANET_SYMBOLS[a]}</span>
-              ⇄
+              â‡„
               <span style={{ color: bc }}>{PLANET_SYMBOLS[b]}</span>
               mutual reception
             </div>
@@ -726,7 +726,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
                   fontSize={20} fill={color}
                   style={{ filter: isSelf ? `drop-shadow(0 0 6px ${color})` : undefined, userSelect: "none" }}
                 >
-                  {PLANET_SYMBOLS[p.name] ?? "·"}
+                  {PLANET_SYMBOLS[p.name] ?? "Â·"}
                 </text>
                 {/* Planet name */}
                 <text x={pos.x} y={pos.y + 14} textAnchor="middle" fontSize={7}
@@ -770,14 +770,14 @@ function DispositorTree({ chart }: { chart: ChartData }) {
                 <p className="text-[14px] font-bold" style={{ color }}>{hovered} in {p.sign}</p>
                 {selfNames.has(hovered) && (
                   <span className="text-[13px] font-bold px-2 py-0.5 rounded-full"
-                    style={{ background: `${color}20`, color }}>SELF-DISPOSITING ✦</span>
+                    style={{ background: `${color}20`, color }}>SELF-DISPOSITING âœ¦</span>
                 )}
               </div>
               <p className="text-[14px]" style={{ color: "#64748b" }}>
                 Chain: {chain.map(n => {
                   const pc = DISP_PLANET_COLORS[n] ?? "#94a3b8";
                   return `${PLANET_SYMBOLS[n]} ${n}`;
-                }).join(" → ")}
+                }).join(" â†’ ")}
                 {selfNames.has(chain[chain.length - 1]) ? " (final dispositor)" : ""}
               </p>
             </motion.div>
@@ -804,7 +804,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
   );
 }
 
-// ─── Fixed Stars Panel ────────────────────────────────────────────────────────
+// â”€â”€â”€ Fixed Stars Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const MAGNITUDE_COLORS = [
   { max: 0,   color: "#fbbf24", label: "1st mag" },
@@ -827,7 +827,7 @@ const FS_PLANET_COLORS: Partial<Record<PlanetName, string>> = {
 function FixedStarsPanel({ chart }: { chart: ChartData }) {
   const [hoveredStar, setHoveredStar] = useState<string | null>(null);
 
-  // Collect all conjunctions: planet → stars
+  // Collect all conjunctions: planet â†’ stars
   const conjunctions = chart.planets.map(p => ({
     planet: p,
     stars: getStarConjunctions(p.longitude, 1.5),
@@ -857,10 +857,10 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
       <div className="flex items-center justify-between mb-5">
         <div>
           <p className="text-[13px] font-bold tracking-widest" style={{ color: "#fbbf24" }}>
-            FIXED STARS — NATAL CONJUNCTIONS
+            FIXED STARS â€” NATAL CONJUNCTIONS
           </p>
           <p className="text-[13px] mt-0.5" style={{ color: "#334155" }}>
-            Stars within 1°30′ of natal planets and angles · Traditional Hellenistic interpretation
+            Stars within 1Â°30â€² of natal planets and angles Â· Traditional Hellenistic interpretation
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -875,8 +875,8 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
 
       {totalConjunctions === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 gap-3">
-          <span className="text-3xl" style={{ color: "#1e293b" }}>✦</span>
-          <p className="text-[14px]" style={{ color: "#334155" }}>No fixed star conjunctions within 1°30′</p>
+          <span className="text-3xl" style={{ color: "#1e293b" }}>âœ¦</span>
+          <p className="text-[14px]" style={{ color: "#334155" }}>No fixed star conjunctions within 1Â°30â€²</p>
           <p className="text-[13px]" style={{ color: "#1e293b" }}>Your chart has rare planetary freedom from stellar influence</p>
         </div>
       ) : (
@@ -897,11 +897,11 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
                   <span className="text-xl" style={{ color: pColor }}>{PLANET_SYMBOLS[planet.name]}</span>
                   <div className="flex-1">
                     <p className="text-[13px] font-bold" style={{ color: pColor }}>
-                      {planet.name} · {planet.signDegree.toFixed(1)}° {planet.sign}
-                      {planet.retrograde ? " ℞" : ""}
+                      {planet.name} Â· {planet.signDegree.toFixed(1)}Â° {planet.sign}
+                      {planet.retrograde ? " â„ž" : ""}
                     </p>
                     <p className="text-[13px]" style={{ color: "#475569" }}>
-                      House {planet.house} · {planet.dignity && planet.dignity !== "peregrine" ? planet.dignity : "peregrine"}
+                      House {planet.house} Â· {planet.dignity && planet.dignity !== "peregrine" ? planet.dignity : "peregrine"}
                     </p>
                   </div>
                   <span className="text-[13px] font-bold px-2 py-0.5 rounded-full"
@@ -932,9 +932,9 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
                         <div className="flex items-start gap-3">
                           {/* Star glyph */}
                           <div className="flex flex-col items-center gap-0.5 flex-shrink-0 w-10 pt-0.5">
-                            <span style={{ color: sColor, fontSize: 16 }}>✦</span>
+                            <span style={{ color: sColor, fontSize: 16 }}>âœ¦</span>
                             <span className="text-[14px] font-mono" style={{ color: "#334155" }}>
-                              {orb.toFixed(1)}°
+                              {orb.toFixed(1)}Â°
                             </span>
                           </div>
 
@@ -977,7 +977,7 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
               <div className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: "1px solid rgba(6,182,212,0.1)" }}>
                 <span className="text-[14px] font-bold" style={{ color: "#06b6d4" }}>{label}</span>
                 <p className="text-[13px] flex-1" style={{ color: "#475569" }}>
-                  {(lon % 30).toFixed(1)}° {ZODIAC_SIGNS[Math.floor(((lon % 360) + 360) % 360 / 30)]}
+                  {(lon % 30).toFixed(1)}Â° {ZODIAC_SIGNS[Math.floor(((lon % 360) + 360) % 360 / 30)]}
                 </p>
                 <span className="text-[13px] font-bold px-2 py-0.5 rounded-full"
                   style={{ background: "rgba(6,182,212,0.12)", color: "#06b6d4" }}>
@@ -993,8 +993,8 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
                     <div key={star.name} className="px-4 py-3">
                       <div className="flex items-start gap-3">
                         <div className="flex flex-col items-center gap-0.5 flex-shrink-0 w-10 pt-0.5">
-                          <span style={{ color: sColor, fontSize: 16 }}>✦</span>
-                          <span className="text-[14px] font-mono" style={{ color: "#334155" }}>{orb.toFixed(1)}°</span>
+                          <span style={{ color: sColor, fontSize: 16 }}>âœ¦</span>
+                          <span className="text-[14px] font-mono" style={{ color: "#334155" }}>{orb.toFixed(1)}Â°</span>
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-0.5 flex-wrap">
@@ -1020,7 +1020,7 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
             <span className="text-[14px] tracking-widest font-bold" style={{ color: "#1e293b" }}>MAGNITUDE</span>
             {MAGNITUDE_COLORS.slice(0, 3).map(m => (
               <div key={m.label} className="flex items-center gap-1.5">
-                <span style={{ color: m.color, fontSize: 13 }}>✦</span>
+                <span style={{ color: m.color, fontSize: 13 }}>âœ¦</span>
                 <span className="text-[14px]" style={{ color: "#334155" }}>{m.label}</span>
               </div>
             ))}
@@ -1031,16 +1031,16 @@ function FixedStarsPanel({ chart }: { chart: ChartData }) {
   );
 }
 
-// ─── Arabic Lots ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Arabic Lots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const LOT_META = [
-  { key: "fortune",   name: "Fortune",    symbol: "⊕", color: "#fbbf24", description: "Material life, body, wealth & luck. The Moon's lot — shows where material blessings flow." },
-  { key: "spirit",    name: "Spirit",     symbol: "⊗", color: "#a78bfa", description: "Soul, mind & agency. The Sun's lot — shows where you exert will and achieve through action." },
-  { key: "eros",      name: "Eros",       symbol: "♡", color: "#f472b6", description: "Desire & longing. What the heart pursues — the objects of deep attraction." },
-  { key: "necessity", name: "Necessity",  symbol: "⊘", color: "#94a3b8", description: "Compulsion & constraint. Where unavoidable obligations and fated bonds arise." },
-  { key: "courage",   name: "Courage",    symbol: "⚔", color: "#ef4444", description: "Boldness & enterprise. Where you can overcome fear and achieve through action." },
-  { key: "victory",   name: "Victory",    symbol: "✦", color: "#f59e0b", description: "Honor & achievement. Where fortunate outcomes and recognition are most accessible." },
-  { key: "nemesis",   name: "Nemesis",    symbol: "⚖", color: "#64748b", description: "Debt & retribution. What cannot be escaped — fate's balancing force in your life." },
+  { key: "fortune",   name: "Fortune",    symbol: "âŠ•", color: "#fbbf24", description: "Material life, body, wealth & luck. The Moon's lot â€” shows where material blessings flow." },
+  { key: "spirit",    name: "Spirit",     symbol: "âŠ—", color: "#a78bfa", description: "Soul, mind & agency. The Sun's lot â€” shows where you exert will and achieve through action." },
+  { key: "eros",      name: "Eros",       symbol: "â™¡", color: "#f472b6", description: "Desire & longing. What the heart pursues â€” the objects of deep attraction." },
+  { key: "necessity", name: "Necessity",  symbol: "âŠ˜", color: "#94a3b8", description: "Compulsion & constraint. Where unavoidable obligations and fated bonds arise." },
+  { key: "courage",   name: "Courage",    symbol: "âš”", color: "#ef4444", description: "Boldness & enterprise. Where you can overcome fear and achieve through action." },
+  { key: "victory",   name: "Victory",    symbol: "âœ¦", color: "#f59e0b", description: "Honor & achievement. Where fortunate outcomes and recognition are most accessible." },
+  { key: "nemesis",   name: "Nemesis",    symbol: "âš–", color: "#64748b", description: "Debt & retribution. What cannot be escaped â€” fate's balancing force in your life." },
 ] as const;
 
 function lonToLotSign(lon: number): { sign: string; sigSym: string; signDeg: number } {
@@ -1067,7 +1067,7 @@ function calcLot(asc: number, a: number, b: number): number {
   return ((asc + a - b) % 360 + 360) % 360;
 }
 
-// ─── Chart Patterns ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Chart Patterns â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const PAT_PLANET_COLORS: Partial<Record<PlanetName, string>> = {
   Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
@@ -1093,7 +1093,7 @@ function detectChartShape(chart: ChartData): ChartShape {
     .map(p => p.longitude)
     .sort((a, b) => a - b);
 
-  if (lons.length < 7) return { name: "Unknown", glyph: "◌", color: "#334155", desc: "", keyword: "" };
+  if (lons.length < 7) return { name: "Unknown", glyph: "â—Œ", color: "#334155", desc: "", keyword: "" };
 
   // Find the largest gap between adjacent planets (including wrap-around)
   let maxGap = 0;
@@ -1110,48 +1110,48 @@ function detectChartShape(chart: ChartData): ChartShape {
   // Occupied arc = 360 - maxGap
   const occupiedArc = 360 - maxGap;
 
-  // Bundle: all within 120°
+  // Bundle: all within 120Â°
   if (occupiedArc <= 120) {
-    return { name: "Bundle", glyph: "◉", color: "#a78bfa", keyword: "Concentrated",
-      desc: "All planets occupy a narrow 120° arc, creating an intensely focused personality with exceptional depth in specific areas — and potential blind spots elsewhere." };
+    return { name: "Bundle", glyph: "â—‰", color: "#a78bfa", keyword: "Concentrated",
+      desc: "All planets occupy a narrow 120Â° arc, creating an intensely focused personality with exceptional depth in specific areas â€” and potential blind spots elsewhere." };
   }
 
-  // Bowl: all within 180° (one full empty hemisphere)
+  // Bowl: all within 180Â° (one full empty hemisphere)
   if (occupiedArc <= 180) {
     // Bucket: one planet on the opposite side (handle)
     const handle = chart.planets.find(p => {
       const lon = p.longitude;
-      // Check if this planet is separated from the main group by > 60° on each side
+      // Check if this planet is separated from the main group by > 60Â° on each side
       const distFromGroup = Math.min(((lon - maxGapStart + 360) % 360), ((maxGapStart - lon + 360) % 360));
       return distFromGroup > 60;
     });
     if (!handle) {
-      return { name: "Bowl", glyph: "⌣", color: "#06b6d4", keyword: "Purposeful",
+      return { name: "Bowl", glyph: "âŒ£", color: "#06b6d4", keyword: "Purposeful",
         desc: "All planets occupy one hemisphere, giving a clear sense of direction and self-containment. The native is oriented toward a specific half of life's experience." };
     }
   }
 
   // Check for Bucket explicitly (handle planet across from a bowl)
-  // Locomotive: all within 240°
+  // Locomotive: all within 240Â°
   if (occupiedArc <= 240) {
-    return { name: "Locomotive", glyph: "⟶", color: "#f59e0b", keyword: "Driven",
-      desc: "Planets span 240° with a 120° empty trine. The empty house area represents the locomotive's direction of travel — where the native drives their energy." };
+    return { name: "Locomotive", glyph: "âŸ¶", color: "#f59e0b", keyword: "Driven",
+      desc: "Planets span 240Â° with a 120Â° empty trine. The empty house area represents the locomotive's direction of travel â€” where the native drives their energy." };
   }
 
-  // Seesaw: two opposing clusters with two gaps of roughly 60°+
+  // Seesaw: two opposing clusters with two gaps of roughly 60Â°+
   if (gaps[1] >= 60) {
-    return { name: "Seesaw", glyph: "⇌", color: "#f472b6", keyword: "Polarized",
+    return { name: "Seesaw", glyph: "â‡Œ", color: "#f472b6", keyword: "Polarized",
       desc: "Two distinct planetary clusters in opposition create constant balancing of competing life demands, perspectives, and roles. Great skill in navigating duality." };
   }
 
-  // Splay: three or more distinct clusters (3 gaps of 40°+)
+  // Splay: three or more distinct clusters (3 gaps of 40Â°+)
   if (gaps[2] >= 40) {
-    return { name: "Splay", glyph: "✳", color: "#22c55e", keyword: "Independent",
+    return { name: "Splay", glyph: "âœ³", color: "#22c55e", keyword: "Independent",
       desc: "Three or more planetary clusters form a splay, reflecting a strongly individualistic, non-conformist nature that resists systematic categorization." };
   }
 
   // Splash: planets spread widely around the wheel
-  return { name: "Splash", glyph: "✦", color: "#94a3b8", keyword: "Universal",
+  return { name: "Splash", glyph: "âœ¦", color: "#94a3b8", keyword: "Universal",
     desc: "Planets are distributed relatively evenly across the chart. The native has broad interests, many life areas of equal importance, and a universal, adaptable nature." };
 }
 
@@ -1177,7 +1177,7 @@ function detectPatterns(chart: ChartData): ChartPattern[] {
       x.type === type && x.orb <= maxOrb
     );
 
-  // ── Stellium: 3+ planets in same sign
+  // â”€â”€ Stellium: 3+ planets in same sign
   const bySign: Partial<Record<ZodiacSign, PlanetName[]>> = {};
   for (const p of planets) {
     bySign[p.sign] = [...(bySign[p.sign] ?? []), p.name as PlanetName];
@@ -1186,7 +1186,7 @@ function detectPatterns(chart: ChartData): ChartPattern[] {
     if (ps && ps.length >= 3) {
       patterns.push({
         name: `Stellium in ${sign}`,
-        glyph: "✦",
+        glyph: "âœ¦",
         color: "#a78bfa",
         rarity: ps.length >= 4 ? "Very Rare" : "Uncommon",
         planets: ps,
@@ -1195,7 +1195,7 @@ function detectPatterns(chart: ChartData): ChartPattern[] {
     }
   }
 
-  // ── Grand Trine: three planets all trine each other
+  // â”€â”€ Grand Trine: three planets all trine each other
   const ps = planets.map(p => p.name as PlanetName);
   for (let i = 0; i < ps.length - 2; i++) {
     for (let j = i + 1; j < ps.length - 1; j++) {
@@ -1208,7 +1208,7 @@ function detectPatterns(chart: ChartData): ChartPattern[] {
             : trioSigns.every(s => s && ["Cancer","Scorpio","Pisces"].includes(s)) ? "Water" : "Mixed";
           patterns.push({
             name: `Grand ${element} Trine`,
-            glyph: "△",
+            glyph: "â–³",
             color: "#22c55e",
             rarity: "Rare",
             planets: [ps[i], ps[j], ps[k]],
@@ -1219,7 +1219,7 @@ function detectPatterns(chart: ChartData): ChartPattern[] {
     }
   }
 
-  // ── T-Square: two planets in opposition, both square a third
+  // â”€â”€ T-Square: two planets in opposition, both square a third
   for (let i = 0; i < ps.length - 2; i++) {
     for (let j = i + 1; j < ps.length - 1; j++) {
       if (!hasAsp(ps[i], ps[j], "opposition", 8)) continue;
@@ -1228,11 +1228,11 @@ function detectPatterns(chart: ChartData): ChartPattern[] {
         if (hasAsp(ps[i], ps[k], "square", 7) && hasAsp(ps[j], ps[k], "square", 7)) {
           patterns.push({
             name: "T-Square",
-            glyph: "□",
+            glyph: "â–¡",
             color: "#f97316",
             rarity: "Uncommon",
             planets: [ps[i], ps[j], ps[k]],
-            desc: `Intense pressure funnels through ${ps[k]}, the focal planet. This pattern drives achievement through repeated friction — the apex planet ${ps[k]} must be actively developed.`,
+            desc: `Intense pressure funnels through ${ps[k]}, the focal planet. This pattern drives achievement through repeated friction â€” the apex planet ${ps[k]} must be actively developed.`,
           });
           break;
         }
@@ -1240,7 +1240,7 @@ function detectPatterns(chart: ChartData): ChartPattern[] {
     }
   }
 
-  // ── Grand Cross: two pairs of opposing planets, all square each other
+  // â”€â”€ Grand Cross: two pairs of opposing planets, all square each other
   for (let a = 0; a < ps.length - 3; a++) {
     for (let b = a + 1; b < ps.length - 2; b++) {
       if (!hasAsp(ps[a], ps[b], "opposition", 8)) continue;
@@ -1251,11 +1251,11 @@ function detectPatterns(chart: ChartData): ChartPattern[] {
               hasAsp(ps[b], ps[c], "square", 7) && hasAsp(ps[b], ps[d], "square", 7)) {
             patterns.push({
               name: "Grand Cross",
-              glyph: "✛",
+              glyph: "âœ›",
               color: "#ef4444",
               rarity: "Very Rare",
               planets: [ps[a], ps[b], ps[c], ps[d]],
-              desc: "Four planets form a cross of tension and drive. Natives with grand crosses possess enormous stamina and capability — they are built for major challenges.",
+              desc: "Four planets form a cross of tension and drive. Natives with grand crosses possess enormous stamina and capability â€” they are built for major challenges.",
             });
           }
         }
@@ -1263,7 +1263,7 @@ function detectPatterns(chart: ChartData): ChartPattern[] {
     }
   }
 
-  // ── Yod (Finger of God): two sextile planets both quincunx a third
+  // â”€â”€ Yod (Finger of God): two sextile planets both quincunx a third
   for (let i = 0; i < ps.length - 2; i++) {
     for (let j = i + 1; j < ps.length - 1; j++) {
       if (!hasAsp(ps[i], ps[j], "sextile", 5)) continue;
@@ -1271,12 +1271,12 @@ function detectPatterns(chart: ChartData): ChartPattern[] {
         if (k === i || k === j) continue;
         if (hasAsp(ps[i], ps[k], "quincunx", 3) && hasAsp(ps[j], ps[k], "quincunx", 3)) {
           patterns.push({
-            name: "Yod — Finger of God",
-            glyph: "▽",
+            name: "Yod â€” Finger of God",
+            glyph: "â–½",
             color: "#8b5cf6",
             rarity: "Rare",
             planets: [ps[i], ps[j], ps[k]],
-            desc: `${ps[k]} is the apex of a fated configuration. Yods indicate a persistent calling that resists ordinary solution — ${ps[k]}'s themes recur until consciously integrated.`,
+            desc: `${ps[k]} is the apex of a fated configuration. Yods indicate a persistent calling that resists ordinary solution â€” ${ps[k]}'s themes recur until consciously integrated.`,
           });
           break;
         }
@@ -1284,7 +1284,7 @@ function detectPatterns(chart: ChartData): ChartPattern[] {
     }
   }
 
-  // ── Mystic Rectangle: two oppositions connected by trines and sextiles
+  // â”€â”€ Mystic Rectangle: two oppositions connected by trines and sextiles
   for (let a = 0; a < ps.length - 3; a++) {
     for (let b = a + 1; b < ps.length - 2; b++) {
       if (!hasAsp(ps[a], ps[b], "opposition", 7)) continue;
@@ -1298,7 +1298,7 @@ function detectPatterns(chart: ChartData): ChartPattern[] {
           if (sides[0] || sides[1]) {
             patterns.push({
               name: "Mystic Rectangle",
-              glyph: "⬡",
+              glyph: "â¬¡",
               color: "#06b6d4",
               rarity: "Very Rare",
               planets: [ps[a], ps[b], ps[c], ps[d]],
@@ -1346,7 +1346,7 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
         style={{ background: `${shape.color}0a`, border: `1px solid ${shape.color}22` }}
       >
         <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>
-          CHART SHAPE — JONES PATTERN
+          CHART SHAPE â€” JONES PATTERN
         </p>
         <div className="flex items-center gap-4">
           <div
@@ -1386,7 +1386,7 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
 
       {patterns.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 gap-4">
-          <div className="text-4xl" style={{ color: "#1e293b" }}>○</div>
+          <div className="text-4xl" style={{ color: "#1e293b" }}>â—‹</div>
           <p className="text-[14px]" style={{ color: "#334155" }}>No major chart patterns detected.</p>
           <p className="text-[13px] text-center" style={{ color: "#1e293b", maxWidth: "28ch" }}>
             This is common. A chart without major configurations can still be deeply complex through sign, house, and dignity placement.
@@ -1453,12 +1453,12 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
             <p className="text-[14px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>PATTERN GUIDE</p>
             <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
               {[
-                { glyph: "✦", name: "Stellium", rarity: "Uncommon" },
-                { glyph: "△", name: "Grand Trine", rarity: "Rare" },
-                { glyph: "□", name: "T-Square", rarity: "Uncommon" },
-                { glyph: "✛", name: "Grand Cross", rarity: "Very Rare" },
-                { glyph: "▽", name: "Yod", rarity: "Rare" },
-                { glyph: "⬡", name: "Mystic Rectangle", rarity: "Very Rare" },
+                { glyph: "âœ¦", name: "Stellium", rarity: "Uncommon" },
+                { glyph: "â–³", name: "Grand Trine", rarity: "Rare" },
+                { glyph: "â–¡", name: "T-Square", rarity: "Uncommon" },
+                { glyph: "âœ›", name: "Grand Cross", rarity: "Very Rare" },
+                { glyph: "â–½", name: "Yod", rarity: "Rare" },
+                { glyph: "â¬¡", name: "Mystic Rectangle", rarity: "Very Rare" },
               ].map(g => (
                 <div key={g.name} className="flex items-center gap-2">
                   <span style={{ fontSize: 11, color: "#334155" }}>{g.glyph}</span>
@@ -1502,7 +1502,7 @@ function ArabicLots({ chart }: { chart: ChartData }) {
   const [selected, setSelected] = useState<string | null>(null);
   const selectedLot = lots.find(l => l.key === selected);
 
-  // Mini zodiac ring: 260×260, R=100
+  // Mini zodiac ring: 260Ã—260, R=100
   const CX = 130, CY = 130, R = 90, LABEL_R = 115;
   const lonToAngle = (lon: number) => (((lon % 360) + 360) % 360 / 360) * 2 * Math.PI - Math.PI / 2;
 
@@ -1515,10 +1515,10 @@ function ArabicLots({ chart }: { chart: ChartData }) {
       {/* Left: Lots table */}
       <div className="flex-1 flex flex-col min-h-0 overflow-y-auto px-6 py-5">
         <div className="mb-5">
-          <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#475569" }}>ARABIC LOTS · HERMETIC LOTS</p>
+          <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#475569" }}>ARABIC LOTS Â· HERMETIC LOTS</p>
           <p className="text-[14px] leading-relaxed" style={{ color: "#334155" }}>
-            Sensitive points derived from three chart factors — each amplifies a specific life domain.
-            Sect determines Fortune/Spirit orientation: {isDay ? "Day chart — Fortune leads." : "Night chart — Fortune and Spirit swap."}
+            Sensitive points derived from three chart factors â€” each amplifies a specific life domain.
+            Sect determines Fortune/Spirit orientation: {isDay ? "Day chart â€” Fortune leads." : "Night chart â€” Fortune and Spirit swap."}
           </p>
         </div>
 
@@ -1550,7 +1550,7 @@ function ArabicLots({ chart }: { chart: ChartData }) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className="text-[13px] font-bold" style={{ color: "#e2e8f0" }}>Lot of {lot.name}</span>
-                    <span className="text-[14px] font-mono" style={{ color: "#475569" }}>{lot.signDeg.toFixed(1)}°</span>
+                    <span className="text-[14px] font-mono" style={{ color: "#475569" }}>{lot.signDeg.toFixed(1)}Â°</span>
                     <span className="text-[13px]" style={{ color: lot.color }}>{lot.sigSym}</span>
                     <span className="text-[14px]" style={{ color: "#64748b" }}>{lot.sign}</span>
                     <span className="text-[13px] px-1.5 py-0.5 rounded-md font-bold" style={{ background: "rgba(99,102,241,0.12)", color: "#818cf8" }}>H{lot.house}</span>
@@ -1572,7 +1572,7 @@ function ArabicLots({ chart }: { chart: ChartData }) {
 
                 {/* Longitude */}
                 <span className="text-[13px] font-mono flex-shrink-0" style={{ color: "#334155" }}>
-                  {lot.lon.toFixed(2)}°
+                  {lot.lon.toFixed(2)}Â°
                 </span>
               </div>
             </motion.div>
@@ -1584,13 +1584,13 @@ function ArabicLots({ chart }: { chart: ChartData }) {
           <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>FORMULAE ({isDay ? "DAY SECT" : "NIGHT SECT"})</p>
           <div className="grid grid-cols-2 gap-x-6 gap-y-1">
             {[
-              ["Fortune", isDay ? "ASC + ☽ − ☉" : "ASC + ☉ − ☽"],
-              ["Spirit",  isDay ? "ASC + ☉ − ☽" : "ASC + ☽ − ☉"],
-              ["Eros",    isDay ? "ASC + ♀ − Spirit" : "ASC + Spirit − ♀"],
-              ["Necessity","ASC + ☿ − Fortune"],
-              ["Courage", "ASC + ♂ − Fortune"],
-              ["Victory", "ASC + ♃ − Spirit"],
-              ["Nemesis", "ASC + Fortune − ♄"],
+              ["Fortune", isDay ? "ASC + â˜½ âˆ’ â˜‰" : "ASC + â˜‰ âˆ’ â˜½"],
+              ["Spirit",  isDay ? "ASC + â˜‰ âˆ’ â˜½" : "ASC + â˜½ âˆ’ â˜‰"],
+              ["Eros",    isDay ? "ASC + â™€ âˆ’ Spirit" : "ASC + Spirit âˆ’ â™€"],
+              ["Necessity","ASC + â˜¿ âˆ’ Fortune"],
+              ["Courage", "ASC + â™‚ âˆ’ Fortune"],
+              ["Victory", "ASC + â™ƒ âˆ’ Spirit"],
+              ["Nemesis", "ASC + Fortune âˆ’ â™„"],
             ].map(([name, formula]) => (
               <div key={name} className="flex items-center gap-1">
                 <span className="text-[13px] font-bold w-20" style={{ color: "#475569" }}>{name}</span>
@@ -1607,7 +1607,7 @@ function ArabicLots({ chart }: { chart: ChartData }) {
         <svg width={260} height={260} viewBox="0 0 260 260">
           {/* Zodiac ring */}
           <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(99,102,241,0.12)" strokeWidth={1} />
-          {/* 30° division ticks */}
+          {/* 30Â° division ticks */}
           {Array.from({ length: 12 }, (_, i) => {
             const a = (i / 12) * 2 * Math.PI - Math.PI / 2;
             return (
@@ -1765,7 +1765,7 @@ export default function ChartPage() {
 
   if (!loading && !profileId) {
     return (
-      <div className="h-screen flex overflow-hidden" style={{ background: "#00000f" }}>
+      <div className="h-screen flex overflow-hidden">
         <DashboardBg />
         <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "5%", background: "rgba(124,58,237,0.07)", filter: "blur(100px)" }} />
         <Sidebar />
@@ -1803,7 +1803,7 @@ export default function ChartPage() {
               className="px-7 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
               style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
             >
-              Begin Your Chart →
+              Begin Your Chart â†’
             </motion.button>
           </Link>
         </div>
@@ -1812,7 +1812,7 @@ export default function ChartPage() {
   }
 
   return (
-    <div className="h-screen flex overflow-hidden" style={{ background: "#00000f" }}>
+    <div className="h-screen flex overflow-hidden">
       <DashboardBg />
 
       {/* Ambient orbs */}
@@ -1989,7 +1989,7 @@ export default function ChartPage() {
                     className="absolute bottom-5 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-[14px] font-bold tracking-widest"
                     style={{ background: "rgba(4,4,28,0.75)", border: "1px solid rgba(99,102,241,0.2)", color: "#475569", backdropFilter: "blur(12px)", pointerEvents: "none", whiteSpace: "nowrap" }}
                   >
-                    DRAG TO ORBIT · SCROLL TO ZOOM · CLICK PLANET TO EXPLORE
+                    DRAG TO ORBIT Â· SCROLL TO ZOOM Â· CLICK PLANET TO EXPLORE
                   </motion.div>
                 </motion.div>
               )}
@@ -2053,16 +2053,16 @@ export default function ChartPage() {
                         >
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-[14px] font-bold" style={{ color: "#e2e8f0" }}>
-                              {p.name} {p.retrograde ? "℞" : ""}
+                              {p.name} {p.retrograde ? "â„ž" : ""}
                             </span>
                             <button onClick={() => setSelectedPlanet(null)}
-                              className="text-[13px] cursor-pointer" style={{ color: "#475569" }}>×</button>
+                              className="text-[13px] cursor-pointer" style={{ color: "#475569" }}>Ã—</button>
                           </div>
                           <div className="grid grid-cols-3 gap-3">
                             {[
-                              { label: "SIGN", value: `${p.signDegree.toFixed(0)}° ${p.sign}` },
+                              { label: "SIGN", value: `${p.signDegree.toFixed(0)}Â° ${p.sign}` },
                               { label: "HOUSE", value: `House ${p.house}` },
-                              { label: "DIGNITY", value: p.dignity ?? "—" },
+                              { label: "DIGNITY", value: p.dignity ?? "â€”" },
                             ].map(item => (
                               <div key={item.label}>
                                 <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>{item.label}</p>
@@ -2139,3 +2139,4 @@ export default function ChartPage() {
     </div>
   );
 }
+

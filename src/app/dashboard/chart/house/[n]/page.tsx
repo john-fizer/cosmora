@@ -156,7 +156,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
   const meta = HOUSE_META[houseNum];
   if (!meta || houseNum < 1 || houseNum > 12) {
     return (
-      <div style={{ display: "flex", minHeight: "100vh", alignItems: "center", justifyContent: "center", background: "#00000f", color: "#475569" }}>
+      <div style={{ display: "flex", minHeight: "100vh", alignItems: "center", justifyContent: "center", color: "var(--text-2)" }}>
         Invalid house number.
       </div>
     );
@@ -173,7 +173,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
   const qColor = QUADRANT_COLORS[meta.quadrant];
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: `color-mix(in srgb, ${meta.color} 4%, #00000f)`, position: "relative" }}>
+    <div style={{ display: "flex", minHeight: "100vh", position: "relative" }}>
       <DashboardBg />
 
       {/* Colored nebula */}

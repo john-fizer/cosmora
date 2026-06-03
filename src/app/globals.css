@@ -716,3 +716,88 @@ h1 em, h2 em, h3 em, h1 i, h2 i, h3 i { font-family: 'Source Serif 4', Georgia, 
   transition: border-color 0.2s, background 0.2s;
 }
 .btn-secondary:hover { border-color: var(--border-hi); background: var(--elevated); }
+
+/* ─── Cosmic form inputs ─────────────────────────────────────────────────────── */
+
+.cosmic-input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: var(--text-1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+.cosmic-input:focus {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(123, 111, 212, 0.50);
+  box-shadow: 0 0 0 3px rgba(123, 111, 212, 0.08);
+}
+.cosmic-input::placeholder { color: var(--text-3); opacity: 1; }
+
+/* Date/time inputs — override browser defaults */
+.cosmic-input[type="date"]::-webkit-calendar-picker-indicator,
+.cosmic-input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7) sepia(0.2) saturate(0.5);
+  cursor: pointer;
+}
+
+/* ─── Primary glass button ───────────────────────────────────────────────────── */
+
+.cosmic-btn-primary {
+  background: rgba(123, 111, 212, 0.16);
+  border: 1px solid rgba(123, 111, 212, 0.42);
+  color: rgba(220, 210, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.cosmic-btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg,
+    rgba(255,255,255,0.25) 0%,
+    rgba(123,111,212,0.30) 40%,
+    transparent 60%,
+    rgba(78,205,196,0.15) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.cosmic-btn-primary:hover:not(:disabled) {
+  background: rgba(123, 111, 212, 0.26);
+  border-color: rgba(123, 111, 212, 0.62);
+  box-shadow: 0 0 28px rgba(123, 111, 212, 0.22);
+  transform: translateY(-1px);
+}
+.cosmic-btn-primary:disabled { opacity: 0.48; cursor: not-allowed; }
+
+/* ─── Glass select option button ─────────────────────────────────────────────── */
+
+.cosmic-option {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.cosmic-option:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); color: var(--text-1); }
+.cosmic-option.selected {
+  background: rgba(123, 111, 212, 0.12);
+  border-color: rgba(123, 111, 212, 0.42);
+  color: rgba(200, 190, 255, 0.95);
+  box-shadow: 0 0 12px rgba(123,111,212,0.10);
+}
+.cosmic-option.selected-gold {
+  background: rgba(200, 165, 91, 0.12);
+  border-color: rgba(200, 165, 91, 0.38);
+  color: rgba(255, 215, 130, 0.95);
+}

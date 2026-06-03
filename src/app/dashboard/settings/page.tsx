@@ -62,12 +62,7 @@ function OptionButton({
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.97 }}
       onClick={onClick}
-      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl cursor-pointer text-left transition-all duration-200"
-      style={{
-        background: selected ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.03)",
-        border: selected ? "1px solid rgba(124,58,237,0.4)" : "1px solid rgba(255,255,255,0.06)",
-        boxShadow: selected ? "0 0 16px rgba(124,58,237,0.12)" : "none",
-      }}
+      className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl cursor-pointer text-left cosmic-option${selected ? " selected" : ""}`}
     >
       <div
         className="w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center"
@@ -109,12 +104,7 @@ function ProfileCard({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
-      className="rounded-2xl p-4"
-      style={{
-        background: isActive ? "rgba(124,58,237,0.08)" : "rgba(255,255,255,0.03)",
-        border: isActive ? "1px solid rgba(124,58,237,0.25)" : "1px solid rgba(255,255,255,0.06)",
-        boxShadow: isActive ? "0 0 24px rgba(124,58,237,0.08)" : "none",
-      }}
+      className={`rounded-2xl p-4 ${isActive ? "liquid-glass-cosmos" : "liquid-glass"}`}
     >
       <div className="flex items-start gap-3">
         {/* Avatar */}
@@ -581,9 +571,8 @@ export default function SettingsPage() {
   const editingChart = editingId ? getCachedChart(editingId) : null;
 
   return (
-    <div className="h-screen flex overflow-hidden" style={{ background: "#00000f" }}>
+    <div className="h-screen flex overflow-hidden">
       <DashboardBg />
-      <div className="nebula-orb" style={{ width: 400, height: 400, right: "5%", top: "10%", background: "rgba(99,102,241,0.05)", filter: "blur(80px)" }} />
 
       <Sidebar />
 
@@ -593,12 +582,8 @@ export default function SettingsPage() {
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="flex-shrink-0 flex items-center justify-between px-4 md:px-6 py-3"
-          style={{
-            borderBottom: "1px solid rgba(6,182,212,0.1)",
-            background: "rgba(1,1,14,0.85)",
-            backdropFilter: "blur(20px)",
-          }}
+          className="flex-shrink-0 flex items-center justify-between px-4 md:px-6 py-3 liquid-glass"
+          style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
         >
           <div className="flex items-center gap-3">
             <Link href="/dashboard">
@@ -620,12 +605,7 @@ export default function SettingsPage() {
           <Link href="/onboarding">
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-              className="flex items-center gap-1.5 text-[13px] font-bold tracking-widest px-3 py-1.5 rounded-lg cursor-pointer"
-              style={{
-                background: "rgba(124,58,237,0.12)",
-                border: "1px solid rgba(124,58,237,0.25)",
-                color: "#a78bfa",
-              }}
+              className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.18em] px-3 py-1.5 rounded-lg cursor-pointer cosmic-option selected"
             >
               <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
                 <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
@@ -652,12 +632,11 @@ export default function SettingsPage() {
 
               {!loading && profiles.length === 0 && (
                 <div className="text-center py-10">
-                  <p className="text-[14px] mb-4" style={{ color: "#475569" }}>No profiles yet</p>
+                  <p className="text-[14px] mb-4" style={{ color: "var(--text-2)" }}>No profiles yet</p>
                   <Link href="/onboarding">
                     <motion.button
-                      whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-                      className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
-                      style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white" }}
+                      whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.96 }}
+                      className="px-6 py-3 rounded-xl text-[14px] font-medium tracking-wide cursor-pointer cosmic-btn-primary"
                     >
                       Create First Profile →
                     </motion.button>
@@ -705,18 +684,9 @@ export default function SettingsPage() {
             {/* App info section */}
             <div>
               <SectionHeader label="About" />
-              <div
-                className="rounded-2xl p-4 space-y-3"
-                style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}
-              >
+              <div className="rounded-2xl p-4 space-y-3 liquid-glass">
                 <div className="flex items-center gap-3">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center"
-                    style={{
-                      background: "linear-gradient(135deg, #7c3aed, #06b6d4)",
-                      boxShadow: "0 0 20px rgba(124,58,237,0.4)",
-                    }}
-                  >
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center liquid-glass-cosmos">
                     <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="white" strokeWidth="1.5">
                       <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
                     </svg>
@@ -748,7 +718,7 @@ export default function SettingsPage() {
             {/* Privacy & storage */}
             <div>
               <SectionHeader label="Privacy & Storage" />
-              <div className="rounded-xl p-4 mb-3" style={{ background: "rgba(6,182,212,0.04)", border: "1px solid rgba(6,182,212,0.12)" }}>
+              <div className="rounded-xl p-4 mb-3 liquid-glass">
                 <p className="text-[14px] leading-relaxed" style={{ color: "#475569" }}>
                   Everything is stored <strong style={{ color: "#06b6d4" }}>on this device only</strong> — your browser&apos;s localStorage. No birth data, charts, or chat history is ever sent to or stored on any server. AI chat sends only the current message and recent chat history to the Claude API per request.
                 </p>

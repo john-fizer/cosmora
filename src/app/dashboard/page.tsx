@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,6 +9,7 @@ import { PLANET_SYMBOLS, SIGN_SYMBOLS } from "@/lib/astrology/types";
 import { SignGlyph, PlanetGlyph } from "@/components/ui/AstroGlyph";
 import type { Ingress } from "@/lib/astrology/transits";
 import { getActiveProfileId, getProfile, getCachedChart, setCachedChart } from "@/lib/storage";
+import { DashboardBg } from "@/components/ui/DashboardBg";
 import { useWarpTo } from "@/components/ui/WarpTransition";
 import { ScanBar } from "@/components/three/HUDPanel";
 import { ChatInput } from "@/components/dashboard/ChatInput";
@@ -18,7 +19,7 @@ const SolarSystemOrrery = dynamic(
   { ssr: false }
 );
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
   Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
@@ -27,7 +28,7 @@ const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
 };
 
 const ASPECT_GLYPHS: Record<string, string> = {
-  conjunction: "☌", opposition: "☍", trine: "△", square: "□", sextile: "⚹", quincunx: "⚻",
+  conjunction: "â˜Œ", opposition: "â˜", trine: "â–³", square: "â–¡", sextile: "âš¹", quincunx: "âš»",
 };
 
 const ASPECT_COLORS: Record<string, string> = {
@@ -49,18 +50,18 @@ const ELEMENT_SIGNS: Record<"Fire" | "Earth" | "Air" | "Water", ZodiacSign[]> = 
 };
 const ELEMENT_COLORS = { Fire: "#ef4444", Earth: "#22c55e", Air: "#eab308", Water: "#38bdf8" };
 
-// ─── Moon Phase ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Moon Phase â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const MOON_PHASES = [
-  { name: "New Moon",        emoji: "🌑", min: 0,   max: 1.5  },
-  { name: "Waxing Crescent", emoji: "🌒", min: 1.5, max: 24   },
-  { name: "First Quarter",   emoji: "🌓", min: 24,  max: 26   },
-  { name: "Waxing Gibbous",  emoji: "🌔", min: 26,  max: 49   },
-  { name: "Full Moon",       emoji: "🌕", min: 49,  max: 51   },
-  { name: "Waning Gibbous",  emoji: "🌖", min: 51,  max: 74   },
-  { name: "Last Quarter",    emoji: "🌗", min: 74,  max: 76   },
-  { name: "Waning Crescent", emoji: "🌘", min: 76,  max: 98.5 },
-  { name: "New Moon",        emoji: "🌑", min: 98.5,max: 100  },
+  { name: "New Moon",        emoji: "ðŸŒ‘", min: 0,   max: 1.5  },
+  { name: "Waxing Crescent", emoji: "ðŸŒ’", min: 1.5, max: 24   },
+  { name: "First Quarter",   emoji: "ðŸŒ“", min: 24,  max: 26   },
+  { name: "Waxing Gibbous",  emoji: "ðŸŒ”", min: 26,  max: 49   },
+  { name: "Full Moon",       emoji: "ðŸŒ•", min: 49,  max: 51   },
+  { name: "Waning Gibbous",  emoji: "ðŸŒ–", min: 51,  max: 74   },
+  { name: "Last Quarter",    emoji: "ðŸŒ—", min: 74,  max: 76   },
+  { name: "Waning Crescent", emoji: "ðŸŒ˜", min: 76,  max: 98.5 },
+  { name: "New Moon",        emoji: "ðŸŒ‘", min: 98.5,max: 100  },
 ] as const;
 
 function getMoonPhase(date: Date) {
@@ -86,12 +87,12 @@ function MoonPhaseWidget() {
   const { pct, illumination, phase, daysUntilFull, daysUntilNew } = getMoonPhase(now);
   const isWaxing = pct < 50;
 
-  // SVG moon: 48×48, draw crescent/gibbous using overlapping circles
+  // SVG moon: 48Ã—48, draw crescent/gibbous using overlapping circles
   const R = 20, CX = 24, CY = 24;
-  // illumination 0→100 maps to phase shape
+  // illumination 0â†’100 maps to phase shape
   // waxing: right side lit; waning: left side lit
   const lit = illumination / 100;
-  // Shadow circle offset: at 0% → full shadow (circle on top), at 50% → edge-on, at 100% → full lit
+  // Shadow circle offset: at 0% â†’ full shadow (circle on top), at 50% â†’ edge-on, at 100% â†’ full lit
   const shadowOffsetX = isWaxing ? R * (1 - lit * 2) : R * (lit * 2 - 1);
 
   const nextEventDays = isWaxing ? daysUntilFull : daysUntilNew;
@@ -126,7 +127,7 @@ function MoonPhaseWidget() {
         <div className="flex-1 min-w-0">
           <p className="text-[14px] font-bold leading-tight" style={{ color: "#c4b5fd" }}>{phase.name}</p>
           <p className="text-[14px] mt-0.5 tabular-nums" style={{ color: "#475569" }}>
-            {illumination.toFixed(0)}% illuminated · {isWaxing ? "Waxing" : "Waning"}
+            {illumination.toFixed(0)}% illuminated Â· {isWaxing ? "Waxing" : "Waning"}
           </p>
           <div className="mt-2 flex gap-1">
             <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
@@ -149,7 +150,7 @@ function MoonPhaseWidget() {
   );
 }
 
-// ─── Planetary Hour ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Planetary Hour â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const CHALDEAN = ["Saturn","Jupiter","Mars","Sun","Venus","Mercury","Moon"] as const;
 type ChaldeanPlanet = typeof CHALDEAN[number];
@@ -157,7 +158,7 @@ const CHALDEAN_COLORS: Record<ChaldeanPlanet, string> = {
   Saturn:"#94a3b8", Jupiter:"#f59e0b", Mars:"#ef4444",
   Sun:"#fbbf24", Venus:"#f472b6", Mercury:"#a78bfa", Moon:"#c4b5fd",
 };
-// Day of week (Sun=0..Sat=6) → starting index in CHALDEAN array
+// Day of week (Sun=0..Sat=6) â†’ starting index in CHALDEAN array
 const DOW_START = [3, 6, 2, 5, 1, 4, 0];
 
 function calcSunriseSunset(lat: number, lon: number, date: Date): { rise: Date; set: Date } {
@@ -242,7 +243,7 @@ function PlanetaryHourWidget({ lat, lon }: { lat: number; lon: number }) {
               style={{ filter: `drop-shadow(0 0 6px ${color}90)` }} />
           )}
           <text x={CX} y={CY - 4} textAnchor="middle" dominantBaseline="central"
-            fontSize={20} fill={color}>{PLANET_SYMBOLS[curr.planet as PlanetName] ?? "✦"}</text>
+            fontSize={20} fill={color}>{PLANET_SYMBOLS[curr.planet as PlanetName] ?? "âœ¦"}</text>
           <text x={CX} y={CY + 14} textAnchor="middle" fontSize={7} fill={curr.isDay ? "#f59e0b60" : "#a78bfa60"}
             letterSpacing={0.5}>{curr.isDay ? "DAY" : "NGT"}</text>
         </svg>
@@ -270,7 +271,7 @@ function PlanetaryHourWidget({ lat, lon }: { lat: number; lon: number }) {
   );
 }
 
-// ─── Live clock ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Live clock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function CosmicClock() {
   const [time, setTime] = useState(() => new Date());
@@ -290,7 +291,7 @@ function CosmicClock() {
   );
 }
 
-// ─── Element balance ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Element balance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function ElementBalance({ chart }: { chart: ChartData }) {
   const counts = { Fire: 0, Earth: 0, Air: 0, Water: 0 };
@@ -321,7 +322,7 @@ function ElementBalance({ chart }: { chart: ChartData }) {
   );
 }
 
-// ─── Planet card popup ────────────────────────────────────────────────────────
+// â”€â”€â”€ Planet card popup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function PlanetPopup({ planet, onClose }: { planet: PlanetPosition; onClose: () => void }) {
   const color = PLANET_COLORS[planet.name] ?? "#94a3b8";
@@ -345,17 +346,17 @@ function PlanetPopup({ planet, onClose }: { planet: PlanetPosition; onClose: () 
           <div className="flex items-center gap-2">
             <PlanetGlyph planet={planet.name} color={color} size={22} />
             <div>
-              <p className="text-[14px] font-bold" style={{ color: "#e2e8f0" }}>{planet.name}{planet.retrograde ? " ℞" : ""}</p>
+              <p className="text-[14px] font-bold" style={{ color: "#e2e8f0" }}>{planet.name}{planet.retrograde ? " â„ž" : ""}</p>
               <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>NATAL</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-lg leading-none cursor-pointer" style={{ color: "#475569" }}>×</button>
+          <button onClick={onClose} className="text-lg leading-none cursor-pointer" style={{ color: "#475569" }}>Ã—</button>
         </div>
         <div className="space-y-1 text-[13px] mb-3">
           {[
-            { label: "Position", value: <span className="flex items-center gap-1">{planet.signDegree.toFixed(1)}° <SignGlyph sign={planet.sign} size={13} />{planet.sign}</span> },
+            { label: "Position", value: <span className="flex items-center gap-1">{planet.signDegree.toFixed(1)}Â° <SignGlyph sign={planet.sign} size={13} />{planet.sign}</span> },
             { label: "House", value: `H${planet.house}` },
-            { label: "Longitude", value: `${planet.longitude.toFixed(2)}°` },
+            { label: "Longitude", value: `${planet.longitude.toFixed(2)}Â°` },
             ...(planet.dignity && planet.dignity !== "peregrine" ? [{ label: "Dignity", value: planet.dignity }] : []),
           ].map(r => (
             <div key={r.label} className="flex justify-between">
@@ -371,14 +372,14 @@ function PlanetPopup({ planet, onClose }: { planet: PlanetPosition; onClose: () 
           className="w-full py-2 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
           style={{ background: `${color}10`, border: `1px solid ${color}25`, color }}
         >
-          FULL {planet.name.toUpperCase()} READING →
+          FULL {planet.name.toUpperCase()} READING â†’
         </motion.button>
       </div>
     </motion.div>
   );
 }
 
-// ─── Cosmic Weather Strip ────────────────────────────────────────────────────
+// â”€â”€â”€ Cosmic Weather Strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface TransitPill {
   transitPlanet: PlanetName;
@@ -436,7 +437,7 @@ function CosmicWeatherStrip({ aspects }: { aspects: TransitPill[] }) {
               whileHover={{ borderColor: aColor, scale: 1.05 }}
             >
               <span className="text-[13px] leading-none" style={{ color: tColor }}>{PLANET_SYMBOLS[a.transitPlanet]}</span>
-              {a.transitRetrograde && <span className="text-[13px]" style={{ color: "#f97316" }}>℞</span>}
+              {a.transitRetrograde && <span className="text-[13px]" style={{ color: "#f97316" }}>â„ž</span>}
               <span className="text-[13px] font-bold mx-0.5" style={{ color: aColor }}>{ASPECT_GLYPHS[a.type]}</span>
               <span className="text-[13px] leading-none" style={{ color: nColor }}>{PLANET_SYMBOLS[a.natalPlanet]}</span>
               <span className="ml-1 text-[13px]" style={{ color: "#334155" }}>H{a.natalHouse}</span>
@@ -444,7 +445,7 @@ function CosmicWeatherStrip({ aspects }: { aspects: TransitPill[] }) {
                 <span className="ml-0.5 text-[13px] font-bold px-1 rounded" style={{ background: "rgba(167,139,250,0.2)", color: "#a78bfa" }}>EX</span>
               )}
               {a.applying && !a.exact && (
-                <span className="ml-0.5 text-[13px] font-bold" style={{ color: "#22c55e" }}>→</span>
+                <span className="ml-0.5 text-[13px] font-bold" style={{ color: "#22c55e" }}>â†’</span>
               )}
             </motion.div>
           );
@@ -454,7 +455,7 @@ function CosmicWeatherStrip({ aspects }: { aspects: TransitPill[] }) {
   );
 }
 
-// ─── Daily Briefing ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Daily Briefing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function DailyBriefing({ chart, transits, profileId }: {
   chart: ChartData;
@@ -480,7 +481,7 @@ function DailyBriefing({ chart, transits, profileId }: {
     if (cached) { setText(cached); return; }
 
     const top3 = transits.slice(0, 3).map(t =>
-      `${t.transitPlanet}${t.transitRetrograde ? " Rx" : ""} ${t.type} natal ${t.natalPlanet} H${t.natalHouse} (${t.orb.toFixed(1)}°${t.applying ? ", applying" : ", separating"})`
+      `${t.transitPlanet}${t.transitRetrograde ? " Rx" : ""} ${t.type} natal ${t.natalPlanet} H${t.natalHouse} (${t.orb.toFixed(1)}Â°${t.applying ? ", applying" : ", separating"})`
     ).join("; ");
 
     const sun = chart.planets.find(p => p.name === "Sun");
@@ -495,7 +496,7 @@ Natal Moon: ${moon?.sign ?? "?"} H${moon?.house ?? "?"}
 Profection year: ${prof.lordOfYear} rules H${prof.activatedHouse} (${prof.activatedSign}) age ${prof.age}
 Key transits: ${top3 || "No tight transits today"}
 
-2–3 sentences. Grounded, specific, evocative. Do not start with "Today". No bullet points.`;
+2â€“3 sentences. Grounded, specific, evocative. Do not start with "Today". No bullet points.`;
 
     setStreaming(true);
     let fullText = "";
@@ -584,7 +585,7 @@ Key transits: ${top3 || "No tight transits today"}
               DAILY COSMIC WEATHER
             </span>
             <span className="text-[13px]" style={{ color: "#1e293b" }}>
-              · {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              Â· {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}
             </span>
           </div>
           <button
@@ -594,7 +595,7 @@ Key transits: ${top3 || "No tight transits today"}
             onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = "#475569"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = "#1e293b"; }}
           >
-            ✕
+            âœ•
           </button>
         </div>
 
@@ -608,7 +609,7 @@ Key transits: ${top3 || "No tight transits today"}
                 className="w-3 h-3 rounded-full border border-t-transparent flex-shrink-0"
                 style={{ borderColor: "#7c3aed" }}
               />
-              <span className="text-[13px]" style={{ color: "#334155" }}>Reading the skies…</span>
+              <span className="text-[13px]" style={{ color: "#334155" }}>Reading the skiesâ€¦</span>
             </div>
           ) : (
             <p className="text-[16px] leading-relaxed" style={{ color: "#94a3b8" }}>
@@ -643,7 +644,7 @@ Key transits: ${top3 || "No tight transits today"}
                   <span className="text-[13px] leading-none" style={{ color: tColor }}>{PLANET_SYMBOLS[t.transitPlanet]}</span>
                   <span className="text-[13px] font-bold" style={{ color: aColor }}>{ASPECT_GLYPHS[t.type]}</span>
                   <span className="text-[13px] leading-none" style={{ color: PLANET_COLORS[t.natalPlanet] ?? "#94a3b8" }}>{PLANET_SYMBOLS[t.natalPlanet]}</span>
-                  <span className="text-[13px] font-mono ml-0.5" style={{ color: "#334155" }}>{t.orb.toFixed(1)}°</span>
+                  <span className="text-[13px] font-mono ml-0.5" style={{ color: "#334155" }}>{t.orb.toFixed(1)}Â°</span>
                 </div>
               );
             })}
@@ -654,7 +655,7 @@ Key transits: ${top3 || "No tight transits today"}
   );
 }
 
-// ─── Left panel ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Left panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet: (p: PlanetPosition) => void }) {
   return (
@@ -681,10 +682,10 @@ function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet
               >
                 <PlanetGlyph planet={p.name} color={color} size={14} className="w-5 flex-shrink-0" />
                 <span className="text-[14px] font-medium flex-1" style={{ color: "#94a3b8" }}>
-                  {p.name}{p.retrograde ? " ℞" : ""}
+                  {p.name}{p.retrograde ? " â„ž" : ""}
                 </span>
                 <span className="text-[14px] font-bold flex items-center gap-1" style={{ color: signColor }}>
-                  {p.signDegree.toFixed(0)}° <SignGlyph sign={p.sign} size={13} />
+                  {p.signDegree.toFixed(0)}Â° <SignGlyph sign={p.sign} size={13} />
                 </span>
                 <span className="text-[13px] w-6 text-right" style={{ color: "#334155" }}>H{p.house}</span>
               </motion.div>
@@ -708,7 +709,7 @@ function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet
                 <span style={{ color }} className="font-bold">{ASPECT_GLYPHS[a.type]}</span>
                 <span style={{ color: PLANET_COLORS[a.planet2] ?? "#94a3b8" }}>{PLANET_SYMBOLS[a.planet2]}</span>
                 <span className="flex-1 capitalize" style={{ color: "#475569" }}>{a.type}</span>
-                <span style={{ color: "#334155" }}>{a.orb.toFixed(1)}°</span>
+                <span style={{ color: "#334155" }}>{a.orb.toFixed(1)}Â°</span>
                 {a.exact && <span className="text-[13px]" style={{ color: "#22c55e" }}>EX</span>}
               </div>
             );
@@ -719,7 +720,7 @@ function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet
             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
               className="w-full py-1.5 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer"
               style={{ background: "rgba(6,182,212,0.08)", border: "1px solid rgba(6,182,212,0.2)", color: "#06b6d4" }}>
-              VIEW ALL ASPECTS →
+              VIEW ALL ASPECTS â†’
             </motion.button>
           </Link>
         </div>
@@ -728,7 +729,7 @@ function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet
   );
 }
 
-// ─── Convergence Score ────────────────────────────────────────────────────────
+// â”€â”€â”€ Convergence Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const OUTER_PLANETS: PlanetName[] = ["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
 
@@ -750,13 +751,13 @@ function computeConvergence(chart: ChartData, transits: TransitPill[]): {
   else if (lordPlanet?.dignity === "exaltation") { score += 14; factors.push({ text: `${lord} exalted`, pts: 14 }); }
   else if (lordPlanet?.dignity === "detriment" || lordPlanet?.dignity === "fall") { score -= 8; }
 
-  // Factor 2: Outer planet transits to Lord of Year (applying, ≤3°)
+  // Factor 2: Outer planet transits to Lord of Year (applying, â‰¤3Â°)
   const towardLord = transits.filter(t => t.natalPlanet === lord && OUTER_PLANETS.includes(t.transitPlanet) && t.applying && t.orb <= 3);
-  if (towardLord.length >= 2) { score += 32; factors.push({ text: `${towardLord.length}× outer transits to ${lord}`, pts: 32 }); }
+  if (towardLord.length >= 2) { score += 32; factors.push({ text: `${towardLord.length}Ã— outer transits to ${lord}`, pts: 32 }); }
   else if (towardLord.length === 1) {
     const pts = towardLord[0].exact ? 22 : 16;
     score += pts;
-    factors.push({ text: `${towardLord[0].transitPlanet}→${lord} (${towardLord[0].orb.toFixed(1)}°)`, pts });
+    factors.push({ text: `${towardLord[0].transitPlanet}â†’${lord} (${towardLord[0].orb.toFixed(1)}Â°)`, pts });
   }
 
   // Factor 3: Multiple transits activating the profection house
@@ -768,7 +769,7 @@ function computeConvergence(chart: ChartData, transits: TransitPill[]): {
   const lordTransiting = transits.filter(t => t.transitPlanet === lord && t.applying && t.orb <= 2 && (t.natalPlanet === "Sun" || t.natalPlanet === "Moon"));
   if (lordTransiting.length > 0) { score += 15; factors.push({ text: `${lord} activates natal luminaries`, pts: 15 }); }
 
-  // Factor 5: Exact transits — any
+  // Factor 5: Exact transits â€” any
   const exact = transits.filter(t => t.exact);
   if (exact.length > 0) { score += Math.min(exact.length * 5, 15); factors.push({ text: `${exact.length} exact transit${exact.length > 1 ? "s" : ""}`, pts: Math.min(exact.length * 5, 15) }); }
 
@@ -866,7 +867,7 @@ function ConvergenceWidget({ chart, transits }: { chart: ChartData; transits: Tr
 
         <div className="mt-2.5 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
           <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>
-            VIEW FULL ANALYSIS →
+            VIEW FULL ANALYSIS â†’
           </span>
         </div>
       </motion.div>
@@ -874,7 +875,7 @@ function ConvergenceWidget({ chart, transits }: { chart: ChartData; transits: Tr
   );
 }
 
-// ─── Sky Status widget ────────────────────────────────────────────────────────
+// â”€â”€â”€ Sky Status widget â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function SkyStatusWidget({ retrogrades, ingresses }: { retrogrades: PlanetName[]; ingresses: Ingress[] }) {
   if (retrogrades.length === 0 && ingresses.length === 0) return null;
@@ -894,9 +895,9 @@ function SkyStatusWidget({ retrogrades, ingresses }: { retrogrades: PlanetName[]
                   className="flex items-center gap-1 px-2 py-1 rounded-lg"
                   style={{ background: `${color}10`, border: `1px solid ${color}25` }}
                 >
-                  <span style={{ fontSize: "0.75rem", color }}>{PLANET_SYMBOLS[name] ?? "○"}</span>
+                  <span style={{ fontSize: "0.75rem", color }}>{PLANET_SYMBOLS[name] ?? "â—‹"}</span>
                   <span className="text-[13px] font-bold" style={{ color }}>{name.slice(0, 3)}</span>
-                  <span className="text-[13px] font-bold" style={{ color: "#f97316" }}>℞</span>
+                  <span className="text-[13px] font-bold" style={{ color: "#f97316" }}>â„ž</span>
                 </div>
               );
             })}
@@ -913,7 +914,7 @@ function SkyStatusWidget({ retrogrades, ingresses }: { retrogrades: PlanetName[]
               return (
                 <div key={i} className="flex items-center gap-2">
                   <PlanetGlyph planet={ing.planet as PlanetName} color={color} size={13} />
-                  <span className="text-[13px]" style={{ color: "#64748b" }}>→</span>
+                  <span className="text-[13px]" style={{ color: "#64748b" }}>â†’</span>
                   <span className="text-[13px] font-medium flex items-center gap-1" style={{ color: "#94a3b8" }}><SignGlyph sign={ing.toSign} size={13} />{ing.toSign}</span>
                   <span className="text-[13px] font-mono ml-auto" style={{ color: "#334155" }}>
                     {ing.daysUntil === 0 ? "today" : `${ing.daysUntil}d`}
@@ -928,11 +929,11 @@ function SkyStatusWidget({ retrogrades, ingresses }: { retrogrades: PlanetName[]
   );
 }
 
-// ─── Next Exact Transit widget ────────────────────────────────────────────────
+// â”€â”€â”€ Next Exact Transit widget â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const ASPECT_GLYPHS_NE: Record<string, string> = {
-  conjunction: "☌", opposition: "☍", trine: "△",
-  square: "□", sextile: "⚹", quincunx: "⚻",
+  conjunction: "â˜Œ", opposition: "â˜", trine: "â–³",
+  square: "â–¡", sextile: "âš¹", quincunx: "âš»",
 };
 
 function NextExactWidget({ transits }: { transits: TransitPill[] }) {
@@ -974,13 +975,13 @@ function NextExactWidget({ transits }: { transits: TransitPill[] }) {
       {topExact && (
         <div className="flex items-center gap-2 mb-2 p-2 rounded-xl" style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)" }}>
           <span style={{ fontSize: "1rem", color: tColor(topExact.transitPlanet) }}>
-            {PLANET_SYMBOLS[topExact.transitPlanet] ?? "○"}
+            {PLANET_SYMBOLS[topExact.transitPlanet] ?? "â—‹"}
           </span>
           <span className="text-[14px] font-bold" style={{ color: ASPECT_COLORS[topExact.type] ?? "#94a3b8" }}>
             {ASPECT_GLYPHS_NE[topExact.type] ?? "~"}
           </span>
           <span style={{ fontSize: "1rem", color: tColor(topExact.natalPlanet) }}>
-            {PLANET_SYMBOLS[topExact.natalPlanet] ?? "○"}
+            {PLANET_SYMBOLS[topExact.natalPlanet] ?? "â—‹"}
           </span>
           <div className="flex-1 min-w-0">
             <p className="text-[13px] font-semibold truncate" style={{ color: "#94a3b8" }}>
@@ -994,13 +995,13 @@ function NextExactWidget({ transits }: { transits: TransitPill[] }) {
       {next && (
         <div className="flex items-center gap-2">
           <span style={{ fontSize: "1rem", color: tColor(next.transitPlanet) }}>
-            {PLANET_SYMBOLS[next.transitPlanet] ?? "○"}
+            {PLANET_SYMBOLS[next.transitPlanet] ?? "â—‹"}
           </span>
           <span className="text-[14px] font-bold" style={{ color: ASPECT_COLORS[next.type] ?? "#94a3b8" }}>
             {ASPECT_GLYPHS_NE[next.type] ?? "~"}
           </span>
           <span style={{ fontSize: "1rem", color: tColor(next.natalPlanet) }}>
-            {PLANET_SYMBOLS[next.natalPlanet] ?? "○"}
+            {PLANET_SYMBOLS[next.natalPlanet] ?? "â—‹"}
           </span>
           <div className="flex-1 min-w-0">
             <p className="text-[13px] font-semibold truncate" style={{ color: "#94a3b8" }}>
@@ -1021,9 +1022,9 @@ function NextExactWidget({ transits }: { transits: TransitPill[] }) {
           <div className="flex flex-wrap gap-1">
             {applying.slice(1, 4).map((t, i) => (
               <div key={i} className="flex items-center gap-1 px-2 py-1 rounded-lg" style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.1)" }}>
-                <span style={{ fontSize: "0.7rem", color: tColor(t.transitPlanet) }}>{PLANET_SYMBOLS[t.transitPlanet] ?? "○"}</span>
+                <span style={{ fontSize: "0.7rem", color: tColor(t.transitPlanet) }}>{PLANET_SYMBOLS[t.transitPlanet] ?? "â—‹"}</span>
                 <span style={{ fontSize: "0.65rem", color: ASPECT_COLORS[t.type] ?? "#64748b" }}>{ASPECT_GLYPHS_NE[t.type] ?? "~"}</span>
-                <span style={{ fontSize: "0.7rem", color: tColor(t.natalPlanet) }}>{PLANET_SYMBOLS[t.natalPlanet] ?? "○"}</span>
+                <span style={{ fontSize: "0.7rem", color: tColor(t.natalPlanet) }}>{PLANET_SYMBOLS[t.natalPlanet] ?? "â—‹"}</span>
                 {t.daysToExact != null && (
                   <span className="text-[13px] font-mono" style={{ color: "#334155" }}>{fmtDays(t.daysToExact)}</span>
                 )}
@@ -1036,7 +1037,7 @@ function NextExactWidget({ transits }: { transits: TransitPill[] }) {
   );
 }
 
-// ─── Right panel ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Right panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingresses }: { chart: ChartData; profileId: string | null; lat: number; lon: number; transits: TransitPill[]; retrogrades: PlanetName[]; ingresses: Ingress[] }) {
   const sun   = chart.planets.find(p => p.name === "Sun");
@@ -1072,11 +1073,11 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
         <div className="flex items-start gap-2 mb-3">
           <div className="w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center"
             style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 12px rgba(124,58,237,0.4)" }}>
-            <span className="text-[13px] text-white font-bold">✦</span>
+            <span className="text-[13px] text-white font-bold">âœ¦</span>
           </div>
           <div>
             <p className="text-[13px] font-bold tracking-wider mb-1" style={{ color: "#a78bfa" }}>
-              {prof.lordOfYear.toUpperCase()} YEAR · H{prof.activatedHouse}
+              {prof.lordOfYear.toUpperCase()} YEAR Â· H{prof.activatedHouse}
             </p>
             <p className="text-[14px] leading-relaxed" style={{ color: "#475569" }}>
               Age {prof.age} profection activates your {prof.activatedSign} house. {prof.lordOfYear} rules your {prof.activatedHouse === 1 ? "identity" : prof.activatedHouse === 7 ? "partnerships" : prof.activatedHouse === 10 ? "career" : "life theme"} this year.
@@ -1087,7 +1088,7 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
             className="w-full py-2 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
             style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa" }}>
-            EXPLORE INSIGHT →
+            EXPLORE INSIGHT â†’
           </motion.button>
         </Link>
       </div>
@@ -1114,14 +1115,14 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
           }}
         >
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-base leading-none" style={{ color: "#f59e0b" }}>✦</span>
+            <span className="text-base leading-none" style={{ color: "#f59e0b" }}>âœ¦</span>
             <p className="text-[13px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>TODAY'S BRIEFING</p>
           </div>
           <p className="text-[14px] leading-relaxed mb-3" style={{ color: "#64748b" }}>
             Morning cosmic weather, planetary hours &amp; AI-narrated sky report.
           </p>
           <div className="text-[13px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>
-            OPEN BRIEFING →
+            OPEN BRIEFING â†’
           </div>
         </motion.div>
       </Link>
@@ -1138,14 +1139,14 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
           }}
         >
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-base leading-none" style={{ color: "#c4b5fd" }}>✦</span>
+            <span className="text-base leading-none" style={{ color: "#c4b5fd" }}>âœ¦</span>
             <p className="text-[13px] font-bold tracking-widest" style={{ color: "#c4b5fd" }}>NATAL REPORT</p>
           </div>
           <p className="text-[14px] leading-relaxed mb-3" style={{ color: "#64748b" }}>
-            8-chapter AI interpretation of your birth chart — streamed live.
+            8-chapter AI interpretation of your birth chart â€” streamed live.
           </p>
           <div className="text-[13px] font-bold tracking-widest" style={{ color: "#c4b5fd" }}>
-            GENERATE REPORT →
+            GENERATE REPORT â†’
           </div>
         </motion.div>
       </Link>
@@ -1175,7 +1176,7 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
         <div className="mt-3 pt-3 flex items-center gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
           <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>SECT</span>
           <span className="text-[14px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
-            {chart.sect === "day" ? "☀ DAY" : "☽ NIGHT"}
+            {chart.sect === "day" ? "â˜€ DAY" : "â˜½ NIGHT"}
           </span>
           <span className="ml-auto text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>DOMINANT</span>
           <span className="text-[14px] font-bold" style={{ color: ELEMENT_COLORS[dominant as keyof typeof ELEMENT_COLORS] }}>{dominant}</span>
@@ -1191,7 +1192,7 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
               className="w-full py-1.5 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer"
               style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", color: "#f59e0b" }}>
-              VIEW TIMELINE →
+              VIEW TIMELINE â†’
             </motion.button>
           </Link>
         </div>
@@ -1206,9 +1207,9 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
   );
 }
 
-// ─── Main dashboard ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Main dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-// ─── Natal Signature Card ─────────────────────────────────────────────────────
+// â”€â”€â”€ Natal Signature Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function SignatureCard({ chart, name }: { chart: ChartData; name: string }) {
   const sun   = chart.planets.find(p => p.name === "Sun");
@@ -1299,26 +1300,26 @@ function SignatureCard({ chart, name }: { chart: ChartData; name: string }) {
           {PLANET_SYMBOLS.Sun}
         </text>
         <text x={70} y={140} textAnchor="middle" fontSize={8} fill={sunColor} fontWeight="700" letterSpacing={1}>SUN</text>
-        <text x={70} y={154} textAnchor="middle" fontSize={11} fill={sunColor}>{sun?.sign ?? "—"}</text>
-        <text x={70} y={168} textAnchor="middle" fontSize={8} fill="rgba(251,191,36,0.5)">{sun ? `${sun.signDegree.toFixed(0)}° H${sun.house}` : ""}</text>
+        <text x={70} y={154} textAnchor="middle" fontSize={11} fill={sunColor}>{sun?.sign ?? "â€”"}</text>
+        <text x={70} y={168} textAnchor="middle" fontSize={8} fill="rgba(251,191,36,0.5)">{sun ? `${sun.signDegree.toFixed(0)}Â° H${sun.house}` : ""}</text>
 
         {/* Moon glyph + label */}
         <text x={180} y={120} textAnchor="middle" fontSize={32} fill={moonColor} filter="url(#sigGlow)">
           {PLANET_SYMBOLS.Moon}
         </text>
         <text x={180} y={140} textAnchor="middle" fontSize={8} fill={moonColor} fontWeight="700" letterSpacing={1}>MOON</text>
-        <text x={180} y={154} textAnchor="middle" fontSize={11} fill={moonColor}>{moon?.sign ?? "—"}</text>
-        <text x={180} y={168} textAnchor="middle" fontSize={8} fill="rgba(196,181,253,0.5)">{moon ? `${moon.signDegree.toFixed(0)}° H${moon.house}` : ""}</text>
+        <text x={180} y={154} textAnchor="middle" fontSize={11} fill={moonColor}>{moon?.sign ?? "â€”"}</text>
+        <text x={180} y={168} textAnchor="middle" fontSize={8} fill="rgba(196,181,253,0.5)">{moon ? `${moon.signDegree.toFixed(0)}Â° H${moon.house}` : ""}</text>
 
         {/* Rising */}
-        <text x={290} y={118} textAnchor="middle" fontSize={26} fill={ascColor}>↑</text>
+        <text x={290} y={118} textAnchor="middle" fontSize={26} fill={ascColor}>â†‘</text>
         <text x={290} y={140} textAnchor="middle" fontSize={8} fill={ascColor} fontWeight="700" letterSpacing={1}>RISING</text>
-        <text x={290} y={154} textAnchor="middle" fontSize={11} fill={ascColor}>{asc?.sign ?? "—"}</text>
-        <text x={290} y={168} textAnchor="middle" fontSize={8} fill="rgba(6,182,212,0.5)">{asc ? `${asc.signDegree.toFixed(0)}°` : ""}</text>
+        <text x={290} y={154} textAnchor="middle" fontSize={11} fill={ascColor}>{asc?.sign ?? "â€”"}</text>
+        <text x={290} y={168} textAnchor="middle" fontSize={8} fill="rgba(6,182,212,0.5)">{asc ? `${asc.signDegree.toFixed(0)}Â°` : ""}</text>
 
         {/* Lord of Year */}
         <text x={390} y={108} textAnchor="middle" fontSize={26} fill={lordColor} filter="url(#sigGlow)">
-          {PLANET_SYMBOLS[prof.lordOfYear] ?? "✦"}
+          {PLANET_SYMBOLS[prof.lordOfYear] ?? "âœ¦"}
         </text>
         <text x={390} y={126} textAnchor="middle" fontSize={7} fill={lordColor} fontWeight="700" letterSpacing={1}>LORD</text>
         <text x={390} y={138} textAnchor="middle" fontSize={7} fill={lordColor} letterSpacing={1}>OF YEAR</text>
@@ -1330,7 +1331,7 @@ function SignatureCard({ chart, name }: { chart: ChartData; name: string }) {
 
         {/* Bottom row: sect + element + aspect count */}
         <text x={22} y={206} fontSize={8} fill="rgba(99,102,241,0.5)" letterSpacing={1}>
-          {chart.sect === "day" ? "☀ DAY SECT" : "☽ NIGHT SECT"}
+          {chart.sect === "day" ? "â˜€ DAY SECT" : "â˜½ NIGHT SECT"}
         </text>
         <circle cx={220} cy={202} r={3} fill={domColor} />
         <text x={232} y={206} textAnchor="start" fontSize={8} fill={domColor} fontWeight="700">{dominant} dominant</text>
@@ -1431,32 +1432,33 @@ export default function DashboardPage() {
 
   if (!loading && !profileId) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center gap-6" style={{ background: "#00000f" }}>
-        <div className="w-20 h-20 rounded-2xl flex items-center justify-center"
-          style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 50px rgba(124,58,237,0.6)" }}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.2" className="w-10 h-10">
-            <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
-          </svg>
+      <div className="h-screen flex flex-col items-center justify-center gap-6 relative">
+        <DashboardBg />
+        <div className="relative z-10 flex flex-col items-center gap-6">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center liquid-glass-cosmos">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(168,130,255,0.85)" strokeWidth="1.2" className="w-9 h-9">
+              <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
+            </svg>
+          </div>
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-medium" style={{ color: "var(--text-1)" }}>No chart found</h2>
+            <p className="text-[14px]" style={{ color: "var(--text-2)" }}>Enter your birth data to begin.</p>
+          </div>
+          <Link href="/onboarding">
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.96 }}
+              className="px-8 py-3 rounded-xl text-[14px] font-medium tracking-wide cursor-pointer cosmic-btn-primary">
+              Begin â†’
+            </motion.button>
+          </Link>
         </div>
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-bold" style={{ color: "#e2e8f0" }}>No chart found</h2>
-          <p className="text-[14px]" style={{ color: "#64748b" }}>Enter your birth data to begin.</p>
-        </div>
-        <Link href="/onboarding">
-          <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-            className="px-8 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
-            style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white" }}>
-            Begin →
-          </motion.button>
-        </Link>
       </div>
     );
   }
 
   return (
-    <div className="relative h-screen overflow-hidden" style={{ background: "#00000f" }}>
+    <div className="relative h-screen overflow-hidden">
 
-      {/* ── Full-screen 3D canvas ── */}
+      {/* â”€â”€ Full-screen 3D canvas â”€â”€ */}
       <div className="absolute inset-0 z-0">
         {loading ? (
           <div className="h-full flex items-center justify-center">
@@ -1476,7 +1478,7 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* ── HUD overlay ── */}
+      {/* â”€â”€ HUD overlay â”€â”€ */}
       <div className="relative z-10 h-full flex flex-col pointer-events-none">
 
         {/* Top bar */}
@@ -1532,7 +1534,7 @@ export default function DashboardPage() {
                 className="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-lg text-[14px] font-bold tracking-widest cursor-pointer"
                 style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.25)", color: "#06b6d4" }}
               >
-                ✦ SHARE
+                âœ¦ SHARE
               </motion.button>
             )}
             <Link href="/onboarding">
@@ -1548,12 +1550,12 @@ export default function DashboardPage() {
         {/* Main 3-column area */}
         <div className="flex-1 flex items-center px-4 md:px-6 gap-4 overflow-hidden min-h-0">
 
-          {/* Left panel — desktop only */}
+          {/* Left panel â€” desktop only */}
           <div className="hidden md:block flex-shrink-0 self-center">
             {!loading && chart && <LeftPanel chart={chart} onSelectPlanet={setSelectedPlanet} />}
           </div>
 
-          {/* Center — chart + planet popup + daily briefing */}
+          {/* Center â€” chart + planet popup + daily briefing */}
           <div className="flex-1 relative h-full pointer-events-none">
             <AnimatePresence>
               {selectedPlanet && (
@@ -1573,13 +1575,13 @@ export default function DashboardPage() {
             </AnimatePresence>
           </div>
 
-          {/* Right panel — desktop only */}
+          {/* Right panel â€” desktop only */}
           <div className="hidden md:block flex-shrink-0 self-center">
             {!loading && chart && <RightPanel chart={chart} profileId={profileId} lat={profileCoords.lat} lon={profileCoords.lon} transits={transitAspects} retrogrades={retrogradePlanets} ingresses={upcomingIngresses} />}
           </div>
         </div>
 
-        {/* Bottom — view switcher + chat */}
+        {/* Bottom â€” view switcher + chat */}
         <motion.div
           initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
           className="flex-shrink-0 flex flex-col items-center gap-3 px-4 md:px-6 pb-4 md:pb-5 pointer-events-auto"
@@ -1623,7 +1625,7 @@ export default function DashboardPage() {
                 className="absolute -top-10 right-0 text-[14px] cursor-pointer font-bold tracking-widest"
                 style={{ color: "#475569" }}
               >
-                ✕ CLOSE
+                âœ• CLOSE
               </button>
               <SignatureCard chart={chart} name={profileName} />
             </motion.div>
@@ -1633,3 +1635,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

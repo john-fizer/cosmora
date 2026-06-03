@@ -47,6 +47,49 @@ export function DashboardBg() {
       ctx.fillStyle = "#03040a";
       ctx.fillRect(0, 0, w, h);
 
+      // ── Planet sphere (lower-right, like landing page video) ──────────────────
+      const px = w * 0.86;
+      const py = h * 0.76;
+      const pr = Math.min(w, h) * 0.44;
+
+      // Atmospheric halo beyond the sphere
+      const halo = ctx.createRadialGradient(px, py, pr * 0.85, px, py, pr * 1.6);
+      halo.addColorStop(0,   "rgba(50, 180, 160, 0.07)");
+      halo.addColorStop(0.4, "rgba(40, 150, 130, 0.04)");
+      halo.addColorStop(1,   "rgba(20, 80,  80,  0)");
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(px, py, pr * 1.6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Clip to sphere boundary
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(px, py, pr, 0, Math.PI * 2);
+      ctx.clip();
+
+      // Planet surface gradient (highlight top-left, dark lower-right)
+      const surf = ctx.createRadialGradient(
+        px - pr * 0.28, py - pr * 0.22, 0,
+        px + pr * 0.1,  py + pr * 0.1,  pr * 1.05
+      );
+      surf.addColorStop(0,    "rgba(90, 185, 168, 0.22)");
+      surf.addColorStop(0.3,  "rgba(55, 145, 130, 0.15)");
+      surf.addColorStop(0.65, "rgba(25,  80,  90, 0.09)");
+      surf.addColorStop(1,    "rgba(8,   20,  35, 0.04)");
+      ctx.fillStyle = surf;
+      ctx.fillRect(px - pr, py - pr, pr * 2, pr * 2);
+
+      // Rim light — cyan edge on upper-left
+      const rim = ctx.createRadialGradient(px, py, pr * 0.82, px, py, pr);
+      rim.addColorStop(0,   "rgba(78, 205, 196, 0)");
+      rim.addColorStop(0.6, "rgba(78, 205, 196, 0.015)");
+      rim.addColorStop(1,   "rgba(78, 205, 196, 0.07)");
+      ctx.fillStyle = rim;
+      ctx.fillRect(px - pr, py - pr, pr * 2, pr * 2);
+
+      ctx.restore();
+
       for (const o of orbs) {
         const drift = Math.sin(t * o.speed * 6283 + o.phase);
         const cx = (o.bx + Math.sin(t * o.speed * 3141 + o.phase) * 0.05) * w;
@@ -55,8 +98,8 @@ export function DashboardBg() {
 
         const [r, g, b] = o.color;
         const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-        grad.addColorStop(0,   `rgba(${r},${g},${b},0.07)`);
-        grad.addColorStop(0.45, `rgba(${r},${g},${b},0.035)`);
+        grad.addColorStop(0,   `rgba(${r},${g},${b},0.09)`);
+        grad.addColorStop(0.45, `rgba(${r},${g},${b},0.045)`);
         grad.addColorStop(1,   `rgba(${r},${g},${b},0)`);
         ctx.fillStyle = grad;
         ctx.beginPath();

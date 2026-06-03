@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,7 +17,7 @@ import {
 } from "@/lib/astrology/zodiacalReleasing";
 import type { ZRPeriod } from "@/lib/astrology/zodiacalReleasing";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const SIGN_COLORS: Record<ZodiacSign, string> = {
   Aries: "#ef4444", Taurus: "#22c55e", Gemini: "#eab308", Cancer: "#38bdf8",
@@ -39,9 +39,9 @@ const HOUSE_THEMES: Record<number, string> = {
 };
 
 const LEVEL_COLORS = ["#06b6d4", "#a78bfa", "#f472b6", "#f59e0b"];
-const LEVEL_LABELS = ["L1 · MAJOR PERIOD", "L2 · MINOR PERIOD", "L3 · SUB-MINOR", "L4 · FINE GRAIN"];
+const LEVEL_LABELS = ["L1 Â· MAJOR PERIOD", "L2 Â· MINOR PERIOD", "L3 Â· SUB-MINOR", "L4 Â· FINE GRAIN"];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function fmtDate(d: Date): string {
   return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
@@ -65,7 +65,7 @@ function fmtDuration(years: number): string {
   return `${days} days`;
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Sub-components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function LevelPill({ level, active, onClick }: {
   level: 1 | 2 | 3 | 4;
@@ -97,7 +97,7 @@ function LooseningBadge() {
       className="text-[11px] font-bold tracking-widest px-2 py-0.5 rounded flex-shrink-0"
       style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.35)" }}
     >
-      ⟳ LOOSENING
+      âŸ³ LOOSENING
     </motion.span>
   );
 }
@@ -116,7 +116,7 @@ function CurrentCascade({ l1, l2, l3, l4 }: {
         const levelColor = LEVEL_COLORS[p.level - 1];
         return (
           <div key={i} className="flex items-center gap-1.5">
-            {i > 0 && <span className="text-[13px]" style={{ color: "#1e293b" }}>→</span>}
+            {i > 0 && <span className="text-[13px]" style={{ color: "#1e293b" }}>â†’</span>}
             <div
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl"
               style={{
@@ -127,7 +127,7 @@ function CurrentCascade({ l1, l2, l3, l4 }: {
               <span className="text-[11px] font-bold tracking-widest" style={{ color: levelColor }}>L{p.level}</span>
               <span className="text-base" style={{ color }}>{SIGN_SYMBOLS[p.sign]}</span>
               <span className="text-[13px] font-semibold" style={{ color }}>{p.sign}</span>
-              {p.isLooseningOfBonds && <span className="text-[11px]" style={{ color: "#f59e0b" }}>⟳</span>}
+              {p.isLooseningOfBonds && <span className="text-[11px]" style={{ color: "#f59e0b" }}>âŸ³</span>}
             </div>
           </div>
         );
@@ -257,14 +257,14 @@ function PeriodCard({
           )}
         </div>
         <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
-          {fmtDate(period.start)} → {fmtDate(period.end)} · {fmtDuration(period.years)}
+          {fmtDate(period.start)} â†’ {fmtDate(period.end)} Â· {fmtDuration(period.years)}
         </p>
         {parentSign && (
           <p className="text-[13px] mt-0.5" style={{ color: "#334155" }}>
             {HOUSE_THEMES[period.derivedHouse] ?? ""}
             {profectionHouse && profectionSign && (
               <span style={{ color: "#1e293b" }}>
-                {" "}· <span style={{ color: profectionColor }}>{HOUSE_THEMES[profectionHouse]}</span> this year
+                {" "}Â· <span style={{ color: profectionColor }}>{HOUSE_THEMES[profectionHouse]}</span> this year
               </span>
             )}
           </p>
@@ -280,7 +280,7 @@ function PeriodCard({
   );
 }
 
-// ─── Reading Panel ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Reading Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function ReadingPanel({
   period,
@@ -314,14 +314,14 @@ function ReadingPanel({
     const lotSign = ZODIAC_SIGNS[Math.floor(lotLon / 30)];
 
     const chainDesc = chain.map((p, i) => {
-      const lines = [`L${p.level} ${p.sign} (${fmtDate(p.start)} – ${fmtDate(p.end)})`];
+      const lines = [`L${p.level} ${p.sign} (${fmtDate(p.start)} â€“ ${fmtDate(p.end)})`];
       if (i > 0) lines.push(`H${p.derivedHouse} of L${chain[i - 1].level}: ${HOUSE_THEMES[p.derivedHouse]}`);
-      if (p.isLooseningOfBonds) lines.push("⚠ LOOSENING OF BONDS — L2 in opposition to L1");
-      return lines.join(" · ");
+      if (p.isLooseningOfBonds) lines.push("âš  LOOSENING OF BONDS â€” L2 in opposition to L1");
+      return lines.join(" Â· ");
     }).join("\n  ");
 
     const looseningNote = chain.some(p => p.isLooseningOfBonds)
-      ? "\n\nLOOSENING OF BONDS IS ACTIVE: The current L2 period is in the 7th sign (opposition) from the L1 period. In Hellenistic astrology, this is a classic marker of major life restructuring — old bonds, obligations, or identities releasing. The soul is being repositioned."
+      ? "\n\nLOOSENING OF BONDS IS ACTIVE: The current L2 period is in the 7th sign (opposition) from the L1 period. In Hellenistic astrology, this is a classic marker of major life restructuring â€” old bonds, obligations, or identities releasing. The soul is being repositioned."
       : "";
 
     const sun = chart.planets.find(p => p.name === "Sun");
@@ -330,7 +330,7 @@ function ReadingPanel({
     const profHouse = profectionSign ? signHouseDiff(profectionSign, period.sign) : null;
     const profectionLayer = profectionSign && profHouse
       ? `\nDERIVATIVE RELATIVITY (PROFECTION OVERLAY):
-Current profection year: Age ${chart.annualProfection.age}, H${chart.annualProfection.activatedHouse} (${profectionSign}) activated — lord of year: ${chart.annualProfection.lordOfYear}
+Current profection year: Age ${chart.annualProfection.age}, H${chart.annualProfection.activatedHouse} (${profectionSign}) activated â€” lord of year: ${chart.annualProfection.lordOfYear}
 ${period.sign} is H${profHouse} counted from this year's profection sign (${profectionSign})
 Profection-relative theme: ${HOUSE_THEMES[profHouse]}
 This means: the ZR period's general themes are filtered THIS year through a ${HOUSE_THEMES[profHouse].toLowerCase()} lens because the profection wheel has placed ${profectionSign} as the current frame of reference. What is permanently true about this ZR period shifts in emphasis to "${HOUSE_THEMES[profHouse]}" this year specifically.`
@@ -349,11 +349,11 @@ NATAL CONTEXT:
 
 READING REQUESTED FOR: L${period.level} ${period.sign} period
 ${period.level > 1 ? `ZR derived house: H${period.derivedHouse} of parent (${HOUSE_THEMES[period.derivedHouse]}).` : ""}
-${profHouse && profectionSign ? `Profection-relative house: H${profHouse} from ${profectionSign} (${HOUSE_THEMES[profHouse]}) — THIS YEAR'S specific lens.` : ""}
+${profHouse && profectionSign ? `Profection-relative house: H${profHouse} from ${profectionSign} (${HOUSE_THEMES[profHouse]}) â€” THIS YEAR'S specific lens.` : ""}
 
 Interpret this timing window in 3 focused paragraphs:
-1. What life area and themes this period activates based on its sign, derived house position, and ${lord} as its lord — be specific to the natal context
-2. ${profHouse && profectionSign ? `How the DERIVATIVE RELATIVITY shifts the emphasis: the ZR period reads as "${HOUSE_THEMES[period.derivedHouse]}" generally, but the profection wheel this year places the focus on "${HOUSE_THEMES[profHouse]}" — explain how these two lenses compound` : `What the ${period.level > 1 ? `nested quality (H${period.derivedHouse} of the ${chain[period.level - 2]?.sign ?? "parent"} chapter)` : "overarching chapter theme"} means for this person's lived experience right now`}
+1. What life area and themes this period activates based on its sign, derived house position, and ${lord} as its lord â€” be specific to the natal context
+2. ${profHouse && profectionSign ? `How the DERIVATIVE RELATIVITY shifts the emphasis: the ZR period reads as "${HOUSE_THEMES[period.derivedHouse]}" generally, but the profection wheel this year places the focus on "${HOUSE_THEMES[profHouse]}" â€” explain how these two lenses compound` : `What the ${period.level > 1 ? `nested quality (H${period.derivedHouse} of the ${chain[period.level - 2]?.sign ?? "parent"} chapter)` : "overarching chapter theme"} means for this person's lived experience right now`}
 3. What to lean into, what to watch for, and ${period.isLooseningOfBonds ? "what specifically is being released or restructured in this loosening of bonds period" : "one key actionable insight for this window"}
 
 Under 280 words. Be specific to the placements shown.`;
@@ -410,7 +410,7 @@ Under 280 words. Be specific to the placements shown.`;
           className="w-7 h-7 flex items-center justify-center rounded-lg cursor-pointer"
           style={{ background: "rgba(255,255,255,0.05)", color: "#475569" }}
         >
-          ×
+          Ã—
         </button>
       </div>
 
@@ -418,9 +418,9 @@ Under 280 words. Be specific to the placements shown.`;
       <div className="flex-shrink-0 px-4 py-3 space-y-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-[13px]" style={{ color: "#475569" }}>
-            {fmtDate(period.start)} → {fmtDate(period.end)}
+            {fmtDate(period.start)} â†’ {fmtDate(period.end)}
           </span>
-          <span className="text-[13px]" style={{ color: "#334155" }}>·</span>
+          <span className="text-[13px]" style={{ color: "#334155" }}>Â·</span>
           <span className="text-[13px]" style={{ color: "#64748b" }}>{fmtDuration(period.years)}</span>
           {period.isCurrent && (
             <span className="text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded"
@@ -460,10 +460,10 @@ Under 280 words. Be specific to the placements shown.`;
             style={{ background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.3)" }}
           >
             <p className="text-[12px] font-bold tracking-widest mb-1" style={{ color: "#f59e0b" }}>
-              ⟳ LOOSENING OF BONDS
+              âŸ³ LOOSENING OF BONDS
             </p>
             <p className="text-[13px] leading-relaxed" style={{ color: "#92400e" }}>
-              L2 {period.sign} sits in the 7th sign from L1 {chain[0]?.sign ?? ""}. In traditional Hellenistic timing, this opposition marks a major life pivot — structures dissolve, identities release, and a fundamental repositioning is underway.
+              L2 {period.sign} sits in the 7th sign from L1 {chain[0]?.sign ?? ""}. In traditional Hellenistic timing, this opposition marks a major life pivot â€” structures dissolve, identities release, and a fundamental repositioning is underway.
             </p>
           </motion.div>
         )}
@@ -478,7 +478,7 @@ Under 280 words. Be specific to the placements shown.`;
               const c = SIGN_COLORS[p.sign];
               return (
                 <div key={i} className="flex items-center gap-1">
-                  {i > 0 && <span className="text-[11px]" style={{ color: "#1e293b" }}>›</span>}
+                  {i > 0 && <span className="text-[11px]" style={{ color: "#1e293b" }}>â€º</span>}
                   <span
                     className="text-[11px] font-bold px-1.5 py-0.5 rounded"
                     style={{
@@ -502,8 +502,8 @@ Under 280 words. Be specific to the placements shown.`;
           <div className="space-y-3">
             <p className="text-[13px]" style={{ color: "#475569" }}>
               {period.level === 1
-                ? `AI reading for the ${period.sign} L1 major period — the overarching life chapter ruled by ${lord}.`
-                : `AI reading for ${period.sign} at L${period.level} — H${period.derivedHouse} (${HOUSE_THEMES[period.derivedHouse]}) of the ${chain[period.level - 2]?.sign ?? "parent"} chapter.`}
+                ? `AI reading for the ${period.sign} L1 major period â€” the overarching life chapter ruled by ${lord}.`
+                : `AI reading for ${period.sign} at L${period.level} â€” H${period.derivedHouse} (${HOUSE_THEMES[period.derivedHouse]}) of the ${chain[period.level - 2]?.sign ?? "parent"} chapter.`}
             </p>
             <motion.button
               whileHover={{ scale: 1.02, boxShadow: `0 0 24px ${color}25` }}
@@ -516,7 +516,7 @@ Under 280 words. Be specific to the placements shown.`;
                 color,
               }}
             >
-              ✦ GENERATE READING
+              âœ¦ GENERATE READING
             </motion.button>
           </div>
         ) : !text && streaming ? (
@@ -527,7 +527,7 @@ Under 280 words. Be specific to the placements shown.`;
               className="w-3 h-3 rounded-full border border-t-transparent flex-shrink-0"
               style={{ borderColor: color }}
             />
-            <span className="text-[13px]" style={{ color: "#475569" }}>Consulting the stars…</span>
+            <span className="text-[13px]" style={{ color: "#475569" }}>Consulting the starsâ€¦</span>
           </div>
         ) : (
           <div className="space-y-3">
@@ -554,7 +554,7 @@ Under 280 words. Be specific to the placements shown.`;
                 className="mt-2 px-3 py-1.5 rounded-lg text-[12px] font-bold tracking-widest cursor-pointer"
                 style={{ background: "rgba(255,255,255,0.04)", color: "#475569", border: "1px solid rgba(255,255,255,0.08)" }}
               >
-                REGENERATE ↺
+                REGENERATE â†º
               </motion.button>
             )}
           </div>
@@ -564,7 +564,7 @@ Under 280 words. Be specific to the placements shown.`;
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Main Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function ReleasingPage() {
   const [chart, setChart] = useState<ChartData | null>(null);
@@ -708,10 +708,10 @@ export default function ReleasingPage() {
     }
   };
 
-  // ─── Empty states ───────────────────────────────────────────────────────────
+  // â”€â”€â”€ Empty states â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (!loading && !chart) {
     return (
-      <div className="h-screen flex overflow-hidden" style={{ background: "#00000f" }}>
+      <div className="h-screen flex overflow-hidden">
         <DashboardBg />
         <Sidebar />
         <div className="flex-1 flex flex-col items-center justify-center gap-6 md:ml-[68px] mb-[60px] md:mb-0 px-6">
@@ -725,7 +725,7 @@ export default function ReleasingPage() {
               className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
               style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
             >
-              Begin Your Chart →
+              Begin Your Chart â†’
             </motion.button>
           </Link>
         </div>
@@ -738,7 +738,7 @@ export default function ReleasingPage() {
   const lotColor = SIGN_COLORS[lotSignDisplay];
 
   return (
-    <div className="h-screen flex overflow-hidden" style={{ background: "#00000f" }}>
+    <div className="h-screen flex overflow-hidden">
       <DashboardBg />
       <div className="nebula-orb" style={{ width: 500, height: 500, left: "-5%", top: "-10%", background: "rgba(6,182,212,0.04)", filter: "blur(100px)" }} />
       <div className="nebula-orb" style={{ width: 400, height: 400, right: "0%", bottom: "0%", background: "rgba(124,58,237,0.04)", filter: "blur(80px)" }} />
@@ -747,7 +747,7 @@ export default function ReleasingPage() {
 
       <div className="flex-1 flex min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10">
 
-        {/* ── LEFT/CENTER PANEL ─────────────────────────────────────────────── */}
+        {/* â”€â”€ LEFT/CENTER PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="flex-1 flex flex-col min-h-0 min-w-0 overflow-hidden">
 
           {/* Top bar */}
@@ -799,7 +799,7 @@ export default function ReleasingPage() {
                     border: lot === l ? `1px solid ${l === "fortune" ? "rgba(6,182,212,0.4)" : "rgba(139,92,246,0.4)"}` : "1px solid transparent",
                   }}
                 >
-                  {l === "fortune" ? "☽ FORTUNE" : "☉ SPIRIT"}
+                  {l === "fortune" ? "â˜½ FORTUNE" : "â˜‰ SPIRIT"}
                 </motion.button>
               ))}
             </div>
@@ -819,10 +819,10 @@ export default function ReleasingPage() {
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div className="flex-1">
                     <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#06b6d4" }}>
-                      ZODIACAL RELEASING · LOT OF {lot.toUpperCase()}
+                      ZODIACAL RELEASING Â· LOT OF {lot.toUpperCase()}
                     </p>
                     <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>
-                      A Hellenistic timing system dividing life into nested sign-periods. L1 defines the overarching life chapter. L2 within L1 fine-tunes the theme. L3 and L4 reveal precise windows within the broader arc. When L2 reaches the 7th sign from L1, the <span style={{ color: "#f59e0b" }}>Loosening of Bonds</span> activates — a major life transition.
+                      A Hellenistic timing system dividing life into nested sign-periods. L1 defines the overarching life chapter. L2 within L1 fine-tunes the theme. L3 and L4 reveal precise windows within the broader arc. When L2 reaches the 7th sign from L1, the <span style={{ color: "#f59e0b" }}>Loosening of Bonds</span> activates â€” a major life transition.
                     </p>
                   </div>
                   <div
@@ -835,7 +835,7 @@ export default function ReleasingPage() {
                         LOT OF {lot.toUpperCase()}
                       </p>
                       <p className="text-[14px] font-bold" style={{ color: lotColor }}>
-                        {lotSignDisplay} {(lotLonDisplay % 30).toFixed(1)}°
+                        {lotSignDisplay} {(lotLonDisplay % 30).toFixed(1)}Â°
                       </p>
                     </div>
                   </div>
@@ -870,12 +870,12 @@ export default function ReleasingPage() {
                         className="text-base flex-shrink-0 mt-0.5"
                         style={{ color: "#f59e0b" }}
                       >
-                        ⟳
+                        âŸ³
                       </motion.span>
                       <div>
                         <p className="text-[13px] font-bold" style={{ color: "#f59e0b" }}>Loosening of Bonds is Active</p>
                         <p className="text-[13px]" style={{ color: "#92400e" }}>
-                          L2 {currentL2?.sign} is in the 7th sign from L1 {currentL1?.sign} — a Hellenistic marker of major life repositioning. Old structures are releasing; a fundamental pivot is underway.
+                          L2 {currentL2?.sign} is in the 7th sign from L1 {currentL1?.sign} â€” a Hellenistic marker of major life repositioning. Old structures are releasing; a fundamental pivot is underway.
                         </p>
                       </div>
                     </motion.div>
@@ -895,13 +895,13 @@ export default function ReleasingPage() {
                   <div className="flex items-start justify-between gap-3 flex-wrap">
                     <div className="flex-1 min-w-0">
                       <p className="text-[11px] font-bold tracking-widest mb-1" style={{ color: SIGN_COLORS[profectionSign] }}>
-                        ◑ DERIVATIVE RELATIVITY · PROFECTION OVERLAY
+                        â—‘ DERIVATIVE RELATIVITY Â· PROFECTION OVERLAY
                       </p>
                       <p className="text-[13px] leading-relaxed" style={{ color: "#475569" }}>
-                        Age {chart.annualProfection.age} · H{chart.annualProfection.activatedHouse} activated this year.
+                        Age {chart.annualProfection.age} Â· H{chart.annualProfection.activatedHouse} activated this year.
                         Each ZR period is also read as a house counted from{" "}
                         <span style={{ color: SIGN_COLORS[profectionSign] }}>{SIGN_SYMBOLS[profectionSign]} {profectionSign}</span>{" "}
-                        as the new frame of reference — showing <em>this year&apos;s specific emphasis</em> within the ZR arc.
+                        as the new frame of reference â€” showing <em>this year&apos;s specific emphasis</em> within the ZR arc.
                         The gold badge on each period is its house from {profectionSign}.
                       </p>
                     </div>
@@ -948,7 +948,7 @@ export default function ReleasingPage() {
                     )}
                     {effectiveL2 && activeLevel >= 3 && (
                       <>
-                        <span className="text-[11px]" style={{ color: "#1e293b" }}>›</span>
+                        <span className="text-[11px]" style={{ color: "#1e293b" }}>â€º</span>
                         <button
                           onClick={() => { setActiveLevel(2); setDrilledL2(null); setDrilledL3(null); }}
                           className="text-[11px] font-bold px-1.5 py-0.5 rounded cursor-pointer"
@@ -960,7 +960,7 @@ export default function ReleasingPage() {
                     )}
                     {effectiveL3 && activeLevel === 4 && (
                       <>
-                        <span className="text-[11px]" style={{ color: "#1e293b" }}>›</span>
+                        <span className="text-[11px]" style={{ color: "#1e293b" }}>â€º</span>
                         <button
                           onClick={() => { setActiveLevel(3); setDrilledL3(null); }}
                           className="text-[11px] font-bold px-1.5 py-0.5 rounded cursor-pointer"
@@ -979,12 +979,12 @@ export default function ReleasingPage() {
                 <p className="text-[11px] font-bold tracking-widest mb-1" style={{ color: LEVEL_COLORS[activeLevel - 1] }}>
                   {LEVEL_LABELS[activeLevel - 1]}
                   {activeParentPeriod && (
-                    <span style={{ color: "#334155" }}> · within {activeParentPeriod.sign}</span>
+                    <span style={{ color: "#334155" }}> Â· within {activeParentPeriod.sign}</span>
                   )}
                 </p>
                 {activeLevel >= 2 && activeParentPeriod && (
                   <p className="text-[13px]" style={{ color: "#475569" }}>
-                    Sub-periods counted from {SIGN_SYMBOLS[activeParentPeriod.sign]} {activeParentPeriod.sign} as H1 — showing which area of the {activeParentPeriod.sign} chapter each period activates
+                    Sub-periods counted from {SIGN_SYMBOLS[activeParentPeriod.sign]} {activeParentPeriod.sign} as H1 â€” showing which area of the {activeParentPeriod.sign} chapter each period activates
                   </p>
                 )}
               </div>
@@ -1032,14 +1032,14 @@ export default function ReleasingPage() {
               {/* Click hint */}
               {activePeriods.length > 0 && (
                 <p className="text-center text-[12px] mt-4" style={{ color: "#1e293b" }}>
-                  Click any period to drill into sub-periods and get an AI reading ↓
+                  Click any period to drill into sub-periods and get an AI reading â†“
                 </p>
               )}
             </div>
           </div>
         </div>
 
-        {/* ── RIGHT PANEL (reading) ──────────────────────────────────────────── */}
+        {/* â”€â”€ RIGHT PANEL (reading) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <AnimatePresence>
           {selectedPeriod && chart && (
             <motion.div
@@ -1067,3 +1067,4 @@ export default function ReleasingPage() {
     </div>
   );
 }
+

@@ -913,7 +913,7 @@ export default function OraclePage() {
   };
 
   return (
-    <div className="h-screen flex overflow-hidden" style={{ background: "#03040a" }}>
+    <div className="h-screen flex overflow-hidden">
       <DashboardBg />
       <Sidebar />
 

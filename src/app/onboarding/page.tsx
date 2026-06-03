@@ -137,7 +137,7 @@ export default function OnboardingPage() {
       content: (
         <div className="space-y-4">
           <div>
-            <label className="block text-[13px] font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
+            <label className="block text-[11px] font-semibold tracking-[0.18em] mb-2" style={{ color: "rgba(122,118,144,0.8)" }}>
               CHART NAME *
             </label>
             <input
@@ -159,7 +159,7 @@ export default function OnboardingPage() {
       content: (
         <div className="space-y-4">
           <div>
-            <label className="block text-[13px] font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
+            <label className="block text-[11px] font-semibold tracking-[0.18em] mb-2" style={{ color: "rgba(122,118,144,0.8)" }}>
               BIRTH DATE *
             </label>
             <input
@@ -171,7 +171,7 @@ export default function OnboardingPage() {
             />
           </div>
           <div>
-            <label className="block text-[13px] font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
+            <label className="block text-[11px] font-semibold tracking-[0.18em] mb-2" style={{ color: "rgba(122,118,144,0.8)" }}>
               BIRTH TIME
             </label>
             <input
@@ -183,7 +183,7 @@ export default function OnboardingPage() {
             />
           </div>
           <div>
-            <label className="block text-[13px] font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
+            <label className="block text-[11px] font-semibold tracking-[0.18em] mb-2" style={{ color: "rgba(122,118,144,0.8)" }}>
               TIME CONFIDENCE
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -191,12 +191,7 @@ export default function OnboardingPage() {
                 <button
                   key={o.value}
                   onClick={() => setConfidence(o.value)}
-                  className="px-3 py-2 rounded-xl text-[13px] font-medium text-left cursor-pointer transition-all duration-150"
-                  style={{
-                    background: confidence === o.value ? "rgba(124,58,237,0.25)" : "rgba(255,255,255,0.04)",
-                    border: confidence === o.value ? "1px solid rgba(124,58,237,0.5)" : "1px solid rgba(255,255,255,0.08)",
-                    color: confidence === o.value ? "#c4b5fd" : "#94a3b8",
-                  }}
+                  className={`px-3 py-2 rounded-xl text-[13px] font-medium text-left cosmic-option${confidence === o.value ? " selected" : ""}`}
                 >
                   {o.label}
                 </button>
@@ -213,7 +208,7 @@ export default function OnboardingPage() {
       content: (
         <div className="space-y-4">
           <div className="relative">
-            <label className="block text-[13px] font-bold tracking-widest mb-2" style={{ color: "#94a3b8" }}>
+            <label className="block text-[11px] font-semibold tracking-[0.18em] mb-2" style={{ color: "rgba(122,118,144,0.8)" }}>
               BIRTHPLACE *
             </label>
             <input
@@ -237,12 +232,7 @@ export default function OnboardingPage() {
               <motion.div
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute top-full left-0 right-0 mt-1 rounded-xl overflow-hidden z-20"
-                style={{
-                  background: "rgba(4,4,32,0.95)",
-                  border: "1px solid rgba(99,102,241,0.3)",
-                  backdropFilter: "blur(20px)",
-                }}
+                className="absolute top-full left-0 right-0 mt-1 rounded-xl overflow-hidden z-20 liquid-glass-strong"
               >
                 {geoResults.map((r, i) => (
                   <button
@@ -264,10 +254,9 @@ export default function OnboardingPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl"
-              style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.3)" }}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl liquid-glass-cosmos"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="1.5" className="w-5 h-5 flex-shrink-0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="rgba(168,130,255,0.7)" strokeWidth="1.5" className="w-5 h-5 flex-shrink-0">
                 <path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
               </svg>
               <div className="min-w-0">
@@ -290,7 +279,7 @@ export default function OnboardingPage() {
       content: (
         <div className="space-y-6">
           <div>
-            <label className="block text-[13px] font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>
+            <label className="block text-[11px] font-semibold tracking-[0.18em] mb-3" style={{ color: "rgba(122,118,144,0.8)" }}>
               HOUSE SYSTEM
             </label>
             <div className="space-y-2">
@@ -298,12 +287,7 @@ export default function OnboardingPage() {
                 <button
                   key={hs.value}
                   onClick={() => setHouseSystem(hs.value)}
-                  className="w-full px-4 py-3 rounded-xl text-left text-[14px] font-medium cursor-pointer transition-all duration-150"
-                  style={{
-                    background: houseSystem === hs.value ? "rgba(124,58,237,0.25)" : "rgba(255,255,255,0.03)",
-                    border: houseSystem === hs.value ? "1px solid rgba(124,58,237,0.5)" : "1px solid rgba(255,255,255,0.07)",
-                    color: houseSystem === hs.value ? "#c4b5fd" : "#94a3b8",
-                  }}
+                  className={`w-full px-4 py-3 rounded-xl text-left text-[14px] font-medium cosmic-option${houseSystem === hs.value ? " selected" : ""}`}
                 >
                   {hs.label}
                 </button>
@@ -311,7 +295,7 @@ export default function OnboardingPage() {
             </div>
           </div>
           <div>
-            <label className="block text-[13px] font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>
+            <label className="block text-[11px] font-semibold tracking-[0.18em] mb-3" style={{ color: "rgba(122,118,144,0.8)" }}>
               INTERPRETATION MODE
             </label>
             <div className="space-y-2">
@@ -319,12 +303,7 @@ export default function OnboardingPage() {
                 <button
                   key={m.value}
                   onClick={() => setAstrologyMode(m.value)}
-                  className="w-full px-4 py-3 rounded-xl text-left text-[14px] font-medium cursor-pointer transition-all duration-150"
-                  style={{
-                    background: astrologyMode === m.value ? "rgba(245,158,11,0.2)" : "rgba(255,255,255,0.03)",
-                    border: astrologyMode === m.value ? "1px solid rgba(245,158,11,0.4)" : "1px solid rgba(255,255,255,0.07)",
-                    color: astrologyMode === m.value ? "#fbbf24" : "#94a3b8",
-                  }}
+                  className={`w-full px-4 py-3 rounded-xl text-left text-[14px] font-medium cosmic-option${astrologyMode === m.value ? " selected-gold" : ""}`}
                 >
                   {m.label}
                 </button>
@@ -366,12 +345,8 @@ export default function OnboardingPage() {
     ];
 
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-4" style={{ background: "#00000f" }}>
+      <div className="min-h-screen flex flex-col items-center justify-center px-4">
         <DashboardBg />
-        <div
-          className="fixed pointer-events-none rounded-full"
-          style={{ width: 700, height: 700, left: "50%", top: "50%", transform: "translate(-50%,-50%)", background: "radial-gradient(ellipse, rgba(124,58,237,0.09), transparent 65%)", filter: "blur(80px)" }}
-        />
 
         <div className="relative z-10 w-full max-w-md flex flex-col items-center gap-8">
           {/* Header */}
@@ -382,21 +357,20 @@ export default function OnboardingPage() {
             className="text-center"
           >
             <motion.div
-              animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
+              animate={{ scale: [1, 1.04, 1], opacity: [0.85, 1, 0.85] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 50px rgba(124,58,237,0.5)" }}
+              className="w-14 h-14 rounded-2xl mx-auto mb-5 flex items-center justify-center liquid-glass-cosmos"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.2" className="w-9 h-9">
+              <svg viewBox="0 0 24 24" fill="none" stroke="rgba(168,130,255,0.9)" strokeWidth="1.2" className="w-8 h-8">
                 <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
                 <line x1="12" y1="2" x2="12" y2="6" /><line x1="12" y1="18" x2="12" y2="22" />
               </svg>
             </motion.div>
-            <p className="text-[13px] font-bold tracking-[0.25em] mb-3" style={{ color: "#7c3aed" }}>CHART COMPLETE</p>
-            <h2 className="text-3xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#f1f5f9", letterSpacing: "-0.02em" }}>
+            <p className="text-[11px] font-semibold tracking-[0.22em] mb-3" style={{ color: "rgba(168,130,255,0.7)" }}>CHART COMPLETE</p>
+            <h2 className="text-3xl font-medium" style={{ color: "var(--text-1)", letterSpacing: "-0.02em" }}>
               Welcome, {name}.
             </h2>
-            <p className="text-[14px] mt-2" style={{ color: "#475569" }}>Here&apos;s what we found in your chart.</p>
+            <p className="text-[14px] mt-2" style={{ color: "var(--text-2)" }}>Here&apos;s what we found in your chart.</p>
           </motion.div>
 
           {/* Reveals */}
@@ -407,12 +381,7 @@ export default function OnboardingPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6 + i * 0.18, duration: 0.5, ease: "easeOut" }}
-                className="flex items-center gap-4 rounded-2xl px-5 py-4"
-                style={{
-                  background: `${r.color}08`,
-                  border: `1px solid ${r.color}20`,
-                  backdropFilter: "blur(12px)",
-                }}
+                className="flex items-center gap-4 rounded-2xl px-5 py-4 liquid-glass"
               >
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                   style={{ background: `${r.color}14`, border: `1px solid ${r.color}30` }}>
@@ -453,15 +422,14 @@ export default function OnboardingPage() {
             className="w-full"
           >
             <motion.button
-              whileHover={{ scale: 1.03, boxShadow: "0 0 50px rgba(124,58,237,0.5)" }}
+              whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => router.push("/dashboard")}
-              className="w-full py-4 rounded-2xl text-base font-bold tracking-wider cursor-pointer"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5, #06b6d4)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
+              className="w-full py-4 rounded-2xl text-base font-medium tracking-wide cosmic-btn-primary"
             >
               Enter My Cosmos →
             </motion.button>
-            <p className="text-center text-[14px] mt-3" style={{ color: "#1e293b" }}>
+            <p className="text-center text-[13px] mt-3" style={{ color: "var(--text-3)" }}>
               All data stored locally on your device
             </p>
           </motion.div>
@@ -471,19 +439,8 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "#00000f" }}>
+    <div className="min-h-screen flex items-center justify-center px-4">
       <DashboardBg />
-
-      {/* Nebula orb */}
-      <div
-        className="fixed pointer-events-none rounded-full"
-        style={{
-          width: 600, height: 600,
-          left: "20%", top: "10%",
-          background: "radial-gradient(ellipse, rgba(124,58,237,0.1), transparent 70%)",
-          filter: "blur(60px)",
-        }}
-      />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -491,16 +448,15 @@ export default function OnboardingPage() {
         className="relative z-10 w-full max-w-lg"
       >
         {/* Logo */}
-        <div className="flex items-center gap-2 mb-8">
+        <div className="flex items-center gap-2.5 mb-8">
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 20px rgba(124,58,237,0.4)" }}
+            className="w-8 h-8 rounded-xl flex items-center justify-center liquid-glass-cosmos"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" className="w-5 h-5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(168,130,255,0.85)" strokeWidth="1.5" className="w-5 h-5">
               <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
             </svg>
           </div>
-          <span className="font-bold tracking-widest gradient-text">COSMORA</span>
+          <span className="text-[13px] font-semibold tracking-[0.2em]" style={{ color: "var(--text-1)" }}>COSMORA</span>
         </div>
 
         {/* Progress */}
@@ -508,28 +464,18 @@ export default function OnboardingPage() {
           {steps.map((_, i) => (
             <div
               key={i}
-              className="h-1 flex-1 rounded-full transition-all duration-300"
+              className="h-px flex-1 rounded-full transition-all duration-300"
               style={{
-                background: i <= step ? "linear-gradient(90deg, #7c3aed, #06b6d4)" : "rgba(255,255,255,0.08)",
+                background: i <= step
+                  ? "linear-gradient(90deg, rgba(168,130,255,0.8), rgba(78,205,196,0.6))"
+                  : "rgba(255,255,255,0.06)",
               }}
             />
           ))}
         </div>
 
         {/* Card */}
-        <div
-          className="rounded-3xl p-8 relative"
-          style={{
-            background: "rgba(4,4,32,0.85)",
-            border: "1px solid rgba(99,102,241,0.2)",
-            backdropFilter: "blur(20px)",
-          }}
-        >
-          {/* HUD corner brackets */}
-          <div style={{ position: "absolute", top: 12, left: 12, width: 14, height: 14, borderTop: "1.5px solid rgba(6,182,212,0.5)", borderLeft: "1.5px solid rgba(6,182,212,0.5)" }} />
-          <div style={{ position: "absolute", top: 12, right: 12, width: 14, height: 14, borderTop: "1.5px solid rgba(6,182,212,0.5)", borderRight: "1.5px solid rgba(6,182,212,0.5)" }} />
-          <div style={{ position: "absolute", bottom: 12, left: 12, width: 14, height: 14, borderBottom: "1.5px solid rgba(6,182,212,0.5)", borderLeft: "1.5px solid rgba(6,182,212,0.5)" }} />
-          <div style={{ position: "absolute", bottom: 12, right: 12, width: 14, height: 14, borderBottom: "1.5px solid rgba(6,182,212,0.5)", borderRight: "1.5px solid rgba(6,182,212,0.5)" }} />
+        <div className="rounded-3xl p-8 relative liquid-glass-strong">
           <AnimatePresence mode="wait">
             <motion.div
               key={step}
@@ -538,16 +484,13 @@ export default function OnboardingPage() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.2 }}
             >
-              <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#7c3aed" }}>
+              <p className="text-[11px] font-semibold tracking-[0.22em] mb-2" style={{ color: "rgba(168,130,255,0.75)" }}>
                 STEP {step + 1} OF {steps.length}
               </p>
-              <h2
-                className="text-2xl font-bold mb-2"
-                style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#f1f5f9" }}
-              >
+              <h2 className="text-2xl font-medium mb-2" style={{ color: "var(--text-1)" }}>
                 {current.title}
               </h2>
-              <p className="text-[14px] mb-6" style={{ color: "#64748b" }}>{current.subtitle}</p>
+              <p className="text-[14px] mb-6" style={{ color: "var(--text-2)" }}>{current.subtitle}</p>
               {current.content}
             </motion.div>
           </AnimatePresence>
@@ -557,7 +500,7 @@ export default function OnboardingPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="mt-4 text-[13px] px-3 py-2 rounded-lg"
-              style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", color: "#fca5a5" }}
+              style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "#fca5a5" }}
             >
               {error}
             </motion.p>
@@ -567,27 +510,17 @@ export default function OnboardingPage() {
             {step > 0 && (
               <button
                 onClick={() => setStep(s => s - 1)}
-                className="px-5 py-3 rounded-xl text-[14px] font-medium cursor-pointer transition-all duration-150"
-                style={{
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  color: "#94a3b8",
-                }}
+                className="px-5 py-3 rounded-xl text-[14px] font-medium cosmic-option"
               >
                 Back
               </button>
             )}
             <motion.button
-              whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(124,58,237,0.4)" }}
+              whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               onClick={isLast ? handleSave : () => { if (current.valid()) { setError(""); setStep(s => s + 1); } else setError("Please complete this step."); }}
               disabled={saving}
-              className="flex-1 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer transition-all duration-150 disabled:opacity-50"
-              style={{
-                background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
-                color: "white",
-                border: "1px solid rgba(124,58,237,0.5)",
-              }}
+              className="flex-1 py-3 rounded-xl text-[14px] font-medium tracking-wide cosmic-btn-primary"
             >
               {saving ? "Calculating chart..." : isLast ? "Calculate My Chart →" : "Continue"}
             </motion.button>

@@ -559,7 +559,7 @@ export default function ReportPage() {
   const showLanding = sections.length === 0 && !generating;
 
   return (
-    <div className="h-screen flex overflow-hidden" style={{ background: "#03040a" }}>
+    <div className="h-screen flex overflow-hidden">
       <DashboardBg />
       <Sidebar />
 

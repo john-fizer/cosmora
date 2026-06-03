@@ -153,6 +153,20 @@ const NAV_ITEMS = [
     ),
   },
   {
+    label: "Temporal",
+    hint: "time oracle",
+    href: "/dashboard/temporal",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 2" />
+        <path d="M5 5l1.5 1.5M19 5l-1.5 1.5" strokeOpacity="0.5" />
+        <path d="M7 3.5C8.5 2.5 10.2 2 12 2" strokeOpacity="0.4" />
+        <path d="M17 3.5C15.5 2.5 13.8 2 12 2" strokeOpacity="0.4" />
+      </svg>
+    ),
+  },
+  {
     label: "Oracle",
     hint: "ai readings",
     href: "/dashboard/oracle",

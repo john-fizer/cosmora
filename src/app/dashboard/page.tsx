@@ -98,8 +98,7 @@ function MoonPhaseWidget() {
   const nextEventName = isWaxing ? "Full Moon" : "New Moon";
 
   return (
-    <div className="rounded-2xl p-4"
-      style={{ background: "rgba(4,4,28,0.85)", border: "1px solid rgba(196,181,253,0.12)", backdropFilter: "blur(20px)" }}>
+    <div className="liquid-glass-cosmos rounded-2xl p-4">
       <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>MOON PHASE</p>
       <div className="flex items-center gap-3">
         {/* SVG moon glyph */}
@@ -233,8 +232,7 @@ function PlanetaryHourWidget({ lat, lon }: { lat: number; lon: number }) {
   const upcoming = hours.filter(h => h.start >= curr.end).slice(0, 3);
 
   return (
-    <div className="rounded-2xl p-4"
-      style={{ background: "rgba(4,4,28,0.85)", border: `1px solid ${color}22`, backdropFilter: "blur(20px)" }}>
+    <div className="liquid-glass-cosmos rounded-2xl p-4">
       <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>PLANETARY HOUR</p>
       <div className="flex items-center gap-3">
         <svg width={72} height={72} viewBox="0 0 72 72">
@@ -666,15 +664,7 @@ function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet
       style={{ width: 240 }}
     >
       {/* Planetary Positions */}
-      <div
-        className="rounded-2xl overflow-hidden flex flex-col"
-        style={{
-          background: "rgba(4,4,28,0.85)",
-          border: "1px solid rgba(99,102,241,0.2)",
-          backdropFilter: "blur(20px)",
-          boxShadow: "0 0 30px rgba(99,102,241,0.08)",
-        }}
-      >
+      <div className="liquid-glass-cosmos rounded-2xl overflow-hidden flex flex-col">
         <div className="px-4 pt-3 pb-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
           <p className="text-[13px] font-bold tracking-widest" style={{ color: "#7c3aed" }}>PLANETARY POSITIONS</p>
         </div>
@@ -704,13 +694,7 @@ function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet
       </div>
 
       {/* Aspects */}
-      <div
-        className="rounded-2xl overflow-hidden"
-        style={{
-          background: "rgba(4,4,28,0.85)",
-          border: "1px solid rgba(99,102,241,0.2)",
-          backdropFilter: "blur(20px)",
-        }}
+      <div className="liquid-glass-cosmos rounded-2xl overflow-hidden"
       >
         <div className="px-4 pt-3 pb-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
           <p className="text-[13px] font-bold tracking-widest" style={{ color: "#06b6d4" }}>ASPECTS</p>
@@ -809,14 +793,8 @@ function ConvergenceWidget({ chart, transits }: { chart: ChartData; transits: Tr
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.45 }}
         whileHover={{ scale: 1.01, borderColor: `${color}40` }}
-        className="rounded-2xl p-4 cursor-pointer"
-        style={{
-          background: "rgba(4,4,28,0.85)",
-          border: `1px solid ${color}20`,
-          backdropFilter: "blur(20px)",
-          boxShadow: `0 0 30px ${color}08`,
-          transition: "border-color 0.2s",
-        }}
+        className="liquid-glass-cosmos rounded-2xl p-4 cursor-pointer"
+        style={{ transition: "transform 0.2s" }}
       >
         <div className="flex items-center justify-between mb-3">
           <p className="text-[13px] font-bold tracking-widest" style={{ color }}>CONVERGENCE</p>
@@ -901,14 +879,7 @@ function ConvergenceWidget({ chart, transits }: { chart: ChartData; transits: Tr
 function SkyStatusWidget({ retrogrades, ingresses }: { retrogrades: PlanetName[]; ingresses: Ingress[] }) {
   if (retrogrades.length === 0 && ingresses.length === 0) return null;
   return (
-    <div
-      className="rounded-2xl p-4"
-      style={{
-        background: "rgba(4,4,28,0.85)",
-        border: "1px solid rgba(6,182,212,0.12)",
-        backdropFilter: "blur(20px)",
-      }}
-    >
+    <div className="liquid-glass-cosmos rounded-2xl p-4">
       <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#475569" }}>SKY STATUS</p>
 
       {retrogrades.length > 0 && (
@@ -985,14 +956,7 @@ function NextExactWidget({ transits }: { transits: TransitPill[] }) {
   const tColor = (name: PlanetName) => PLANET_COLORS[name] ?? "#94a3b8";
 
   return (
-    <div
-      className="rounded-2xl p-4"
-      style={{
-        background: "rgba(4,4,28,0.85)",
-        border: "1px solid rgba(6,182,212,0.15)",
-        backdropFilter: "blur(20px)",
-      }}
-    >
+    <div className="liquid-glass-cosmos rounded-2xl p-4">
       <div className="flex items-center justify-between mb-3">
         <p className="text-[13px] font-bold tracking-widest" style={{ color: "#06b6d4" }}>NEXT EXACT</p>
         {exact.length > 0 && (
@@ -1099,13 +1063,7 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
     >
       {/* Cosmic Insight */}
       <div
-        className="rounded-2xl p-4"
-        style={{
-          background: "rgba(4,4,28,0.85)",
-          border: "1px solid rgba(124,58,237,0.2)",
-          backdropFilter: "blur(20px)",
-          boxShadow: "0 0 30px rgba(124,58,237,0.08)",
-        }}
+        className="liquid-glass-cosmos rounded-2xl p-4"
       >
         <div className="flex items-center justify-between mb-3">
           <p className="text-[13px] font-bold tracking-widest" style={{ color: "#7c3aed" }}>COSMIC INSIGHT</p>
@@ -1193,14 +1151,7 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
       </Link>
 
       {/* Key Placements */}
-      <div
-        className="rounded-2xl p-4"
-        style={{
-          background: "rgba(4,4,28,0.85)",
-          border: "1px solid rgba(99,102,241,0.15)",
-          backdropFilter: "blur(20px)",
-        }}
-      >
+      <div className="liquid-glass-cosmos rounded-2xl p-4">
         <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>KEY PLACEMENTS</p>
         <div className="space-y-2">
           {[
@@ -1232,14 +1183,7 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
       </div>
 
       {/* Energy Balance */}
-      <div
-        className="rounded-2xl p-4"
-        style={{
-          background: "rgba(4,4,28,0.85)",
-          border: "1px solid rgba(99,102,241,0.15)",
-          backdropFilter: "blur(20px)",
-        }}
-      >
+      <div className="liquid-glass-cosmos rounded-2xl p-4">
         <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#64748b" }}>ENERGY BALANCE</p>
         <ElementBalance chart={chart} />
         <div className="mt-3 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>

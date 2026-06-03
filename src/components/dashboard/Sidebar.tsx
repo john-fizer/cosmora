@@ -211,13 +211,8 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
       transition={SPRING}
       onHoverStart={() => setExpanded(true)}
       onHoverEnd={() => setExpanded(false)}
-      className="fixed left-0 top-0 h-full z-50 hidden md:flex flex-col"
-      style={{
-        background: "var(--sidebar-bg)",
-        borderRight: "1px solid var(--sidebar-border)",
-        backdropFilter: "blur(32px)",
-        overflow: "hidden",
-      }}
+      className="fixed left-0 top-0 h-full z-50 hidden md:flex flex-col liquid-glass-strong"
+      style={{ overflow: "hidden" }}
     >
       {/* Logo */}
       <div style={{ padding: "20px 12px 14px", display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
@@ -275,17 +270,16 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                   paddingLeft: expanded ? 10 : 0,
                   paddingRight: expanded ? 10 : 0,
                   justifyContent: expanded ? "flex-start" : "center",
-                  backgroundColor: active ? "var(--nav-active-bg)" : "transparent",
                 }}
                 whileHover={{ opacity: 1 }}
                 transition={SPRING}
+                className={active ? "liquid-glass-cosmos" : ""}
                 style={{
                   position: "relative",
                   display: "flex", alignItems: "center", gap: 10,
                   paddingTop: 7, paddingBottom: 7,
                   borderRadius: 9, cursor: "pointer", marginBottom: 1,
-                  border: active ? "1px solid var(--nav-active-border)" : "1px solid transparent",
-                  boxShadow: active ? "var(--nav-active-shadow)" : "none",
+                  background: active ? undefined : "transparent",
                 }}
               >
                 {/* Active indicator */}
@@ -381,11 +375,8 @@ function MobileNav({ pathname }: { pathname: string }) {
       initial={{ y: 80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-      className="fixed bottom-0 left-0 right-0 flex items-center justify-around px-2 z-50 md:hidden"
+      className="fixed bottom-0 left-0 right-0 flex items-center justify-around px-2 z-50 md:hidden liquid-glass-strong"
       style={{
-        background: "rgba(8,8,15,0.96)",
-        borderTop: "1px solid var(--border)",
-        backdropFilter: "blur(32px)",
         paddingBottom: "max(8px, env(safe-area-inset-bottom))",
         paddingTop: 6,
       }}

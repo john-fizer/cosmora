@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Fragment+Mono&family=Noto+Sans+Symbols+2&family=Outfit:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400;1,8..60,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Fragment+Mono&family=Noto+Sans+Symbols+2&family=Outfit:wght@300;400;500;600&display=swap');
 @import "tailwindcss";
 
 html { overflow-x: hidden; }
@@ -305,10 +305,16 @@ body { overflow-x: clip; max-width: 100vw; }
 body {
   background: var(--bg-void);
   color: var(--text-1);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Poppins', 'Outfit', sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* persistent cosmic nebula behind all glass surfaces */
+  background-image:
+    radial-gradient(ellipse 80% 60% at 15% 30%, rgba(123,111,212,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 15%, rgba(78,205,196,0.04) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 80% at 50% 90%, rgba(200,165,91,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 70% 55%, rgba(123,111,212,0.03) 0%, transparent 50%);
 }
 
 /* ─── Scrollbar ─────────────────────────────────────────────────────────────── */
@@ -320,13 +326,19 @@ body {
 
 /* ─── Typography utilities ──────────────────────────────────────────────────── */
 
+.font-sans    { font-family: 'Poppins', 'Outfit', sans-serif; }
+.font-serif   { font-family: 'Source Serif 4', 'Cormorant Garamond', Georgia, serif; }
 .font-display { font-family: 'Cormorant Garamond', Georgia, serif; }
-.font-body    { font-family: 'Outfit', sans-serif; }
+.font-body    { font-family: 'Poppins', 'Outfit', sans-serif; }
 .font-mono    { font-family: 'Fragment Mono', 'Fira Code', monospace; }
 
 /* legacy aliases */
 .font-hud     { font-family: 'Fragment Mono', 'Fira Code', monospace; }
 .font-title   { font-family: 'Cormorant Garamond', Georgia, serif; }
+
+/* Heading weight system: 500 matches Bloom spec */
+h1, h2, h3 { font-weight: 500; }
+h1 em, h2 em, h3 em, h1 i, h2 i, h3 i { font-family: 'Source Serif 4', Georgia, serif; font-style: italic; }
 
 /* ─── Astrology glyphs — Cosmora 2070 chrome treatment ─────────────────────── */
 
@@ -407,6 +419,145 @@ body {
 }
 .glow-text-gold {
   text-shadow: 0 0 15px rgba(200,165,91,0.7), 0 0 40px rgba(200,165,91,0.25);
+}
+
+/* ─── Liquid Glass (Bloom-spec) ─────────────────────────────────────────────── */
+
+@layer components {
+  /* Light tier — for pills, chips, secondary elements */
+  .liquid-glass {
+    background: rgba(255,255,255,0.01);
+    background-blend-mode: luminosity;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.10);
+  }
+  .liquid-glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1.4px;
+    border-radius: inherit;
+    background: linear-gradient(180deg,
+      rgba(255,255,255,0.45) 0%,
+      rgba(255,255,255,0.15) 20%,
+      transparent 40%,
+      transparent 60%,
+      rgba(255,255,255,0.15) 80%,
+      rgba(255,255,255,0.45) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Heavy tier — for major panels, CTA buttons, drawers */
+  .liquid-glass-strong {
+    background: rgba(255,255,255,0.02);
+    background-blend-mode: luminosity;
+    backdrop-filter: blur(50px);
+    -webkit-backdrop-filter: blur(50px);
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      4px 4px 4px rgba(0,0,0,0.05),
+      inset 0 1px 1px rgba(255,255,255,0.15);
+  }
+  .liquid-glass-strong::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1.4px;
+    border-radius: inherit;
+    background: linear-gradient(180deg,
+      rgba(255,255,255,0.50) 0%,
+      rgba(255,255,255,0.20) 20%,
+      transparent 40%,
+      transparent 60%,
+      rgba(255,255,255,0.20) 80%,
+      rgba(255,255,255,0.50) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Cosmo glass — tinted with the Cosmora accent palette */
+  .liquid-glass-cosmos {
+    background: rgba(123,111,212,0.04);
+    background-blend-mode: luminosity;
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      inset 0 1px 1px rgba(255,255,255,0.10),
+      0 0 40px rgba(123,111,212,0.06);
+  }
+  .liquid-glass-cosmos::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg,
+      rgba(255,255,255,0.22) 0%,
+      rgba(123,111,212,0.30) 35%,
+      transparent 50%,
+      rgba(78,205,196,0.20) 80%,
+      rgba(255,255,255,0.18) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Gold accent glass — for featured cards, solar highlights */
+  .liquid-glass-solar {
+    background: rgba(200,165,91,0.04);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      inset 0 1px 1px rgba(255,255,255,0.12),
+      0 0 30px rgba(200,165,91,0.08);
+  }
+  .liquid-glass-solar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg,
+      rgba(200,165,91,0.55) 0%,
+      rgba(255,255,255,0.20) 30%,
+      transparent 50%,
+      rgba(200,165,91,0.25) 80%,
+      rgba(200,165,91,0.50) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+  }
 }
 
 /* ─── Cards ─────────────────────────────────────────────────────────────────── */

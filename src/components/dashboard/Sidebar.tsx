@@ -112,6 +112,34 @@ const NAV_ITEMS = [
     ),
   },
   {
+    label: "Releasing",
+    hint: "zodiacal releasing",
+    href: "/dashboard/releasing",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 3 C12 3 16 7 16 12 C16 17 12 21 12 21" />
+        <path d="M12 3 C12 3 8 7 8 12 C8 17 12 21 12 21" />
+        <circle cx="12" cy="12" r="2" fill="currentColor" opacity="0.6" />
+        <path d="M3 12 h18" strokeOpacity="0.4" />
+      </svg>
+    ),
+  },
+  {
+    label: "Prism",
+    hint: "derived houses",
+    href: "/dashboard/prism",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+        <path d="M12 3 L21 19 H3 Z" />
+        <path d="M12 3 L5 19" strokeOpacity="0.5" />
+        <path d="M12 3 L8 19" strokeOpacity="0.35" />
+        <path d="M12 3 L15 19" strokeOpacity="0.35" />
+        <path d="M12 3 L19 19" strokeOpacity="0.5" />
+      </svg>
+    ),
+  },
+  {
     label: "Map",
     hint: "astrocartography",
     href: "/dashboard/map",

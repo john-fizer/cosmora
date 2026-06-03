@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sidebar } from "@/components/dashboard/Sidebar";
-import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
+import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
 import type { AstroLine, AstroLinePlanet, AstroLineAngle, LocationScore } from "@/lib/astrology/astrocartography";
 import {
   PLANET_COLORS, PLANET_SYMBOLS, ASTRO_PLANETS,
@@ -12,7 +12,8 @@ import {
 } from "@/lib/astrology/astrocartography";
 import type { VortexNodePublic, CitySpot } from "./GlobeCanvas";
 
-const GlobeCanvas = dynamic(() => import("./GlobeCanvas"), { ssr: false });
+const GlobeCanvas     = dynamic(() => import("./GlobeCanvas"),     { ssr: false });
+const FlatEarthCanvas = dynamic(() => import("./FlatEarthCanvas"), { ssr: false });
 import type { GlobeMode } from "./GlobeCanvas";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -136,166 +137,6 @@ function EyeIcon({ visible }: { visible: boolean }) {
   );
 }
 
-// ─── Flat map view ────────────────────────────────────────────────────────────
-function FlatMapView({ lines, activePlanets, topSpots, birthLat, birthLon }: {
-  lines: AstroLine[];
-  activePlanets: Set<AstroLinePlanet>;
-  topSpots: CitySpot[];
-  birthLat: number;
-  birthLon: number;
-}) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef    = useRef<HTMLCanvasElement>(null);
-  const [coastlines, setCoastlines] = useState<number[][][]>([]);
-  const animRef  = useRef<number>(0);
-  const pulseRef = useRef(0);
-
-  useEffect(() => {
-    fetch("/geo/coastlines.json").then(r => r.json()).then(setCoastlines).catch(() => {});
-  }, []);
-
-  const proj = useCallback((lon: number, lat: number, w: number, h: number) => ({
-    x: ((lon + 180) / 360) * w,
-    y: ((90 - lat) / 180) * h,
-  }), []);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    const canvas    = canvasRef.current;
-    if (!container || !canvas || !coastlines.length) return;
-    canvas.width  = container.clientWidth;
-    canvas.height = container.clientHeight;
-    const W = canvas.width, H = canvas.height;
-
-    const draw = (ts: number) => {
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-      pulseRef.current = ts * 0.001;
-
-      ctx.fillStyle = "#010810";
-      ctx.fillRect(0, 0, W, H);
-
-      // Lat/lon grid
-      ctx.strokeStyle = "rgba(26,68,187,0.18)";
-      ctx.lineWidth = 0.5;
-      for (let lon = -180; lon <= 180; lon += 30) {
-        const x = ((lon + 180) / 360) * W;
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-      }
-      for (let lat = -90; lat <= 90; lat += 30) {
-        const y = ((90 - lat) / 180) * H;
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-      }
-
-      // Coastlines
-      ctx.strokeStyle = "#1A5EFF";
-      ctx.lineWidth = 0.7;
-      ctx.globalAlpha = 0.55;
-      for (const line of coastlines) {
-        if (line.length < 2) continue;
-        ctx.beginPath();
-        const { x: x0, y: y0 } = proj(line[0][0], line[0][1], W, H);
-        ctx.moveTo(x0, y0);
-        for (let i = 1; i < line.length; i++) {
-          const dx = Math.abs(line[i][0] - line[i - 1][0]);
-          if (dx > 90) { ctx.stroke(); ctx.beginPath(); }
-          const { x, y } = proj(line[i][0], line[i][1], W, H);
-          ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-
-      // Planet lines
-      for (const line of lines) {
-        if (!activePlanets.has(line.planet)) continue;
-        const color = PLANET_COLORS[line.planet];
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1.5;
-        ctx.globalAlpha = 0.65;
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 5;
-        for (const seg of line.segments) {
-          if (seg.length < 2) continue;
-          ctx.beginPath();
-          const { x: x0, y: y0 } = proj(seg[0].lon, seg[0].lat, W, H);
-          ctx.moveTo(x0, y0);
-          for (let i = 1; i < seg.length; i++) {
-            const { x, y } = proj(seg[i].lon, seg[i].lat, W, H);
-            ctx.lineTo(x, y);
-          }
-          ctx.stroke();
-        }
-        ctx.shadowBlur = 0;
-        ctx.globalAlpha = 1;
-      }
-
-      // City markers
-      for (const spot of topSpots) {
-        const { x, y } = proj(spot.lon, spot.lat, W, H);
-        const top   = spot.scores[0]?.planet;
-        const color = top ? PLANET_COLORS[top] : "#4488FF";
-
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 0.6;
-        ctx.globalAlpha = 0.35;
-        ctx.beginPath();
-        ctx.moveTo(x, y); ctx.lineTo(x, y - 22);
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-
-        ctx.fillStyle = color;
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 14;
-        ctx.beginPath();
-        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        ctx.fillStyle = color;
-        ctx.globalAlpha = 0.8;
-        ctx.font = "8px 'Fragment Mono', monospace";
-        ctx.fillText(spot.city.split(",")[0].toUpperCase(), x + 6, y - 4);
-        ctx.globalAlpha = 1;
-      }
-
-      // Birth location pulse rings
-      const { x: bx, y: by } = proj(birthLon, birthLat, W, H);
-      for (let ring = 0; ring < 3; ring++) {
-        const phase = ((pulseRef.current * 0.5 + ring * 0.34) % 1.0);
-        const r     = 8 + phase * 32;
-        ctx.beginPath();
-        ctx.arc(bx, by, r, 0, Math.PI * 2);
-        ctx.strokeStyle = "#c4b5fd";
-        ctx.lineWidth = 1;
-        ctx.globalAlpha = (1 - phase) * 0.45;
-        ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-
-      const pulse = (Math.sin(pulseRef.current * 3) + 1) / 2;
-      ctx.fillStyle = "#ffffff";
-      ctx.shadowColor = "#c4b5fd";
-      ctx.shadowBlur = 14 + pulse * 8;
-      ctx.beginPath();
-      ctx.arc(bx, by, 4.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      animRef.current = requestAnimationFrame(draw);
-    };
-
-    animRef.current = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(animRef.current);
-  }, [coastlines, lines, activePlanets, topSpots, birthLat, birthLon, proj]);
-
-  return (
-    <div ref={containerRef} className="absolute inset-0">
-      <canvas ref={canvasRef} style={{ display: "block" }} />
-    </div>
-  );
-}
-
 // ─── Location analysis popup ──────────────────────────────────────────────────
 function LocationPanel({ lat, lon, scores, onClose }: {
   lat: number; lon: number; scores: LocationScore[]; onClose: () => void;
@@ -312,7 +153,7 @@ function LocationPanel({ lat, lon, scores, onClose }: {
       const res = await fetch("/api/astrocartography/read", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lat, lon, scores }),
+        body: JSON.stringify({ lat, lon, scores, persona: getOraclePersona() }),
       });
       if (!res.ok || !res.body) { setStreaming(false); return; }
       const reader = res.body.getReader();
@@ -688,7 +529,7 @@ export default function AstrocartographyPage() {
   // ── Compute top power spots ───────────────────────────────────────────────────
   useEffect(() => {
     if (lines.length === 0) return;
-    const CLOSE_LINE_DEG = 5; // ~500 km — must have a line passing this close to show skyline
+    const CLOSE_LINE_DEG = 2; // ~200 km — must have a line passing this close to show skyline
     const scored = SAMPLE_SPOTS.map(s => {
       const scores = scoreLocation(lines, s.lat, s.lon);
       const power  = scores.reduce((acc, sc) => acc + sc.influence * 100, 0);
@@ -701,7 +542,7 @@ export default function AstrocartographyPage() {
     for (const spot of sorted) {
       if (!deduped.some(k => angularDist(spot.lat, spot.lon, k.lat, k.lon) < 5)) deduped.push(spot);
     }
-    setTopSpots(deduped);
+    setTopSpots(deduped.slice(0, 8));
   }, [lines]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
@@ -725,7 +566,7 @@ export default function AstrocartographyPage() {
     return activeCategories.has(cat);
   });
 
-  const globeMode: GlobeMode = viewMode === "heatmap" ? "energy" : "cities";
+  const globeMode: GlobeMode = viewMode === "heatmap" ? "energy" : "globe";
 
   // Format birth datetime for display
   const birthDisplay = birthDatetime ? (() => {
@@ -778,13 +619,19 @@ export default function AstrocartographyPage() {
       {/* ── Canvas ── */}
       <div className="absolute inset-0" style={{ left: 64, bottom: 74 }}>
         {viewMode === "flat" ? (
-          <FlatMapView
-            lines={lines}
-            activePlanets={activePlanets}
-            topSpots={visibleTopSpots as CitySpot[]}
-            birthLat={birthLat}
-            birthLon={birthLon}
-          />
+          lines.length > 0 && (
+            <FlatEarthCanvas
+              lines={lines}
+              activePlanets={activePlanets}
+              activeAngles={activeAngles}
+              topSpots={visibleTopSpots as CitySpot[]}
+              birthLat={birthLat}
+              birthLon={birthLon}
+              showCities={layers.citySkylines}
+              showLines={layers.planetLines}
+              onLocationClick={handleLocationClick}
+            />
+          )
         ) : (
           lines.length > 0 && (
             <GlobeCanvas
@@ -821,7 +668,7 @@ export default function AstrocartographyPage() {
         {/* Title */}
         <div style={{ flexShrink: 0 }}>
           <span style={{ color: "#C0D4FF", fontSize: 11, fontWeight: 600, letterSpacing: "0.12em" }}>COSMORA 2070</span>
-          <span style={{ color: "#334466", fontSize: 11, letterSpacing: "0.08em" }}> · ASTROCARTOGRAPHY</span>
+          <span style={{ color: "#334466", fontSize: 11, letterSpacing: "0.08em" }}> · ASTROCARTOGRAPHY{viewMode === "flat" ? " · FLAT EARTH MODEL" : ""}</span>
         </div>
 
         {/* Planet toggles */}
@@ -1048,7 +895,7 @@ export default function AstrocartographyPage() {
         }}>
           {([
             { id: "globe",   label: "GLOBE"    },
-            { id: "flat",    label: "FLAT MAP" },
+            { id: "flat",    label: "FLAT EARTH" },
             { id: "heatmap", label: "HEATMAP"  },
           ] as { id: ViewMode; label: string }[]).map(v => (
             <button key={v.id} onClick={() => setViewMode(v.id)} style={{

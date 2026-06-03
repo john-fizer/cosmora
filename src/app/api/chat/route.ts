@@ -5,7 +5,7 @@ import type { ChartData, PlanetName } from "@/lib/astrology/types";
 import { selectSkills, formatSkillsForPrompt } from "@/lib/skills";
 import { buildKnowledgeContext } from "@/lib/oracle/knowledge";
 import { getModelById, DEFAULT_MODEL_ID } from "@/lib/oracle/models";
-import { getPersonaById } from "@/lib/oracle/personas";
+import { getPersonaById, COSMORA_IDENTITY } from "@/lib/oracle/personas";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -46,35 +46,11 @@ Lot of Fortune: ${chart.lotOfFortune.toFixed(1)}° | Lot of Spirit: ${chart.lotO
 `.trim();
 }
 
-// ─── System prompt ────────────────────────────────────────────────────────────
+// ─── Chat-specific tool use addendum (appended to persona identity) ───────────
 
-const COSMORA_IDENTITY = `You are Cosmora — the world's most advanced astrological intelligence, operating from a 2070 cosmic observatory.
-
-Your astrological foundation:
-- Sect doctrine (day/night chart distinctions change how malefics and benefics operate)
-- Essential dignity (domicile, exaltation, triplicity, detriment, fall, peregrine)
-- Annual profections and Lord of the Year timing
-- Whole Sign and Placidus house interpretation
-- Aspect doctrine: applying vs separating, exact aspects as key signatures
-- Hellenistic foundations + psychological modern synthesis
-
-Your voice:
-- Precise and grounded, never vague or generic
-- You reference SPECIFIC placements from the native's chart
-- You distinguish between their natal blueprint and current timing (transits/profections)
-- You speak in complete paragraphs — cosmic intelligence doesn't bullet everything
-- You give one clear practical takeaway at the end of each reading
-
+const TOOL_USE_INSTRUCTIONS = `
 TOOL USE INSTRUCTIONS:
-When you have access to a chart, use the available tools to look up specific data BEFORE giving your reading. This allows you to give a precise, data-grounded response rather than working from memory. Use 1–3 tools per response — don't over-query.
-
-GUARDRAILS:
-- Never predict death, illness, or specific catastrophe with certainty
-- Use symbolic framing: "this pattern can correlate with...", "the symbolism suggests..."
-- Respect the native's autonomy — you reveal patterns, not determine destiny
-
-IDENTITY REMINDER:
-You are Cosmora, not Claude, not an AI assistant. You are the Oracle of this cosmic interface.`;
+When you have access to a chart, use the available tools to look up specific data BEFORE giving your reading. This allows you to give a precise, data-grounded response rather than working from memory. Use 1–3 tools per response — don't over-query.`;
 
 // ─── Oracle tools ─────────────────────────────────────────────────────────────
 
@@ -455,7 +431,10 @@ export async function POST(req: NextRequest) {
     const skillsSection = formatSkillsForPrompt(skills);
 
     const personaDef = getPersonaById(persona);
-    const systemIdentity = personaDef.chatSystemPrompt || COSMORA_IDENTITY;
+    const baseIdentity = personaDef.chatSystemPrompt || COSMORA_IDENTITY;
+    const systemIdentity = persona === "oracle" || !personaDef.chatSystemPrompt
+      ? baseIdentity + (chart ? TOOL_USE_INSTRUCTIONS : "")
+      : baseIdentity;
 
     const systemContent = [
       systemIdentity,

@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import type { LocationScore } from "@/lib/astrology/astrocartography";
+import { getPersonaById, COSMORA_IDENTITY } from "@/lib/oracle/personas";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -9,13 +10,14 @@ interface ReadRequest {
   lon: number;
   cityHint?: string;
   scores: LocationScore[];
-  profileContext?: string; // brief natal chart summary
+  profileContext?: string;
+  persona?: string;
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json() as ReadRequest;
-    const { lat, lon, cityHint, scores, profileContext } = body;
+    const { lat, lon, cityHint, scores, profileContext, persona = "oracle" } = body;
 
     if (!scores || scores.length === 0) {
       return new Response(JSON.stringify({ error: "no location scores provided" }), { status: 400 });
@@ -30,9 +32,12 @@ export async function POST(req: NextRequest) {
       .map(s => `• ${s.planet} ${s.angle} (influence: ${(s.influence * 100).toFixed(0)}%) — ${s.theme.split("—")[0].trim()}`)
       .join("\n");
 
-    const system = `You are Cosmora, a sophisticated astrocartography oracle. You speak with poetic precision — not vague mysticism, but grounded cosmic insight. You give actionable, emotionally resonant readings about how a specific location activates a person's birth chart.
+    const personaDef = getPersonaById(persona);
+    const baseIdentity = personaDef.chatSystemPrompt || COSMORA_IDENTITY;
 
-Your readings are structured as:
+    const astroContext = `
+
+ASTROCARTOGRAPHY READING STRUCTURE:
 1. A vivid opening that captures the FEELING of this location for this person (2-3 sentences)
 2. The dominant planetary activation and what it means for daily life there (3-4 sentences)
 3. Specific opportunities this location offers
@@ -40,6 +45,8 @@ Your readings are structured as:
 5. A brief timing note — what phase of life this location suits best
 
 Keep the total response under 300 words. Be specific, not generic. Use the planetary lines as your source material.${profileContext ? `\n\nNATAL CONTEXT:\n${profileContext}` : ""}`;
+
+    const system = baseIdentity + astroContext;
 
     const userMessage = `Give me an astrocartography reading for ${locationLabel}.
 

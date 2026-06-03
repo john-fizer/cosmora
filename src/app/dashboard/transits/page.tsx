@@ -8,7 +8,8 @@ import { Sidebar } from "@/components/dashboard/Sidebar";
 import { PLANET_SYMBOLS, SIGN_SYMBOLS } from "@/lib/astrology/types";
 import type { PlanetName, ZodiacSign, ChartData } from "@/lib/astrology/types";
 import type { TransitsData, TransitAspect, Ingress } from "@/lib/astrology/transits";
-import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
+import type { ForecastEvent } from "@/app/api/transits/forecast/route";
+import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
 import { useWarpTo } from "@/components/ui/WarpTransition";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -799,6 +800,381 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
   );
 }
 
+// ─── Forecast timeline component ─────────────────────────────────────────────
+
+const SIG_COLORS: Record<string, string> = {
+  major: "#f59e0b",
+  standard: "#6366f1",
+  minor: "#475569",
+};
+
+const SIG_LABEL: Record<string, string> = {
+  major: "MAJOR",
+  standard: "KEY",
+  minor: "",
+};
+
+function ForecastTimeline({
+  events,
+  filter,
+  selectedEvent,
+  onSelect,
+}: {
+  events: ForecastEvent[];
+  filter: "all" | "outer" | "major";
+  selectedEvent: ForecastEvent | null;
+  onSelect: (e: ForecastEvent) => void;
+}) {
+  const filtered = useMemo(() => {
+    return events.filter(ev => {
+      if (filter === "outer") {
+        const outer = new Set(["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]);
+        return outer.has(ev.transitPlanet);
+      }
+      if (filter === "major") return ev.significance === "major";
+      return true;
+    });
+  }, [events, filter]);
+
+  // Group by month
+  const byMonth = useMemo(() => {
+    const map = new Map<string, ForecastEvent[]>();
+    for (const ev of filtered) {
+      const key = ev.date.slice(0, 7); // "YYYY-MM"
+      const arr = map.get(key) ?? [];
+      arr.push(ev);
+      map.set(key, arr);
+    }
+    return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b));
+  }, [filtered]);
+
+  if (filtered.length === 0) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <p className="text-[14px]" style={{ color: "#334155" }}>No events match current filter</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
+      {byMonth.map(([monthKey, monthEvents]) => {
+        const [yr, mo] = monthKey.split("-");
+        const label = new Date(Number(yr), Number(mo) - 1, 1)
+          .toLocaleDateString("en-US", { month: "long", year: "numeric" })
+          .toUpperCase();
+
+        return (
+          <div key={monthKey}>
+            {/* Month header */}
+            <div
+              className="sticky top-0 flex items-center gap-3 px-4 py-2 z-10"
+              style={{ background: "rgba(2,2,18,0.95)", borderBottom: "1px solid rgba(255,255,255,0.04)" }}
+            >
+              <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>{label}</span>
+              <span className="text-[13px] px-2 py-0.5 rounded-md" style={{ background: "rgba(99,102,241,0.1)", color: "#6366f1" }}>
+                {monthEvents.length} event{monthEvents.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+
+            {/* Events */}
+            {monthEvents.map((ev, i) => {
+              const tColor = PLANET_COLORS[ev.transitPlanet] ?? "#64748b";
+              const nColor = ev.natalPlanet ? (PLANET_COLORS[ev.natalPlanet] ?? "#64748b") : "#64748b";
+              const aConfig = ev.aspectType ? ASPECT_CONFIG[ev.aspectType] : null;
+              const sigColor = SIG_COLORS[ev.significance] ?? "#475569";
+              const isSelected = selectedEvent === ev;
+              const dayDate = new Date(ev.date + "T12:00:00");
+              const dayLabel = dayDate.toLocaleDateString("en-US", { weekday: "short", day: "numeric" });
+
+              return (
+                <motion.div
+                  key={`${ev.date}-${ev.transitPlanet}-${ev.type}-${ev.natalPlanet}-${i}`}
+                  initial={{ opacity: 0, x: -6 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: Math.min(i * 0.008, 0.3) }}
+                  onClick={() => onSelect(ev)}
+                  className="flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-all"
+                  style={{
+                    borderLeft: `2px solid ${ev.significance === "major" ? sigColor : "transparent"}`,
+                    background: isSelected
+                      ? "rgba(99,102,241,0.1)"
+                      : ev.significance === "major"
+                      ? `${sigColor}07`
+                      : "transparent",
+                    borderBottom: "1px solid rgba(255,255,255,0.02)",
+                  }}
+                >
+                  {/* Date */}
+                  <div className="flex-shrink-0 w-14 text-right">
+                    <span className="text-[12px] font-bold" style={{ color: "#475569" }}>{dayLabel}</span>
+                  </div>
+
+                  {/* Event content */}
+                  <div className="flex-1 flex items-center gap-2 min-w-0">
+                    {ev.type === "aspect" ? (
+                      <>
+                        <span className="text-[14px] leading-none" style={{ color: tColor }}>
+                          {PLANET_SYMBOLS[ev.transitPlanet as PlanetName]}
+                        </span>
+                        <span className="text-[13px] font-semibold" style={{ color: tColor }}>
+                          {ev.transitPlanet}
+                          {ev.transitRetrograde && <span className="ml-0.5 text-[11px]" style={{ color: "#f97316" }}>℞</span>}
+                        </span>
+                        {aConfig && (
+                          <span className="text-[15px] font-bold" style={{ color: aConfig.color }}>{aConfig.symbol}</span>
+                        )}
+                        {ev.natalPlanet && (
+                          <>
+                            <span className="text-[14px] leading-none" style={{ color: nColor }}>
+                              {PLANET_SYMBOLS[ev.natalPlanet as PlanetName]}
+                            </span>
+                            <span className="text-[13px]" style={{ color: nColor }}>{ev.natalPlanet}</span>
+                          </>
+                        )}
+                        {ev.natalHouse && (
+                          <span className="text-[12px] px-1.5 py-0.5 rounded flex-shrink-0" style={{ background: "rgba(99,102,241,0.1)", color: "#6366f1" }}>
+                            H{ev.natalHouse}
+                          </span>
+                        )}
+                        {ev.theme && (
+                          <span className="text-[12px] truncate hidden md:block" style={{ color: "#334155" }}>
+                            — {ev.theme}
+                          </span>
+                        )}
+                      </>
+                    ) : ev.type === "ingress" ? (
+                      <>
+                        <span className="text-[14px] leading-none" style={{ color: tColor }}>
+                          {PLANET_SYMBOLS[ev.transitPlanet as PlanetName]}
+                        </span>
+                        <span className="text-[13px] font-semibold" style={{ color: tColor }}>
+                          {ev.transitPlanet}
+                          {ev.transitRetrograde && <span className="ml-0.5 text-[11px]" style={{ color: "#f97316" }}>℞</span>}
+                        </span>
+                        <span className="text-[13px]" style={{ color: "#334155" }}>→</span>
+                        {ev.toSign && (
+                          <>
+                            <span className="text-[14px]" style={{ color: SIGN_COLORS[ev.toSign] ?? "#94a3b8" }}>
+                              {SIGN_SYMBOLS[ev.toSign]}
+                            </span>
+                            <span className="text-[13px] font-semibold" style={{ color: SIGN_COLORS[ev.toSign] ?? "#94a3b8" }}>
+                              {ev.toSign}
+                            </span>
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      // station
+                      <>
+                        <span className="text-[14px] leading-none" style={{ color: tColor }}>
+                          {PLANET_SYMBOLS[ev.transitPlanet as PlanetName]}
+                        </span>
+                        <span className="text-[13px] font-semibold" style={{ color: tColor }}>{ev.transitPlanet}</span>
+                        <span
+                          className="text-[13px] font-bold px-2 py-0.5 rounded"
+                          style={{ background: ev.transitRetrograde ? "rgba(239,68,68,0.15)" : "rgba(34,197,94,0.12)", color: ev.transitRetrograde ? "#ef4444" : "#4ade80" }}
+                        >
+                          {ev.transitRetrograde ? "℞ RETROGRADE" : "DIRECT"}
+                        </span>
+                        {ev.theme && (
+                          <span className="text-[12px] hidden md:block" style={{ color: "#334155" }}>— {ev.theme}</span>
+                        )}
+                      </>
+                    )}
+                  </div>
+
+                  {/* Significance badge + click hint */}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {SIG_LABEL[ev.significance] && (
+                      <span
+                        className="text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded"
+                        style={{ background: `${sigColor}15`, color: sigColor }}
+                      >
+                        {SIG_LABEL[ev.significance]}
+                      </span>
+                    )}
+                    <span className="text-[11px]" style={{ color: "#1e293b" }}>✦</span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Event reading panel ──────────────────────────────────────────────────────
+
+function EventReadingPanel({
+  event,
+  natalContext,
+  onClose,
+}: {
+  event: ForecastEvent;
+  natalContext: string;
+  onClose: () => void;
+}) {
+  const [reading, setReading] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [started, setStarted] = useState(false);
+
+  const tColor = PLANET_COLORS[event.transitPlanet] ?? "#64748b";
+  const aConfig = event.aspectType ? ASPECT_CONFIG[event.aspectType] : null;
+  const nColor  = event.natalPlanet ? (PLANET_COLORS[event.natalPlanet] ?? "#64748b") : "#64748b";
+
+  const eventDate = new Date(event.date + "T12:00:00")
+    .toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+
+  const buildPrompt = (): string => {
+    if (event.type === "station") {
+      return `Give a concise reading for: ${event.transitPlanet} stations ${event.transitRetrograde ? "retrograde" : "direct"} on ${event.date}. What does this station mean — what area of life is being reviewed or released? What is one practical thing to do or avoid during this period? Under 180 words.\n\nNATAL CONTEXT:\n${natalContext}`;
+    }
+    if (event.type === "ingress") {
+      return `Give a concise reading for: ${event.transitPlanet} entering ${event.toSign} on ${event.date}. What energy shift does this bring, and how does it interact with this person's natal chart? Under 180 words.\n\nNATAL CONTEXT:\n${natalContext}`;
+    }
+    return `Give a concise reading for this upcoming transit: ${event.transitPlanet}${event.transitRetrograde ? " Rx" : ""} ${event.aspectType} natal ${event.natalPlanet} in house ${event.natalHouse}, exact on ${event.date}. Explain: what this activation feels like, what it asks of them, and one practical thing to do while it's active. Under 200 words.\n\nNATAL CONTEXT:\n${natalContext}`;
+  };
+
+  const generate = useCallback(async () => {
+    if (started) return;
+    setStarted(true); setLoading(true); setReading("");
+    try {
+      const res = await fetch("/api/oracle/stream", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: buildPrompt(), maxTokens: 250, persona: getOraclePersona() }),
+      });
+      if (!res.ok || !res.body) { setLoading(false); return; }
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        setReading(buf);
+      }
+    } catch { /* silent */ }
+    setLoading(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [started, event]);
+
+  return (
+    <motion.div
+      initial={{ x: 60, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: 60, opacity: 0 }}
+      transition={{ type: "spring", stiffness: 320, damping: 30 }}
+      className="flex flex-col h-full overflow-hidden"
+      style={{ borderLeft: "1px solid rgba(99,102,241,0.15)" }}
+    >
+      {/* Header */}
+      <div className="flex-shrink-0 flex items-center justify-between px-4 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+        <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>TRANSIT READING</span>
+        <button
+          onClick={onClose}
+          className="text-[13px] cursor-pointer px-2 py-1 rounded-lg transition-all hover:bg-white/5"
+          style={{ color: "#475569" }}
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* Event summary */}
+      <div className="flex-shrink-0 p-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+        <p className="text-[12px] font-bold tracking-widest mb-2" style={{ color: "#475569" }}>
+          {eventDate.toUpperCase()}
+        </p>
+
+        {event.type === "aspect" && (
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[16px]" style={{ color: tColor }}>{PLANET_SYMBOLS[event.transitPlanet as PlanetName]}</span>
+            <span className="text-[14px] font-bold" style={{ color: tColor }}>
+              {event.transitPlanet}{event.transitRetrograde ? " ℞" : ""}
+            </span>
+            {aConfig && <span className="text-[18px] font-bold" style={{ color: aConfig.color }}>{aConfig.symbol}</span>}
+            {event.natalPlanet && (
+              <>
+                <span className="text-[16px]" style={{ color: nColor }}>{PLANET_SYMBOLS[event.natalPlanet as PlanetName]}</span>
+                <span className="text-[14px] font-bold" style={{ color: nColor }}>natal {event.natalPlanet}</span>
+              </>
+            )}
+            {event.natalHouse && (
+              <span className="text-[12px] font-bold px-2 py-0.5 rounded" style={{ background: "rgba(99,102,241,0.12)", color: "#6366f1" }}>
+                House {event.natalHouse}
+              </span>
+            )}
+          </div>
+        )}
+
+        {event.type === "ingress" && (
+          <div className="flex items-center gap-2">
+            <span className="text-[16px]" style={{ color: tColor }}>{PLANET_SYMBOLS[event.transitPlanet as PlanetName]}</span>
+            <span className="text-[14px] font-bold" style={{ color: tColor }}>{event.transitPlanet}</span>
+            <span style={{ color: "#334155" }}>→</span>
+            <span className="text-[14px] font-bold" style={{ color: event.toSign ? (SIGN_COLORS[event.toSign] ?? "#94a3b8") : "#94a3b8" }}>
+              {event.toSign && SIGN_SYMBOLS[event.toSign]} {event.toSign}
+            </span>
+          </div>
+        )}
+
+        {event.type === "station" && (
+          <div className="flex items-center gap-2">
+            <span className="text-[16px]" style={{ color: tColor }}>{PLANET_SYMBOLS[event.transitPlanet as PlanetName]}</span>
+            <span className="text-[14px] font-bold" style={{ color: tColor }}>{event.transitPlanet}</span>
+            <span className="text-[13px] font-bold px-2 py-0.5 rounded" style={{ background: event.transitRetrograde ? "rgba(239,68,68,0.15)" : "rgba(34,197,94,0.12)", color: event.transitRetrograde ? "#ef4444" : "#4ade80" }}>
+              {event.transitRetrograde ? "STATIONS RETROGRADE" : "STATIONS DIRECT"}
+            </span>
+          </div>
+        )}
+
+        {event.theme && (
+          <p className="text-[12px] mt-2" style={{ color: "#475569" }}>{event.theme}</p>
+        )}
+      </div>
+
+      {/* Reading */}
+      <div className="flex-1 overflow-y-auto p-4" style={{ scrollbarWidth: "thin" }}>
+        {!started ? (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={generate}
+            className="w-full py-3 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
+            style={{ background: "linear-gradient(135deg, rgba(99,102,241,0.2), rgba(124,58,237,0.2))", border: "1px solid rgba(99,102,241,0.3)", color: "#c4b5fd" }}
+          >
+            ✦ GENERATE READING
+          </motion.button>
+        ) : loading ? (
+          <div className="space-y-2">
+            {[1, 0.8, 0.9, 0.6].map((w, i) => (
+              <motion.div
+                key={i}
+                animate={{ opacity: [0.2, 0.5, 0.2] }}
+                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.15 }}
+                className="h-3 rounded-full"
+                style={{ width: `${w * 100}%`, background: "rgba(99,102,241,0.15)" }}
+              />
+            ))}
+          </div>
+        ) : (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-[13px] leading-relaxed"
+            style={{ color: "#94a3b8" }}
+          >
+            {reading}
+          </motion.p>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 // ─── Main page ─────────────────────────────────────────────────────────────
 
 export default function TransitsPage() {
@@ -811,7 +1187,12 @@ export default function TransitsPage() {
   const [date, setDate] = useState<Date>(new Date());
   const [filterOuter, setFilterOuter] = useState(false);
   const [filterApplying, setFilterApplying] = useState(false);
-  const [viewMode, setViewMode] = useState<"list" | "calendar" | "heat" | "wheel">("list");
+  const [viewMode, setViewMode] = useState<"list" | "calendar" | "heat" | "wheel" | "forecast">("list");
+  const [forecastMonths, setForecastMonths] = useState<3 | 6 | 12>(3);
+  const [forecastFilter, setForecastFilter] = useState<"all" | "outer" | "major">("all");
+  const [forecastEvents, setForecastEvents] = useState<ForecastEvent[] | null>(null);
+  const [forecastLoading, setForecastLoading] = useState(false);
+  const [selectedForecastEvent, setSelectedForecastEvent] = useState<ForecastEvent | null>(null);
   const [activeAspectTypes, setActiveAspectTypes] = useState<Set<string>>(
     new Set(["conjunction","opposition","trine","square","sextile","quincunx"])
   );
@@ -830,6 +1211,32 @@ export default function TransitsPage() {
     }
   }, []);
 
+  const fetchForecast = useCallback(async (chart: ChartData, months: 3 | 6 | 12) => {
+    const cacheKey = `cosmora_forecast_${profileId}_${months}`;
+    const cached = typeof window !== "undefined" ? sessionStorage.getItem(cacheKey) : null;
+    if (cached) {
+      try {
+        setForecastEvents(JSON.parse(cached) as ForecastEvent[]);
+        return;
+      } catch { /* ignore bad cache */ }
+    }
+    setForecastLoading(true);
+    try {
+      const res = await fetch("/api/transits/forecast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ natal: chart, months }),
+      });
+      if (res.ok) {
+        const { events } = await res.json() as { events: ForecastEvent[] };
+        setForecastEvents(events);
+        try { sessionStorage.setItem(cacheKey, JSON.stringify(events)); } catch { /* storage full */ }
+      }
+    } finally {
+      setForecastLoading(false);
+    }
+  }, [profileId]);
+
   useEffect(() => {
     const id = getActiveProfileId();
     if (!id) { setLoading(false); return; }
@@ -847,6 +1254,21 @@ export default function TransitsPage() {
       setLoading(false);
     }
   }, [fetchTransits]);
+
+  useEffect(() => {
+    if (viewMode === "forecast" && natal && !forecastEvents && !forecastLoading) {
+      fetchForecast(natal, forecastMonths);
+    }
+  }, [viewMode, natal, forecastEvents, forecastLoading, forecastMonths, fetchForecast]);
+
+  useEffect(() => {
+    if (viewMode === "forecast" && natal) {
+      setForecastEvents(null);
+      setSelectedForecastEvent(null);
+      fetchForecast(natal, forecastMonths);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [forecastMonths]);
 
   const changeDate = (delta: number) => {
     if (!natal) return;
@@ -879,6 +1301,15 @@ export default function TransitsPage() {
 
   const applyingCount = aspects.filter(a => a.applying).length;
   const exactCount = aspects.filter(a => a.exact).length;
+
+  const natalContext = useMemo(() => {
+    if (!natal) return "";
+    const asc = natal.houses[0]?.sign ?? "Unknown";
+    const top = natal.planets.slice(0, 8).map(p =>
+      `${p.name}: ${p.signDegree.toFixed(0)}° ${p.sign} H${p.house}${p.retrograde ? " Rx" : ""}`
+    ).join(", ");
+    return `${asc} Rising. ${top}. Age ${natal.annualProfection.age}, Lord of Year: ${natal.annualProfection.lordOfYear}.`;
+  }, [natal]);
 
   if (!loading && (!profileId || !natal)) {
     return (
@@ -973,50 +1404,94 @@ export default function TransitsPage() {
             )}
           </div>
 
-          {/* Date navigator */}
-          <div className="flex items-center gap-2">
-            <motion.button
-              whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
-              onClick={() => changeDate(-1)}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[13px] cursor-pointer"
-              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#64748b" }}
-            >
-              <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
-                <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
-              </svg>
-            </motion.button>
+          {/* Date navigator (TODAY mode only) */}
+          {viewMode !== "forecast" && (
+            <div className="flex items-center gap-2">
+              <motion.button
+                whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
+                onClick={() => changeDate(-1)}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[13px] cursor-pointer"
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#64748b" }}
+              >
+                <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
+                  <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                </svg>
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={goToToday}
+                className="px-3 py-1.5 rounded-lg text-[13px] font-semibold cursor-pointer transition-all"
+                style={{
+                  background: isToday(date) ? "rgba(124,58,237,0.2)" : "rgba(255,255,255,0.04)",
+                  border: isToday(date) ? "1px solid rgba(124,58,237,0.4)" : "1px solid rgba(255,255,255,0.08)",
+                  color: isToday(date) ? "#c4b5fd" : "#94a3b8",
+                }}
+              >
+                {isToday(date) ? "Today" : formatDate(date)}
+              </motion.button>
+              {!isToday(date) && (
+                <span className="text-[13px]" style={{ color: "#475569" }}>{formatDate(date)}</span>
+              )}
+              <motion.button
+                whileHover={{ x: 2 }} whileTap={{ scale: 0.95 }}
+                onClick={() => changeDate(1)}
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[13px] cursor-pointer"
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#64748b" }}
+              >
+                <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
+                  <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                </svg>
+              </motion.button>
+            </div>
+          )}
 
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              onClick={goToToday}
-              className="px-3 py-1.5 rounded-lg text-[13px] font-semibold cursor-pointer transition-all"
-              style={{
-                background: isToday(date) ? "rgba(124,58,237,0.2)" : "rgba(255,255,255,0.04)",
-                border: isToday(date) ? "1px solid rgba(124,58,237,0.4)" : "1px solid rgba(255,255,255,0.08)",
-                color: isToday(date) ? "#c4b5fd" : "#94a3b8",
-              }}
-            >
-              {isToday(date) ? "Today" : formatDate(date)}
-            </motion.button>
+          {/* Forecast controls (FORECAST mode only) */}
+          {viewMode === "forecast" && (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 p-0.5 rounded-lg" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                {([3, 6, 12] as const).map(m => (
+                  <motion.button
+                    key={m}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setForecastMonths(m)}
+                    className="px-3 py-1 rounded-md text-[13px] font-bold tracking-widest cursor-pointer transition-all"
+                    style={{
+                      background: forecastMonths === m ? "rgba(99,102,241,0.25)" : "transparent",
+                      color: forecastMonths === m ? "#c4b5fd" : "#334155",
+                      border: forecastMonths === m ? "1px solid rgba(99,102,241,0.4)" : "1px solid transparent",
+                    }}
+                  >
+                    {m === 12 ? "1 YEAR" : `${m} MO`}
+                  </motion.button>
+                ))}
+              </div>
+              <div className="flex items-center gap-1 p-0.5 rounded-lg" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                {(["all", "outer", "major"] as const).map(f => (
+                  <motion.button
+                    key={f}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setForecastFilter(f)}
+                    className="px-2.5 py-1 rounded-md text-[13px] font-bold tracking-widest cursor-pointer transition-all"
+                    style={{
+                      background: forecastFilter === f ? "rgba(99,102,241,0.2)" : "transparent",
+                      color: forecastFilter === f ? "#c4b5fd" : "#334155",
+                      border: forecastFilter === f ? "1px solid rgba(99,102,241,0.35)" : "1px solid transparent",
+                    }}
+                  >
+                    {f === "all" ? "ALL" : f === "outer" ? "♃ OUTER" : "✦ MAJOR"}
+                  </motion.button>
+                ))}
+              </div>
+              {forecastEvents && (
+                <span className="text-[13px] px-2 py-0.5 rounded-md" style={{ background: "rgba(99,102,241,0.1)", color: "#6366f1" }}>
+                  {forecastEvents.length} events
+                </span>
+              )}
+            </div>
+          )}
 
-            {!isToday(date) && (
-              <span className="text-[13px]" style={{ color: "#475569" }}>{formatDate(date)}</span>
-            )}
-
-            <motion.button
-              whileHover={{ x: 2 }} whileTap={{ scale: 0.95 }}
-              onClick={() => changeDate(1)}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[13px] cursor-pointer"
-              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#64748b" }}
-            >
-              <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
-                <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-              </svg>
-            </motion.button>
-          </div>
-
-          {/* Filters */}
-          <div className="flex items-center gap-2">
+          {/* Filters (TODAY mode only) */}
+          {viewMode !== "forecast" && <div className="flex items-center gap-2">
             {/* Outer planets toggle */}
             <motion.button
               whileTap={{ scale: 0.97 }}
@@ -1064,7 +1539,7 @@ export default function TransitsPage() {
                 </motion.button>
               ))}
             </div>
-          </div>
+          </div>}
         </motion.div>
 
         {/* Sky strip */}
@@ -1097,7 +1572,7 @@ export default function TransitsPage() {
                 style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
               >
                 <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>
-                  {viewMode === "list" ? "TRANSIT ASPECTS" : viewMode === "calendar" ? "TRANSIT CALENDAR" : viewMode === "heat" ? "90-DAY INTENSITY" : "TRANSIT BI-WHEEL"}
+                  {viewMode === "list" ? "TRANSIT ASPECTS" : viewMode === "calendar" ? "TRANSIT CALENDAR" : viewMode === "heat" ? "90-DAY INTENSITY" : viewMode === "wheel" ? "TRANSIT BI-WHEEL" : "COSMIC FORECAST"}
                 </span>
                 {viewMode === "list" && (
                   <>
@@ -1118,11 +1593,16 @@ export default function TransitsPage() {
                 )}
                 {/* View toggle */}
                 <div className="ml-auto flex items-center gap-1 p-0.5 rounded-lg" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                  {(["list", "calendar", "heat", "wheel"] as const).map(mode => (
+                  {(["list", "calendar", "heat", "wheel", "forecast"] as const).map(mode => (
                     <motion.button
                       key={mode}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => setViewMode(mode)}
+                      onClick={() => {
+                        setViewMode(mode);
+                        if (mode === "forecast" && natal && !forecastEvents) {
+                          fetchForecast(natal, forecastMonths);
+                        }
+                      }}
                       className="px-2.5 py-1 rounded-md text-[13px] font-bold tracking-widest cursor-pointer transition-all"
                       style={{
                         background: viewMode === mode ? "rgba(124,58,237,0.25)" : "transparent",
@@ -1130,7 +1610,7 @@ export default function TransitsPage() {
                         border: viewMode === mode ? "1px solid rgba(124,58,237,0.4)" : "1px solid transparent",
                       }}
                     >
-                      {mode === "list" ? "≡ LIST" : mode === "calendar" ? "⊞ CAL" : mode === "heat" ? "▬ HEAT" : "⊙ WHEEL"}
+                      {mode === "list" ? "≡ LIST" : mode === "calendar" ? "⊞ CAL" : mode === "heat" ? "▬ HEAT" : mode === "wheel" ? "⊙ WHEEL" : "◎ FORECAST"}
                     </motion.button>
                   ))}
                 </div>
@@ -1200,10 +1680,55 @@ export default function TransitsPage() {
                   <TransitBiWheel natal={natal} data={data} />
                 </div>
               )}
+
+              {/* Forecast view */}
+              {viewMode === "forecast" && (
+                <div className="flex-1 flex min-h-0">
+                  {/* Timeline */}
+                  <div className="flex-1 flex flex-col min-h-0">
+                    {forecastLoading ? (
+                      <div className="flex-1 flex flex-col items-center justify-center gap-4">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                          className="w-10 h-10 rounded-full border-2 border-t-transparent"
+                          style={{ borderColor: "#f59e0b" }}
+                        />
+                        <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>SCANNING THE COSMIC CALENDAR</p>
+                        <p className="text-[12px]" style={{ color: "#334155" }}>Calculating {forecastMonths === 12 ? "365" : forecastMonths === 6 ? "183" : "91"} days of planetary motion…</p>
+                      </div>
+                    ) : !forecastEvents ? (
+                      <div className="flex-1 flex items-center justify-center">
+                        <p className="text-[14px]" style={{ color: "#334155" }}>No forecast data.</p>
+                      </div>
+                    ) : (
+                      <ForecastTimeline
+                        events={forecastEvents}
+                        filter={forecastFilter}
+                        selectedEvent={selectedForecastEvent}
+                        onSelect={ev => setSelectedForecastEvent(ev === selectedForecastEvent ? null : ev)}
+                      />
+                    )}
+                  </div>
+
+                  {/* Event reading panel */}
+                  <AnimatePresence>
+                    {selectedForecastEvent && (
+                      <div className="w-80 flex-shrink-0 flex flex-col min-h-0">
+                        <EventReadingPanel
+                          event={selectedForecastEvent}
+                          natalContext={natalContext}
+                          onClose={() => setSelectedForecastEvent(null)}
+                        />
+                      </div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
             </div>
 
-            {/* Right panel: ingresses + stats */}
-            <div
+            {/* Right panel: ingresses + stats (TODAY modes only) */}
+            {viewMode !== "forecast" && <div
               className="w-72 flex-shrink-0 flex flex-col overflow-hidden"
               style={{ borderLeft: "1px solid rgba(99,102,241,0.1)" }}
             >
@@ -1417,7 +1942,7 @@ export default function TransitsPage() {
                   </div>
                 )}
               </div>
-            </div>
+            </div>}
 
           </div>
         )}

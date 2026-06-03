@@ -475,7 +475,7 @@ function Scene({
     return lines.filter(l => activePlanets.has(l.planet) && activeAngles.has(l.angle));
   }, [lines, activePlanets, activeAngles, globeMode]);
 
-  const lineOpacity = globeMode === "cities" ? 0.25 : 0.85;
+  const lineOpacity = showCities ? 0.45 : 0.85;
   const bloomIntensity = globeMode === "energy" ? 2.4 : globeMode === "lines" ? 2.0 : globeMode === "cities" ? 1.8 : 1.4;
 
   return (
@@ -536,7 +536,7 @@ function Scene({
         {globeMode === "planets" && <PlanetLabels lines={visibleLines} />}
 
         {/* Holographic city projections — CITIES mode */}
-        {showCities && globeMode === "cities" && topSpots.map((spot, i) => (
+        {showCities && topSpots.map((spot, i) => (
           <CityProjection key={spot.city} spot={spot} index={i} />
         ))}
       </group>

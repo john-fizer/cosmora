@@ -7,7 +7,8 @@ export type ReportType =
   | "love_life"
   | "vocation"
   | "solar_return"
-  | "saturn_return";
+  | "saturn_return"
+  | "progressed_planets";
 
 export interface ReportTypeMeta {
   id: ReportType;
@@ -35,7 +36,7 @@ export const REPORT_TYPES: ReportTypeMeta[] = [
   },
   {
     id: "life_pivots",
-    title: "Loosening of Bonds",
+    title: "Overview Forecast",
     subtitle: "Pivotal Moments & Turning Points",
     description: "Where your life is being renegotiated. Identifies the exact doors opening and closing — through progressions, eclipses, outer planet transits, and profection activations converging now.",
     techniques: ["Progressed Sun & Moon", "Outer planet transits", "Eclipse activation", "Annual profection", "Solar arc directions", "Saturn major aspects"],
@@ -98,6 +99,17 @@ export const REPORT_TYPES: ReportTypeMeta[] = [
     estimatedMinutes: 4,
     icon: "♄",
     color: "#8899BB",
+  },
+  {
+    id: "progressed_planets",
+    title: "Secondary Progressions",
+    subtitle: "Your Evolving Inner Landscape",
+    description: "Day-for-a-year: the sky on the day equal to your current age reveals your inner evolution. Progressed Sun (identity shift), progressed Moon (emotional seasons), sign ingresses, and key progressed aspects decoded into the life chapter you are actively growing into.",
+    techniques: ["Progressed Sun & identity", "Progressed Moon cycle", "Sign ingresses & shifts", "Key progressed aspects", "Progressed chart synthesis"],
+    expiryDays: 365,
+    estimatedMinutes: 3,
+    icon: "◐",
+    color: "#22d3ee",
   },
 ];
 

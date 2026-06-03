@@ -18,7 +18,7 @@ import type { ProgressedPlanet, FirdarPeriod } from "@/lib/astrology/calculator"
 
 // Hellenistic zodiacal releasing period lengths (years per sign)
 const ZR_YEARS: Record<ZodiacSign, number> = {
-  Aries: 7, Taurus: 15, Gemini: 20, Cancer: 25,
+  Aries: 15, Taurus: 8, Gemini: 20, Cancer: 25,
   Leo: 19, Virgo: 20, Libra: 8, Scorpio: 15,
   Sagittarius: 12, Capricorn: 27, Aquarius: 30, Pisces: 12,
 };

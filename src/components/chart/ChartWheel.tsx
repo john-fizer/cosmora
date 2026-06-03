@@ -73,6 +73,8 @@ interface ChartWheelProps {
   chart?: ChartData;
   onPlanetClick?: (name: PlanetName) => void;
   showDecans?: boolean;
+  derivedOffset?: number; // 0 = natal, 1–11 = house N+1 as derived ASC
+  onHouseClick?: (houseIndex: number) => void;
 }
 
 // ─── Holographic ambient orb ─────────────────────────────────────────────────
@@ -143,7 +145,7 @@ function HoloOrb({ x, y, scale = 1, hue = 250, delay = 0 }: {
 
 // ─── Main wheel ───────────────────────────────────────────────────────────────
 
-export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClick, showDecans: initShowDecans = false }: ChartWheelProps) {
+export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClick, showDecans: initShowDecans = false, derivedOffset = 0, onHouseClick }: ChartWheelProps) {
   const [hoveredPlanet, setHoveredPlanet] = useState<string | null>(null);
   const [showDecans, setShowDecans] = useState(initShowDecans);
 
@@ -380,23 +382,26 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
           const hAngle = lonToAngle(house.longitude, ascLon);
           const p1 = polarToXY(hAngle, zodInner, cx, cy);
           const p2 = polarToXY(hAngle, coreR * 1.5, cx, cy);
+          const midLon = house.longitude + 15;
           const textPt = polarToXY(
-            lonToAngle(house.longitude + 15, ascLon),
+            lonToAngle(midLon, ascLon),
             (zodInner * 0.88 + zodInner * 0.62) / 2,
             cx, cy
           );
           const isAngular = [0, 3, 6, 9].includes(i);
+          const isDerivedAsc = derivedOffset > 0 && i === derivedOffset;
           return (
-            <g key={i}>
+            <g key={i} style={onHouseClick ? { cursor: "pointer" } : {}}
+              onClick={() => onHouseClick?.(i)}>
               <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-                stroke={isAngular ? "rgba(168,85,247,0.5)" : "rgba(99,102,241,0.2)"}
-                strokeWidth={isAngular ? "1.2" : "0.6"} />
+                stroke={isDerivedAsc ? "#e879f9" : isAngular ? "rgba(168,85,247,0.5)" : "rgba(99,102,241,0.2)"}
+                strokeWidth={isDerivedAsc ? "2" : isAngular ? "1.2" : "0.6"} />
               <text
                 x={textPt.x} y={textPt.y}
                 textAnchor="middle" dominantBaseline="central"
                 fontSize={isAngular ? "8.5" : "7.5"}
-                fill={isAngular ? "rgba(196,181,253,0.8)" : "rgba(148,163,184,0.5)"}
-                fontWeight={isAngular ? "700" : "400"}
+                fill={isDerivedAsc ? "#e879f9" : isAngular ? "rgba(196,181,253,0.8)" : "rgba(148,163,184,0.5)"}
+                fontWeight={isDerivedAsc || isAngular ? "700" : "400"}
                 style={{ userSelect: "none", fontFamily: "'Fragment Mono', monospace" }}
               >
                 {i + 1}
@@ -404,6 +409,78 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
             </g>
           );
         })}
+
+        {/* ── Derived house overlay (PRISM mode) ── */}
+        {derivedOffset > 0 && (() => {
+          const houseLons = chart?.houses?.map(h => h.longitude)
+            ?? Array.from({ length: 12 }, (_, i) => i * 30 + ascLon);
+          const derivedAscLon = houseLons[derivedOffset];
+          const nextLon       = houseLons[(derivedOffset + 1) % 12];
+          const derivedAscAngle = lonToAngle(derivedAscLon, ascLon);
+          const nextAngle       = lonToAngle(nextLon, ascLon);
+          // Sector fill for derived ASC house
+          const s1 = polarToXY(derivedAscAngle, zodInner * 0.62, cx, cy);
+          const s2 = polarToXY(nextAngle,       zodInner * 0.62, cx, cy);
+          const e1 = polarToXY(derivedAscAngle, zodInner * 0.90, cx, cy);
+          const e2 = polarToXY(nextAngle,       zodInner * 0.90, cx, cy);
+          const spanAngle = ((nextAngle - derivedAscAngle) + 360) % 360;
+          const la = spanAngle > 180 ? 1 : 0;
+          const sectorPath = `M ${s1.x} ${s1.y} L ${e1.x} ${e1.y} A ${zodInner * 0.90} ${zodInner * 0.90} 0 ${la} 1 ${e2.x} ${e2.y} L ${s2.x} ${s2.y} A ${zodInner * 0.62} ${zodInner * 0.62} 0 ${la} 0 ${s1.x} ${s1.y} Z`;
+
+          // Derived ASC badge
+          const badgePt = polarToXY(derivedAscAngle, zodOuter + 20, cx, cy);
+
+          return (
+            <g>
+              {/* Glowing sector */}
+              <motion.path
+                d={sectorPath}
+                fill="rgba(232,121,249,0.09)"
+                stroke="rgba(232,121,249,0.35)"
+                strokeWidth="0.8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4 }}
+                style={{ filter: "drop-shadow(0 0 6px rgba(232,121,249,0.5))" }}
+              />
+              {/* Derived house numbers in middle ring */}
+              {houseLons.map((lon, i) => {
+                const derivedNum = ((i - derivedOffset + 12) % 12) + 1;
+                const midLon = lon + ((houseLons[(i + 1) % 12] - lon + 360) % 360) / 2;
+                const pt = polarToXY(lonToAngle(midLon, ascLon), zodInner * 0.75, cx, cy);
+                return (
+                  <motion.text
+                    key={i}
+                    x={pt.x} y={pt.y}
+                    textAnchor="middle" dominantBaseline="central"
+                    fontSize="6"
+                    fill={derivedNum === 1 ? "#e879f9" : "rgba(232,121,249,0.45)"}
+                    fontWeight={derivedNum === 1 ? "700" : "400"}
+                    style={{ userSelect: "none", fontFamily: "'Fragment Mono', monospace" }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.03, duration: 0.3 }}
+                  >
+                    {derivedNum}
+                  </motion.text>
+                );
+              })}
+              {/* PRISM ASC badge */}
+              <motion.g initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4 }}>
+                <circle cx={badgePt.x} cy={badgePt.y} r="14"
+                  fill="rgba(4,4,20,0.9)" stroke="#e879f9" strokeWidth="1.2"
+                  style={{ filter: "drop-shadow(0 0 8px rgba(232,121,249,0.7))" }} />
+                <text x={badgePt.x} y={badgePt.y}
+                  textAnchor="middle" dominantBaseline="central"
+                  fontSize="5.5" fill="#e879f9" fontWeight="700" letterSpacing="0.3"
+                  style={{ userSelect: "none", fontFamily: "'Fragment Mono', monospace" }}
+                >
+                  PRISM
+                </text>
+              </motion.g>
+            </g>
+          );
+        })()}
 
         {/* ── ASC/DC/MC/IC badge circles ── */}
         {cardinals.map(({ label, lon, color }) => {

@@ -684,7 +684,7 @@ export default function OraclePage() {
       const res = await fetch("/api/suggest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lastUserMessage: userMsg, lastAssistantMessage: assistantMsg }),
+        body: JSON.stringify({ lastUserMessage: userMsg, lastAssistantMessage: assistantMsg, persona: personaId }),
       });
       const { suggestions: s } = await res.json() as { suggestions: string[] };
       if (Array.isArray(s) && s.length > 0) setSuggestions(s);

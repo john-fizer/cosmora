@@ -8,6 +8,7 @@ import * as THREE from "three";
 import type { ChartData, PlanetName, Aspect } from "@/lib/astrology/types";
 import { PLANET_SYMBOLS } from "@/lib/astrology/types";
 import { getPlanetMeta } from "@/lib/astrology/planetMeta";
+import { QUALITY, detectGpuTier } from "@/lib/design/gpuTier";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -730,13 +731,14 @@ export function SolarSystemOrrery({
 }) {
   const navigateRef = useRef(onPlanetNavigate);
   useEffect(() => { navigateRef.current = onPlanetNavigate; }, [onPlanetNavigate]);
+  const quality = useMemo(() => QUALITY[detectGpuTier()], []);
 
   return (
     <div className={className} style={{ width: "100%", height: "100%", ...style }}>
       <Canvas
         camera={{ position: [0, 22, 30], fov: 52, near: 0.1, far: 500 }}
-        gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
-        dpr={[1, 2]}
+        gl={{ antialias: quality.antialias, alpha: false, powerPreference: "high-performance" }}
+        dpr={quality.dpr}
         style={{ width: "100%", height: "100%" }}
       >
         <Suspense fallback={null}>

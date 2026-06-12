@@ -92,6 +92,18 @@ const NAV_ITEMS = [
     ),
   },
   {
+    label: "Windows",
+    hint: "pressure & timing",
+    href: "/dashboard/pressure",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 5v3M12 16v3M5 12h3M16 12h3" />
+        <circle cx="12" cy="12" r="2.5" fill="currentColor" opacity="0.5" />
+      </svg>
+    ),
+  },
+  {
     label: "Unions",
     hint: "marriage patterns",
     href: "/dashboard/marriages",

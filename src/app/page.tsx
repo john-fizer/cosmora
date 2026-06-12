@@ -82,8 +82,10 @@ const FAQ = [
 function Station({ station, progress }: { station: typeof STATIONS[number]; progress: MotionValue<number> }) {
   const [lo, hi] = station.range;
   const fadeIn = (hi - lo) * 0.3;
-  const opacity = useTransform(progress, [lo, lo + fadeIn, hi - fadeIn * 0.7, hi], [0, 1, 1, 0]);
-  const y = useTransform(progress, [lo, lo + fadeIn], [34, 0]);
+  const isFirst = lo === 0;
+  // First station must be fully visible at progress 0 — it fades OUT only
+  const opacity = useTransform(progress, [lo, lo + fadeIn, hi - fadeIn * 0.7, hi], [isFirst ? 1 : 0, 1, 1, 0]);
+  const y = useTransform(progress, [lo, lo + fadeIn], [isFirst ? 0 : 34, 0]);
   const isLast = hi >= 1;
 
   return (

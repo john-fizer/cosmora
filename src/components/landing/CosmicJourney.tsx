@@ -95,13 +95,25 @@ const FRESNEL_FRAG = /* glsl */ `
 // ─── Skybox — Milky Way, very dim, brand-tinted ──────────────────────────────
 
 function Sky() {
-  const tex = useLoader(THREE.TextureLoader, "/textures/space/8k_stars_milky_way.jpg");
-  tex.colorSpace = THREE.SRGBColorSpace;
+  const [stars, nebula] = useLoader(THREE.TextureLoader, [
+    "/textures/space/8k_stars_milky_way.jpg",
+    "/textures/space/nebula_brand.png",
+  ]);
+  stars.colorSpace = THREE.SRGBColorSpace;
+  nebula.colorSpace = THREE.SRGBColorSpace;
   return (
-    <mesh scale={[-1, 1, 1]}>
-      <sphereGeometry args={[400, 48, 48]} />
-      <meshBasicMaterial map={tex} side={THREE.BackSide} color="#9a93b8" />
-    </mesh>
+    <>
+      <mesh scale={[-1, 1, 1]}>
+        <sphereGeometry args={[400, 48, 48]} />
+        <meshBasicMaterial map={stars} side={THREE.BackSide} color="#9a93b8" />
+      </mesh>
+      {/* Brand nebula — additive haze layer over the star sphere */}
+      <mesh scale={[-1, 1, 1]} rotation={[0.15, 2.1, 0.1]}>
+        <sphereGeometry args={[395, 32, 32]} />
+        <meshBasicMaterial map={nebula} side={THREE.BackSide} transparent opacity={0.55}
+          blending={THREE.AdditiveBlending} depthWrite={false} />
+      </mesh>
+    </>
   );
 }
 

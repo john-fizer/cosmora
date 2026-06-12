@@ -8,6 +8,7 @@ import { useRef, useMemo, useCallback, useState, useEffect } from "react";
 import * as THREE from "three";
 import type { AstroLine, AstroLinePlanet, AstroLineAngle, LocationScore } from "@/lib/astrology/astrocartography";
 import { PLANET_COLORS, PLANET_SYMBOLS, scoreLocation } from "@/lib/astrology/astrocartography";
+import { QUALITY, detectGpuTier } from "@/lib/design/gpuTier";
 
 export type GlobeMode = "globe" | "cities" | "lines" | "planets" | "energy";
 
@@ -708,8 +709,9 @@ export default function GlobeCanvas({
   birthLat?: number; birthLon?: number;
   showCities?: boolean; showLines?: boolean;
 }) {
+  const quality = QUALITY[typeof window !== "undefined" ? detectGpuTier() : "high"];
   return (
-    <Canvas camera={{ position: [0, 1.5, 6], fov: 45 }} gl={{ antialias: true, alpha: false }} style={{ background: "#010810" }}>
+    <Canvas camera={{ position: [0, 1.5, 6], fov: 45 }} dpr={quality.dpr} gl={{ antialias: quality.antialias, alpha: false }} style={{ background: "#010810" }}>
       <color attach="background" args={["#010810"]} />
       <fog attach="fog" args={["#010810", 20, 45]} />
       <Scene lines={lines} activePlanets={activePlanets} activeAngles={activeAngles}

@@ -13,15 +13,15 @@ import type { StoredProfile } from "@/lib/storage";
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Record<string, string> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
 };
 
 const SIGN_COLORS: Record<ZodiacSign, string> = {
   Aries: "#ef4444", Taurus: "#22c55e", Gemini: "#eab308", Cancer: "#38bdf8",
   Leo: "#f97316", Virgo: "#4ade80", Libra: "#facc15", Scorpio: "#dc2626",
-  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#8b5cf6",
+  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#7B6FD4",
 };
 
 // Chaldean order
@@ -522,7 +522,7 @@ function TimingOracle({
   return (
     <div
       className="rounded-2xl p-4"
-      style={{ background: "rgba(124,58,237,0.04)", border: "1px solid rgba(124,58,237,0.15)" }}
+      style={{ background: "rgba(123,111,212,0.04)", border: "1px solid rgba(123,111,212,0.15)" }}
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -530,7 +530,7 @@ function TimingOracle({
             animate={streaming ? { opacity: [0.5, 1, 0.5] } : {}}
             transition={{ duration: 1.4, repeat: Infinity }}
             className="w-1.5 h-1.5 rounded-full"
-            style={{ background: streaming ? "#7c3aed" : "#334155" }}
+            style={{ background: streaming ? "#7B6FD4" : "#334155" }}
           />
           <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>TIMING ORACLE</span>
         </div>
@@ -539,7 +539,7 @@ function TimingOracle({
             whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
             onClick={generate}
             className="text-[13px] font-bold tracking-wider px-3 py-1.5 rounded-lg cursor-pointer"
-            style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)", color: "#a78bfa" }}
+            style={{ background: "rgba(123,111,212,0.12)", border: "1px solid rgba(123,111,212,0.25)", color: "#a78bfa" }}
           >
             ✦ ASK ORACLE
           </motion.button>
@@ -573,7 +573,7 @@ function TimingOracle({
             <motion.span
               animate={{ opacity: [1, 0, 1] }}
               transition={{ duration: 0.7, repeat: Infinity }}
-              style={{ display: "inline-block", width: 5, height: 10, background: "#7c3aed", borderRadius: 1, marginLeft: 3, verticalAlign: "middle" }}
+              style={{ display: "inline-block", width: 5, height: 10, background: "#7B6FD4", borderRadius: 1, marginLeft: 3, verticalAlign: "middle" }}
             />
           )}
         </motion.p>
@@ -644,19 +644,19 @@ export default function ElectionalPage() {
     return (
       <div className="h-screen flex overflow-hidden">
         <DashboardBg />
-        <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "5%", background: "rgba(124,58,237,0.07)", filter: "blur(100px)" }} />
+        <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "5%", background: "rgba(123,111,212,0.07)", filter: "blur(100px)" }} />
         <div className="flex-1 flex flex-col items-center justify-center gap-6 md:ml-[68px] mb-[60px] md:mb-0 px-6">
           <motion.div
             animate={{ scale: [1, 1.06, 1], opacity: [0.75, 1, 0.75] }}
             transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
             className="rounded-2xl flex items-center justify-center"
-            style={{ width: 72, height: 72, background: "linear-gradient(135deg, rgba(124,58,237,0.22), rgba(6,182,212,0.14))", border: "1px solid rgba(124,58,237,0.35)", boxShadow: "0 0 48px rgba(124,58,237,0.18)" }}
+            style={{ width: 72, height: 72, background: "linear-gradient(135deg, rgba(123,111,212,0.22), rgba(6,182,212,0.14))", border: "1px solid rgba(123,111,212,0.35)", boxShadow: "0 0 48px rgba(123,111,212,0.18)" }}
           >
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-              <circle cx="18" cy="18" r="14" stroke="rgba(124,58,237,0.6)" strokeWidth="1"/>
+              <circle cx="18" cy="18" r="14" stroke="rgba(123,111,212,0.6)" strokeWidth="1"/>
               <circle cx="18" cy="18" r="8" stroke="rgba(6,182,212,0.5)" strokeWidth="0.75"/>
-              <line x1="18" y1="4" x2="18" y2="32" stroke="rgba(124,58,237,0.35)" strokeWidth="0.75"/>
-              <line x1="4" y1="18" x2="32" y2="18" stroke="rgba(124,58,237,0.35)" strokeWidth="0.75"/>
+              <line x1="18" y1="4" x2="18" y2="32" stroke="rgba(123,111,212,0.35)" strokeWidth="0.75"/>
+              <line x1="4" y1="18" x2="32" y2="18" stroke="rgba(123,111,212,0.35)" strokeWidth="0.75"/>
               <circle cx="18" cy="18" r="2.5" fill="rgba(6,182,212,0.8)"/>
             </svg>
           </motion.div>
@@ -669,7 +669,7 @@ export default function ElectionalPage() {
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
               className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
+              style={{ background: "linear-gradient(135deg, #7B6FD4, #7B6FD4)", color: "white", border: "1px solid rgba(123,111,212,0.4)" }}
             >
               Begin Your Chart →
             </motion.button>
@@ -683,7 +683,7 @@ export default function ElectionalPage() {
     <div className="h-screen flex overflow-hidden">
       <DashboardBg />
       <div className="nebula-orb" style={{ width: 500, height: 500, left: "-5%", top: "-5%", background: "rgba(34,197,94,0.04)", filter: "blur(100px)" }} />
-      <div className="nebula-orb" style={{ width: 400, height: 400, right: "5%", bottom: "10%", background: "rgba(124,58,237,0.05)", filter: "blur(90px)" }} />
+      <div className="nebula-orb" style={{ width: 400, height: 400, right: "5%", bottom: "10%", background: "rgba(123,111,212,0.05)", filter: "blur(90px)" }} />
 
 
       <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-x-hidden">

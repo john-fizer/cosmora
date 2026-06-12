@@ -11,7 +11,7 @@ const THEMES: {
   secondary: string;
   bg: string;
 }[] = [
-  { id: "cosmic",     label: "Cosmic",     primary: "#7c3aed", secondary: "#06b6d4", bg: "#00000f" },
+  { id: "cosmic",     label: "Cosmic",     primary: "#7B6FD4", secondary: "#06b6d4", bg: "#00000f" },
   { id: "matrix",     label: "Matrix",     primary: "#00ff41", secondary: "#00cc33", bg: "#000000" },
   { id: "cyberpunk",  label: "Cyberpunk",  primary: "#ff0090", secondary: "#f7df1e", bg: "#0a0014" },
   { id: "alien",      label: "Alien",      primary: "#39ff14", secondary: "#00ffcc", bg: "#000a03" },
@@ -44,7 +44,7 @@ export function ThemeSwitcher() {
               padding: "10px 8px",
               backdropFilter: "blur(28px)",
               WebkitBackdropFilter: "blur(28px)",
-              boxShadow: "0 8px 40px rgba(0,0,0,0.7), 0 0 60px rgba(124,58,237,0.08)",
+              boxShadow: "0 8px 40px rgba(0,0,0,0.7), 0 0 60px rgba(123,111,212,0.08)",
               display: "flex",
               flexDirection: "column",
               gap: 4,
@@ -155,7 +155,7 @@ export function ThemeSwitcher() {
           width: 32,
           height: 32,
           borderRadius: 8,
-          background: open ? "rgba(124,58,237,0.2)" : "rgba(255,255,255,0.04)",
+          background: open ? "rgba(123,111,212,0.2)" : "rgba(255,255,255,0.04)",
           border: open
             ? `1px solid ${current.primary}66`
             : "1px solid rgba(255,255,255,0.07)",

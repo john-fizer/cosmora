@@ -20,15 +20,15 @@ const HOUSE_TOPICS: Record<number, { title: string; keywords: string; quadrant: 
 };
 
 const QUADRANT_COLORS: Record<string, string> = {
-  Angular:   "#a855f7",
+  Angular:   "#9C8AC4",
   Succedent: "#06b6d4",
   Cadent:    "#64748b",
 };
 
 const SIGN_COLORS: Record<ZodiacSign, string> = {
-  Aries:"#ef4444", Taurus:"#22c55e", Gemini:"#eab308", Cancer:"#a855f7",
-  Leo:"#f97316", Virgo:"#6366f1", Libra:"#ec4899", Scorpio:"#dc2626",
-  Sagittarius:"#f59e0b", Capricorn:"#64748b", Aquarius:"#06b6d4", Pisces:"#8b5cf6",
+  Aries:"#ef4444", Taurus:"#22c55e", Gemini:"#eab308", Cancer:"#9C8AC4",
+  Leo:"#f97316", Virgo:"#7B6FD4", Libra:"#ec4899", Scorpio:"#dc2626",
+  Sagittarius:"#f59e0b", Capricorn:"#64748b", Aquarius:"#06b6d4", Pisces:"#7B6FD4",
 };
 
 function formatCusp(lon: number): string {

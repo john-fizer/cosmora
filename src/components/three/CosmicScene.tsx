@@ -10,7 +10,7 @@ import type { ChartData, PlanetPosition } from "@/lib/astrology/types";
 // ─── Color maps ───────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Record<string, string> = {
-  Sun: "#ffd700", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f9a8d4",
+  Sun: "#ffd700", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f9a8d4",
   Mars: "#ff5555", Jupiter: "#fbbf24", Saturn: "#e8d5a3", Uranus: "#67e8f9",
   Neptune: "#60a5fa", Pluto: "#a78bfa", NorthNode: "#94a3b8",
 };
@@ -28,22 +28,22 @@ const PLANET_RADII: Record<string, number> = {
 };
 
 const SIGN_COLORS: string[] = [
-  "#ef4444", "#22c55e", "#eab308", "#a855f7",
-  "#f97316", "#6366f1", "#ec4899", "#dc2626",
-  "#f59e0b", "#64748b", "#06b6d4", "#8b5cf6",
+  "#ef4444", "#22c55e", "#eab308", "#9C8AC4",
+  "#f97316", "#7B6FD4", "#ec4899", "#dc2626",
+  "#f59e0b", "#64748b", "#06b6d4", "#7B6FD4",
 ];
 
 const ZODIAC_GLYPHS = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
 
 const ASPECT_COLORS: Record<string, string> = {
-  conjunction: "#a855f7", opposition: "#ef4444", trine: "#22c55e",
+  conjunction: "#9C8AC4", opposition: "#ef4444", trine: "#22c55e",
   square: "#f59e0b", sextile: "#06b6d4", quincunx: "#94a3b8",
 };
 
 // ─── Animated torus ring ─────────────────────────────────────────────────────
 
 function TorusRing({
-  radius, tube = 0.003, color = "#7c3aed", opacity = 0.3, speed = 0,
+  radius, tube = 0.003, color = "#7B6FD4", opacity = 0.3, speed = 0,
 }: {
   radius: number; tube?: number; color?: string; opacity?: number; speed?: number;
 }) {
@@ -235,7 +235,7 @@ function HouseSpokes({ chart, innerR, outerR }: { chart: ChartData; innerR: numb
           new THREE.Vector3(Math.cos(a) * outerR, Math.sin(a) * outerR, 0),
         ],
         opacity: isAngular ? 0.35 : 0.15,
-        color: isAngular ? "#7c3aed" : "#4f46e5",
+        color: isAngular ? "#7B6FD4" : "#7B6FD4",
       };
     }),
     [chart.houses, innerR, outerR]
@@ -355,7 +355,7 @@ function HouseLabels({ chart, houseRingR }: { chart: ChartData; houseRingR: numb
       {labels.map(({ num, x, y }) => (
         <Html key={num} position={[x, y, 0]} center>
           <div style={{
-            color: "rgba(99,102,241,0.65)",
+            color: "rgba(123,111,212,0.65)",
             fontSize: 6,
             fontWeight: "bold",
             fontFamily: "monospace",
@@ -376,7 +376,7 @@ function HouseLabels({ chart, houseRingR }: { chart: ChartData; houseRingR: numb
 function AngleLabels({ chart, outerRadius }: { chart: ChartData; outerRadius: number }) {
   const ANGLES = [
     { label: "ASC", idx: 0, color: "#06b6d4" },
-    { label: "IC",  idx: 3, color: "#8b5cf6" },
+    { label: "IC",  idx: 3, color: "#7B6FD4" },
     { label: "DSC", idx: 6, color: "#06b6d4" },
     { label: "MC",  idx: 9, color: "#a78bfa" },
   ];
@@ -429,7 +429,7 @@ function GlowCore() {
       <mesh ref={outerRef}>
         <sphereGeometry args={[0.2, 16, 16]} />
         <meshBasicMaterial
-          color="#7c3aed"
+          color="#7B6FD4"
           transparent
           opacity={0.055}
           depthWrite={false}
@@ -450,7 +450,7 @@ function GlowCore() {
         <sphereGeometry args={[0.044, 24, 24]} />
         <meshStandardMaterial
           color="#c084fc"
-          emissive="#7c3aed"
+          emissive="#7B6FD4"
           emissiveIntensity={2.5}
           roughness={0.2}
           metalness={0.1}
@@ -507,19 +507,19 @@ function CosmicWheel({
     <group>
       {/* Decorative slow-rotating outer ring */}
       <RotatingGroup speed={0.0003}>
-        <TorusRing radius={OUTER_R + 0.12} tube={0.003} color="#4f46e5" opacity={0.12} />
+        <TorusRing radius={OUTER_R + 0.12} tube={0.003} color="#7B6FD4" opacity={0.12} />
       </RotatingGroup>
 
       {/* Fixed zodiac arcs */}
       <ZodiacArcs outerRadius={OUTER_R} />
-      <TorusRing radius={OUTER_R} tube={0.005} color="#7c3aed" opacity={0.40} />
+      <TorusRing radius={OUTER_R} tube={0.005} color="#7B6FD4" opacity={0.40} />
       <ZodiacGlyphs outerRadius={OUTER_R} />
 
       {/* Angular labels */}
       {showLabels && <AngleLabels chart={chart} outerRadius={OUTER_R} />}
 
       {/* House ring */}
-      <TorusRing radius={HOUSE_R} tube={0.002} color="#4f46e5" opacity={0.22} />
+      <TorusRing radius={HOUSE_R} tube={0.002} color="#7B6FD4" opacity={0.22} />
       <TorusRing radius={HOUSE_R - 0.06} tube={0.002} color="#06b6d4" opacity={0.14} speed={-0.025} />
 
       {/* House number labels */}
@@ -529,7 +529,7 @@ function CosmicWheel({
       <HouseSpokes chart={chart} innerR={0} outerR={HOUSE_R} />
 
       {/* Planet orbit ring */}
-      <TorusRing radius={ORBIT_R} tube={0.002} color="#a855f7" opacity={0.14} />
+      <TorusRing radius={ORBIT_R} tube={0.002} color="#9C8AC4" opacity={0.14} />
 
       {/* Aspect lines */}
       {showAspects && <AspectLines chart={chart} outerRadius={ORBIT_R} />}
@@ -540,7 +540,7 @@ function CosmicWheel({
       ))}
 
       {/* Inner rings */}
-      <TorusRing radius={0.52} tube={0.002} color="#7c3aed" opacity={0.10} speed={0.07} />
+      <TorusRing radius={0.52} tube={0.002} color="#7B6FD4" opacity={0.10} speed={0.07} />
       <TorusRing radius={0.28} tube={0.002} color="#06b6d4" opacity={0.13} speed={-0.12} />
 
       {/* Glowing core */}
@@ -567,7 +567,7 @@ export function CosmicScene({
       {/* Lighting for realistic planet shading */}
       <ambientLight intensity={0.35} />
       <pointLight position={[0, 0, 4]} intensity={1.8} color="#ffffff" />
-      <pointLight position={[4, 3, 3]} intensity={1.0} color="#a855f7" />
+      <pointLight position={[4, 3, 3]} intensity={1.0} color="#9C8AC4" />
       <pointLight position={[-3, -2, 2]} intensity={0.6} color="#06b6d4" />
       <directionalLight position={[5, 5, 5]} intensity={0.5} color="#fbbf24" />
 

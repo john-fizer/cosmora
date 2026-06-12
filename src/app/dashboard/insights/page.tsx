@@ -14,19 +14,19 @@ import { useWarpTo } from "@/components/ui/WarpTransition";
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6", NorthNode: "#64748b",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4", NorthNode: "#64748b",
 };
 
 const SIGN_COLORS: Record<ZodiacSign, string> = {
   Aries: "#ef4444", Taurus: "#22c55e", Gemini: "#eab308", Cancer: "#38bdf8",
   Leo: "#f97316", Virgo: "#4ade80", Libra: "#facc15", Scorpio: "#dc2626",
-  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#8b5cf6",
+  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#7B6FD4",
 };
 
 const ASPECT_COLORS: Record<string, string> = {
-  conjunction: "#a855f7", opposition: "#ef4444", trine: "#22c55e",
+  conjunction: "#9C8AC4", opposition: "#ef4444", trine: "#22c55e",
   square: "#f59e0b", sextile: "#06b6d4", quincunx: "#94a3b8",
 };
 
@@ -75,7 +75,7 @@ const SIGN_KEYWORDS: Record<ZodiacSign, string> = {
 const ASPECT_QUALITY: Record<string, { label: string; color: string }> = {
   trine:       { label: "Harmonious · Natural flow",          color: "#22c55e" },
   sextile:     { label: "Supportive · Skill through effort",  color: "#06b6d4" },
-  conjunction: { label: "Fusion · Intensified energy",        color: "#a855f7" },
+  conjunction: { label: "Fusion · Intensified energy",        color: "#9C8AC4" },
   square:      { label: "Tension · Growth through friction",  color: "#f59e0b" },
   opposition:  { label: "Polarity · Balance & awareness",     color: "#ef4444" },
   quincunx:    { label: "Adjustment · Subtle friction",       color: "#94a3b8" },
@@ -110,7 +110,7 @@ const MODALITY_SIGNS: Record<"Cardinal" | "Fixed" | "Mutable", ZodiacSign[]> = {
 };
 
 const ELEMENT_COLORS = { Fire: "#ef4444", Earth: "#22c55e", Air: "#eab308", Water: "#38bdf8" };
-const MODALITY_COLORS = { Cardinal: "#a855f7", Fixed: "#f59e0b", Mutable: "#06b6d4" };
+const MODALITY_COLORS = { Cardinal: "#9C8AC4", Fixed: "#f59e0b", Mutable: "#06b6d4" };
 
 const READING_PROMPTS = [
   { id: "overview", label: "Full Reading",         prompt: "Give me a full natal chart reading covering my core identity (Sun, Moon, Ascendant), how I think and communicate (Mercury), love and values (Venus), drive and ambition (Mars), and any major aspect patterns shaping my personality. Use the sect of my chart throughout." },
@@ -151,9 +151,9 @@ function ChartSnapshot({ chart }: { chart: ChartData }) {
 
   const pills = [
     { label: "SUN",  value: sun  ? `${SIGN_SYMBOLS[sun.sign] ?? ""}${sun.sign}`   : "–", color: "#fbbf24" },
-    { label: "MOON", value: moon ? `${SIGN_SYMBOLS[moon.sign] ?? ""}${moon.sign}` : "–", color: "#c4b5fd" },
+    { label: "MOON", value: moon ? `${SIGN_SYMBOLS[moon.sign] ?? ""}${moon.sign}` : "–", color: "#BFB6E8" },
     { label: "ASC",  value: asc  ? `${SIGN_SYMBOLS[asc] ?? ""}${asc}`             : "–", color: "#06b6d4" },
-    { label: "SECT", value: chart.sect.toUpperCase(), color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" },
+    { label: "SECT", value: chart.sect.toUpperCase(), color: chart.sect === "day" ? "#fbbf24" : "#BFB6E8" },
     { label: `AGE ${prof.age}`, value: `H${prof.activatedHouse} · ${prof.lordOfYear}`, color: "#f59e0b" },
   ];
 
@@ -213,7 +213,7 @@ function ConvergenceRadar({ chart }: { chart: ChartData }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.25 }}
       className="rounded-2xl p-5"
-      style={{ background: "rgba(4,4,28,0.7)", border: "1px solid rgba(99,102,241,0.18)" }}
+      style={{ background: "rgba(4,4,28,0.7)", border: "1px solid rgba(123,111,212,0.18)" }}
     >
       <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "#64748b" }}>
         CONVERGENCE SCORE — HOUSE ACTIVATION MAP
@@ -232,7 +232,7 @@ function ConvergenceRadar({ chart }: { chart: ChartData }) {
                   return `${CX + r * Math.cos(a)},${CY + r * Math.sin(a)}`;
                 }).join(" ")}
                 fill="none"
-                stroke="rgba(99,102,241,0.12)"
+                stroke="rgba(123,111,212,0.12)"
                 strokeWidth={1}
               />
             ))}
@@ -244,14 +244,14 @@ function ConvergenceRadar({ chart }: { chart: ChartData }) {
                   x1={CX} y1={CY}
                   x2={CX + R * Math.cos(a)}
                   y2={CY + R * Math.sin(a)}
-                  stroke="rgba(99,102,241,0.1)" strokeWidth={1}
+                  stroke="rgba(123,111,212,0.1)" strokeWidth={1}
                 />
               );
             })}
             {/* Filled polygon */}
             <motion.polygon
               points={polygon}
-              fill="rgba(99,102,241,0.12)"
+              fill="rgba(123,111,212,0.12)"
               stroke="url(#radarGrad)"
               strokeWidth={1.5}
               initial={{ opacity: 0, scale: 0.3 }}
@@ -262,7 +262,7 @@ function ConvergenceRadar({ chart }: { chart: ChartData }) {
             {/* Defs */}
             <defs>
               <linearGradient id="radarGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#6366f1" />
+                <stop offset="0%" stopColor="#7B6FD4" />
                 <stop offset="100%" stopColor="#06b6d4" />
               </linearGradient>
             </defs>
@@ -288,7 +288,7 @@ function ConvergenceRadar({ chart }: { chart: ChartData }) {
             {/* Dots on polygon vertices */}
             {pts.map(([x, y], i) => scores[i + 1] > 0.05 ? (
               <motion.circle key={i} cx={x} cy={y} r={2.5}
-                fill="#6366f1"
+                fill="#7B6FD4"
                 initial={{ scale: 0 }} animate={{ scale: 1 }}
                 transition={{ delay: 0.4 + i * 0.04, duration: 0.3 }}
                 style={{ transformOrigin: `${x}px ${y}px` }}
@@ -309,7 +309,7 @@ function ConvergenceRadar({ chart }: { chart: ChartData }) {
               <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
                 <motion.div
                   className="h-full rounded-full"
-                  style={{ background: idx === 0 ? "linear-gradient(90deg,#6366f1,#06b6d4)" : "rgba(99,102,241,0.4)" }}
+                  style={{ background: idx === 0 ? "linear-gradient(90deg,#7B6FD4,#06b6d4)" : "rgba(123,111,212,0.4)" }}
                   initial={{ width: 0 }}
                   animate={{ width: `${(score / (rawScores[ranked[0].h])) * 100}%` }}
                   transition={{ duration: 0.8, ease: "easeOut", delay: idx * 0.1 }}
@@ -384,19 +384,19 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-5"
         style={{
-          background: "linear-gradient(135deg, rgba(124,58,237,0.1), rgba(6,182,212,0.06))",
-          border: "1px solid rgba(124,58,237,0.25)",
-          boxShadow: "0 0 60px rgba(124,58,237,0.08)",
+          background: "linear-gradient(135deg, rgba(123,111,212,0.1), rgba(6,182,212,0.06))",
+          border: "1px solid rgba(123,111,212,0.25)",
+          boxShadow: "0 0 60px rgba(123,111,212,0.08)",
         }}
       >
-        <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#7c3aed" }}>CHART SIGNATURE</p>
+        <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#7B6FD4" }}>CHART SIGNATURE</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: "SUN",       value: sun?.sign,           color: "#fbbf24", symbol: PLANET_SYMBOLS.Sun },
-            { label: "MOON",      value: moon?.sign,          color: "#c4b5fd", symbol: PLANET_SYMBOLS.Moon },
+            { label: "MOON",      value: moon?.sign,          color: "#BFB6E8", symbol: PLANET_SYMBOLS.Moon },
             { label: "RISING",    value: asc?.sign,           color: "#06b6d4", symbol: "↑" },
             { label: "SECT",      value: chart.sect === "day" ? "Day Chart" : "Night Chart",
-                                                              color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd", symbol: chart.sect === "day" ? "☀" : "☽" },
+                                                              color: chart.sect === "day" ? "#fbbf24" : "#BFB6E8", symbol: chart.sect === "day" ? "☀" : "☽" },
           ].map(({ label, value, color, symbol }) => value ? (
             <div key={label}>
               <p className="text-[14px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>{label}</p>
@@ -411,7 +411,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
           ) : null)}
         </div>
 
-        <div className="mt-4 pt-4 flex flex-wrap gap-2" style={{ borderTop: "1px solid rgba(124,58,237,0.1)" }}>
+        <div className="mt-4 pt-4 flex flex-wrap gap-2" style={{ borderTop: "1px solid rgba(123,111,212,0.1)" }}>
           <span className="text-[13px] px-2.5 py-1 rounded-full font-bold"
             style={{ background: `${ELEMENT_COLORS[dominantElement as keyof typeof ELEMENT_COLORS]}18`, color: ELEMENT_COLORS[dominantElement as keyof typeof ELEMENT_COLORS] }}>
             {dominantElement} dominant
@@ -565,7 +565,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
         const sectMaleficPlanet = chart.planets.find(p => p.name === sectMalefic);
         const outSectMalPlanet  = chart.planets.find(p => p.name === outSectMalefic);
 
-        const sectLightColor   = isDay ? "#fbbf24" : "#c4b5fd";
+        const sectLightColor   = isDay ? "#fbbf24" : "#BFB6E8";
         const sectBeneficColor = isDay ? "#f59e0b" : "#f472b6";
         const sectMaleficColor = isDay ? "#94a3b8" : "#ef4444";
         const outSectMalColor  = isDay ? "#ef4444" : "#94a3b8";
@@ -678,7 +678,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                     </p>
                   )}
                 </div>
-                <div className="rounded-xl p-3" style={{ background: "rgba(99,102,241,0.05)", border: "1px solid rgba(99,102,241,0.15)" }}>
+                <div className="rounded-xl p-3" style={{ background: "rgba(123,111,212,0.05)", border: "1px solid rgba(123,111,212,0.15)" }}>
                   <p className="text-[13px] font-bold mb-1.5" style={{ color: "#a78bfa" }}>
                     {PLANET_SYMBOLS[outSectBenefic]} {outSectBenefic} — Out-of-Sect Benefic
                   </p>
@@ -756,9 +756,9 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
             <SectionHeader label="House Emphasis" sub="Houses with 2+ planets" />
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {emphasized.map(({ house, planets }) => (
-                <div key={house} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(99,102,241,0.12)" }}>
+                <div key={house} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(123,111,212,0.12)" }}>
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-[13px] font-bold tracking-widest" style={{ color: "#4f46e5" }}>H{house}</span>
+                    <span className="text-[13px] font-bold tracking-widest" style={{ color: "#7B6FD4" }}>H{house}</span>
                     <span className="text-[13px] font-semibold" style={{ color: "#94a3b8" }}>
                       {HOUSE_THEMES[house]?.name}
                     </span>
@@ -854,7 +854,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.08 }}
                         className="flex items-center gap-3 rounded-xl p-3"
-                        style={{ background: "rgba(4,4,28,0.6)", border: "1px solid rgba(99,102,241,0.15)" }}
+                        style={{ background: "rgba(4,4,28,0.6)", border: "1px solid rgba(123,111,212,0.15)" }}
                       >
                         <div className="flex items-center gap-1.5">
                           <span className="text-xl" style={{ color: aColor }}>{PLANET_SYMBOLS[a.name]}</span>
@@ -890,7 +890,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
           {READING_PROMPTS.map(rp => (
             <motion.button
               key={rp.id}
-              whileHover={{ scale: 1.02, borderColor: "rgba(124,58,237,0.4)" }}
+              whileHover={{ scale: 1.02, borderColor: "rgba(123,111,212,0.4)" }}
               whileTap={{ scale: 0.97 }}
               onClick={() => onAskOracle(rp.prompt)}
               className="text-left p-3 rounded-xl cursor-pointer transition-all duration-200"
@@ -984,7 +984,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
       className="rounded-2xl p-5"
-      style={{ background: "rgba(4,4,28,0.7)", border: "1px solid rgba(99,102,241,0.15)" }}
+      style={{ background: "rgba(4,4,28,0.7)", border: "1px solid rgba(123,111,212,0.15)" }}
     >
       <div className="flex items-center justify-between mb-4">
         <p className="text-[13px] font-bold tracking-widest" style={{ color: "#64748b" }}>DISPOSITOR TREE — RULERSHIP FLOW</p>
@@ -998,7 +998,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
         <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ maxWidth: "100%", height: "auto" }}>
           <defs>
             <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-              <path d="M0,0 L0,6 L6,3 z" fill="rgba(99,102,241,0.5)" />
+              <path d="M0,0 L0,6 L6,3 z" fill="rgba(123,111,212,0.5)" />
             </marker>
             <marker id="arr-mutual" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
               <path d="M0,0 L0,6 L6,3 z" fill="rgba(245,158,11,0.8)" />
@@ -1010,7 +1010,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
           </defs>
 
           {/* Subtle circle guide */}
-          <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(99,102,241,0.06)" strokeWidth={1} strokeDasharray="3 5" />
+          <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(123,111,212,0.06)" strokeWidth={1} strokeDasharray="3 5" />
 
           {/* Arrows — draw all dispositor relationships */}
           {Array.from(dispositorOf.entries()).map(([fromName, toName]) => {
@@ -1023,7 +1023,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
                 key={`${fromName}-${toName}`}
                 d={arcPath(fromIdx, toIdx)}
                 fill="none"
-                stroke={isMutual ? "rgba(245,158,11,0.55)" : "rgba(99,102,241,0.35)"}
+                stroke={isMutual ? "rgba(245,158,11,0.55)" : "rgba(123,111,212,0.35)"}
                 strokeWidth={isMutual ? 1.5 : 1}
                 strokeDasharray={isMutual ? "none" : "4 3"}
                 markerEnd={isMutual ? "url(#arr-mutual)" : "url(#arr)"}
@@ -1128,8 +1128,8 @@ function DispositorTree({ chart }: { chart: ChartData }) {
       {/* Legend */}
       <div className="mt-4 flex flex-wrap items-center gap-4 text-[14px] tracking-widest" style={{ color: "#334155" }}>
         <div className="flex items-center gap-1.5">
-          <div className="w-4 h-px" style={{ background: "rgba(99,102,241,0.5)", border: "none" }} />
-          <span style={{ background: "rgba(99,102,241,0.35)", height: 1, display: "inline-block", width: 16, borderBottom: "1px dashed rgba(99,102,241,0.5)" }} />
+          <div className="w-4 h-px" style={{ background: "rgba(123,111,212,0.5)", border: "none" }} />
+          <span style={{ background: "rgba(123,111,212,0.35)", height: 1, display: "inline-block", width: 16, borderBottom: "1px dashed rgba(123,111,212,0.5)" }} />
           disposits
         </div>
         <div className="flex items-center gap-1.5">
@@ -1202,7 +1202,7 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                     <span className="text-[13px]" style={{ color: "#334155" }}>·</span>
                     <span className="text-[13px]" style={{ color: "#475569" }}>{p.signDegree.toFixed(1)}°</span>
                     <span className="text-[13px]" style={{ color: "#334155" }}>·</span>
-                    <span className="text-[13px]" style={{ color: "#4f46e5" }}>H{p.house}</span>
+                    <span className="text-[13px]" style={{ color: "#7B6FD4" }}>H{p.house}</span>
                   </div>
                 </div>
 
@@ -1455,13 +1455,13 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
             return (
               <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl"
                 style={{
-                  background: isAngular ? "rgba(124,58,237,0.06)" : "rgba(255,255,255,0.02)",
-                  border: isAngular ? "1px solid rgba(124,58,237,0.15)" : "1px solid rgba(255,255,255,0.04)",
+                  background: isAngular ? "rgba(123,111,212,0.06)" : "rgba(255,255,255,0.02)",
+                  border: isAngular ? "1px solid rgba(123,111,212,0.15)" : "1px solid rgba(255,255,255,0.04)",
                 }}>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1.5">
                     <span className="text-[13px] font-bold" style={{ color: isAngular ? "#a78bfa" : "#334155" }}>H{i + 1}</span>
-                    {angleLabel && <span className="text-[14px] font-bold" style={{ color: "#7c3aed" }}>{angleLabel}</span>}
+                    {angleLabel && <span className="text-[14px] font-bold" style={{ color: "#7B6FD4" }}>{angleLabel}</span>}
                   </div>
                 </div>
                 <span className="text-base" style={{ color: signColor }}>{SIGN_SYMBOLS[h.sign]}</span>
@@ -1503,7 +1503,7 @@ const PATTERN_COLORS: Record<PatternType, string> = {
   "Grand Trine":       "#22c55e",
   "T-Square":          "#f59e0b",
   "Grand Cross":       "#ef4444",
-  "Yod":               "#a855f7",
+  "Yod":               "#9C8AC4",
   "Stellium":          "#06b6d4",
   "Mystic Rectangle":  "#3b82f6",
   "Opposition":        "#f97316",
@@ -1739,7 +1739,7 @@ function AspectsTab({ chart }: { chart: ChartData }) {
       {/* Summary row */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { label: "TOTAL ASPECTS", value: chart.aspects.length, color: "#7c3aed" },
+          { label: "TOTAL ASPECTS", value: chart.aspects.length, color: "#7B6FD4" },
           { label: "HARMONIOUS",    value: harmoniousCount,      color: "#22c55e" },
           { label: "TENSE",         value: tensionCount,          color: "#ef4444" },
         ].map(({ label, value, color }) => (
@@ -1758,8 +1758,8 @@ function AspectsTab({ chart }: { chart: ChartData }) {
 
       {/* Exact aspects highlight */}
       {exactAspects.length > 0 && (
-        <div className="rounded-2xl p-4" style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.2)" }}>
-          <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#7c3aed" }}>EXACT ASPECTS · MOST POWERFUL</p>
+        <div className="rounded-2xl p-4" style={{ background: "rgba(123,111,212,0.06)", border: "1px solid rgba(123,111,212,0.2)" }}>
+          <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#7B6FD4" }}>EXACT ASPECTS · MOST POWERFUL</p>
           <div className="flex flex-wrap gap-2">
             {exactAspects.map((a, i) => {
               const color = ASPECT_COLORS[a.type] ?? "#94a3b8";
@@ -1826,7 +1826,7 @@ function AspectsTab({ chart }: { chart: ChartData }) {
                       <span className="text-lg" style={{ color: p2Color }}>{PLANET_SYMBOLS[a.planet2]}</span>
                       <span className="text-[13px] font-bold capitalize ml-1" style={{ color }}>{a.type}</span>
                       <span className="text-[13px] font-mono ml-auto" style={{ color: "#475569" }}>{a.orb.toFixed(2)}°</span>
-                      {a.exact && <span className="text-[14px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(124,58,237,0.15)", color: "#a78bfa" }}>EXACT</span>}
+                      {a.exact && <span className="text-[14px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(123,111,212,0.15)", color: "#a78bfa" }}>EXACT</span>}
                       {a.applying && !a.exact && <span className="text-[14px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(34,197,94,0.1)", color: "#22c55e" }}>APPL.</span>}
                     </div>
                     <div className="h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
@@ -1852,8 +1852,8 @@ function AspectsTab({ chart }: { chart: ChartData }) {
           <button key={t} onClick={() => setFilter(t)}
             className="px-2.5 py-1 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer transition-all duration-200"
             style={{
-              background: filter === t ? "rgba(124,58,237,0.25)" : "rgba(255,255,255,0.03)",
-              border: filter === t ? "1px solid rgba(124,58,237,0.4)" : "1px solid rgba(255,255,255,0.06)",
+              background: filter === t ? "rgba(123,111,212,0.25)" : "rgba(255,255,255,0.03)",
+              border: filter === t ? "1px solid rgba(123,111,212,0.4)" : "1px solid rgba(255,255,255,0.06)",
               color: filter === t ? "#a78bfa" : "#475569",
             }}>
             {t === "all" ? "ALL" : ASPECT_GLYPHS[t]}
@@ -1949,7 +1949,7 @@ function computeTimingConvergence(chart: ChartData, transits: TransitHit[]): {
 
   score = Math.max(5, Math.min(100, score));
   const label = score >= 75 ? "PEAK" : score >= 50 ? "HIGH" : score >= 30 ? "ACTIVE" : "QUIET";
-  const color = score >= 75 ? "#a855f7" : score >= 50 ? "#06b6d4" : score >= 30 ? "#f59e0b" : "#334155";
+  const color = score >= 75 ? "#9C8AC4" : score >= 50 ? "#06b6d4" : score >= 30 ? "#f59e0b" : "#334155";
   return { score, label, color, factors };
 }
 
@@ -2057,7 +2057,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
           </div>
           <div>
             <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
-            <p className="text-[13px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
+            <p className="text-[13px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#BFB6E8" }}>
               {chart.sect === "day" ? "☀ Day" : "☽ Night"}
             </p>
           </div>
@@ -2106,9 +2106,9 @@ function TimingTab({ chart }: { chart: ChartData }) {
                 whileHover={{ scale: 1.05 }}
                 className="flex flex-col items-center gap-1 p-2 rounded-xl"
                 style={{
-                  background: isActive ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.02)",
-                  border: isActive ? "1px solid rgba(124,58,237,0.35)" : "1px solid rgba(255,255,255,0.04)",
-                  boxShadow: isActive ? "0 0 16px rgba(124,58,237,0.15)" : "none",
+                  background: isActive ? "rgba(123,111,212,0.15)" : "rgba(255,255,255,0.02)",
+                  border: isActive ? "1px solid rgba(123,111,212,0.35)" : "1px solid rgba(255,255,255,0.04)",
+                  boxShadow: isActive ? "0 0 16px rgba(123,111,212,0.15)" : "none",
                 }}
               >
                 <span className="text-[14px] font-bold tracking-wider" style={{ color: isActive ? "#a78bfa" : "#334155" }}>H{i + 1}</span>
@@ -2218,7 +2218,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
         <motion.button
           whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
           className="w-full py-3 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
-          style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.25)", color: "#a78bfa" }}
+          style={{ background: "rgba(123,111,212,0.1)", border: "1px solid rgba(123,111,212,0.25)", color: "#a78bfa" }}
         >
           VIEW FULL TIMELINE → PROFECTIONS · ZOD. RELEASING · PROGRESSIONS · FIRDARIA
         </motion.button>
@@ -2234,7 +2234,7 @@ function MessageBubble({ role, content, streaming = false }: { role: "user" | "a
     return (
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex justify-end">
         <div className="max-w-[80%] px-4 py-3 rounded-2xl rounded-tr-sm text-[14px] leading-relaxed"
-          style={{ background: "rgba(124,58,237,0.2)", border: "1px solid rgba(124,58,237,0.35)", color: "#c4b5fd" }}>
+          style={{ background: "rgba(123,111,212,0.2)", border: "1px solid rgba(123,111,212,0.35)", color: "#BFB6E8" }}>
           {content}
         </div>
       </motion.div>
@@ -2243,15 +2243,15 @@ function MessageBubble({ role, content, streaming = false }: { role: "user" | "a
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex gap-3">
       <div className="w-7 h-7 rounded-xl flex-shrink-0 flex items-center justify-center mt-1"
-        style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 16px rgba(124,58,237,0.5)" }}>
+        style={{ background: "linear-gradient(135deg, #7B6FD4, #06b6d4)", boxShadow: "0 0 16px rgba(123,111,212,0.5)" }}>
         <span className="text-[13px] text-white font-bold">✦</span>
       </div>
       <div className="flex-1 px-4 py-3 rounded-2xl rounded-tl-sm text-[14px] leading-relaxed"
-        style={{ background: "rgba(4,4,28,0.8)", border: "1px solid rgba(99,102,241,0.2)", color: "#cbd5e1", whiteSpace: "pre-wrap" }}>
+        style={{ background: "rgba(4,4,28,0.8)", border: "1px solid rgba(123,111,212,0.2)", color: "#cbd5e1", whiteSpace: "pre-wrap" }}>
         {content}
         {streaming && (
           <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.7, repeat: Infinity }}
-            className="inline-block w-1.5 h-4 ml-1 align-middle rounded-sm" style={{ background: "#7c3aed" }} />
+            className="inline-block w-1.5 h-4 ml-1 align-middle rounded-sm" style={{ background: "#7B6FD4" }} />
         )}
       </div>
     </motion.div>
@@ -2300,15 +2300,15 @@ function OracleTab({
             >
               <div className="w-20 h-20 rounded-2xl flex items-center justify-center"
                 style={{
-                  background: "linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.15))",
-                  border: "1px solid rgba(124,58,237,0.35)",
-                  boxShadow: "0 0 40px rgba(124,58,237,0.25), 0 0 80px rgba(124,58,237,0.1)",
+                  background: "linear-gradient(135deg, rgba(123,111,212,0.2), rgba(6,182,212,0.15))",
+                  border: "1px solid rgba(123,111,212,0.35)",
+                  boxShadow: "0 0 40px rgba(123,111,212,0.25), 0 0 80px rgba(123,111,212,0.1)",
                 }}
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="url(#og)" strokeWidth="1.2" className="w-10 h-10">
                   <defs>
                     <linearGradient id="og" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="#a855f7" /><stop offset="100%" stopColor="#06b6d4" />
+                      <stop offset="0%" stopColor="#9C8AC4" /><stop offset="100%" stopColor="#06b6d4" />
                     </linearGradient>
                   </defs>
                   <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="4" />
@@ -2365,7 +2365,7 @@ function OracleTab({
               <motion.button key={rp.id} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                 onClick={() => send(rp.prompt)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer whitespace-nowrap"
-                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(99,102,241,0.15)", color: "#64748b" }}>
+                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(123,111,212,0.15)", color: "#64748b" }}>
                 {rp.label.toUpperCase()}
               </motion.button>
             ))}
@@ -2387,12 +2387,12 @@ function OracleTab({
       )}
 
       {/* Input */}
-      <div className="flex-shrink-0 pt-2" style={{ borderTop: "1px solid rgba(99,102,241,0.1)" }}>
-        <ScanBar color="#7c3aed" />
+      <div className="flex-shrink-0 pt-2" style={{ borderTop: "1px solid rgba(123,111,212,0.1)" }}>
+        <ScanBar color="#7B6FD4" />
         <div className="flex items-end gap-3 p-3 rounded-2xl mt-2"
-          style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(124,58,237,0.2)" }}>
+          style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(123,111,212,0.2)" }}>
           <div className="w-7 h-7 rounded-xl flex-shrink-0 flex items-center justify-center mb-0.5"
-            style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 14px rgba(124,58,237,0.4)" }}>
+            style={{ background: "linear-gradient(135deg, #7B6FD4, #06b6d4)", boxShadow: "0 0 14px rgba(123,111,212,0.4)" }}>
             <span className="text-[13px] text-white font-bold">✦</span>
           </div>
           <textarea
@@ -2413,11 +2413,11 @@ function OracleTab({
             onClick={() => send(input)}
             disabled={streaming || !input.trim() || !chart}
             className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed mb-0.5"
-            style={{ background: input.trim() && !streaming ? "rgba(124,58,237,0.3)" : "rgba(255,255,255,0.04)", border: "1px solid rgba(124,58,237,0.3)" }}
+            style={{ background: input.trim() && !streaming ? "rgba(123,111,212,0.3)" : "rgba(255,255,255,0.04)", border: "1px solid rgba(123,111,212,0.3)" }}
           >
             {streaming
               ? <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="w-3.5 h-3.5 rounded-full border border-t-transparent" style={{ borderColor: "#7c3aed" }} />
+                  className="w-3.5 h-3.5 rounded-full border border-t-transparent" style={{ borderColor: "#7B6FD4" }} />
               : <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2" className="w-3.5 h-3.5">
                   <path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
                 </svg>
@@ -2514,7 +2514,7 @@ export default function InsightsPage() {
   return (
     <div className="h-screen flex overflow-hidden">
       <DashboardBg />
-      <div className="nebula-orb" style={{ width: 500, height: 500, left: "10%", top: "0%", background: "rgba(124,58,237,0.06)", filter: "blur(100px)" }} />
+      <div className="nebula-orb" style={{ width: 500, height: 500, left: "10%", top: "0%", background: "rgba(123,111,212,0.06)", filter: "blur(100px)" }} />
       <div className="nebula-orb" style={{ width: 400, height: 400, right: "5%", bottom: "10%", background: "rgba(6,182,212,0.04)", filter: "blur(80px)" }} />
 
 
@@ -2557,7 +2557,7 @@ export default function InsightsPage() {
 
         {/* Chart snapshot */}
         {chart && (
-          <div className="flex-shrink-0 px-4 md:px-6 py-2.5" style={{ borderBottom: "1px solid rgba(99,102,241,0.08)" }}>
+          <div className="flex-shrink-0 px-4 md:px-6 py-2.5" style={{ borderBottom: "1px solid rgba(123,111,212,0.08)" }}>
             <ChartSnapshot chart={chart} />
           </div>
         )}
@@ -2570,14 +2570,14 @@ export default function InsightsPage() {
               onClick={() => setActiveTab(id)}
               className="flex-shrink-0 px-3 py-1.5 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer transition-all duration-200"
               style={{
-                background: activeTab === id ? "rgba(124,58,237,0.25)" : "transparent",
+                background: activeTab === id ? "rgba(123,111,212,0.25)" : "transparent",
                 color: activeTab === id ? "#a78bfa" : "#334155",
-                border: activeTab === id ? "1px solid rgba(124,58,237,0.4)" : "1px solid rgba(255,255,255,0.05)",
+                border: activeTab === id ? "1px solid rgba(123,111,212,0.4)" : "1px solid rgba(255,255,255,0.05)",
               }}>
               {label}
               {label === "ORACLE" && messages.length > 0 && (
                 <span className="ml-1.5 text-[14px] px-1 rounded-full align-middle"
-                  style={{ background: "rgba(124,58,237,0.3)", color: "#a78bfa" }}>
+                  style={{ background: "rgba(123,111,212,0.3)", color: "#a78bfa" }}>
                   {messages.filter(m => m.role === "assistant").length}
                 </span>
               )}
@@ -2593,7 +2593,7 @@ export default function InsightsPage() {
               <div className="flex items-center justify-center py-20">
                 <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                   className="w-12 h-12 rounded-full"
-                  style={{ border: "1px solid rgba(124,58,237,0.3)", borderTopColor: "#7c3aed" }} />
+                  style={{ border: "1px solid rgba(123,111,212,0.3)", borderTopColor: "#7B6FD4" }} />
               </div>
             ) : !chart ? (
               <div className="flex flex-col items-center justify-center py-20 gap-6">
@@ -2601,13 +2601,13 @@ export default function InsightsPage() {
                   animate={{ scale: [1, 1.06, 1], opacity: [0.75, 1, 0.75] }}
                   transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
                   className="rounded-2xl flex items-center justify-center"
-                  style={{ width: 64, height: 64, background: "linear-gradient(135deg, rgba(124,58,237,0.22), rgba(6,182,212,0.14))", border: "1px solid rgba(124,58,237,0.35)", boxShadow: "0 0 48px rgba(124,58,237,0.18)" }}
+                  style={{ width: 64, height: 64, background: "linear-gradient(135deg, rgba(123,111,212,0.22), rgba(6,182,212,0.14))", border: "1px solid rgba(123,111,212,0.35)", boxShadow: "0 0 48px rgba(123,111,212,0.18)" }}
                 >
                   <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
-                    <circle cx="18" cy="18" r="14" stroke="rgba(124,58,237,0.6)" strokeWidth="1"/>
+                    <circle cx="18" cy="18" r="14" stroke="rgba(123,111,212,0.6)" strokeWidth="1"/>
                     <circle cx="18" cy="18" r="8" stroke="rgba(6,182,212,0.5)" strokeWidth="0.75"/>
-                    <line x1="18" y1="4" x2="18" y2="32" stroke="rgba(124,58,237,0.35)" strokeWidth="0.75"/>
-                    <line x1="4" y1="18" x2="32" y2="18" stroke="rgba(124,58,237,0.35)" strokeWidth="0.75"/>
+                    <line x1="18" y1="4" x2="18" y2="32" stroke="rgba(123,111,212,0.35)" strokeWidth="0.75"/>
+                    <line x1="4" y1="18" x2="32" y2="18" stroke="rgba(123,111,212,0.35)" strokeWidth="0.75"/>
                     <circle cx="18" cy="18" r="2.5" fill="rgba(6,182,212,0.8)"/>
                   </svg>
                 </motion.div>
@@ -2619,7 +2619,7 @@ export default function InsightsPage() {
                 <Link href="/onboarding">
                   <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                     className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
-                    style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}>
+                    style={{ background: "linear-gradient(135deg, #7B6FD4, #7B6FD4)", color: "white", border: "1px solid rgba(123,111,212,0.4)" }}>
                     Begin Your Chart →
                   </motion.button>
                 </Link>

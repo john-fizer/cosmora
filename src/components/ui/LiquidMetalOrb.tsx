@@ -80,8 +80,8 @@ export function LiquidMetalOrb({ state = "idle", size = 280 }: LiquidMetalOrbPro
           width: 5,
           height: 5,
           borderRadius: "50%",
-          background: "#a855f7",
-          boxShadow: "0 0 8px #a855f7, 0 0 14px rgba(168,85,247,0.6)",
+          background: "#9C8AC4",
+          boxShadow: "0 0 8px #9C8AC4, 0 0 14px rgba(168,85,247,0.6)",
         }} />
       </motion.div>
 
@@ -94,11 +94,11 @@ export function LiquidMetalOrb({ state = "idle", size = 280 }: LiquidMetalOrbPro
           inset: size * 0.1,
           borderRadius: "50%",
           background: isThinking
-            ? "radial-gradient(circle at 38% 36%, rgba(6,182,212,0.9) 0%, rgba(124,58,237,0.7) 45%, rgba(3,4,10,0.95) 80%)"
+            ? "radial-gradient(circle at 38% 36%, rgba(6,182,212,0.9) 0%, rgba(123,111,212,0.7) 45%, rgba(3,4,10,0.95) 80%)"
             : "radial-gradient(circle at 36% 34%, rgba(168,85,247,0.85) 0%, rgba(79,70,229,0.6) 40%, rgba(3,4,10,0.98) 78%)",
           boxShadow: isThinking
             ? `0 0 ${size * 0.15}px rgba(6,182,212,0.5), 0 0 ${size * 0.3}px rgba(6,182,212,0.2), inset 0 0 ${size * 0.08}px rgba(6,182,212,0.2)`
-            : `0 0 ${size * 0.12}px rgba(124,58,237,0.5), 0 0 ${size * 0.25}px rgba(124,58,237,0.2), inset 0 0 ${size * 0.06}px rgba(168,85,247,0.15)`,
+            : `0 0 ${size * 0.12}px rgba(123,111,212,0.5), 0 0 ${size * 0.25}px rgba(123,111,212,0.2), inset 0 0 ${size * 0.06}px rgba(168,85,247,0.15)`,
         }}
       >
         {/* Liquid surface highlight */}

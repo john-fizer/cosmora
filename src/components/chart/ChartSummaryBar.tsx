@@ -76,7 +76,7 @@ export function ChartSummaryBar({ chart, profileName, onHouseSystemChange, recal
       className="flex-shrink-0 flex items-center justify-between px-6 py-3 gap-4 overflow-x-auto"
       style={{
         background: "rgba(2,2,18,0.8)",
-        borderBottom: "1px solid rgba(99,102,241,0.12)",
+        borderBottom: "1px solid rgba(123,111,212,0.12)",
         backdropFilter: "blur(20px)",
         scrollbarWidth: "none",
       }}
@@ -114,9 +114,9 @@ export function ChartSummaryBar({ chart, profileName, onHouseSystemChange, recal
             disabled={recalculating}
             className="px-3 py-1.5 rounded-lg text-[13px] font-bold tracking-wider cursor-pointer transition-all duration-150 disabled:opacity-50"
             style={{
-              background: chart.houseSystem === hs.value ? "rgba(124,58,237,0.25)" : "rgba(255,255,255,0.03)",
-              border: chart.houseSystem === hs.value ? "1px solid rgba(124,58,237,0.4)" : "1px solid rgba(255,255,255,0.06)",
-              color: chart.houseSystem === hs.value ? "#c4b5fd" : "#64748b",
+              background: chart.houseSystem === hs.value ? "rgba(123,111,212,0.25)" : "rgba(255,255,255,0.03)",
+              border: chart.houseSystem === hs.value ? "1px solid rgba(123,111,212,0.4)" : "1px solid rgba(255,255,255,0.06)",
+              color: chart.houseSystem === hs.value ? "#BFB6E8" : "#64748b",
             }}
           >
             {hs.label}
@@ -127,7 +127,7 @@ export function ChartSummaryBar({ chart, profileName, onHouseSystemChange, recal
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             className="w-3 h-3 rounded-full border border-t-transparent ml-2"
-            style={{ borderColor: "#7c3aed" }}
+            style={{ borderColor: "#7B6FD4" }}
           />
         )}
       </div>

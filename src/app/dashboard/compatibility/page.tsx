@@ -161,7 +161,7 @@ function getRelationshipArchetype(aspects: SynastryAspect[]): { name: string; de
   }
   const [top] = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const archMap: Record<string, { name: string; description: string; color: string }> = {
-    soulBond:     { name: "Soul Bond",         description: "Deep recognition and emotional attunement — you feel like you've known each other before.", color: "#a855f7" },
+    soulBond:     { name: "Soul Bond",         description: "Deep recognition and emotional attunement — you feel like you've known each other before.", color: "#9C8AC4" },
     romanticFire: { name: "Magnetic Union",     description: "Intense attraction and creative chemistry — a passionate, activating connection.",            color: "#f472b6" },
     karmic:       { name: "Karmic Contract",    description: "This relationship brings lessons, structure, and long-term commitment themes.",              color: "#94a3b8" },
     mental:       { name: "Meeting of Minds",   description: "Intellectual synergy and mutual fascination — you think alike and stimulate each other.",    color: "#06b6d4" },
@@ -173,14 +173,14 @@ function getRelationshipArchetype(aspects: SynastryAspect[]): { name: string; de
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
   NorthNode: "#64748b",
 };
 
 const ASPECT_COLORS: Record<string, string> = {
-  conjunction: "#a855f7", opposition: "#ef4444", trine: "#22c55e",
+  conjunction: "#9C8AC4", opposition: "#ef4444", trine: "#22c55e",
   square: "#f59e0b", sextile: "#06b6d4", quincunx: "#64748b",
 };
 
@@ -191,7 +191,7 @@ const ASPECT_GLYPHS: Record<string, string> = {
 const SIGN_COLORS: Record<ZodiacSign, string> = {
   Aries: "#ef4444", Taurus: "#22c55e", Gemini: "#eab308", Cancer: "#38bdf8",
   Leo: "#f97316", Virgo: "#4ade80", Libra: "#facc15", Scorpio: "#dc2626",
-  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#8b5cf6",
+  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#7B6FD4",
 };
 
 // ─── Compatibility Oracle ────────────────────────────────────────────────────
@@ -362,7 +362,7 @@ function ScoreArc({ score, color }: { score: number; color: string }) {
     <svg width={120} height={70} viewBox="0 0 120 70" className="overflow-visible">
       <defs>
         <linearGradient id="scoreGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#7c3aed" />
+          <stop offset="0%" stopColor="#7B6FD4" />
           <stop offset="100%" stopColor={color} />
         </linearGradient>
       </defs>
@@ -476,7 +476,7 @@ function SynastryBiWheel({ chartA, chartB, nameA, nameB, aspects }: {
   const R_PLANETS_B = 128; // B's planets outside zodiac ring
 
   const ZODIAC = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
-  const ZODIAC_COLORS = ["#ef4444","#22c55e","#eab308","#a855f7","#f97316","#6366f1","#ec4899","#dc2626","#f59e0b","#64748b","#06b6d4","#8b5cf6"];
+  const ZODIAC_COLORS = ["#ef4444","#22c55e","#eab308","#9C8AC4","#f97316","#7B6FD4","#ec4899","#dc2626","#f59e0b","#64748b","#06b6d4","#7B6FD4"];
 
   // Convert ecliptic longitude to SVG angle (0° Aries at top, clockwise)
   function lonToAngle(lon: number): number {
@@ -489,7 +489,7 @@ function SynastryBiWheel({ chartA, chartB, nameA, nameB, aspects }: {
   // Aspect lines — only the top 6 by tightness (lowest orb)
   const topAspects = aspects.slice(0, 6);
   const ASPECT_COLORS_LOCAL: Record<string, string> = {
-    conjunction: "#a855f7", opposition: "#ef4444", trine: "#22c55e",
+    conjunction: "#9C8AC4", opposition: "#ef4444", trine: "#22c55e",
     square: "#f97316", sextile: "#06b6d4", quincunx: "#94a3b8",
   };
 
@@ -532,7 +532,7 @@ function SynastryBiWheel({ chartA, chartB, nameA, nameB, aspects }: {
           const isAngular = [0, 3, 6, 9].includes(i);
           return (
             <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-              stroke={isAngular ? "rgba(99,102,241,0.35)" : "rgba(255,255,255,0.06)"}
+              stroke={isAngular ? "rgba(123,111,212,0.35)" : "rgba(255,255,255,0.06)"}
               strokeWidth={isAngular ? 1.5 : 0.5}
             />
           );
@@ -749,7 +749,7 @@ export default function CompatibilityPage() {
           <div
             className="w-16 h-16 rounded-2xl flex items-center justify-center"
             style={{
-              background: "linear-gradient(135deg, rgba(244,114,182,0.2), rgba(124,58,237,0.2))",
+              background: "linear-gradient(135deg, rgba(244,114,182,0.2), rgba(123,111,212,0.2))",
               border: "1px solid rgba(244,114,182,0.3)",
               boxShadow: "0 0 40px rgba(244,114,182,0.15)",
             }}
@@ -772,7 +772,7 @@ export default function CompatibilityPage() {
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
               className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
-              style={{ background: "linear-gradient(135deg, #f472b6, #7c3aed)", color: "white" }}
+              style={{ background: "linear-gradient(135deg, #f472b6, #7B6FD4)", color: "white" }}
             >
               + Add Profile
             </motion.button>
@@ -786,7 +786,7 @@ export default function CompatibilityPage() {
     <div className="h-screen flex overflow-hidden">
       <DashboardBg />
       <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "-20%", background: "rgba(244,114,182,0.05)", filter: "blur(100px)" }} />
-      <div className="nebula-orb" style={{ width: 400, height: 400, right: "10%", bottom: "0%", background: "rgba(124,58,237,0.05)", filter: "blur(80px)" }} />
+      <div className="nebula-orb" style={{ width: 400, height: 400, right: "10%", bottom: "0%", background: "rgba(123,111,212,0.05)", filter: "blur(80px)" }} />
 
 
       <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-x-hidden">
@@ -816,7 +816,7 @@ export default function CompatibilityPage() {
               </motion.button>
             </Link>
             <span style={{ color: "#1e293b" }}>/</span>
-            <span className="text-[13px] font-bold tracking-widest" style={{ background: "linear-gradient(135deg, #f472b6, #a855f7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <span className="text-[13px] font-bold tracking-widest" style={{ background: "linear-gradient(135deg, #f472b6, #9C8AC4)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               SYNASTRY
             </span>
           </div>
@@ -863,7 +863,7 @@ export default function CompatibilityPage() {
                 profiles={allProfiles}
                 selectedId={personAId}
                 onSelect={id => { if (id !== personBId) setPersonAId(id); }}
-                accentColor="#a855f7"
+                accentColor="#9C8AC4"
               />
 
               {/* VS divider */}
@@ -942,7 +942,7 @@ export default function CompatibilityPage() {
                         animate={{ opacity: 1, scale: 1 }}
                         className="rounded-2xl p-6 mb-5 flex flex-col md:flex-row items-center gap-6"
                         style={{
-                          background: `linear-gradient(135deg, rgba(244,114,182,0.06), rgba(124,58,237,0.06))`,
+                          background: `linear-gradient(135deg, rgba(244,114,182,0.06), rgba(123,111,212,0.06))`,
                           border: "1px solid rgba(244,114,182,0.2)",
                           boxShadow: "0 0 40px rgba(244,114,182,0.08)",
                         }}
@@ -1149,7 +1149,7 @@ export default function CompatibilityPage() {
 
                       <div className="space-y-5">
                         <div>
-                          <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#a855f7" }}>
+                          <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#9C8AC4" }}>
                             {profileB.name}&apos;s planets in {profileA.name}&apos;s chart
                           </p>
                           <PlanetOverlay chartA={chartA} chartB={chartB} nameA={profileA.name} nameB={profileB.name} />
@@ -1271,7 +1271,7 @@ export default function CompatibilityPage() {
                             </div>
                             <div>
                               <p className="text-[14px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>COMPOSITE MOON</p>
-                              <p className="text-[14px] font-bold" style={{ color: "#c4b5fd" }}>
+                              <p className="text-[14px] font-bold" style={{ color: "#BFB6E8" }}>
                                 {SIGN_SYMBOLS[compMoon.sign]} {compMoon.sign}
                               </p>
                               <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>

@@ -104,7 +104,7 @@ export function ChatInput({ profileId, chart }: ChatInputProps) {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             className="w-full max-w-2xl rounded-2xl overflow-hidden"
-            style={{ background: "rgba(4,4,32,0.9)", border: "1px solid rgba(99,102,241,0.2)", backdropFilter: "blur(20px)" }}
+            style={{ background: "rgba(4,4,32,0.9)", border: "1px solid rgba(123,111,212,0.2)", backdropFilter: "blur(20px)" }}
           >
             <div className="flex items-center justify-between px-4 py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
               <span className="text-[13px] font-bold tracking-widest" style={{ color: "#64748b" }}>COSMIC DIALOGUE</span>
@@ -121,8 +121,8 @@ export function ChatInput({ profileId, chart }: ChatInputProps) {
                   <div
                     className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[13px] font-bold"
                     style={{
-                      background: m.role === "user" ? "rgba(124,58,237,0.3)" : "linear-gradient(135deg, #7c3aed, #06b6d4)",
-                      border: "1px solid rgba(124,58,237,0.4)",
+                      background: m.role === "user" ? "rgba(123,111,212,0.3)" : "linear-gradient(135deg, #7B6FD4, #06b6d4)",
+                      border: "1px solid rgba(123,111,212,0.4)",
                     }}
                   >
                     {m.role === "user" ? "U" : "✦"}
@@ -130,9 +130,9 @@ export function ChatInput({ profileId, chart }: ChatInputProps) {
                   <div
                     className="flex-1 px-3 py-2 rounded-xl text-[13px] leading-relaxed"
                     style={{
-                      background: m.role === "user" ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.04)",
-                      border: `1px solid ${m.role === "user" ? "rgba(124,58,237,0.3)" : "rgba(255,255,255,0.07)"}`,
-                      color: m.role === "user" ? "#c4b5fd" : "#cbd5e1",
+                      background: m.role === "user" ? "rgba(123,111,212,0.15)" : "rgba(255,255,255,0.04)",
+                      border: `1px solid ${m.role === "user" ? "rgba(123,111,212,0.3)" : "rgba(255,255,255,0.07)"}`,
+                      color: m.role === "user" ? "#BFB6E8" : "#cbd5e1",
                       whiteSpace: "pre-wrap",
                     }}
                   >
@@ -142,7 +142,7 @@ export function ChatInput({ profileId, chart }: ChatInputProps) {
                         animate={{ opacity: [1, 0, 1] }}
                         transition={{ duration: 0.8, repeat: Infinity }}
                         className="inline-block ml-1 w-1 h-3 align-middle"
-                        style={{ background: "#7c3aed" }}
+                        style={{ background: "#7B6FD4" }}
                       />
                     )}
                   </div>
@@ -158,7 +158,7 @@ export function ChatInput({ profileId, chart }: ChatInputProps) {
         className="flex items-center gap-3 px-5 py-3 rounded-2xl w-full max-w-2xl"
         style={{
           background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(124,58,237,0.2)",
+          border: "1px solid rgba(123,111,212,0.2)",
           backdropFilter: "blur(20px)",
         }}
       >
@@ -166,7 +166,7 @@ export function ChatInput({ profileId, chart }: ChatInputProps) {
           animate={{ scale: streaming ? [1, 1.3, 1] : 1, opacity: streaming ? [0.7, 1, 0.7] : 0.7 }}
           transition={{ duration: 1.2, repeat: streaming ? Infinity : 0 }}
           className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center cursor-pointer"
-          style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 10px rgba(124,58,237,0.4)" }}
+          style={{ background: "linear-gradient(135deg, #7B6FD4, #06b6d4)", boxShadow: "0 0 10px rgba(123,111,212,0.4)" }}
           onClick={() => setOpen(o => !o)}
         >
           <span className="text-[13px] text-white font-bold">✦</span>
@@ -187,14 +187,14 @@ export function ChatInput({ profileId, chart }: ChatInputProps) {
           onClick={send}
           disabled={streaming || !query.trim()}
           className="flex-shrink-0 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-          style={{ color: "#7c3aed" }}
+          style={{ color: "#7B6FD4" }}
         >
           {streaming ? (
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               className="w-4 h-4 rounded-full border-2 border-t-transparent"
-              style={{ borderColor: "#7c3aed" }}
+              style={{ borderColor: "#7B6FD4" }}
             />
           ) : (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">

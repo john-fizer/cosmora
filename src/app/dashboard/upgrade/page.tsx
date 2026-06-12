@@ -92,7 +92,7 @@ function UpgradePageInner() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
           <p className="text-[11px] font-semibold tracking-[0.3em] text-white/40 mb-3">COSMORA PRO</p>
           <h1 className="text-3xl font-light text-white mb-3">
-            Read the cosmos at <em style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontStyle: "italic" }}>full depth</em>
+            Read the cosmos at <em style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic" }}>full depth</em>
           </h1>
           <p className="text-sm text-white/50 max-w-sm mx-auto leading-relaxed">
             Every technique. Every layer. Unlimited AI readings.

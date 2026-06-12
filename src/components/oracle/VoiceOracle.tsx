@@ -119,9 +119,9 @@ export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle, onLiveV
               style={{
                 width: 296,
                 background: "rgba(4,4,24,0.98)",
-                border: "1px solid rgba(124,58,237,0.18)",
+                border: "1px solid rgba(123,111,212,0.18)",
                 backdropFilter: "blur(28px)",
-                boxShadow: "0 0 50px rgba(0,0,0,0.6), 0 0 20px rgba(124,58,237,0.08)",
+                boxShadow: "0 0 50px rgba(0,0,0,0.6), 0 0 20px rgba(123,111,212,0.08)",
               }}
             >
               <div className="p-4 space-y-3">
@@ -134,7 +134,7 @@ export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle, onLiveV
                   </div>
                 </div>
 
-                <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(124,58,237,0.2), transparent)" }} />
+                <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(123,111,212,0.2), transparent)" }} />
 
                 {/* 3×3 planet grid */}
                 <div className="grid grid-cols-3 gap-1.5">

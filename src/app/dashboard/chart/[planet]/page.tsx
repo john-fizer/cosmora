@@ -23,10 +23,10 @@ const ASPECT_COLORS: Record<string, string> = {
 };
 
 const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
-  Sun: "#ffd700", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#ffd700", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
-  NorthNode: "#64748b", Chiron: "#6366f1",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
+  NorthNode: "#64748b", Chiron: "#7B6FD4",
 };
 
 const DIGNITY_COLORS: Record<string, string> = {
@@ -100,7 +100,7 @@ function OraclePanel({ text, loading }: { text: string; loading: boolean }) {
       className="rounded-2xl p-6 relative overflow-hidden"
       style={{
         background: "rgba(4,4,28,0.75)",
-        border: "1px solid rgba(124,58,237,0.2)",
+        border: "1px solid rgba(123,111,212,0.2)",
         backdropFilter: "blur(24px)",
         minHeight: 100,
       }}
@@ -111,14 +111,14 @@ function OraclePanel({ text, loading }: { text: string; loading: boolean }) {
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
           style={{
             position: "absolute", left: 0, right: 0, height: 2, top: 0,
-            background: "linear-gradient(to right, transparent, rgba(124,58,237,0.7), transparent)",
+            background: "linear-gradient(to right, transparent, rgba(123,111,212,0.7), transparent)",
             zIndex: 2, pointerEvents: "none",
           }}
         />
       )}
 
       <div className="flex items-center gap-3 mb-4">
-        <span className="text-[13px] font-bold tracking-widest" style={{ color: "#7c3aed" }}>
+        <span className="text-[13px] font-bold tracking-widest" style={{ color: "#7B6FD4" }}>
           ✶ ORACLE
         </span>
         {loading && (
@@ -126,7 +126,7 @@ function OraclePanel({ text, loading }: { text: string; loading: boolean }) {
             animate={{ opacity: [1, 0.3, 1] }}
             transition={{ duration: 0.9, repeat: Infinity }}
             className="w-1.5 h-1.5 rounded-full"
-            style={{ background: "#7c3aed" }}
+            style={{ background: "#7B6FD4" }}
           />
         )}
       </div>

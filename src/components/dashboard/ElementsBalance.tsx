@@ -11,7 +11,7 @@ const ELEMENT_SIGNS: Record<string, ZodiacSign[]> = {
 };
 
 const ELEMENT_COLORS: Record<string, string> = {
-  Fire: "#ef4444", Earth: "#22c55e", Air: "#06b6d4", Water: "#8b5cf6",
+  Fire: "#ef4444", Earth: "#22c55e", Air: "#06b6d4", Water: "#7B6FD4",
 };
 
 function computeElements(chart: ChartData | null | undefined) {
@@ -47,7 +47,7 @@ export function ElementsBalance({ chart }: ElementsBalanceProps) {
     <motion.div
       initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }}
       className="glass-card rounded-2xl p-4"
-      style={{ border: "1px solid rgba(99,102,241,0.15)" }}
+      style={{ border: "1px solid rgba(123,111,212,0.15)" }}
     >
       <h3 className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>ELEMENTS BALANCE</h3>
       <div className="flex items-center gap-4">
@@ -55,17 +55,17 @@ export function ElementsBalance({ chart }: ElementsBalanceProps) {
           <svg width="120" height="120" viewBox="0 0 120 120">
             <defs>
               <linearGradient id="triGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.6" />
+                <stop offset="0%" stopColor="#7B6FD4" stopOpacity="0.6" />
                 <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.4" />
               </linearGradient>
             </defs>
             <polygon points={v.map(p => `${p.x},${p.y}`).join(" ")} fill="url(#triGrad)" opacity="0.15" />
-            <polygon points={v.map(p => `${p.x},${p.y}`).join(" ")} fill="none" stroke="rgba(124,58,237,0.4)" strokeWidth="1" />
+            <polygon points={v.map(p => `${p.x},${p.y}`).join(" ")} fill="none" stroke="rgba(123,111,212,0.4)" strokeWidth="1" />
             <polygon
               points={`${cx},${cy + r * 0.6} ${cx - r * 0.52},${cy - r * 0.3} ${cx + r * 0.52},${cy - r * 0.3}`}
               fill="none" stroke="rgba(6,182,212,0.4)" strokeWidth="1"
             />
-            <motion.circle cx={cx} cy={cy} r="4" fill="#7c3aed"
+            <motion.circle cx={cx} cy={cy} r="4" fill="#7B6FD4"
               animate={{ scale:[1,1.3,1] }} transition={{ duration:2, repeat:Infinity }}
               style={{ originX:`${cx}px`, originY:`${cy}px` }}
             />

@@ -12,7 +12,7 @@ const ROMAN = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
 
 const LENSES = [
   {
-    offset: 0,  keyword: "SELF",      color: "#c4b5fd",
+    offset: 0,  keyword: "SELF",      color: "#BFB6E8",
     title: "Your Own Story",
     subtitle: "The natal chart as experienced through your own eyes.",
     domains: ["Identity", "Body", "First Impressions", "Life Direction"],
@@ -105,7 +105,7 @@ function derivedHouseOf(natalHouse: number, offset: number): number {
 const PLANET_COLORS: Record<string, string> = {
   Sun: "#fbbf24", Moon: "#94a3b8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#8b9ab4", Uranus: "#06b6d4",
-  Neptune: "#3b82f6", Pluto: "#8b5cf6", NorthNode: "#64748b", Chiron: "#6366f1",
+  Neptune: "#3b82f6", Pluto: "#7B6FD4", NorthNode: "#64748b", Chiron: "#7B6FD4",
 };
 
 // ─── Reading stream ───────────────────────────────────────────────────────────
@@ -221,7 +221,7 @@ export default function PrismPage() {
 
       {/* ── Background prismatic gradient ── */}
       <div className="absolute inset-0 pointer-events-none" style={{
-        background: "radial-gradient(ellipse at 20% 50%, rgba(232,121,249,0.05) 0%, transparent 50%), radial-gradient(ellipse at 80% 50%, rgba(99,102,241,0.06) 0%, transparent 50%)",
+        background: "radial-gradient(ellipse at 20% 50%, rgba(232,121,249,0.05) 0%, transparent 50%), radial-gradient(ellipse at 80% 50%, rgba(123,111,212,0.06) 0%, transparent 50%)",
       }} />
 
       {/* ── Header ── */}

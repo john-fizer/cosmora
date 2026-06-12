@@ -49,7 +49,7 @@ const DEMO_ASPECTS: Aspect[] = [
 ];
 
 const ASPECT_COLORS: Record<string, string> = {
-  conjunction: "#a855f7", opposition: "#ef4444", trine: "#22c55e",
+  conjunction: "#9C8AC4", opposition: "#ef4444", trine: "#22c55e",
   square: "#f97316", sextile: "#06b6d4", quincunx: "#94a3b8",
 };
 
@@ -68,8 +68,22 @@ function lonToVec3(lon: number, radius: number): THREE.Vector3 {
   return new THREE.Vector3(radius * Math.cos(rad), 0, -radius * Math.sin(rad));
 }
 
-// ─── Procedural planet surfaces ───────────────────────────────────────────────
-// Real worlds, not glowing balls: banded gas giants, cratered rock, swirling cloud.
+// ─── Planet surfaces ──────────────────────────────────────────────────────────
+// NASA/SSS texture maps where we have them; procedural fallback for points
+// without photographic surfaces (Pluto 2k unavailable, nodes, Chiron).
+
+const TEXTURE_FILES: Record<string, string> = {
+  Sun: "2k_sun.jpg", Moon: "2k_moon.jpg", Mercury: "2k_mercury.jpg",
+  Venus: "2k_venus_atmosphere.jpg", Mars: "2k_mars.jpg", Jupiter: "2k_jupiter.jpg",
+  Saturn: "2k_saturn.jpg", Uranus: "2k_uranus.jpg", Neptune: "2k_neptune.jpg",
+};
+
+function loadPlanetFile(file: string): THREE.Texture {
+  const t = new THREE.TextureLoader().load(`/textures/planets/${file}`);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 4;
+  return t;
+}
 
 function hashSeed(s: string): number {
   let h = 2166136261;
@@ -231,6 +245,7 @@ function Sun() {
   }), []);
   const coreRef = useRef<THREE.Mesh>(null);
   const rotRef = useRef<THREE.Group>(null);
+  const sunTex = useMemo(() => loadPlanetFile("2k_sun.jpg"), []);
 
   useFrame(({ clock }) => {
     if (coreRef.current) {
@@ -247,7 +262,7 @@ function Sun() {
       <group ref={rotRef}>
         <mesh ref={coreRef}>
           <sphereGeometry args={[1.35, 48, 48]} />
-          <meshStandardMaterial color="#fffae0" emissive="#ffb300" emissiveIntensity={2.8} roughness={0.3} metalness={0} />
+          <meshStandardMaterial map={sunTex} color="#fff2cc" emissive="#ffb300" emissiveIntensity={1.6} roughness={0.4} metalness={0} />
         </mesh>
       </group>
       <mesh>
@@ -304,18 +319,24 @@ function OrbitTrail({ radius, longitude, color }: { radius: number; longitude: n
 // ─── Saturn ring system ───────────────────────────────────────────────────────
 
 function SaturnRings({ pos }: { pos: THREE.Vector3 }) {
+  const tex = useMemo(() => loadPlanetFile("2k_saturn_ring_alpha.png"), []);
+  // Radial UVs so the ring strip texture maps inner→outer
+  const geo = useMemo(() => {
+    const inner = 0.44, outer = 0.96;
+    const g = new THREE.RingGeometry(inner, outer, 128);
+    const posAttr = g.attributes.position, uv = g.attributes.uv;
+    const v = new THREE.Vector3();
+    for (let i = 0; i < posAttr.count; i++) {
+      v.fromBufferAttribute(posAttr, i);
+      uv.setXY(i, (v.length() - inner) / (outer - inner), 0.5);
+    }
+    return g;
+  }, []);
   return (
     <group position={pos.toArray()} rotation={[0.45, 0, 0.28]}>
-      {([
-        [0.48, 0.63, 0.60],
-        [0.67, 0.80, 0.42],
-        [0.83, 0.94, 0.26],
-      ] as [number, number, number][]).map(([inner, outer, opacity], i) => (
-        <mesh key={i} rotation={[-Math.PI / 2, 0, 0]}>
-          <ringGeometry args={[inner, outer, 128]} />
-          <meshBasicMaterial color="#d4c08a" transparent opacity={opacity} side={THREE.DoubleSide} depthWrite={false} />
-        </mesh>
-      ))}
+      <mesh geometry={geo} rotation={[-Math.PI / 2, 0, 0]}>
+        <meshBasicMaterial map={tex} transparent side={THREE.DoubleSide} depthWrite={false} opacity={0.95} />
+      </mesh>
     </group>
   );
 }
@@ -342,8 +363,11 @@ function Planet({
   const selfRotRef = useRef<THREE.Group>(null);
   const rotSpeed   = ROTATION_SPEEDS[name] ?? 0.03;
 
-  // Procedural surface texture — generated once per planet
-  const surfaceTex = useMemo(() => makePlanetTexture(name, color), [name, color]);
+  // NASA map when available; procedural fallback otherwise
+  const surfaceTex = useMemo(() => {
+    const file = TEXTURE_FILES[name];
+    return file ? loadPlanetFile(file) : makePlanetTexture(name, color);
+  }, [name, color]);
 
   // Per-planet atmospheric haze material
   const atmoMat = useMemo(() => new THREE.ShaderMaterial({

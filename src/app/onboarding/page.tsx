@@ -224,7 +224,7 @@ export default function OnboardingPage() {
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                   className="w-4 h-4 rounded-full border-2 border-t-transparent"
-                  style={{ borderColor: "#7c3aed" }}
+                  style={{ borderColor: "#7B6FD4" }}
                 />
               </div>
             )}
@@ -260,7 +260,7 @@ export default function OnboardingPage() {
                 <path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
               </svg>
               <div className="min-w-0">
-                <p className="text-[14px] font-medium truncate" style={{ color: "#c4b5fd" }}>
+                <p className="text-[14px] font-medium truncate" style={{ color: "#BFB6E8" }}>
                   {selectedLocation.city || selectedLocation.displayName.split(",")[0]}
                 </p>
                 <p className="text-[13px]" style={{ color: "#64748b" }}>
@@ -329,17 +329,17 @@ export default function OnboardingPage() {
     const SIGN_COLORS: Record<string, string> = {
       Aries:"#ef4444", Taurus:"#22c55e", Gemini:"#eab308", Cancer:"#38bdf8",
       Leo:"#f97316", Virgo:"#4ade80", Libra:"#facc15", Scorpio:"#dc2626",
-      Sagittarius:"#f59e0b", Capricorn:"#94a3b8", Aquarius:"#06b6d4", Pisces:"#8b5cf6",
+      Sagittarius:"#f59e0b", Capricorn:"#94a3b8", Aquarius:"#06b6d4", Pisces:"#7B6FD4",
     };
     const PLANET_COLORS: Record<string, string> = {
-      Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+      Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
       Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-      Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
+      Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
     };
 
     const reveals = [
       { label: "SUN", symbol: "☉", color: "#fbbf24", value: `${sun?.sign ?? "?"}`, subtext: `House ${sun?.house ?? "?"} · ${sun?.dignity ? sun.dignity.charAt(0).toUpperCase() + sun.dignity.slice(1) : "Peregrine"}`, signColor: SIGN_COLORS[sun?.sign ?? ""] ?? "#94a3b8" },
-      { label: "MOON", symbol: "☽", color: "#c4b5fd", value: `${moon?.sign ?? "?"}`, subtext: `House ${moon?.house ?? "?"} · ${moon?.dignity ? moon.dignity.charAt(0).toUpperCase() + moon.dignity.slice(1) : "Peregrine"}`, signColor: SIGN_COLORS[moon?.sign ?? ""] ?? "#94a3b8" },
+      { label: "MOON", symbol: "☽", color: "#BFB6E8", value: `${moon?.sign ?? "?"}`, subtext: `House ${moon?.house ?? "?"} · ${moon?.dignity ? moon.dignity.charAt(0).toUpperCase() + moon.dignity.slice(1) : "Peregrine"}`, signColor: SIGN_COLORS[moon?.sign ?? ""] ?? "#94a3b8" },
       { label: "RISING", symbol: "↑", color: "#06b6d4", value: `${asc?.sign ?? "?"}`, subtext: "Ascendant sign", signColor: SIGN_COLORS[asc?.sign ?? ""] ?? "#94a3b8" },
       { label: "LORD OF YEAR", symbol: PLANET_SYMBOLS[prof.lordOfYear as keyof typeof PLANET_SYMBOLS] ?? "?", color: PLANET_COLORS[prof.lordOfYear] ?? "#f59e0b", value: prof.lordOfYear, subtext: `Age ${prof.age} · H${prof.activatedHouse} activated`, signColor: PLANET_COLORS[prof.lordOfYear] ?? "#f59e0b" },
     ];
@@ -406,7 +406,7 @@ export default function OnboardingPage() {
             className="flex items-center gap-3 px-4 py-2 rounded-xl"
             style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
           >
-            <span style={{ color: revealChart.sect === "day" ? "#fbbf24" : "#c4b5fd", fontSize: "1.1rem" }}>
+            <span style={{ color: revealChart.sect === "day" ? "#fbbf24" : "#BFB6E8", fontSize: "1.1rem" }}>
               {revealChart.sect === "day" ? "☀" : "☽"}
             </span>
             <span className="text-[13px] font-medium" style={{ color: "#64748b" }}>

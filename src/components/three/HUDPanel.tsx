@@ -30,7 +30,7 @@ export function HUDPanel({ children, className = "", style, corner = false }: HU
       className={`relative ${className}`}
       style={{
         background: "rgba(2,2,20,0.75)",
-        border: "1px solid rgba(99,102,241,0.2)",
+        border: "1px solid rgba(123,111,212,0.2)",
         backdropFilter: "blur(24px)",
         WebkitBackdropFilter: "blur(24px)",
         ...style,
@@ -104,7 +104,7 @@ export function DataRow({
 }
 
 // Glowing divider
-export function HUDDivider({ color = "rgba(99,102,241,0.2)" }: { color?: string }) {
+export function HUDDivider({ color = "rgba(123,111,212,0.2)" }: { color?: string }) {
   return <div style={{ height: 1, background: color, margin: "6px 0" }} />;
 }
 

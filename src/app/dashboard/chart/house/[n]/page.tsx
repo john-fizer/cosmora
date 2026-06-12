@@ -35,16 +35,16 @@ const HOUSE_META: Record<number, HouseMeta> = {
   9:  { latinName: "Peregrinatio",     title: "House of God",       color: "#f59e0b", quadrant: "Cadent",    element: "Fire",  body: "Hips & Thighs",     keywords: ["Philosophy","Travel","Religion","Higher Education","Wisdom"],      themes: "The ninth house is the horizon of the mind — long journeys, both physical and intellectual. It governs philosophy, religion, law, foreign cultures, and the search for ultimate meaning. It shows how you expand beyond your immediate world." },
   10: { latinName: "Regnum",           title: "House of Career",    color: "#94a3b8", quadrant: "Angular",   element: "Earth", body: "Knees & Joints",    keywords: ["Career","Reputation","Authority","Achievement","Public Life"],    themes: "The tenth house is the pinnacle of the chart — your public role, career, and the legacy you build. It shows your relationship with authority and your own ambition. Often associated with the more public or authoritative parent." },
   11: { latinName: "Bonus Daemon",     title: "House of Spirit",    color: "#06b6d4", quadrant: "Succedent", element: "Air",   body: "Ankles & Calves",   keywords: ["Friends","Networks","Hopes","Community","Gifts"],                 themes: "The eleventh house is the house of the good spirit — friends, alliances, groups, and aspirations. It shows the networks you belong to, the communities that sustain you, and the long-range hopes that guide your choices." },
-  12: { latinName: "Malus Daemon",     title: "House of Undoing",   color: "#8b5cf6", quadrant: "Cadent",    element: "Water", body: "Feet & Lymphatics", keywords: ["Hidden Enemies","Isolation","Spirituality","Karma","Dreams"],     themes: "The twelfth house contains what is hidden, forgotten, or transcended. It rules self-undoing, secret enemies, institutions of confinement, karma, and the mystical dimension of experience. Planets here operate beneath the surface of ordinary consciousness." },
+  12: { latinName: "Malus Daemon",     title: "House of Undoing",   color: "#7B6FD4", quadrant: "Cadent",    element: "Water", body: "Feet & Lymphatics", keywords: ["Hidden Enemies","Isolation","Spirituality","Karma","Dreams"],     themes: "The twelfth house contains what is hidden, forgotten, or transcended. It rules self-undoing, secret enemies, institutions of confinement, karma, and the mystical dimension of experience. Planets here operate beneath the surface of ordinary consciousness." },
 };
 
-const QUADRANT_COLORS = { Angular: "#a855f7", Succedent: "#06b6d4", Cadent: "#64748b" };
+const QUADRANT_COLORS = { Angular: "#9C8AC4", Succedent: "#06b6d4", Cadent: "#64748b" };
 
 const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
-  NorthNode: "#64748b", Chiron: "#6366f1",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
+  NorthNode: "#64748b", Chiron: "#7B6FD4",
 };
 
 // ─── Oracle panel ─────────────────────────────────────────────────────────────

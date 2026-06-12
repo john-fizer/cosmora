@@ -147,9 +147,9 @@ const ASPECT_WEB_COLORS: Record<string, string> = {
   square: "#f97316", sextile: "#06b6d4", quincunx: "#94a3b8",
 };
 const PLANET_WEB_COLORS: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
 };
 
 function AspectWeb({ chart }: { chart: ChartData }) {
@@ -237,7 +237,7 @@ function AspectWeb({ chart }: { chart: ChartData }) {
               <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
             <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="rgba(99,102,241,0.04)" />
+              <stop offset="0%" stopColor="rgba(123,111,212,0.04)" />
               <stop offset="100%" stopColor="rgba(0,0,15,0)" />
             </radialGradient>
           </defs>
@@ -246,8 +246,8 @@ function AspectWeb({ chart }: { chart: ChartData }) {
           <circle cx={CX} cy={CY} r={R + 30} fill="url(#bgGrad)" />
 
           {/* Zodiac ring */}
-          <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(99,102,241,0.1)" strokeWidth={1} />
-          <circle cx={CX} cy={CY} r={R - 8} fill="none" stroke="rgba(99,102,241,0.05)" strokeWidth={0.5} />
+          <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(123,111,212,0.1)" strokeWidth={1} />
+          <circle cx={CX} cy={CY} r={R - 8} fill="none" stroke="rgba(123,111,212,0.05)" strokeWidth={0.5} />
 
           {/* 30° zodiac division ticks */}
           {Array.from({ length: 12 }, (_, i) => {
@@ -256,7 +256,7 @@ function AspectWeb({ chart }: { chart: ChartData }) {
             const iy = CY + (R - 4) * Math.sin(a);
             const ox = CX + (R + 4) * Math.cos(a);
             const oy = CY + (R + 4) * Math.sin(a);
-            return <line key={i} x1={ix} y1={iy} x2={ox} y2={oy} stroke="rgba(99,102,241,0.2)" strokeWidth={0.8} />;
+            return <line key={i} x1={ix} y1={iy} x2={ox} y2={oy} stroke="rgba(123,111,212,0.2)" strokeWidth={0.8} />;
           })}
 
           {/* Aspect lines */}
@@ -342,9 +342,9 @@ const ASPECT_COLORS_GRID: Record<string, string> = {
   square: "#f97316", sextile: "#06b6d4", quincunx: "#94a3b8",
 };
 const PLANET_COLORS_GRID: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
 };
 
 function AspectarianGrid({ chart }: { chart: ChartData }) {
@@ -528,9 +528,9 @@ function AspectarianGrid({ chart }: { chart: ChartData }) {
 // ─── Dispositor Tree ─────────────────────────────────────────────────────────
 
 const DISP_PLANET_COLORS: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
 };
 
 function buildDispositorTree(chart: ChartData) {
@@ -632,7 +632,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
           const bc = DISP_PLANET_COLORS[b] ?? "#94a3b8";
           return (
             <div key={`${a}${b}`} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[14px] font-bold"
-              style={{ background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.3)", color: "#818cf8" }}>
+              style={{ background: "rgba(123,111,212,0.1)", border: "1px solid rgba(123,111,212,0.3)", color: "#818cf8" }}>
               <span style={{ color: ac }}>{PLANET_SYMBOLS[a]}</span>
               ⇄
               <span style={{ color: bc }}>{PLANET_SYMBOLS[b]}</span>
@@ -817,10 +817,10 @@ function magColor(mag: number): string {
 }
 
 const FS_PLANET_COLORS: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
-  NorthNode: "#64748b", Chiron: "#6366f1",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
+  NorthNode: "#64748b", Chiron: "#7B6FD4",
 };
 
 function FixedStarsPanel({ chart }: { chart: ChartData }) {
@@ -1069,9 +1069,9 @@ function calcLot(asc: number, a: number, b: number): number {
 // ─── Chart Patterns ───────────────────────────────────────────────────────────
 
 const PAT_PLANET_COLORS: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6", NorthNode: "#64748b",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4", NorthNode: "#64748b",
 };
 const PAT_ASPECT_COLORS: Record<string, string> = {
   conjunction: "#a78bfa", opposition: "#ef4444", trine: "#22c55e",
@@ -1272,7 +1272,7 @@ function detectPatterns(chart: ChartData): ChartPattern[] {
           patterns.push({
             name: "Yod — Finger of God",
             glyph: "▽",
-            color: "#8b5cf6",
+            color: "#7B6FD4",
             rarity: "Rare",
             planets: [ps[i], ps[j], ps[k]],
             desc: `${ps[k]} is the apex of a fated configuration. Yods indicate a persistent calling that resists ordinary solution — ${ps[k]}'s themes recur until consciously integrated.`,
@@ -1552,7 +1552,7 @@ function ArabicLots({ chart }: { chart: ChartData }) {
                     <span className="text-[14px] font-mono" style={{ color: "#475569" }}>{lot.signDeg.toFixed(1)}°</span>
                     <span className="text-[13px]" style={{ color: lot.color }}>{lot.sigSym}</span>
                     <span className="text-[14px]" style={{ color: "#64748b" }}>{lot.sign}</span>
-                    <span className="text-[13px] px-1.5 py-0.5 rounded-md font-bold" style={{ background: "rgba(99,102,241,0.12)", color: "#818cf8" }}>H{lot.house}</span>
+                    <span className="text-[13px] px-1.5 py-0.5 rounded-md font-bold" style={{ background: "rgba(123,111,212,0.12)", color: "#818cf8" }}>H{lot.house}</span>
                   </div>
                   <AnimatePresence>
                     {selected === lot.key && (
@@ -1579,7 +1579,7 @@ function ArabicLots({ chart }: { chart: ChartData }) {
         </div>
 
         {/* Formula reference */}
-        <div className="mt-6 rounded-xl p-4" style={{ background: "rgba(4,4,28,0.5)", border: "1px solid rgba(99,102,241,0.1)" }}>
+        <div className="mt-6 rounded-xl p-4" style={{ background: "rgba(4,4,28,0.5)", border: "1px solid rgba(123,111,212,0.1)" }}>
           <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>FORMULAE ({isDay ? "DAY SECT" : "NIGHT SECT"})</p>
           <div className="grid grid-cols-2 gap-x-6 gap-y-1">
             {[
@@ -1601,11 +1601,11 @@ function ArabicLots({ chart }: { chart: ChartData }) {
       </div>
 
       {/* Right: Zodiac ring mini-map */}
-      <div className="flex-shrink-0 flex flex-col items-center justify-center w-72 border-l" style={{ borderColor: "rgba(99,102,241,0.1)" }}>
+      <div className="flex-shrink-0 flex flex-col items-center justify-center w-72 border-l" style={{ borderColor: "rgba(123,111,212,0.1)" }}>
         <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "#334155" }}>LOT POSITIONS</p>
         <svg width={260} height={260} viewBox="0 0 260 260">
           {/* Zodiac ring */}
-          <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(99,102,241,0.12)" strokeWidth={1} />
+          <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(123,111,212,0.12)" strokeWidth={1} />
           {/* 30° division ticks */}
           {Array.from({ length: 12 }, (_, i) => {
             const a = (i / 12) * 2 * Math.PI - Math.PI / 2;
@@ -1614,12 +1614,12 @@ function ArabicLots({ chart }: { chart: ChartData }) {
                 <line
                   x1={CX + (R - 5) * Math.cos(a)} y1={CY + (R - 5) * Math.sin(a)}
                   x2={CX + (R + 5) * Math.cos(a)} y2={CY + (R + 5) * Math.sin(a)}
-                  stroke="rgba(99,102,241,0.2)" strokeWidth={0.8}
+                  stroke="rgba(123,111,212,0.2)" strokeWidth={0.8}
                 />
                 <text
                   x={CX + (R + 16) * Math.cos(a)} y={CY + (R + 16) * Math.sin(a)}
                   textAnchor="middle" dominantBaseline="middle"
-                  fontSize={7} fill="rgba(99,102,241,0.4)"
+                  fontSize={7} fill="rgba(123,111,212,0.4)"
                 >
                   {SIGN_SYMBOLS[ZODIAC_SIGNS[i]] ?? ""}
                 </text>
@@ -1670,7 +1670,7 @@ function ArabicLots({ chart }: { chart: ChartData }) {
               <text x={CX} y={CY + 22} textAnchor="middle" fontSize={7} fill="#475569">{selectedLot.sign} H{selectedLot.house}</text>
             </>
           ) : (
-            <text x={CX} y={CY} textAnchor="middle" dominantBaseline="middle" fontSize={7} fill="rgba(99,102,241,0.2)">CLICK TO EXPLORE</text>
+            <text x={CX} y={CY} textAnchor="middle" dominantBaseline="middle" fontSize={7} fill="rgba(123,111,212,0.2)">CLICK TO EXPLORE</text>
           )}
         </svg>
       </div>
@@ -1766,7 +1766,7 @@ export default function ChartPage() {
     return (
       <div className="h-screen flex overflow-hidden">
         <DashboardBg />
-        <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "5%", background: "rgba(124,58,237,0.07)", filter: "blur(100px)" }} />
+        <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "5%", background: "rgba(123,111,212,0.07)", filter: "blur(100px)" }} />
         <div className="flex-1 flex flex-col items-center justify-center gap-6 md:ml-[68px] mb-[60px] md:mb-0 px-6">
           <motion.div
             animate={{ scale: [1, 1.06, 1], opacity: [0.75, 1, 0.75] }}
@@ -1774,9 +1774,9 @@ export default function ChartPage() {
             className="w-18 h-18 rounded-2xl flex items-center justify-center"
             style={{
               width: 72, height: 72,
-              background: "linear-gradient(135deg, rgba(124,58,237,0.22), rgba(6,182,212,0.14))",
-              border: "1px solid rgba(124,58,237,0.35)",
-              boxShadow: "0 0 48px rgba(124,58,237,0.18)",
+              background: "linear-gradient(135deg, rgba(123,111,212,0.22), rgba(6,182,212,0.14))",
+              border: "1px solid rgba(123,111,212,0.35)",
+              boxShadow: "0 0 48px rgba(123,111,212,0.18)",
             }}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="1.4" style={{ width: 36, height: 36 }}>
@@ -1796,10 +1796,10 @@ export default function ChartPage() {
           </div>
           <Link href="/onboarding">
             <motion.button
-              whileHover={{ scale: 1.04, boxShadow: "0 0 32px rgba(124,58,237,0.45)" }}
+              whileHover={{ scale: 1.04, boxShadow: "0 0 32px rgba(123,111,212,0.45)" }}
               whileTap={{ scale: 0.96 }}
               className="px-7 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
+              style={{ background: "linear-gradient(135deg, #7B6FD4, #7B6FD4)", color: "white", border: "1px solid rgba(123,111,212,0.4)" }}
             >
               Begin Your Chart →
             </motion.button>
@@ -1814,7 +1814,7 @@ export default function ChartPage() {
       <DashboardBg />
 
       {/* Ambient orbs */}
-      <div className="nebula-orb" style={{ width:500, height:500, left:"25%", top:"5%", background:"rgba(124,58,237,0.07)", filter:"blur(100px)" }} />
+      <div className="nebula-orb" style={{ width:500, height:500, left:"25%", top:"5%", background:"rgba(123,111,212,0.07)", filter:"blur(100px)" }} />
       <div className="nebula-orb" style={{ width:400, height:400, right:"5%", bottom:"10%", background:"rgba(6,182,212,0.05)", filter:"blur(80px)" }} />
 
 
@@ -1825,7 +1825,7 @@ export default function ChartPage() {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className="flex-shrink-0 flex items-center justify-between px-6 py-3"
-          style={{ borderBottom: "1px solid rgba(99,102,241,0.1)", background: "rgba(2,2,18,0.7)", backdropFilter: "blur(20px)" }}
+          style={{ borderBottom: "1px solid rgba(123,111,212,0.1)", background: "rgba(2,2,18,0.7)", backdropFilter: "blur(20px)" }}
         >
           <div className="flex items-center gap-3">
             <Link href="/dashboard">
@@ -1860,9 +1860,9 @@ export default function ChartPage() {
                 onClick={() => setActiveTab(tab.id)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-bold tracking-wide cursor-pointer transition-all duration-200"
                 style={{
-                  background: activeTab === tab.id ? "rgba(124,58,237,0.25)" : "rgba(255,255,255,0.03)",
-                  border: activeTab === tab.id ? "1px solid rgba(124,58,237,0.4)" : "1px solid rgba(255,255,255,0.06)",
-                  color: activeTab === tab.id ? "#c4b5fd" : "#64748b",
+                  background: activeTab === tab.id ? "rgba(123,111,212,0.25)" : "rgba(255,255,255,0.03)",
+                  border: activeTab === tab.id ? "1px solid rgba(123,111,212,0.4)" : "1px solid rgba(255,255,255,0.06)",
+                  color: activeTab === tab.id ? "#BFB6E8" : "#64748b",
                 }}
               >
                 {tab.icon}
@@ -1943,7 +1943,7 @@ export default function ChartPage() {
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
               className="w-16 h-16 rounded-full border-2 border-t-transparent"
-              style={{ borderColor: "#7c3aed" }}
+              style={{ borderColor: "#7B6FD4" }}
             />
             <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>LOADING CHART DATA</p>
           </div>
@@ -1953,7 +1953,7 @@ export default function ChartPage() {
               <p className="text-[14px]" style={{ color: "#64748b" }}>Chart not found.</p>
               <Link href="/onboarding">
                 <button className="px-4 py-2 rounded-xl text-[13px] font-bold cursor-pointer"
-                  style={{ background: "rgba(124,58,237,0.2)", color: "#a78bfa", border: "1px solid rgba(124,58,237,0.3)" }}>
+                  style={{ background: "rgba(123,111,212,0.2)", color: "#a78bfa", border: "1px solid rgba(123,111,212,0.3)" }}>
                   Create Profile
                 </button>
               </Link>
@@ -1984,7 +1984,7 @@ export default function ChartPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.5 }}
                     className="absolute bottom-5 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-[14px] font-bold tracking-widest"
-                    style={{ background: "rgba(4,4,28,0.75)", border: "1px solid rgba(99,102,241,0.2)", color: "#475569", backdropFilter: "blur(12px)", pointerEvents: "none", whiteSpace: "nowrap" }}
+                    style={{ background: "rgba(4,4,28,0.75)", border: "1px solid rgba(123,111,212,0.2)", color: "#475569", backdropFilter: "blur(12px)", pointerEvents: "none", whiteSpace: "nowrap" }}
                   >
                     DRAG TO ORBIT · SCROLL TO ZOOM · CLICK PLANET TO EXPLORE
                   </motion.div>
@@ -2003,7 +2003,7 @@ export default function ChartPage() {
                   transition={{ duration: 0.3 }}
                   className="flex items-center justify-center overflow-visible relative"
                   style={{
-                    borderRight: splitView && activeTab !== "WHEEL" ? "1px solid rgba(99,102,241,0.15)" : "none",
+                    borderRight: splitView && activeTab !== "WHEEL" ? "1px solid rgba(123,111,212,0.15)" : "none",
                   }}
                 >
                   {recalculating ? (
@@ -2012,7 +2012,7 @@ export default function ChartPage() {
                         animate={{ rotate: 360 }}
                         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                         className="w-12 h-12 rounded-full border-2 border-t-transparent"
-                        style={{ borderColor: "#7c3aed" }}
+                        style={{ borderColor: "#7B6FD4" }}
                       />
                       <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>RECALCULATING</p>
                     </div>
@@ -2043,7 +2043,7 @@ export default function ChartPage() {
                           className="absolute bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-2xl"
                           style={{
                             background: "rgba(4,4,32,0.95)",
-                            border: "1px solid rgba(124,58,237,0.3)",
+                            border: "1px solid rgba(123,111,212,0.3)",
                             backdropFilter: "blur(20px)",
                             minWidth: 260,
                           }}
@@ -2063,7 +2063,7 @@ export default function ChartPage() {
                             ].map(item => (
                               <div key={item.label}>
                                 <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>{item.label}</p>
-                                <p className="text-[13px] font-semibold capitalize" style={{ color: "#c4b5fd" }}>{item.value}</p>
+                                <p className="text-[13px] font-semibold capitalize" style={{ color: "#BFB6E8" }}>{item.value}</p>
                               </div>
                             ))}
                           </div>

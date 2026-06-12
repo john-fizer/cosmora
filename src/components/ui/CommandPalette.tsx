@@ -97,7 +97,7 @@ const PAGE_COMMANDS: Command[] = [
     description: "AI astrology Q&A",
     icon: "◬",
     category: "Navigate",
-    color: "#8b5cf6",
+    color: "#7B6FD4",
     action: (r) => r.push("/dashboard/oracle"),
     keywords: ["oracle", "ai", "chat", "ask", "question"],
   },
@@ -127,7 +127,7 @@ const PAGE_COMMANDS: Command[] = [
     description: "AI-generated 8-chapter natal chart interpretation",
     icon: "✦",
     category: "Navigate",
-    color: "#c4b5fd",
+    color: "#BFB6E8",
     action: (r) => r.push("/dashboard/report"),
     keywords: ["report", "natal report", "interpretation", "reading", "chapters", "generate"],
   },
@@ -150,7 +150,7 @@ const ACTION_COMMANDS: Command[] = [
     description: "Open AI oracle chat",
     icon: "✶",
     category: "Actions",
-    color: "#a855f7",
+    color: "#9C8AC4",
     action: (r) => r.push("/dashboard/oracle"),
     keywords: ["ask", "oracle", "ai", "question", "reading"],
   },
@@ -186,7 +186,7 @@ const HOUSE_COMMANDS: Command[] = Array.from({ length: 12 }, (_, i) => {
     description: HOUSE_THEMES[i],
     icon: `${n}`,
     category: "Navigate" as const,
-    color: "#6366f1",
+    color: "#7B6FD4",
     action: (_r, warpTo) => warpTo(`/dashboard/chart/house/${n}`),
     keywords: ["house", `house ${n}`, `h${n}`, HOUSE_THEMES[i].toLowerCase()],
   };
@@ -368,9 +368,9 @@ export function CommandPalette() {
               width: "min(640px, calc(100vw - 32px))",
               zIndex: 901,
               background: "rgba(4, 4, 24, 0.96)",
-              border: "1px solid rgba(124,58,237,0.32)",
+              border: "1px solid rgba(123,111,212,0.32)",
               borderRadius: 18,
-              boxShadow: "0 0 0 1px rgba(6,182,212,0.08), 0 32px 80px rgba(0,0,0,0.7), 0 0 60px rgba(124,58,237,0.12)",
+              boxShadow: "0 0 0 1px rgba(6,182,212,0.08), 0 32px 80px rgba(0,0,0,0.7), 0 0 60px rgba(123,111,212,0.12)",
               overflow: "hidden",
             }}
           >
@@ -454,7 +454,7 @@ export function CommandPalette() {
                           style={{
                             display: "flex", alignItems: "center", gap: 14,
                             padding: "9px 18px", cursor: "pointer",
-                            background: isSelected ? "rgba(124,58,237,0.15)" : "transparent",
+                            background: isSelected ? "rgba(123,111,212,0.15)" : "transparent",
                             borderLeft: isSelected ? `2px solid ${cmd.color ?? "#a78bfa"}` : "2px solid transparent",
                             transition: "background 0.12s",
                           }}

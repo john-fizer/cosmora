@@ -62,7 +62,7 @@ function buildSectionDefs(chart: ChartData): SectionDef[] {
       id: "emotion",
       label: "EMOTIONAL ARCHITECTURE",
       subtitle: "Moon",
-      color: "#c4b5fd",
+      color: "#BFB6E8",
       glyph: "☽",
       prompt: `${BASE}\n\nSection: EMOTIONAL ARCHITECTURE. Moon in ${moon?.sign} (House ${moon?.house}${moon?.dignity ? `, ${moon.dignity}` : ""}${moon?.retrograde ? ", Rx" : ""}). Describe the emotional world — instinctive responses, what nourishes and destabilizes this person, their relationship to memory and early home, and what they need to feel safe.`,
     },
@@ -372,7 +372,7 @@ function ReportLanding({
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         className="w-24 h-24 rounded-3xl flex items-center justify-center text-4xl"
         style={{
-          background: "linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.2))",
+          background: "linear-gradient(135deg, rgba(123,111,212,0.2), rgba(6,182,212,0.2))",
           border: "1px solid rgba(168,85,247,0.3)",
         }}
       >
@@ -394,7 +394,7 @@ function ReportLanding({
         <div className="flex flex-wrap items-center justify-center gap-3">
           {[
             { label: "SUN", value: `${sun?.sign}`, color: "#fbbf24", glyph: "☉" },
-            { label: "MOON", value: `${moon?.sign}`, color: "#c4b5fd", glyph: "☽" },
+            { label: "MOON", value: `${moon?.sign}`, color: "#BFB6E8", glyph: "☽" },
             { label: "RISING", value: `${asc?.sign}`, color: "#06b6d4", glyph: "ASC" },
           ].map(item => (
             <div
@@ -419,7 +419,7 @@ function ReportLanding({
       <div className="grid grid-cols-2 gap-2 max-w-sm w-full">
         {[
           { label: "Cosmic Identity", color: "#fbbf24" },
-          { label: "Emotional Architecture", color: "#c4b5fd" },
+          { label: "Emotional Architecture", color: "#BFB6E8" },
           { label: "Mental Matrix", color: "#a78bfa" },
           { label: "Relational Gravity", color: "#f472b6" },
           { label: "Warrior Code", color: "#ef4444" },
@@ -457,10 +457,10 @@ function ReportLanding({
           onClick={onGenerate}
           className="px-10 py-4 rounded-2xl text-[14px] font-bold tracking-widest cursor-pointer"
           style={{
-            background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(6,182,212,0.3))",
+            background: "linear-gradient(135deg, rgba(123,111,212,0.3), rgba(6,182,212,0.3))",
             border: "1px solid rgba(168,85,247,0.4)",
-            color: "#c4b5fd",
-            boxShadow: "0 0 30px rgba(124,58,237,0.15)",
+            color: "#BFB6E8",
+            boxShadow: "0 0 30px rgba(123,111,212,0.15)",
           }}
         >
           ✦ GENERATE NATAL REPORT
@@ -600,7 +600,7 @@ export default function ReportPage() {
                     animate={{ width: `${progressPct}%` }}
                     transition={{ duration: 0.4 }}
                     className="absolute left-0 top-0 h-full rounded-full"
-                    style={{ background: "linear-gradient(90deg, #7c3aed, #06b6d4)" }}
+                    style={{ background: "linear-gradient(90deg, #7B6FD4, #06b6d4)" }}
                   />
                 </div>
                 <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>
@@ -619,7 +619,7 @@ export default function ReportPage() {
                 style={{
                   background: copied ? "rgba(34,197,94,0.12)" : "rgba(168,85,247,0.12)",
                   border: `1px solid ${copied ? "rgba(34,197,94,0.3)" : "rgba(168,85,247,0.25)"}`,
-                  color: copied ? "#4ade80" : "#c4b5fd",
+                  color: copied ? "#4ade80" : "#BFB6E8",
                 }}
               >
                 {copied ? (
@@ -719,7 +719,7 @@ export default function ReportPage() {
                     style={{
                       background: "rgba(168,85,247,0.1)",
                       border: "1px solid rgba(168,85,247,0.2)",
-                      color: "#c4b5fd",
+                      color: "#BFB6E8",
                     }}
                   >
                     {copied ? "✓ COPIED" : "COPY REPORT"}
@@ -835,7 +835,7 @@ export default function ReportPage() {
                           style={{
                             background: "rgba(168,85,247,0.12)",
                             border: "1px solid rgba(168,85,247,0.25)",
-                            color: "#c4b5fd",
+                            color: "#BFB6E8",
                           }}
                         >
                           {copied ? "✓ Copied" : "Copy Report"}

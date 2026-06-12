@@ -28,11 +28,11 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
       <motion.div
         initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}
         className="glass-card rounded-2xl p-3 flex items-center gap-3"
-        style={{ border: "1px solid rgba(99,102,241,0.15)" }}
+        style={{ border: "1px solid rgba(123,111,212,0.15)" }}
       >
         <div
           className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ background:"linear-gradient(135deg, #7c3aed, #a855f7)", boxShadow:"0 0 15px rgba(124,58,237,0.5)" }}
+          style={{ background:"linear-gradient(135deg, #7B6FD4, #9C8AC4)", boxShadow:"0 0 15px rgba(123,111,212,0.5)" }}
         >
           <span className="text-[14px] font-bold text-white">
             {profileName ? profileName[0].toUpperCase() : "?"}
@@ -52,16 +52,16 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
       <motion.div
         initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}
         className="glass-card rounded-2xl p-4"
-        style={{ border: "1px solid rgba(99,102,241,0.15)" }}
+        style={{ border: "1px solid rgba(123,111,212,0.15)" }}
       >
         <div className="flex items-center justify-between mb-2">
           <span className="text-[13px] font-bold tracking-widest" style={{ color: "#94a3b8" }}>AI COSMIC INSIGHT</span>
           <span className="text-[13px] px-2 py-0.5 rounded-full" style={{
-            background:"rgba(124,58,237,0.2)", color:"#a78bfa", border:"1px solid rgba(124,58,237,0.3)"
+            background:"rgba(123,111,212,0.2)", color:"#a78bfa", border:"1px solid rgba(123,111,212,0.3)"
           }}>BETA</span>
         </div>
         {prof && (
-          <h4 className="text-[14px] font-bold mb-2 tracking-wide" style={{ color: "#c4b5fd" }}>
+          <h4 className="text-[14px] font-bold mb-2 tracking-wide" style={{ color: "#BFB6E8" }}>
             AGE {prof.age} · HOUSE {prof.activatedHouse} · {prof.activatedSign.toUpperCase()}
           </h4>
         )}
@@ -75,12 +75,12 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
         </motion.p>
         <div className="flex gap-2">
           <motion.button
-            whileHover={{ scale: 1.02, boxShadow:"0 0 20px rgba(124,58,237,0.4)" }}
+            whileHover={{ scale: 1.02, boxShadow:"0 0 20px rgba(123,111,212,0.4)" }}
             whileTap={{ scale: 0.98 }}
             className="flex-1 py-2 rounded-xl text-[13px] font-semibold tracking-wider cursor-pointer"
             style={{
-              background:"linear-gradient(135deg, rgba(124,58,237,0.4), rgba(99,102,241,0.3))",
-              border:"1px solid rgba(124,58,237,0.4)", color:"#c4b5fd"
+              background:"linear-gradient(135deg, rgba(123,111,212,0.4), rgba(123,111,212,0.3))",
+              border:"1px solid rgba(123,111,212,0.4)", color:"#BFB6E8"
             }}
           >
             ASK COSMORA
@@ -133,13 +133,13 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
         <motion.div
           initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}
           className="glass-card rounded-2xl p-4"
-          style={{ border: "1px solid rgba(99,102,241,0.15)" }}
+          style={{ border: "1px solid rgba(123,111,212,0.15)" }}
         >
           <h3 className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>KEY ASPECTS</h3>
           <div className="space-y-2">
             {chart.aspects.slice(0, 5).map((a, i) => {
               const typeColors: Record<string, string> = {
-                conjunction: "#a855f7", trine: "#22c55e", sextile: "#06b6d4",
+                conjunction: "#9C8AC4", trine: "#22c55e", sextile: "#06b6d4",
                 square: "#f59e0b", opposition: "#ef4444", quincunx: "#94a3b8",
               };
               return (
@@ -148,14 +148,14 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
                   initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 + i * 0.05 }}
                   className="flex items-center gap-2"
                 >
-                  <span className="text-[14px] font-medium" style={{ color: "#c4b5fd" }}>
+                  <span className="text-[14px] font-medium" style={{ color: "#BFB6E8" }}>
                     {PLANET_SYMBOLS[a.planet1]} {a.planet1}
                   </span>
                   <span className="text-[13px] px-1.5 py-0.5 rounded font-bold tracking-wider"
                     style={{ background:`${typeColors[a.type]}20`, color: typeColors[a.type], border:`1px solid ${typeColors[a.type]}30` }}>
                     {a.type.slice(0, 3).toUpperCase()}
                   </span>
-                  <span className="text-[14px] font-medium" style={{ color: "#c4b5fd" }}>
+                  <span className="text-[14px] font-medium" style={{ color: "#BFB6E8" }}>
                     {PLANET_SYMBOLS[a.planet2]} {a.planet2}
                   </span>
                   <span className="text-[13px] ml-auto" style={{ color:"#475569" }}>{a.orb.toFixed(1)}°</span>
@@ -171,7 +171,7 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
         <motion.div
           initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.35 }}
           className="glass-card rounded-2xl p-4"
-          style={{ border: "1px solid rgba(99,102,241,0.15)" }}
+          style={{ border: "1px solid rgba(123,111,212,0.15)" }}
         >
           <h3 className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#94a3b8" }}>ARABIC LOTS</h3>
           {[
@@ -184,7 +184,7 @@ export function InsightPanel({ chart, profileName }: InsightPanelProps) {
             return (
               <div key={l.label} className="flex items-center justify-between py-1">
                 <span className="text-[14px]" style={{ color: "#94a3b8" }}>{l.label}</span>
-                <span className="text-[14px] font-bold" style={{ color: "#c4b5fd" }}>{deg}° {sign}</span>
+                <span className="text-[14px] font-bold" style={{ color: "#BFB6E8" }}>{deg}° {sign}</span>
               </div>
             );
           })}

@@ -5,7 +5,7 @@ import type { ChartData, PlanetName } from "@/lib/astrology/types";
 import { PLANET_SYMBOLS } from "@/lib/astrology/types";
 
 const ASPECT_CONFIG = {
-  conjunction: { symbol: "☌", color: "#a855f7", label: "Conjunction", meaning: "Merger of energies — intense, unified" },
+  conjunction: { symbol: "☌", color: "#9C8AC4", label: "Conjunction", meaning: "Merger of energies — intense, unified" },
   opposition:  { symbol: "☍", color: "#ef4444", label: "Opposition",  meaning: "Tension across the axis — awareness through conflict" },
   trine:       { symbol: "△", color: "#22c55e", label: "Trine",       meaning: "Flowing harmony — natural talent and ease" },
   square:      { symbol: "□", color: "#f59e0b", label: "Square",      meaning: "Dynamic tension — growth through friction" },
@@ -16,7 +16,7 @@ const ASPECT_CONFIG = {
 const PLANET_COLORS: Record<PlanetName, string> = {
   Sun:"#fbbf24", Moon:"#94a3b8", Mercury:"#a78bfa", Venus:"#f472b6",
   Mars:"#ef4444", Jupiter:"#f59e0b", Saturn:"#6b7280", Uranus:"#06b6d4",
-  Neptune:"#3b82f6", Pluto:"#8b5cf6", NorthNode:"#64748b", Chiron:"#6366f1",
+  Neptune:"#3b82f6", Pluto:"#7B6FD4", NorthNode:"#64748b", Chiron:"#7B6FD4",
 };
 
 type AspectType = keyof typeof ASPECT_CONFIG;
@@ -50,7 +50,7 @@ export function AspectsTable({ chart, selectedPlanet }: AspectsTableProps) {
         ))}
         {selectedPlanet && (
           <span className="ml-auto text-[13px] px-2 py-1 rounded-lg"
-            style={{ background: "rgba(124,58,237,0.15)", color: "#a78bfa", border: "1px solid rgba(124,58,237,0.3)" }}>
+            style={{ background: "rgba(123,111,212,0.15)", color: "#a78bfa", border: "1px solid rgba(123,111,212,0.3)" }}>
             Filtering: {selectedPlanet}
           </span>
         )}

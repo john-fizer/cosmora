@@ -8,7 +8,7 @@ import { SignGlyph, PlanetGlyph } from "@/components/ui/AstroGlyph";
 const PLANET_COLORS: Record<PlanetName, string> = {
   Sun: "#fbbf24", Moon: "#94a3b8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#6b7280", Uranus: "#06b6d4",
-  Neptune: "#3b82f6", Pluto: "#8b5cf6", NorthNode: "#64748b", Chiron: "#6366f1",
+  Neptune: "#3b82f6", Pluto: "#7B6FD4", NorthNode: "#64748b", Chiron: "#7B6FD4",
 };
 
 const DIGNITY_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
@@ -114,7 +114,7 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
                   )}
                   {mutualReceptions.has(p.name) && (
                     <span className="ml-1 text-[13px] font-bold px-1 py-0.5 rounded" title="Mutual Reception"
-                      style={{ background: "rgba(99,102,241,0.15)", color: "#818cf8" }}>⇄</span>
+                      style={{ background: "rgba(123,111,212,0.15)", color: "#818cf8" }}>⇄</span>
                   )}
                 </div>
               </div>
@@ -137,9 +137,9 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
                 <span
                   className="text-[13px] font-bold px-2 py-0.5 rounded-lg"
                   style={{
-                    background: "rgba(99,102,241,0.15)",
+                    background: "rgba(123,111,212,0.15)",
                     color: "#818cf8",
-                    border: "1px solid rgba(99,102,241,0.2)",
+                    border: "1px solid rgba(123,111,212,0.2)",
                   }}
                 >
                   {p.house}
@@ -188,7 +188,7 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
         </div>
         {[
           { label: "Lot of Fortune", lon: chart.lotOfFortune, color: "#f59e0b", symbol: "⊕" },
-          { label: "Lot of Spirit",  lon: chart.lotOfSpirit,  color: "#a855f7", symbol: "⊗" },
+          { label: "Lot of Spirit",  lon: chart.lotOfSpirit,  color: "#9C8AC4", symbol: "⊗" },
         ].map((lot, i) => {
           const signIdx = Math.floor(lot.lon / 30);
           const signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
@@ -226,7 +226,7 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
               </div>
               <div className="flex items-center">
                 <span className="text-[13px] font-bold px-2 py-0.5 rounded-lg"
-                  style={{ background:"rgba(99,102,241,0.15)", color:"#818cf8" }}>
+                  style={{ background:"rgba(123,111,212,0.15)", color:"#818cf8" }}>
                   {houseIdx + 1}
                 </span>
               </div>

@@ -89,7 +89,7 @@ function Sphere({ mouseRef }: { mouseRef: React.MutableRefObject<[number, number
       uniforms: {
         u_time:  { value: 0 },
         u_mouse: { value: new THREE.Vector2(0, 0) },
-        u_col1:  { value: new THREE.Color("#7c3aed") },
+        u_col1:  { value: new THREE.Color("#7B6FD4") },
         u_col2:  { value: new THREE.Color("#06b6d4") },
       },
       transparent: true,
@@ -143,7 +143,7 @@ export function ParticlesSphere({ size = 420, className }: { size?: number; clas
         }}
       >
         <ambientLight intensity={0.2} />
-        <pointLight position={[2, 2, 2]} intensity={1.6} color="#a855f7" />
+        <pointLight position={[2, 2, 2]} intensity={1.6} color="#9C8AC4" />
         <pointLight position={[-2, -1, 1]} intensity={0.9} color="#06b6d4" />
         <Sphere mouseRef={mouseRef} />
       </Canvas>

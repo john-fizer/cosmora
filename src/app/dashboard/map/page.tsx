@@ -127,9 +127,9 @@ function EyeIcon({ visible }: { visible: boolean }) {
   return (
     <svg width="15" height="11" viewBox="0 0 15 11" fill="none" style={{ flexShrink: 0 }}>
       <path d="M7.5 1C4 1 1 5.5 1 5.5s3 4.5 6.5 4.5 6.5-4.5 6.5-4.5S11 1 7.5 1z"
-        stroke={visible ? "#32D5FF" : "#334466"} strokeWidth="0.9" />
+        stroke={visible ? "#C8A55B" : "#334466"} strokeWidth="0.9" />
       {visible
-        ? <circle cx="7.5" cy="5.5" r="1.8" fill="#32D5FF" />
+        ? <circle cx="7.5" cy="5.5" r="1.8" fill="#C8A55B" />
         : <line x1="1" y1="1" x2="14" y2="10" stroke="#334466" strokeWidth="1" strokeLinecap="round" />
       }
     </svg>
@@ -186,7 +186,7 @@ function LocationPanel({ lat, lon, scores, onClose }: {
       <div className="flex items-center justify-between flex-shrink-0"
         style={{ padding: "12px 16px", borderBottom: "1px solid rgba(50,80,160,0.2)" }}>
         <div>
-          <span style={{ color: "#32D5FF", fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace" }}>
+          <span style={{ color: "#C8A55B", fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace" }}>
             LOCATION ANALYSIS
           </span>
           <p style={{ color: "#556688", fontSize: 11, fontFamily: "'Fragment Mono', monospace", marginTop: 2 }}>
@@ -222,7 +222,7 @@ function LocationPanel({ lat, lon, scores, onClose }: {
             {reading}
             {streaming && (
               <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.7, repeat: Infinity }}
-                style={{ display: "inline-block", width: 6, height: 12, background: "#32D5FF", borderRadius: 1, marginLeft: 3, verticalAlign: "middle" }} />
+                style={{ display: "inline-block", width: 6, height: 12, background: "#C8A55B", borderRadius: 1, marginLeft: 3, verticalAlign: "middle" }} />
             )}
           </div>
         ) : (
@@ -588,7 +588,7 @@ export default function AstrocartographyPage() {
         <div className="text-center">
           <motion.div
             animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            style={{ width: 56, height: 56, border: "1px solid #1A3A8A", borderTopColor: "#32D5FF", borderRadius: "50%", margin: "0 auto 14px" }}
+            style={{ width: 56, height: 56, border: "1px solid #1A3A8A", borderTopColor: "#C8A55B", borderRadius: "50%", margin: "0 auto 14px" }}
           />
           <p style={{ color: "#445577", fontSize: 11, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace" }}>
             CALCULATING ENERGY FIELDS
@@ -696,7 +696,7 @@ export default function AstrocartographyPage() {
           style={{
             padding: "3px 10px", flexShrink: 0,
             background: "rgba(50,213,255,0.06)", border: "1px solid rgba(50,213,255,0.2)",
-            borderRadius: 20, color: "#32D5FF", fontSize: 8,
+            borderRadius: 20, color: "#C8A55B", fontSize: 8,
             letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
           }}
         >
@@ -717,7 +717,7 @@ export default function AstrocartographyPage() {
           backdropFilter: "blur(20px)", zIndex: 10,
         }}
       >
-        <p style={{ color: "#32D5FF", fontSize: 7.5, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 8 }}>
+        <p style={{ color: "#C8A55B", fontSize: 7.5, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 8 }}>
           YOUR BIRTH DATA
         </p>
         <div className="flex flex-col gap-1">
@@ -749,7 +749,7 @@ export default function AstrocartographyPage() {
           backdropFilter: "blur(20px)", zIndex: 10,
         }}
       >
-        <p style={{ color: "#32D5FF", fontSize: 7.5, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>
+        <p style={{ color: "#C8A55B", fontSize: 7.5, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>
           MAP CONTROLS
         </p>
         <div className="flex flex-col gap-2">
@@ -778,7 +778,7 @@ export default function AstrocartographyPage() {
             marginTop: 10, width: "100%", padding: "5px 0",
             background: "rgba(50,213,255,0.06)",
             border: "1px solid rgba(50,213,255,0.2)",
-            borderRadius: 7, color: "#32D5FF",
+            borderRadius: 7, color: "#C8A55B",
             fontSize: 8, letterSpacing: "0.12em",
             fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
           }}
@@ -800,7 +800,7 @@ export default function AstrocartographyPage() {
           backdropFilter: "blur(20px)", zIndex: 10,
         }}
       >
-        <p style={{ color: "#32D5FF", fontSize: 7.5, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 8, textAlign: "center" }}>
+        <p style={{ color: "#C8A55B", fontSize: 7.5, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 8, textAlign: "center" }}>
           ENERGY INTENSITY
         </p>
         <div style={{ position: "relative", width: 90, height: 90, margin: "0 auto" }}>
@@ -840,7 +840,7 @@ export default function AstrocartographyPage() {
           backdropFilter: "blur(20px)", zIndex: 10,
         }}
       >
-        <p style={{ color: "#32D5FF", fontSize: 7.5, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 8 }}>
+        <p style={{ color: "#C8A55B", fontSize: 7.5, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 8 }}>
           VIEW OPTIONS
         </p>
         <div className="flex flex-col gap-1.5">
@@ -900,7 +900,7 @@ export default function AstrocartographyPage() {
               background: viewMode === v.id ? "rgba(50,213,255,0.14)" : "transparent",
               border: viewMode === v.id ? "1px solid rgba(50,213,255,0.3)" : "1px solid transparent",
               borderRadius: 36,
-              color: viewMode === v.id ? "#32D5FF" : "#445577",
+              color: viewMode === v.id ? "#C8A55B" : "#445577",
               fontSize: 9, letterSpacing: "0.14em",
               fontFamily: "'Fragment Mono', monospace",
               cursor: "pointer", transition: "all 0.15s",
@@ -916,13 +916,13 @@ export default function AstrocartographyPage() {
             width: 22, height: 22,
             background: "rgba(50,213,255,0.08)",
             border: "1px solid rgba(50,213,255,0.2)",
-            borderRadius: "50%", color: "#32D5FF", fontSize: 9, cursor: "pointer",
+            borderRadius: "50%", color: "#C8A55B", fontSize: 9, cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>▶</button>
           <div style={{ flex: 1, position: "relative", height: 4 }}>
             <div style={{ height: "100%", background: "rgba(30,60,120,0.4)", borderRadius: 2 }} />
             <div style={{ position: "absolute", top: 0, left: 0, width: "50%", height: "100%", background: "rgba(50,213,255,0.5)", borderRadius: 2 }} />
-            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 10, height: 10, background: "#32D5FF", borderRadius: "50%", boxShadow: "0 0 8px #32D5FF" }} />
+            <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 10, height: 10, background: "#C8A55B", borderRadius: "50%", boxShadow: "0 0 8px #C8A55B" }} />
           </div>
           <span style={{ color: "#8899BB", fontSize: 9, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.06em", whiteSpace: "nowrap" }}>
             {birthDisplay.date} · {birthDisplay.time}
@@ -931,7 +931,7 @@ export default function AstrocartographyPage() {
             width: 22, height: 22,
             background: "rgba(50,213,255,0.06)",
             border: "1px solid rgba(50,213,255,0.15)",
-            borderRadius: "50%", color: "#32D5FF", fontSize: 13, cursor: "pointer",
+            borderRadius: "50%", color: "#C8A55B", fontSize: 13, cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>+</button>
         </div>
@@ -982,7 +982,7 @@ export default function AstrocartographyPage() {
             <div style={{ padding: "10px 14px", borderBottom: "1px solid rgba(30,60,100,0.3)", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <span style={{ color: "#7B61FF", fontSize: 13 }}>✦</span>
-                <span style={{ color: "#32D5FF", fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace" }}>MAP ORACLE</span>
+                <span style={{ color: "#C8A55B", fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace" }}>MAP ORACLE</span>
               </div>
               <button onClick={() => setShowOracle(false)} style={{ color: "#4455AA", fontSize: 13, background: "none", border: "none", cursor: "pointer" }}>✕</button>
             </div>

@@ -475,7 +475,7 @@ function BirthPulseRings({ lat, lon }: { lat: number; lon: number }) {
         {[0, 1, 2].map(i => (
           <mesh key={i}>
             <ringGeometry args={[0.04, 0.058, 48]} />
-            <meshBasicMaterial color="#c4b5fd" transparent opacity={0} depthWrite={false} side={THREE.DoubleSide} />
+            <meshBasicMaterial color="#BFB6E8" transparent opacity={0} depthWrite={false} side={THREE.DoubleSide} />
           </mesh>
         ))}
       </group>
@@ -486,7 +486,7 @@ function BirthPulseRings({ lat, lon }: { lat: number; lon: number }) {
       </mesh>
       <Html center distanceFactor={7} zIndexRange={[5, 0]}>
         <div style={{
-          pointerEvents: "none", color: "#c4b5fd", fontSize: 7,
+          pointerEvents: "none", color: "#BFB6E8", fontSize: 7,
           fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
           opacity: 0.75, textAlign: "center", whiteSpace: "nowrap", marginTop: 20,
         }}>

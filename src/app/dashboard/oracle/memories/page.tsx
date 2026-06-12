@@ -14,7 +14,7 @@ import type { OracleMemory, MemoryCategory } from "@/lib/storage";
 const CAT_META: Record<MemoryCategory, { label: string; color: string; icon: string }> = {
   insight:      { label: "Insight",      color: "#a78bfa", icon: "✦" },
   timing:       { label: "Timing",       color: "#f59e0b", icon: "◷" },
-  relocation:   { label: "Relocation",   color: "#32D5FF", icon: "⊕" },
+  relocation:   { label: "Relocation",   color: "#C8A55B", icon: "⊕" },
   relationship: { label: "Relationship", color: "#f472b6", icon: "♡" },
   warning:      { label: "Warning",      color: "#ef4444", icon: "⚠" },
   general:      { label: "General",      color: "#64748b", icon: "◈" },
@@ -101,7 +101,7 @@ function MemoryCard({
                 onClick={e => e.stopPropagation()}
                 style={{
                   position: "absolute", top: 38, right: 12,
-                  background: "rgba(4,4,28,0.97)", border: "1px solid rgba(124,58,237,0.2)",
+                  background: "rgba(4,4,28,0.97)", border: "1px solid rgba(123,111,212,0.2)",
                   borderRadius: 12, padding: 8, zIndex: 10, display: "flex", flexWrap: "wrap",
                   gap: 4, width: 180,
                 }}
@@ -197,7 +197,7 @@ export default function OracleMemoriesPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
           className="flex-shrink-0 flex items-center justify-between px-6 py-4"
-          style={{ borderBottom: "1px solid rgba(124,58,237,0.1)" }}
+          style={{ borderBottom: "1px solid rgba(123,111,212,0.1)" }}
         >
           <div className="flex items-center gap-3">
             <Link
@@ -207,7 +207,7 @@ export default function OracleMemoriesPage() {
               ← ORACLE
             </Link>
             <span style={{ color: "#1e293b" }}>/</span>
-            <span style={{ color: "#7c3aed", fontSize: 14, letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace" }}>
+            <span style={{ color: "#7B6FD4", fontSize: 14, letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace" }}>
               MEMORIES
             </span>
           </div>
@@ -225,7 +225,7 @@ export default function OracleMemoriesPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
             className="flex-shrink-0 flex flex-col gap-1 p-4"
-            style={{ width: 180, borderRight: "1px solid rgba(124,58,237,0.08)" }}
+            style={{ width: 180, borderRight: "1px solid rgba(123,111,212,0.08)" }}
           >
             <p className="text-[13px] tracking-[0.2em] mb-3" style={{ color: "#334155", fontFamily: "'Fragment Mono', monospace" }}>
               FILTER
@@ -234,8 +234,8 @@ export default function OracleMemoriesPage() {
               onClick={() => setFilter("all")}
               style={{
                 padding: "7px 12px", borderRadius: 10, textAlign: "left",
-                background: activeFilter === "all" ? "rgba(124,58,237,0.12)" : "transparent",
-                border: `1px solid ${activeFilter === "all" ? "rgba(124,58,237,0.3)" : "transparent"}`,
+                background: activeFilter === "all" ? "rgba(123,111,212,0.12)" : "transparent",
+                border: `1px solid ${activeFilter === "all" ? "rgba(123,111,212,0.3)" : "transparent"}`,
                 color: activeFilter === "all" ? "#a78bfa" : "#475569",
                 fontSize: 14, cursor: "pointer", display: "flex", justifyContent: "space-between",
                 fontFamily: "'Fragment Mono', monospace",
@@ -266,7 +266,7 @@ export default function OracleMemoriesPage() {
           {/* Main content */}
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Search */}
-            <div className="flex-shrink-0 px-6 py-3" style={{ borderBottom: "1px solid rgba(124,58,237,0.06)" }}>
+            <div className="flex-shrink-0 px-6 py-3" style={{ borderBottom: "1px solid rgba(123,111,212,0.06)" }}>
               <input
                 value={search}
                 onChange={e => setSearch(e.target.value)}
@@ -274,7 +274,7 @@ export default function OracleMemoriesPage() {
                 className="w-full max-w-md text-[13px] px-4 py-2 rounded-xl outline-none"
                 style={{
                   background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(124,58,237,0.15)",
+                  border: "1px solid rgba(123,111,212,0.15)",
                   color: "#e2d9f3",
                   fontFamily: "'Fragment Mono', monospace",
                 }}
@@ -292,7 +292,7 @@ export default function OracleMemoriesPage() {
                 >
                   <div style={{
                     width: 64, height: 64, borderRadius: "50%",
-                    background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.15)",
+                    background: "rgba(123,111,212,0.06)", border: "1px solid rgba(123,111,212,0.15)",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 24, color: "#334155", marginBottom: 16,
                   }}>
@@ -311,7 +311,7 @@ export default function OracleMemoriesPage() {
                       href="/dashboard/oracle"
                       style={{
                         marginTop: 20, padding: "8px 20px",
-                        background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)",
+                        background: "rgba(123,111,212,0.12)", border: "1px solid rgba(123,111,212,0.25)",
                         borderRadius: 24, color: "#a78bfa", fontSize: 14,
                         letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace",
                         textDecoration: "none",

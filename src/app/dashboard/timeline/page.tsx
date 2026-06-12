@@ -23,15 +23,15 @@ const ZR_YEARS: Record<ZodiacSign, number> = {
 };
 
 const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
 };
 
 const SIGN_COLORS: Record<ZodiacSign, string> = {
   Aries: "#ef4444", Taurus: "#22c55e", Gemini: "#eab308", Cancer: "#38bdf8",
   Leo: "#f97316", Virgo: "#4ade80", Libra: "#facc15", Scorpio: "#dc2626",
-  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#8b5cf6",
+  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#7B6FD4",
 };
 
 const ELEMENT_LABEL: Record<ZodiacSign, "Fire" | "Earth" | "Air" | "Water"> = {
@@ -199,14 +199,14 @@ function CurrentTimingCard({ profection, chart }: { profection: ProfectionYear; 
       transition={{ duration: 0.5 }}
       className="rounded-2xl p-5 mb-6"
       style={{
-        background: "rgba(124,58,237,0.08)",
-        border: "1px solid rgba(124,58,237,0.25)",
-        boxShadow: "0 0 40px rgba(124,58,237,0.1), inset 0 0 40px rgba(124,58,237,0.03)",
+        background: "rgba(123,111,212,0.08)",
+        border: "1px solid rgba(123,111,212,0.25)",
+        boxShadow: "0 0 40px rgba(123,111,212,0.1), inset 0 0 40px rgba(123,111,212,0.03)",
       }}
     >
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#7c3aed" }}>
+          <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#7B6FD4" }}>
             CURRENT PROFECTION YEAR
           </p>
           <h2 className="text-2xl font-bold font-title" style={{ color: "#e2e8f0" }}>
@@ -245,7 +245,7 @@ function CurrentTimingCard({ profection, chart }: { profection: ProfectionYear; 
         </div>
       </div>
 
-      <div className="mt-4 pt-4 grid grid-cols-2 md:grid-cols-4 gap-3" style={{ borderTop: "1px solid rgba(124,58,237,0.1)" }}>
+      <div className="mt-4 pt-4 grid grid-cols-2 md:grid-cols-4 gap-3" style={{ borderTop: "1px solid rgba(123,111,212,0.1)" }}>
         <div>
           <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>STARTED</p>
           <p className="text-[13px] font-medium" style={{ color: "#94a3b8" }}>{formatDate(profection.yearStart)}</p>
@@ -260,7 +260,7 @@ function CurrentTimingCard({ profection, chart }: { profection: ProfectionYear; 
         </div>
         <div>
           <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
-          <p className="text-[13px] font-medium" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
+          <p className="text-[13px] font-medium" style={{ color: chart.sect === "day" ? "#fbbf24" : "#BFB6E8" }}>
             {chart.sect === "day" ? "Day" : "Night"}
           </p>
         </div>
@@ -287,19 +287,19 @@ function ProfectionCard({ year, onClick, isSelected }: {
       style={{
         width: 72,
         background: year.isCurrent
-          ? "rgba(124,58,237,0.18)"
+          ? "rgba(123,111,212,0.18)"
           : isSelected
           ? "rgba(255,255,255,0.06)"
           : year.isPast
           ? "rgba(255,255,255,0.015)"
           : "rgba(255,255,255,0.03)",
         border: year.isCurrent
-          ? "1px solid rgba(124,58,237,0.45)"
+          ? "1px solid rgba(123,111,212,0.45)"
           : isSelected
-          ? "1px solid rgba(99,102,241,0.3)"
+          ? "1px solid rgba(123,111,212,0.3)"
           : "1px solid rgba(255,255,255,0.05)",
         opacity: year.isPast && !year.isCurrent && !isSelected ? 0.5 : 1,
-        boxShadow: year.isCurrent ? "0 0 20px rgba(124,58,237,0.2)" : "none",
+        boxShadow: year.isCurrent ? "0 0 20px rgba(123,111,212,0.2)" : "none",
       }}
     >
       <span
@@ -316,7 +316,7 @@ function ProfectionCard({ year, onClick, isSelected }: {
       </span>
       <span
         className="text-[14px] tracking-wider font-bold"
-        style={{ color: year.isCurrent ? "#7c3aed" : "#1e293b" }}
+        style={{ color: year.isCurrent ? "#7B6FD4" : "#1e293b" }}
       >
         H{year.activatedHouse}
       </span>
@@ -337,7 +337,7 @@ function ProfectionDetail({ year, chart }: { year: ProfectionYear; chart: ChartD
       className="rounded-xl p-4 mt-3"
       style={{
         background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(99,102,241,0.15)",
+        border: "1px solid rgba(123,111,212,0.15)",
       }}
     >
       <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -387,7 +387,7 @@ function ZRBar({ periods, level, title }: {
 
   return (
     <div className="mb-5">
-      <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: level === 1 ? "#06b6d4" : "#a855f7" }}>
+      <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: level === 1 ? "#06b6d4" : "#9C8AC4" }}>
         {title}
       </p>
       <div className="rounded-xl overflow-hidden flex" style={{ height: level === 1 ? 36 : 24, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
@@ -515,7 +515,7 @@ function ProfectionWheel({ chart }: { chart: ChartData }) {
         </defs>
 
         {/* Background circle */}
-        <circle cx={CX} cy={CY} r={OUTER + 4} fill="rgba(4,4,20,0.6)" stroke="rgba(99,102,241,0.08)" strokeWidth={1} />
+        <circle cx={CX} cy={CY} r={OUTER + 4} fill="rgba(4,4,20,0.6)" stroke="rgba(123,111,212,0.08)" strokeWidth={1} />
 
         {Array.from({ length: 12 }, (_, i) => {
           const house = i + 1;
@@ -593,14 +593,14 @@ function ProfectionWheel({ chart }: { chart: ChartData }) {
         })}
 
         {/* Center content */}
-        <circle cx={CX} cy={CY} r={INNER - 2} fill="rgba(4,4,28,0.95)" stroke="rgba(124,58,237,0.15)" strokeWidth={1} />
+        <circle cx={CX} cy={CY} r={INNER - 2} fill="rgba(4,4,28,0.95)" stroke="rgba(123,111,212,0.15)" strokeWidth={1} />
         <text x={CX} y={CY - 14} textAnchor="middle" fontSize={9} fill="#475569" letterSpacing={1} fontWeight="bold">
           AGE
         </text>
         <text x={CX} y={CY + 2} textAnchor="middle" fontSize={22} fill="#e2e8f0" fontWeight="bold">
           {currentAge}
         </text>
-        <text x={CX} y={CY + 18} textAnchor="middle" fontSize={8} fill="#7c3aed" letterSpacing={1} fontWeight="bold">
+        <text x={CX} y={CY + 18} textAnchor="middle" fontSize={8} fill="#7B6FD4" letterSpacing={1} fontWeight="bold">
           H{currentHouse}
         </text>
         <text x={CX} y={CY + 30} textAnchor="middle" fontSize={7} fill="#334155" letterSpacing={0.5}>
@@ -641,9 +641,9 @@ function TwelveYearCycle({ chart }: { chart: ChartData }) {
             whileHover={{ scale: 1.05 }}
             className="flex flex-col items-center gap-1 p-2 rounded-xl cursor-default"
             style={{
-              background: isActive ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.02)",
-              border: isActive ? "1px solid rgba(124,58,237,0.35)" : "1px solid rgba(255,255,255,0.04)",
-              boxShadow: isActive ? "0 0 16px rgba(124,58,237,0.15)" : "none",
+              background: isActive ? "rgba(123,111,212,0.15)" : "rgba(255,255,255,0.02)",
+              border: isActive ? "1px solid rgba(123,111,212,0.35)" : "1px solid rgba(255,255,255,0.04)",
+              boxShadow: isActive ? "0 0 16px rgba(123,111,212,0.15)" : "none",
             }}
           >
             <span className="text-[14px] font-bold tracking-wider" style={{ color: isActive ? "#a78bfa" : "#334155" }}>
@@ -902,19 +902,19 @@ export default function TimelinePage() {
     return (
       <div className="h-screen flex overflow-hidden">
         <DashboardBg />
-        <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "5%", background: "rgba(124,58,237,0.07)", filter: "blur(100px)" }} />
+        <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "5%", background: "rgba(123,111,212,0.07)", filter: "blur(100px)" }} />
         <div className="flex-1 flex flex-col items-center justify-center gap-6 md:ml-[68px] mb-[60px] md:mb-0 px-6">
           <motion.div
             animate={{ scale: [1, 1.06, 1], opacity: [0.75, 1, 0.75] }}
             transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
             className="rounded-2xl flex items-center justify-center"
-            style={{ width: 72, height: 72, background: "linear-gradient(135deg, rgba(124,58,237,0.22), rgba(6,182,212,0.14))", border: "1px solid rgba(124,58,237,0.35)", boxShadow: "0 0 48px rgba(124,58,237,0.18)" }}
+            style={{ width: 72, height: 72, background: "linear-gradient(135deg, rgba(123,111,212,0.22), rgba(6,182,212,0.14))", border: "1px solid rgba(123,111,212,0.35)", boxShadow: "0 0 48px rgba(123,111,212,0.18)" }}
           >
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-              <circle cx="18" cy="18" r="14" stroke="rgba(124,58,237,0.6)" strokeWidth="1"/>
+              <circle cx="18" cy="18" r="14" stroke="rgba(123,111,212,0.6)" strokeWidth="1"/>
               <circle cx="18" cy="18" r="8" stroke="rgba(6,182,212,0.5)" strokeWidth="0.75"/>
-              <line x1="18" y1="4" x2="18" y2="32" stroke="rgba(124,58,237,0.35)" strokeWidth="0.75"/>
-              <line x1="4" y1="18" x2="32" y2="18" stroke="rgba(124,58,237,0.35)" strokeWidth="0.75"/>
+              <line x1="18" y1="4" x2="18" y2="32" stroke="rgba(123,111,212,0.35)" strokeWidth="0.75"/>
+              <line x1="4" y1="18" x2="32" y2="18" stroke="rgba(123,111,212,0.35)" strokeWidth="0.75"/>
               <circle cx="18" cy="18" r="2.5" fill="rgba(6,182,212,0.8)"/>
             </svg>
           </motion.div>
@@ -927,7 +927,7 @@ export default function TimelinePage() {
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
               className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
+              style={{ background: "linear-gradient(135deg, #7B6FD4, #7B6FD4)", color: "white", border: "1px solid rgba(123,111,212,0.4)" }}
             >
               Begin Your Chart →
             </motion.button>
@@ -940,7 +940,7 @@ export default function TimelinePage() {
   return (
     <div className="h-screen flex overflow-hidden">
       <DashboardBg />
-      <div className="nebula-orb" style={{ width: 600, height: 600, left: "-10%", top: "-10%", background: "rgba(124,58,237,0.05)", filter: "blur(120px)" }} />
+      <div className="nebula-orb" style={{ width: 600, height: 600, left: "-10%", top: "-10%", background: "rgba(123,111,212,0.05)", filter: "blur(120px)" }} />
       <div className="nebula-orb" style={{ width: 400, height: 400, right: "0%", bottom: "0%", background: "rgba(6,182,212,0.04)", filter: "blur(80px)" }} />
 
 
@@ -1005,9 +1005,9 @@ export default function TimelinePage() {
               onClick={() => setActiveTab(id)}
               className="flex-shrink-0 px-3 py-1.5 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer transition-all duration-200"
               style={{
-                background: activeTab === id ? "rgba(124,58,237,0.25)" : "transparent",
+                background: activeTab === id ? "rgba(123,111,212,0.25)" : "transparent",
                 color: activeTab === id ? "#a78bfa" : "#334155",
-                border: activeTab === id ? "1px solid rgba(124,58,237,0.4)" : "1px solid rgba(255,255,255,0.05)",
+                border: activeTab === id ? "1px solid rgba(123,111,212,0.4)" : "1px solid rgba(255,255,255,0.05)",
               }}
             >
               {label}
@@ -1064,7 +1064,7 @@ export default function TimelinePage() {
                     <div
                       ref={scrollRef}
                       className="flex gap-2 overflow-x-auto pb-3"
-                      style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(124,58,237,0.3) transparent" }}
+                      style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(123,111,212,0.3) transparent" }}
                     >
                       {profections.map(year => (
                         <div key={year.age} data-current={year.isCurrent ? "true" : "false"}>
@@ -1206,7 +1206,7 @@ export default function TimelinePage() {
                               border: `1px solid ${SIGN_COLORS[l2curr.sign]}20`,
                             }}
                           >
-                            <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#a855f7" }}>
+                            <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#9C8AC4" }}>
                               L2 · MINOR PERIOD
                             </p>
                             <div className="flex items-start justify-between">
@@ -1326,7 +1326,7 @@ export default function TimelinePage() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="rounded-2xl p-4 mb-6"
-                    style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.18)" }}
+                    style={{ background: "rgba(123,111,212,0.06)", border: "1px solid rgba(123,111,212,0.18)" }}
                   >
                     <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#a78bfa" }}>
                       SECONDARY PROGRESSIONS · DAY FOR A YEAR
@@ -1485,7 +1485,7 @@ export default function TimelinePage() {
                     {chart && (
                       <div className="flex items-center gap-2 mt-3">
                         <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>SECT</span>
-                        <span className="text-[13px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
+                        <span className="text-[13px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#BFB6E8" }}>
                           {chart.sect === "day" ? "☀ Day" : "☽ Night"}
                         </span>
                         <span className="text-[13px]" style={{ color: "#334155" }}>
@@ -1554,7 +1554,7 @@ export default function TimelinePage() {
                             className="rounded-2xl p-4"
                             style={{ background: `${subColor}08`, border: `1px solid ${subColor}20` }}
                           >
-                            <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#a855f7" }}>
+                            <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#9C8AC4" }}>
                               CURRENT SUB-PERIOD
                             </p>
                             <div className="flex items-center justify-between">
@@ -1969,7 +1969,7 @@ export default function TimelinePage() {
                       // Neptune Square (~41 for current gen)
                       { age: 41, tier: "minor" as const, label: "♆ □", sublabel: "Neptune Square — dissolution of illusions", color: "#3b82f6" },
                       // Pluto Square (~36-40 for current gen, varies by sign)
-                      { age: 38, tier: "minor" as const, label: "♇ □", sublabel: "Pluto Square — power confrontation with fate", color: "#8b5cf6" },
+                      { age: 38, tier: "minor" as const, label: "♇ □", sublabel: "Pluto Square — power confrontation with fate", color: "#7B6FD4" },
                       // Node Return (~18.6 years)
                       { age: 19, tier: "minor" as const, label: "☊ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
                       { age: 37, tier: "minor" as const, label: "☊ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
@@ -2004,20 +2004,20 @@ export default function TimelinePage() {
                         </div>
 
                         {/* SVG Timeline */}
-                        <div className="rounded-2xl p-4 overflow-x-auto" style={{ background: "rgba(4,4,28,0.7)", border: "1px solid rgba(99,102,241,0.15)" }}>
+                        <div className="rounded-2xl p-4 overflow-x-auto" style={{ background: "rgba(4,4,28,0.7)", border: "1px solid rgba(123,111,212,0.15)" }}>
                           <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ minWidth: W, display: "block" }}>
                             {/* Background gradient strip */}
                             <defs>
                               <linearGradient id="lifeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stopColor="rgba(124,58,237,0.04)" />
+                                <stop offset="0%" stopColor="rgba(123,111,212,0.04)" />
                                 <stop offset="50%" stopColor="rgba(6,182,212,0.04)" />
-                                <stop offset="100%" stopColor="rgba(124,58,237,0.04)" />
+                                <stop offset="100%" stopColor="rgba(123,111,212,0.04)" />
                               </linearGradient>
                               <clipPath id="lifeClip">
                                 <rect x={PAD_L} y={20} width={RULER_W} height={140} rx={4} />
                               </clipPath>
                             </defs>
-                            <rect x={PAD_L} y={20} width={RULER_W} height={140} rx={4} fill="url(#lifeGrad)" stroke="rgba(99,102,241,0.1)" strokeWidth={0.5} />
+                            <rect x={PAD_L} y={20} width={RULER_W} height={140} rx={4} fill="url(#lifeGrad)" stroke="rgba(123,111,212,0.1)" strokeWidth={0.5} />
 
                             {/* Age decade lines + labels */}
                             {[0, 10, 20, 30, 40, 50, 60, 70, 80, 84].map(age => {
@@ -2050,7 +2050,7 @@ export default function TimelinePage() {
                             {profectionYears.filter(p => p.age % 2 === 0 && p.age < MAX_AGE).map(({ age, house }) => {
                               const x = ageToX(age + 0.5);
                               return (
-                                <text key={age} x={x} y={135} textAnchor="middle" fontSize={6} fill="rgba(99,102,241,0.4)">
+                                <text key={age} x={x} y={135} textAnchor="middle" fontSize={6} fill="rgba(123,111,212,0.4)">
                                   H{house}
                                 </text>
                               );

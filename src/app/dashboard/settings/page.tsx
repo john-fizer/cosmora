@@ -66,14 +66,14 @@ function OptionButton({
       <div
         className="w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center"
         style={{
-          border: selected ? "2px solid #7c3aed" : "2px solid rgba(255,255,255,0.15)",
-          background: selected ? "rgba(124,58,237,0.3)" : "transparent",
+          border: selected ? "2px solid #7B6FD4" : "2px solid rgba(255,255,255,0.15)",
+          background: selected ? "rgba(123,111,212,0.3)" : "transparent",
         }}
       >
         {selected && <div className="w-1.5 h-1.5 rounded-full bg-violet-400" />}
       </div>
       <div>
-        <p className="text-[13px] font-semibold" style={{ color: selected ? "#c4b5fd" : "#94a3b8" }}>{label}</p>
+        <p className="text-[13px] font-semibold" style={{ color: selected ? "#BFB6E8" : "#94a3b8" }}>{label}</p>
         {desc && <p className="text-[13px]" style={{ color: "#334155" }}>{desc}</p>}
       </div>
     </motion.button>
@@ -81,7 +81,7 @@ function OptionButton({
 }
 
 const PLANET_COLORS_MINI: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa",
 };
 
 function ProfileCard({
@@ -111,10 +111,10 @@ function ProfileCard({
           className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center text-[14px] font-bold"
           style={{
             background: isActive
-              ? "linear-gradient(135deg, rgba(124,58,237,0.4), rgba(6,182,212,0.3))"
+              ? "linear-gradient(135deg, rgba(123,111,212,0.4), rgba(6,182,212,0.3))"
               : "rgba(255,255,255,0.06)",
-            color: isActive ? "#c4b5fd" : "#475569",
-            border: isActive ? "1px solid rgba(124,58,237,0.35)" : "1px solid rgba(255,255,255,0.06)",
+            color: isActive ? "#BFB6E8" : "#475569",
+            border: isActive ? "1px solid rgba(123,111,212,0.35)" : "1px solid rgba(255,255,255,0.06)",
           }}
         >
           {profile.name.charAt(0).toUpperCase()}
@@ -129,7 +129,7 @@ function ProfileCard({
             {isActive && (
               <span
                 className="text-[14px] font-bold tracking-widest px-1.5 py-0.5 rounded"
-                style={{ background: "rgba(124,58,237,0.2)", color: "#a78bfa", border: "1px solid rgba(124,58,237,0.3)" }}
+                style={{ background: "rgba(123,111,212,0.2)", color: "#a78bfa", border: "1px solid rgba(123,111,212,0.3)" }}
               >
                 ACTIVE
               </span>
@@ -156,7 +156,7 @@ function ProfileCard({
               <div className="flex items-center gap-3 mt-2 pt-2 flex-wrap" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
                 {[
                   { label: "☉", value: sun  ? `${SIGN_SYMBOLS[sun.sign]}  ${sun.sign.substring(0,3)}` : "—",  color: "#fbbf24" },
-                  { label: "☽", value: moon ? `${SIGN_SYMBOLS[moon.sign]} ${moon.sign.substring(0,3)}` : "—",  color: "#c4b5fd" },
+                  { label: "☽", value: moon ? `${SIGN_SYMBOLS[moon.sign]} ${moon.sign.substring(0,3)}` : "—",  color: "#BFB6E8" },
                   { label: "ASC", value: asc ? `${SIGN_SYMBOLS[asc.sign]} ${asc.sign.substring(0,3)}`  : "—",  color: "#06b6d4" },
                 ].map(({ label, value, color }) => (
                   <div key={label} className="flex items-center gap-1">
@@ -176,7 +176,7 @@ function ProfileCard({
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={onSetActive}
               className="text-[13px] font-bold tracking-widest px-2.5 py-1 rounded-lg cursor-pointer"
-              style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)", color: "#a78bfa" }}
+              style={{ background: "rgba(123,111,212,0.12)", border: "1px solid rgba(123,111,212,0.25)", color: "#a78bfa" }}
             >
               SET ACTIVE
             </motion.button>
@@ -269,7 +269,7 @@ function EditPanel({
       className="rounded-2xl p-5"
       style={{
         background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(99,102,241,0.2)",
+        border: "1px solid rgba(123,111,212,0.2)",
       }}
     >
       <div className="flex items-center justify-between mb-4">
@@ -360,9 +360,9 @@ function EditPanel({
           disabled={saving}
           className="w-full py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer disabled:opacity-50"
           style={{
-            background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
+            background: "linear-gradient(135deg, #7B6FD4, #7B6FD4)",
             color: "white",
-            boxShadow: "0 0 24px rgba(124,58,237,0.3)",
+            boxShadow: "0 0 24px rgba(123,111,212,0.3)",
           }}
         >
           {saving ? (needsRecalc ? "Recalculating chart…" : "Saving…") : (needsRecalc ? "Save & Recalculate Chart" : "Save Changes")}
@@ -799,10 +799,10 @@ export default function SettingsPage() {
               className="px-4 py-2.5 rounded-xl text-[13px] font-medium"
               style={{
                 background: "rgba(4,4,28,0.95)",
-                border: "1px solid rgba(124,58,237,0.3)",
+                border: "1px solid rgba(123,111,212,0.3)",
                 color: "#a78bfa",
                 backdropFilter: "blur(20px)",
-                boxShadow: "0 0 20px rgba(124,58,237,0.2)",
+                boxShadow: "0 0 20px rgba(123,111,212,0.2)",
               }}
             >
               {toast}

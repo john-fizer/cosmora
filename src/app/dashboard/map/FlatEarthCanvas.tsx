@@ -90,7 +90,7 @@ function DiscBase() {
       {/* Rim glow — pulsing */}
       <mesh ref={rimRef} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[DISC_R - 0.03, DISC_R + 0.05, 128]} />
-        <meshBasicMaterial color="#32D5FF" transparent opacity={0.7} side={THREE.DoubleSide} depthWrite={false} />
+        <meshBasicMaterial color="#C8A55B" transparent opacity={0.7} side={THREE.DoubleSide} depthWrite={false} />
       </mesh>
 
       {/* Outer ambient rings */}
@@ -382,7 +382,7 @@ function BirthPulseDisc({ lat, lon }: { lat: number; lon: number }) {
         {[0, 1, 2].map(i => (
           <mesh key={i}>
             <ringGeometry args={[0.04, 0.058, 48]} />
-            <meshBasicMaterial color="#c4b5fd" transparent opacity={0} depthWrite={false} side={THREE.DoubleSide} />
+            <meshBasicMaterial color="#BFB6E8" transparent opacity={0} depthWrite={false} side={THREE.DoubleSide} />
           </mesh>
         ))}
       </group>
@@ -392,10 +392,10 @@ function BirthPulseDisc({ lat, lon }: { lat: number; lon: number }) {
       </mesh>
       <Html center distanceFactor={6} style={{ pointerEvents: "none" }}>
         <div style={{
-          color: "#c4b5fd", fontSize: 7,
+          color: "#BFB6E8", fontSize: 7,
           fontFamily: "'Fragment Mono', monospace",
           letterSpacing: "0.15em",
-          textShadow: "0 0 6px #c4b5fd",
+          textShadow: "0 0 6px #BFB6E8",
         }}>
           BIRTH
         </div>
@@ -409,9 +409,9 @@ function NorthPoleMarker() {
   return (
     <Html position={[0, Y0 + 0.08, 0]} center distanceFactor={5} style={{ pointerEvents: "none" }}>
       <div style={{
-        color: "#32D5FF", fontSize: 8, fontFamily: "'Fragment Mono', monospace",
+        color: "#C8A55B", fontSize: 8, fontFamily: "'Fragment Mono', monospace",
         letterSpacing: "0.2em", textAlign: "center",
-        textShadow: "0 0 8px #32D5FF", opacity: 0.65,
+        textShadow: "0 0 8px #C8A55B", opacity: 0.65,
         lineHeight: 1.4,
       }}>
         NORTH<br />POLE

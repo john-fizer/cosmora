@@ -7,7 +7,7 @@ import { PLANET_SYMBOLS, SIGN_SYMBOLS } from "@/lib/astrology/types";
 const PLANET_COLORS: Record<PlanetName, string> = {
   Sun: "#fbbf24", Moon: "#94a3b8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8", Uranus: "#06b6d4",
-  Neptune: "#3b82f6", Pluto: "#8b5cf6", NorthNode: "#64748b", Chiron: "#6366f1",
+  Neptune: "#3b82f6", Pluto: "#7B6FD4", NorthNode: "#64748b", Chiron: "#7B6FD4",
 };
 
 const DIGNITY_COLORS: Record<string, string> = {
@@ -27,7 +27,7 @@ export function PlanetList({ chart, loading }: PlanetListProps) {
     <motion.div
       initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}
       className="glass-card rounded-2xl p-4"
-      style={{ border: "1px solid rgba(99,102,241,0.15)" }}
+      style={{ border: "1px solid rgba(123,111,212,0.15)" }}
     >
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-[13px] font-bold tracking-widest" style={{ color: "#94a3b8" }}>CURRENT ENERGIES</h3>
@@ -54,7 +54,7 @@ export function PlanetList({ chart, loading }: PlanetListProps) {
             <motion.div
               key={p.name}
               initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 + i * 0.04 }}
-              whileHover={{ x: 3, backgroundColor: "rgba(124,58,237,0.08)" }}
+              whileHover={{ x: 3, backgroundColor: "rgba(123,111,212,0.08)" }}
               className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors duration-150"
             >
               <span className="text-[14px] w-5 text-center" style={{ color: PLANET_COLORS[p.name] }}>
@@ -69,7 +69,7 @@ export function PlanetList({ chart, loading }: PlanetListProps) {
               <span className="text-[13px]" style={{ color: PLANET_COLORS[p.name] }}>
                 {SIGN_SYMBOLS[p.sign]}
               </span>
-              <span className="text-[13px] px-1.5 py-0.5 rounded-full" style={{ background:"rgba(99,102,241,0.15)", color:"#818cf8" }}>
+              <span className="text-[13px] px-1.5 py-0.5 rounded-full" style={{ background:"rgba(123,111,212,0.15)", color:"#818cf8" }}>
                 H{p.house}
               </span>
               {p.dignity && p.dignity !== "peregrine" && (

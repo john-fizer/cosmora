@@ -22,13 +22,13 @@ import type { ZRPeriod } from "@/lib/astrology/zodiacalReleasing";
 const SIGN_COLORS: Record<ZodiacSign, string> = {
   Aries: "#ef4444", Taurus: "#22c55e", Gemini: "#eab308", Cancer: "#38bdf8",
   Leo: "#f97316", Virgo: "#4ade80", Libra: "#facc15", Scorpio: "#dc2626",
-  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#8b5cf6",
+  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#7B6FD4",
 };
 
 const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
 };
 
 const HOUSE_THEMES: Record<number, string> = {
@@ -722,7 +722,7 @@ export default function ReleasingPage() {
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
               className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
+              style={{ background: "linear-gradient(135deg, #7B6FD4, #7B6FD4)", color: "white", border: "1px solid rgba(123,111,212,0.4)" }}
             >
               Begin Your Chart →
             </motion.button>
@@ -741,7 +741,7 @@ export default function ReleasingPage() {
     <div className="h-screen flex overflow-hidden">
       <DashboardBg />
       <div className="nebula-orb" style={{ width: 500, height: 500, left: "-5%", top: "-10%", background: "rgba(6,182,212,0.04)", filter: "blur(100px)" }} />
-      <div className="nebula-orb" style={{ width: 400, height: 400, right: "0%", bottom: "0%", background: "rgba(124,58,237,0.04)", filter: "blur(80px)" }} />
+      <div className="nebula-orb" style={{ width: 400, height: 400, right: "0%", bottom: "0%", background: "rgba(123,111,212,0.04)", filter: "blur(80px)" }} />
 
 
       <div className="flex-1 flex min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10">
@@ -794,7 +794,7 @@ export default function ReleasingPage() {
                   className="px-3 py-1 rounded-lg text-[12px] font-bold tracking-widest cursor-pointer transition-all duration-200"
                   style={{
                     background: lot === l ? (l === "fortune" ? "rgba(6,182,212,0.2)" : "rgba(139,92,246,0.2)") : "transparent",
-                    color: lot === l ? (l === "fortune" ? "#06b6d4" : "#8b5cf6") : "#334155",
+                    color: lot === l ? (l === "fortune" ? "#06b6d4" : "#7B6FD4") : "#334155",
                     border: lot === l ? `1px solid ${l === "fortune" ? "rgba(6,182,212,0.4)" : "rgba(139,92,246,0.4)"}` : "1px solid transparent",
                   }}
                 >

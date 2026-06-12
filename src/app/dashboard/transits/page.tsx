@@ -16,11 +16,11 @@ import { useWarpTo } from "@/components/ui/WarpTransition";
 const PLANET_COLORS: Record<string, string> = {
   Sun: "#fbbf24", Moon: "#94a3b8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#6b7280", Uranus: "#06b6d4",
-  Neptune: "#3b82f6", Pluto: "#8b5cf6", NorthNode: "#64748b", Chiron: "#6366f1",
+  Neptune: "#3b82f6", Pluto: "#7B6FD4", NorthNode: "#64748b", Chiron: "#7B6FD4",
 };
 
 const ASPECT_CONFIG: Record<string, { symbol: string; color: string; label: string }> = {
-  conjunction: { symbol: "☌", color: "#a855f7", label: "Conjunction" },
+  conjunction: { symbol: "☌", color: "#9C8AC4", label: "Conjunction" },
   opposition:  { symbol: "☍", color: "#ef4444", label: "Opposition" },
   trine:       { symbol: "△", color: "#22c55e", label: "Trine" },
   square:      { symbol: "□", color: "#f59e0b", label: "Square" },
@@ -29,9 +29,9 @@ const ASPECT_CONFIG: Record<string, { symbol: string; color: string; label: stri
 };
 
 const SIGN_COLORS: Record<ZodiacSign, string> = {
-  Aries:"#ef4444", Taurus:"#22c55e", Gemini:"#eab308", Cancer:"#a855f7",
-  Leo:"#f97316", Virgo:"#6366f1", Libra:"#ec4899", Scorpio:"#dc2626",
-  Sagittarius:"#f59e0b", Capricorn:"#64748b", Aquarius:"#06b6d4", Pisces:"#8b5cf6",
+  Aries:"#ef4444", Taurus:"#22c55e", Gemini:"#eab308", Cancer:"#9C8AC4",
+  Leo:"#f97316", Virgo:"#7B6FD4", Libra:"#ec4899", Scorpio:"#dc2626",
+  Sagittarius:"#f59e0b", Capricorn:"#64748b", Aquarius:"#06b6d4", Pisces:"#7B6FD4",
 };
 
 const OUTER_PLANETS = new Set<string>(["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]);
@@ -71,7 +71,7 @@ function SkyStrip({ planets }: { planets: TransitsData["transitPlanets"] }) {
       className="flex-shrink-0 flex items-center gap-2 px-6 py-3 overflow-x-auto"
       style={{
         background: "rgba(2,2,18,0.6)",
-        borderBottom: "1px solid rgba(99,102,241,0.1)",
+        borderBottom: "1px solid rgba(123,111,212,0.1)",
         scrollbarWidth: "none",
       }}
     >
@@ -130,7 +130,7 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
           animate={{ opacity: 1 }}
           onClick={e => { e.stopPropagation(); onOracleClick(); }}
           className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[13px] font-bold tracking-wider px-2 py-1 rounded-lg z-10 cursor-pointer"
-          style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa" }}
+          style={{ background: "rgba(123,111,212,0.15)", border: "1px solid rgba(123,111,212,0.3)", color: "#a78bfa" }}
         >
           ✦ Ask
         </motion.button>
@@ -320,7 +320,7 @@ function TransitHeatmap({ data, baseDate }: { data: TransitsData; baseDate: Date
       (ASPECT_WEIGHT[a.type] ?? 0) > (ASPECT_WEIGHT[best?.type ?? ""] ?? 0) ? a : best,
       bucket.aspects[0]
     );
-    return ASPECT_CONFIG[dominantAsp?.type ?? ""]?.color ?? "#7c3aed";
+    return ASPECT_CONFIG[dominantAsp?.type ?? ""]?.color ?? "#7B6FD4";
   }
 
   const hov = hoveredDay !== null ? buckets[hoveredDay] : null;
@@ -391,13 +391,13 @@ function TransitHeatmap({ data, baseDate }: { data: TransitsData; baseDate: Date
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             className="rounded-xl p-4"
-            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(99,102,241,0.15)" }}
+            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(123,111,212,0.15)" }}
           >
             {(() => {
               const d = new Date(today);
               d.setDate(d.getDate() + hoveredDay);
               return (
-                <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#7c3aed" }}>
+                <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#7B6FD4" }}>
                   {d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
                   {hoveredDay === 0 && " · TODAY"}
                 </p>
@@ -490,7 +490,7 @@ function TransitBiWheel({ natal, data }: { natal: ChartData; data: TransitsData 
   const R_TRANSIT = 145; // transit planets
 
   const ZODIAC_SYMBOLS = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
-  const ZODIAC_COLORS_ZW = ["#ef4444","#22c55e","#eab308","#a855f7","#f97316","#6366f1","#ec4899","#dc2626","#f59e0b","#64748b","#06b6d4","#8b5cf6"];
+  const ZODIAC_COLORS_ZW = ["#ef4444","#22c55e","#eab308","#9C8AC4","#f97316","#7B6FD4","#ec4899","#dc2626","#f59e0b","#64748b","#06b6d4","#7B6FD4"];
 
   function lonToAngle(lon: number): number {
     return (lon / 360) * 2 * Math.PI - Math.PI / 2;
@@ -507,8 +507,8 @@ function TransitBiWheel({ natal, data }: { natal: ChartData; data: TransitsData 
       <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} style={{ maxWidth: "100%", height: "auto" }}>
         <defs>
           <radialGradient id="twCore" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="rgba(99,102,241,0.2)" />
-            <stop offset="100%" stopColor="rgba(99,102,241,0)" />
+            <stop offset="0%" stopColor="rgba(123,111,212,0.2)" />
+            <stop offset="100%" stopColor="rgba(123,111,212,0)" />
           </radialGradient>
           <filter id="twGlow">
             <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="b" />
@@ -518,7 +518,7 @@ function TransitBiWheel({ natal, data }: { natal: ChartData; data: TransitsData 
 
         {/* Core glow */}
         <circle cx={CX} cy={CY} r={R_INNER + 10} fill="url(#twCore)" />
-        <circle cx={CX} cy={CY} r={R_INNER} fill="rgba(4,4,28,0.95)" stroke="rgba(99,102,241,0.2)" strokeWidth={1} />
+        <circle cx={CX} cy={CY} r={R_INNER} fill="rgba(4,4,28,0.95)" stroke="rgba(123,111,212,0.2)" strokeWidth={1} />
         <text x={CX} y={CY - 4} textAnchor="middle" fontSize={7} fill="#475569" fontWeight="bold" letterSpacing={0.5}>NATAL</text>
         <text x={CX} y={CY + 6} textAnchor="middle" fontSize={5} fill="#334155" letterSpacing={0.5}>INNER</text>
 
@@ -530,7 +530,7 @@ function TransitBiWheel({ natal, data }: { natal: ChartData; data: TransitsData 
           const isAngular = [0, 3, 6, 9].includes(i);
           return (
             <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-              stroke={isAngular ? "rgba(99,102,241,0.4)" : "rgba(255,255,255,0.06)"}
+              stroke={isAngular ? "rgba(123,111,212,0.4)" : "rgba(255,255,255,0.06)"}
               strokeWidth={isAngular ? 1.5 : 0.5} />
           );
         })}
@@ -607,14 +607,14 @@ function TransitBiWheel({ natal, data }: { natal: ChartData; data: TransitsData 
         })}
 
         {/* Labels */}
-        <text x={CX} y={CY - R_NATAL - 14} textAnchor="middle" fontSize={6} fill="rgba(99,102,241,0.5)" fontWeight="bold" letterSpacing={0.5}>NATAL</text>
+        <text x={CX} y={CY - R_NATAL - 14} textAnchor="middle" fontSize={6} fill="rgba(123,111,212,0.5)" fontWeight="bold" letterSpacing={0.5}>NATAL</text>
         <text x={CX} y={CY - R_TRANSIT - 18} textAnchor="middle" fontSize={6} fill="rgba(245,158,11,0.5)" fontWeight="bold" letterSpacing={0.5}>TRANSITS</text>
       </svg>
 
       {/* Legend */}
       <div className="flex gap-4 text-[13px]">
         <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 rounded-full flex items-center justify-center border" style={{ background: "rgba(4,4,28,0.9)", borderColor: "rgba(99,102,241,0.4)" }}>
+          <div className="w-6 h-6 rounded-full flex items-center justify-center border" style={{ background: "rgba(4,4,28,0.9)", borderColor: "rgba(123,111,212,0.4)" }}>
             <span style={{ color: "#a78bfa", fontSize: 13 }}>☉</span>
           </div>
           <span style={{ color: "#475569" }}>Natal (inner)</span>
@@ -705,13 +705,13 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
                 onClick={() => setSelectedDay(day === selectedDay ? null : day)}
                 className="flex flex-col items-center py-1.5 px-1 rounded-lg cursor-pointer transition-all min-h-[44px]"
                 style={{
-                  background: isSelected ? "rgba(124,58,237,0.22)" : isToday ? "rgba(99,102,241,0.12)" : events ? "rgba(255,255,255,0.03)" : "transparent",
-                  border: isSelected ? "1px solid rgba(124,58,237,0.5)" : isToday ? "1px solid rgba(99,102,241,0.3)" : "1px solid transparent",
+                  background: isSelected ? "rgba(123,111,212,0.22)" : isToday ? "rgba(123,111,212,0.12)" : events ? "rgba(255,255,255,0.03)" : "transparent",
+                  border: isSelected ? "1px solid rgba(123,111,212,0.5)" : isToday ? "1px solid rgba(123,111,212,0.3)" : "1px solid transparent",
                   opacity: isPast ? 0.45 : 1,
                 }}
               >
                 <span className="text-[14px] font-bold leading-tight" style={{
-                  color: isToday ? "#c4b5fd" : isSelected ? "#e2e8f0" : "#64748b",
+                  color: isToday ? "#BFB6E8" : isSelected ? "#e2e8f0" : "#64748b",
                 }}>{day}</span>
 
                 {events && (
@@ -747,9 +747,9 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             className="rounded-xl p-4"
-            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(99,102,241,0.12)" }}
+            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(123,111,212,0.12)" }}
           >
-            <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#7c3aed" }}>
+            <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#7B6FD4" }}>
               {new Date(year, month, selectedDay).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }).toUpperCase()}
             </p>
 
@@ -803,7 +803,7 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
 
 const SIG_COLORS: Record<string, string> = {
   major: "#f59e0b",
-  standard: "#6366f1",
+  standard: "#7B6FD4",
   minor: "#475569",
 };
 
@@ -871,7 +871,7 @@ function ForecastTimeline({
               style={{ background: "rgba(2,2,18,0.95)", borderBottom: "1px solid rgba(255,255,255,0.04)" }}
             >
               <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>{label}</span>
-              <span className="text-[13px] px-2 py-0.5 rounded-md" style={{ background: "rgba(99,102,241,0.1)", color: "#6366f1" }}>
+              <span className="text-[13px] px-2 py-0.5 rounded-md" style={{ background: "rgba(123,111,212,0.1)", color: "#7B6FD4" }}>
                 {monthEvents.length} event{monthEvents.length !== 1 ? "s" : ""}
               </span>
             </div>
@@ -897,7 +897,7 @@ function ForecastTimeline({
                   style={{
                     borderLeft: `2px solid ${ev.significance === "major" ? sigColor : "transparent"}`,
                     background: isSelected
-                      ? "rgba(99,102,241,0.1)"
+                      ? "rgba(123,111,212,0.1)"
                       : ev.significance === "major"
                       ? `${sigColor}07`
                       : "transparent",
@@ -932,7 +932,7 @@ function ForecastTimeline({
                           </>
                         )}
                         {ev.natalHouse && (
-                          <span className="text-[12px] px-1.5 py-0.5 rounded flex-shrink-0" style={{ background: "rgba(99,102,241,0.1)", color: "#6366f1" }}>
+                          <span className="text-[12px] px-1.5 py-0.5 rounded flex-shrink-0" style={{ background: "rgba(123,111,212,0.1)", color: "#7B6FD4" }}>
                             H{ev.natalHouse}
                           </span>
                         )}
@@ -1068,7 +1068,7 @@ function EventReadingPanel({
       exit={{ x: 60, opacity: 0 }}
       transition={{ type: "spring", stiffness: 320, damping: 30 }}
       className="flex flex-col h-full overflow-hidden"
-      style={{ borderLeft: "1px solid rgba(99,102,241,0.15)" }}
+      style={{ borderLeft: "1px solid rgba(123,111,212,0.15)" }}
     >
       {/* Header */}
       <div className="flex-shrink-0 flex items-center justify-between px-4 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
@@ -1102,7 +1102,7 @@ function EventReadingPanel({
               </>
             )}
             {event.natalHouse && (
-              <span className="text-[12px] font-bold px-2 py-0.5 rounded" style={{ background: "rgba(99,102,241,0.12)", color: "#6366f1" }}>
+              <span className="text-[12px] font-bold px-2 py-0.5 rounded" style={{ background: "rgba(123,111,212,0.12)", color: "#7B6FD4" }}>
                 House {event.natalHouse}
               </span>
             )}
@@ -1143,7 +1143,7 @@ function EventReadingPanel({
             whileTap={{ scale: 0.97 }}
             onClick={generate}
             className="w-full py-3 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
-            style={{ background: "linear-gradient(135deg, rgba(99,102,241,0.2), rgba(124,58,237,0.2))", border: "1px solid rgba(99,102,241,0.3)", color: "#c4b5fd" }}
+            style={{ background: "linear-gradient(135deg, rgba(123,111,212,0.2), rgba(123,111,212,0.2))", border: "1px solid rgba(123,111,212,0.3)", color: "#BFB6E8" }}
           >
             ✦ GENERATE READING
           </motion.button>
@@ -1155,7 +1155,7 @@ function EventReadingPanel({
                 animate={{ opacity: [0.2, 0.5, 0.2] }}
                 transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.15 }}
                 className="h-3 rounded-full"
-                style={{ width: `${w * 100}%`, background: "rgba(99,102,241,0.15)" }}
+                style={{ width: `${w * 100}%`, background: "rgba(123,111,212,0.15)" }}
               />
             ))}
           </div>
@@ -1348,7 +1348,7 @@ export default function TransitsPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.96 }}
                 className="px-8 py-3 rounded-2xl text-[14px] font-bold tracking-wider cursor-pointer"
-                style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", boxShadow: "0 0 30px rgba(124,58,237,0.4)" }}
+                style={{ background: "linear-gradient(135deg, #7B6FD4, #7B6FD4)", color: "white", boxShadow: "0 0 30px rgba(123,111,212,0.4)" }}
               >
                 Begin Setup →
               </motion.button>
@@ -1376,7 +1376,7 @@ export default function TransitsPage() {
           animate={{ y: 0, opacity: 1 }}
           className="flex-shrink-0 flex items-center justify-between px-6 py-3 gap-4"
           style={{
-            borderBottom: "1px solid rgba(99,102,241,0.1)",
+            borderBottom: "1px solid rgba(123,111,212,0.1)",
             background: "rgba(2,2,18,0.7)",
             backdropFilter: "blur(20px)",
           }}
@@ -1423,9 +1423,9 @@ export default function TransitsPage() {
                 onClick={goToToday}
                 className="px-3 py-1.5 rounded-lg text-[13px] font-semibold cursor-pointer transition-all"
                 style={{
-                  background: isToday(date) ? "rgba(124,58,237,0.2)" : "rgba(255,255,255,0.04)",
-                  border: isToday(date) ? "1px solid rgba(124,58,237,0.4)" : "1px solid rgba(255,255,255,0.08)",
-                  color: isToday(date) ? "#c4b5fd" : "#94a3b8",
+                  background: isToday(date) ? "rgba(123,111,212,0.2)" : "rgba(255,255,255,0.04)",
+                  border: isToday(date) ? "1px solid rgba(123,111,212,0.4)" : "1px solid rgba(255,255,255,0.08)",
+                  color: isToday(date) ? "#BFB6E8" : "#94a3b8",
                 }}
               >
                 {isToday(date) ? "Today" : formatDate(date)}
@@ -1457,9 +1457,9 @@ export default function TransitsPage() {
                     onClick={() => setForecastMonths(m)}
                     className="px-3 py-1 rounded-md text-[13px] font-bold tracking-widest cursor-pointer transition-all"
                     style={{
-                      background: forecastMonths === m ? "rgba(99,102,241,0.25)" : "transparent",
-                      color: forecastMonths === m ? "#c4b5fd" : "#334155",
-                      border: forecastMonths === m ? "1px solid rgba(99,102,241,0.4)" : "1px solid transparent",
+                      background: forecastMonths === m ? "rgba(123,111,212,0.25)" : "transparent",
+                      color: forecastMonths === m ? "#BFB6E8" : "#334155",
+                      border: forecastMonths === m ? "1px solid rgba(123,111,212,0.4)" : "1px solid transparent",
                     }}
                   >
                     {m === 12 ? "1 YEAR" : `${m} MO`}
@@ -1474,9 +1474,9 @@ export default function TransitsPage() {
                     onClick={() => setForecastFilter(f)}
                     className="px-2.5 py-1 rounded-md text-[13px] font-bold tracking-widest cursor-pointer transition-all"
                     style={{
-                      background: forecastFilter === f ? "rgba(99,102,241,0.2)" : "transparent",
-                      color: forecastFilter === f ? "#c4b5fd" : "#334155",
-                      border: forecastFilter === f ? "1px solid rgba(99,102,241,0.35)" : "1px solid transparent",
+                      background: forecastFilter === f ? "rgba(123,111,212,0.2)" : "transparent",
+                      color: forecastFilter === f ? "#BFB6E8" : "#334155",
+                      border: forecastFilter === f ? "1px solid rgba(123,111,212,0.35)" : "1px solid transparent",
                     }}
                   >
                     {f === "all" ? "ALL" : f === "outer" ? "♃ OUTER" : "✦ MAJOR"}
@@ -1484,7 +1484,7 @@ export default function TransitsPage() {
                 ))}
               </div>
               {forecastEvents && (
-                <span className="text-[13px] px-2 py-0.5 rounded-md" style={{ background: "rgba(99,102,241,0.1)", color: "#6366f1" }}>
+                <span className="text-[13px] px-2 py-0.5 rounded-md" style={{ background: "rgba(123,111,212,0.1)", color: "#7B6FD4" }}>
                   {forecastEvents.length} events
                 </span>
               )}
@@ -1553,7 +1553,7 @@ export default function TransitsPage() {
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
               className="w-12 h-12 rounded-full border-2 border-t-transparent"
-              style={{ borderColor: "#7c3aed" }}
+              style={{ borderColor: "#7B6FD4" }}
             />
             <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>CALCULATING TRANSITS</p>
           </div>
@@ -1577,7 +1577,7 @@ export default function TransitsPage() {
                 </span>
                 {viewMode === "list" && (
                   <>
-                    <span className="text-[13px] px-2 py-0.5 rounded-md" style={{ background: "rgba(99,102,241,0.15)", color: "#818cf8" }}>
+                    <span className="text-[13px] px-2 py-0.5 rounded-md" style={{ background: "rgba(123,111,212,0.15)", color: "#818cf8" }}>
                       {aspects.length} active
                     </span>
                     {applyingCount > 0 && (
@@ -1586,7 +1586,7 @@ export default function TransitsPage() {
                       </span>
                     )}
                     {exactCount > 0 && (
-                      <span className="text-[13px] px-2 py-0.5 rounded-md" style={{ background: "rgba(168,85,247,0.15)", color: "#c4b5fd" }}>
+                      <span className="text-[13px] px-2 py-0.5 rounded-md" style={{ background: "rgba(168,85,247,0.15)", color: "#BFB6E8" }}>
                         {exactCount} exact
                       </span>
                     )}
@@ -1606,9 +1606,9 @@ export default function TransitsPage() {
                       }}
                       className="px-2.5 py-1 rounded-md text-[13px] font-bold tracking-widest cursor-pointer transition-all"
                       style={{
-                        background: viewMode === mode ? "rgba(124,58,237,0.25)" : "transparent",
-                        color: viewMode === mode ? "#c4b5fd" : "#334155",
-                        border: viewMode === mode ? "1px solid rgba(124,58,237,0.4)" : "1px solid transparent",
+                        background: viewMode === mode ? "rgba(123,111,212,0.25)" : "transparent",
+                        color: viewMode === mode ? "#BFB6E8" : "#334155",
+                        border: viewMode === mode ? "1px solid rgba(123,111,212,0.4)" : "1px solid transparent",
                       }}
                     >
                       {mode === "list" ? "≡ LIST" : mode === "calendar" ? "⊞ CAL" : mode === "heat" ? "▬ HEAT" : mode === "wheel" ? "⊙ WHEEL" : "◎ FORECAST"}
@@ -1731,7 +1731,7 @@ export default function TransitsPage() {
             {/* Right panel: ingresses + stats (TODAY modes only) */}
             {viewMode !== "forecast" && <div
               className="w-72 flex-shrink-0 flex flex-col overflow-hidden"
-              style={{ borderLeft: "1px solid rgba(99,102,241,0.1)" }}
+              style={{ borderLeft: "1px solid rgba(123,111,212,0.1)" }}
             >
 
               {/* Stats */}
@@ -1742,9 +1742,9 @@ export default function TransitsPage() {
                 style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
               >
                 {[
-                  { label: "ACTIVE", value: aspects.length, color: "#6366f1" },
+                  { label: "ACTIVE", value: aspects.length, color: "#7B6FD4" },
                   { label: "APPLYING", value: applyingCount, color: "#22c55e" },
-                  { label: "EXACT", value: exactCount, color: "#a855f7" },
+                  { label: "EXACT", value: exactCount, color: "#9C8AC4" },
                 ].map(stat => (
                   <div
                     key={stat.label}
@@ -1797,7 +1797,7 @@ export default function TransitsPage() {
                 const arcR = 18;
                 // Terminator x-offset: cos of angle for full phase
                 const termX = Math.cos(angle * Math.PI / 180) * arcR;
-                const moonColor = "#c4b5fd";
+                const moonColor = "#BFB6E8";
                 return (
                   <div className="flex-shrink-0 p-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                     <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>LUNAR PHASE</p>
@@ -1913,7 +1913,7 @@ export default function TransitsPage() {
                             <span className="text-[14px]" style={{ color: PLANET_COLORS[asp.natalPlanet] ?? "#64748b" }}>{PLANET_SYMBOLS[asp.natalPlanet]}</span>
                             <div className="flex-1 flex items-center justify-end gap-1">
                               {days === 0 ? (
-                                <span className="text-[13px] font-black" style={{ color: "#a855f7" }}>TODAY</span>
+                                <span className="text-[13px] font-black" style={{ color: "#9C8AC4" }}>TODAY</span>
                               ) : (
                                 <>
                                   <span className="text-[13px] font-bold" style={{ color: "#22c55e" }}>{days}d</span>

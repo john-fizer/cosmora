@@ -23,9 +23,9 @@ const SolarSystemOrrery = dynamic(
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6", NorthNode: "#64748b",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4", NorthNode: "#64748b",
 };
 
 const ASPECT_GLYPHS: Record<string, string> = {
@@ -33,14 +33,14 @@ const ASPECT_GLYPHS: Record<string, string> = {
 };
 
 const ASPECT_COLORS: Record<string, string> = {
-  conjunction: "#a855f7", opposition: "#ef4444", trine: "#22c55e",
+  conjunction: "#9C8AC4", opposition: "#ef4444", trine: "#22c55e",
   square: "#f59e0b", sextile: "#06b6d4", quincunx: "#64748b",
 };
 
 const SIGN_COLORS: Record<ZodiacSign, string> = {
   Aries: "#ef4444", Taurus: "#22c55e", Gemini: "#eab308", Cancer: "#38bdf8",
   Leo: "#f97316", Virgo: "#4ade80", Libra: "#facc15", Scorpio: "#dc2626",
-  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#8b5cf6",
+  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#7B6FD4",
 };
 
 const ELEMENT_SIGNS: Record<"Fire" | "Earth" | "Air" | "Water", ZodiacSign[]> = {
@@ -126,7 +126,7 @@ function MoonPhaseWidget() {
         </svg>
 
         <div className="flex-1 min-w-0">
-          <p className="text-[14px] font-bold leading-tight" style={{ color: "#c4b5fd" }}>{phase.name}</p>
+          <p className="text-[14px] font-bold leading-tight" style={{ color: "#BFB6E8" }}>{phase.name}</p>
           <p className="text-[14px] mt-0.5 tabular-nums" style={{ color: "#475569" }}>
             {illumination.toFixed(0)}% illuminated · {isWaxing ? "Waxing" : "Waning"}
           </p>
@@ -157,7 +157,7 @@ const CHALDEAN = ["Saturn","Jupiter","Mars","Sun","Venus","Mercury","Moon"] as c
 type ChaldeanPlanet = typeof CHALDEAN[number];
 const CHALDEAN_COLORS: Record<ChaldeanPlanet, string> = {
   Saturn:"#94a3b8", Jupiter:"#f59e0b", Mars:"#ef4444",
-  Sun:"#fbbf24", Venus:"#f472b6", Mercury:"#a78bfa", Moon:"#c4b5fd",
+  Sun:"#fbbf24", Venus:"#f472b6", Mercury:"#a78bfa", Moon:"#BFB6E8",
 };
 // Day of week (Sun=0..Sat=6) → starting index in CHALDEAN array
 const DOW_START = [3, 6, 2, 5, 1, 4, 0];
@@ -432,7 +432,7 @@ function CosmicWeatherStrip({ aspects }: { aspects: TransitPill[] }) {
               className="flex items-center gap-1 px-2 py-1 rounded-lg flex-shrink-0"
               style={{
                 background: isUrgent ? `${aColor}18` : "rgba(4,4,28,0.8)",
-                border: `1px solid ${isUrgent ? aColor + "60" : "rgba(99,102,241,0.2)"}`,
+                border: `1px solid ${isUrgent ? aColor + "60" : "rgba(123,111,212,0.2)"}`,
                 backdropFilter: "blur(12px)",
               }}
               whileHover={{ borderColor: aColor, scale: 1.05 }}
@@ -556,9 +556,9 @@ Key transits: ${top3 || "No tight transits today"}
         className="rounded-2xl overflow-hidden relative"
         style={{
           background: "rgba(2,2,20,0.9)",
-          border: "1px solid rgba(99,102,241,0.18)",
+          border: "1px solid rgba(123,111,212,0.18)",
           backdropFilter: "blur(28px)",
-          boxShadow: "0 0 60px rgba(99,102,241,0.08), 0 24px 60px rgba(0,0,0,0.6)",
+          boxShadow: "0 0 60px rgba(123,111,212,0.08), 0 24px 60px rgba(0,0,0,0.6)",
         }}
       >
         {streaming && (
@@ -608,7 +608,7 @@ Key transits: ${top3 || "No tight transits today"}
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                 className="w-3 h-3 rounded-full border border-t-transparent flex-shrink-0"
-                style={{ borderColor: "#7c3aed" }}
+                style={{ borderColor: "#7B6FD4" }}
               />
               <span className="text-[13px]" style={{ color: "#334155" }}>Reading the skies…</span>
             </div>
@@ -620,7 +620,7 @@ Key transits: ${top3 || "No tight transits today"}
                   animate={{ opacity: [1, 0, 1] }}
                   transition={{ duration: 0.7, repeat: Infinity }}
                   className="inline-block ml-0.5 w-0.5 h-3.5 align-middle rounded-full"
-                  style={{ background: "#7c3aed" }}
+                  style={{ background: "#7B6FD4" }}
                 />
               )}
             </p>
@@ -668,7 +668,7 @@ function LeftPanel({ chart, onSelectPlanet }: { chart: ChartData; onSelectPlanet
       {/* Planetary Positions */}
       <div className="liquid-glass-cosmos rounded-2xl overflow-hidden flex flex-col">
         <div className="px-4 pt-3 pb-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-          <p className="text-[13px] font-bold tracking-widest" style={{ color: "#7c3aed" }}>PLANETARY POSITIONS</p>
+          <p className="text-[13px] font-bold tracking-widest" style={{ color: "#7B6FD4" }}>PLANETARY POSITIONS</p>
         </div>
         <div className="flex-1 overflow-y-auto" style={{ maxHeight: 260, scrollbarWidth: "none" }}>
           {chart.planets.map((p) => {
@@ -776,7 +776,7 @@ function computeConvergence(chart: ChartData, transits: TransitPill[]): {
 
   score = Math.max(5, Math.min(100, score));
   const label = score >= 75 ? "PEAK" : score >= 50 ? "HIGH" : score >= 30 ? "ACTIVE" : "QUIET";
-  const color = score >= 75 ? "#a855f7" : score >= 50 ? "#06b6d4" : score >= 30 ? "#f59e0b" : "#334155";
+  const color = score >= 75 ? "#9C8AC4" : score >= 50 ? "#06b6d4" : score >= 30 ? "#f59e0b" : "#334155";
 
   return { score, label, color, factors };
 }
@@ -1068,12 +1068,12 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
         className="liquid-glass-cosmos rounded-2xl p-4"
       >
         <div className="flex items-center justify-between mb-3">
-          <p className="text-[13px] font-bold tracking-widest" style={{ color: "#7c3aed" }}>COSMIC INSIGHT</p>
+          <p className="text-[13px] font-bold tracking-widest" style={{ color: "#7B6FD4" }}>COSMIC INSIGHT</p>
           <span className="text-[13px] tracking-widest" style={{ color: "#334155" }}>AI ANALYSIS</span>
         </div>
         <div className="flex items-start gap-2 mb-3">
           <div className="w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 12px rgba(124,58,237,0.4)" }}>
+            style={{ background: "linear-gradient(135deg, #7B6FD4, #06b6d4)", boxShadow: "0 0 12px rgba(123,111,212,0.4)" }}>
             <span className="text-[13px] text-white font-bold">✦</span>
           </div>
           <div>
@@ -1088,7 +1088,7 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
         <Link href="/dashboard/insights">
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
             className="w-full py-2 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
-            style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa" }}>
+            style={{ background: "rgba(123,111,212,0.12)", border: "1px solid rgba(123,111,212,0.3)", color: "#a78bfa" }}>
             EXPLORE INSIGHT →
           </motion.button>
         </Link>
@@ -1140,13 +1140,13 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
           }}
         >
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-base leading-none" style={{ color: "#c4b5fd" }}>✦</span>
-            <p className="text-[13px] font-bold tracking-widest" style={{ color: "#c4b5fd" }}>NATAL REPORT</p>
+            <span className="text-base leading-none" style={{ color: "#BFB6E8" }}>✦</span>
+            <p className="text-[13px] font-bold tracking-widest" style={{ color: "#BFB6E8" }}>NATAL REPORT</p>
           </div>
           <p className="text-[14px] leading-relaxed mb-3" style={{ color: "#64748b" }}>
             8-chapter AI interpretation of your birth chart — streamed live.
           </p>
-          <div className="text-[13px] font-bold tracking-widest" style={{ color: "#c4b5fd" }}>
+          <div className="text-[13px] font-bold tracking-widest" style={{ color: "#BFB6E8" }}>
             GENERATE REPORT →
           </div>
         </motion.div>
@@ -1158,7 +1158,7 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
         <div className="space-y-2">
           {[
             { label: "SUN",    planet: sun,  color: "#fbbf24" },
-            { label: "MOON",   planet: moon, color: "#c4b5fd" },
+            { label: "MOON",   planet: moon, color: "#BFB6E8" },
             { label: "VENUS",  planet: venus, color: "#f472b6" },
             { label: "ASC",    sign: asc?.sign, color: "#06b6d4" },
           ].map(({ label, planet, sign, color }) => {
@@ -1176,7 +1176,7 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
         </div>
         <div className="mt-3 pt-3 flex items-center gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
           <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>SECT</span>
-          <span className="text-[14px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
+          <span className="text-[14px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#BFB6E8" }}>
             {chart.sect === "day" ? "☀ DAY" : "☽ NIGHT"}
           </span>
           <span className="ml-auto text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>DOMINANT</span>
@@ -1218,7 +1218,7 @@ function SignatureCard({ chart, name }: { chart: ChartData; name: string }) {
   const asc   = chart.houses[0];
   const prof  = chart.annualProfection;
   const sunColor  = "#fbbf24";
-  const moonColor = "#c4b5fd";
+  const moonColor = "#BFB6E8";
   const ascColor  = "#06b6d4";
   const lordColor = PLANET_COLORS[prof.lordOfYear] ?? "#f59e0b";
 
@@ -1258,8 +1258,8 @@ function SignatureCard({ chart, name }: { chart: ChartData; name: string }) {
             <stop offset="100%" stopColor="#020214" />
           </linearGradient>
           <radialGradient id="sigOrb1" cx="15%" cy="20%" r="40%">
-            <stop offset="0%" stopColor="rgba(124,58,237,0.25)" />
-            <stop offset="100%" stopColor="rgba(124,58,237,0)" />
+            <stop offset="0%" stopColor="rgba(123,111,212,0.25)" />
+            <stop offset="100%" stopColor="rgba(123,111,212,0)" />
           </radialGradient>
           <radialGradient id="sigOrb2" cx="85%" cy="80%" r="35%">
             <stop offset="0%" stopColor="rgba(6,182,212,0.18)" />
@@ -1277,7 +1277,7 @@ function SignatureCard({ chart, name }: { chart: ChartData; name: string }) {
         <rect width={440} height={240} rx={20} fill="url(#sigOrb2)" />
 
         {/* Border */}
-        <rect width={440} height={240} rx={20} fill="none" stroke="rgba(124,58,237,0.3)" strokeWidth={1} />
+        <rect width={440} height={240} rx={20} fill="none" stroke="rgba(123,111,212,0.3)" strokeWidth={1} />
 
         {/* Star field */}
         {[20,80,200,300,380,40,150,350,420,60,260,340].map((x, i) => (
@@ -1287,8 +1287,8 @@ function SignatureCard({ chart, name }: { chart: ChartData; name: string }) {
         ))}
 
         {/* Branding */}
-        <text x={22} y={26} fontSize={9} fill="rgba(124,58,237,0.7)" fontWeight="700" letterSpacing={3}>COSMORA</text>
-        <text x={22} y={38} fontSize={7} fill="rgba(99,102,241,0.4)" letterSpacing={2}>NATAL SIGNATURE</text>
+        <text x={22} y={26} fontSize={9} fill="rgba(123,111,212,0.7)" fontWeight="700" letterSpacing={3}>COSMORA</text>
+        <text x={22} y={38} fontSize={7} fill="rgba(123,111,212,0.4)" letterSpacing={2}>NATAL SIGNATURE</text>
 
         {/* Name */}
         <text x={220} y={70} textAnchor="middle" fontSize={22} fill="white" fontWeight="800" letterSpacing={1}
@@ -1328,19 +1328,19 @@ function SignatureCard({ chart, name }: { chart: ChartData; name: string }) {
         <text x={390} y={168} textAnchor="middle" fontSize={7} fill="rgba(245,158,11,0.5)">Age {prof.age}</text>
 
         {/* Divider */}
-        <line x1={22} y1={185} x2={418} y2={185} stroke="rgba(99,102,241,0.15)" strokeWidth={0.5} />
+        <line x1={22} y1={185} x2={418} y2={185} stroke="rgba(123,111,212,0.15)" strokeWidth={0.5} />
 
         {/* Bottom row: sect + element + aspect count */}
-        <text x={22} y={206} fontSize={8} fill="rgba(99,102,241,0.5)" letterSpacing={1}>
+        <text x={22} y={206} fontSize={8} fill="rgba(123,111,212,0.5)" letterSpacing={1}>
           {chart.sect === "day" ? "☀ DAY SECT" : "☽ NIGHT SECT"}
         </text>
         <circle cx={220} cy={202} r={3} fill={domColor} />
         <text x={232} y={206} textAnchor="start" fontSize={8} fill={domColor} fontWeight="700">{dominant} dominant</text>
-        <text x={418} y={206} textAnchor="end" fontSize={7} fill="rgba(99,102,241,0.3)" letterSpacing={1}>cosmora.app</text>
+        <text x={418} y={206} textAnchor="end" fontSize={7} fill="rgba(123,111,212,0.3)" letterSpacing={1}>cosmora.app</text>
 
         {/* Bottom glow line */}
-        <line x1={22} y1={225} x2={418} y2={225} stroke="rgba(124,58,237,0.1)" strokeWidth={0.5} />
-        <text x={220} y={235} textAnchor="middle" fontSize={7} fill="rgba(99,102,241,0.2)" letterSpacing={3}>
+        <line x1={22} y1={225} x2={418} y2={225} stroke="rgba(123,111,212,0.1)" strokeWidth={0.5} />
+        <text x={220} y={235} textAnchor="middle" fontSize={7} fill="rgba(123,111,212,0.2)" letterSpacing={3}>
           {chart.birthDatetime ? new Date(chart.birthDatetime).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : ""}
         </text>
       </svg>
@@ -1351,7 +1351,7 @@ function SignatureCard({ chart, name }: { chart: ChartData; name: string }) {
           whileTap={{ scale: 0.96 }}
           onClick={handleDownload}
           className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
-          style={{ background: "rgba(124,58,237,0.2)", border: "1px solid rgba(124,58,237,0.4)", color: "#a78bfa" }}
+          style={{ background: "rgba(123,111,212,0.2)", border: "1px solid rgba(123,111,212,0.4)", color: "#a78bfa" }}
         >
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3.5 h-3.5">
             <path d="M10 3v10M6 9l4 4 4-4" /><path d="M4 15h12" />
@@ -1473,7 +1473,7 @@ export default function DashboardPage() {
           <div className="h-full flex items-center justify-center">
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
               className="w-24 h-24 rounded-full"
-              style={{ border: "1px solid rgba(124,58,237,0.3)", borderTopColor: "#7c3aed", boxShadow: "0 0 40px rgba(124,58,237,0.3)" }} />
+              style={{ border: "1px solid rgba(123,111,212,0.3)", borderTopColor: "#7B6FD4", boxShadow: "0 0 40px rgba(123,111,212,0.3)" }} />
           </div>
         ) : (
           <SolarSystemOrrery
@@ -1500,13 +1500,13 @@ export default function DashboardPage() {
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 20px rgba(124,58,237,0.5)" }}>
+                style={{ background: "linear-gradient(135deg, #7B6FD4, #06b6d4)", boxShadow: "0 0 20px rgba(123,111,212,0.5)" }}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" className="w-5 h-5">
                   <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
                 </svg>
               </div>
               <div className="hidden md:block">
-                <p className="text-[14px] font-bold tracking-[0.2em]" style={{ color: "#7c3aed" }}>COSMORA</p>
+                <p className="text-[14px] font-bold tracking-[0.2em]" style={{ color: "#7B6FD4" }}>COSMORA</p>
                 <p className="text-[13px] tracking-widest" style={{ color: "#334155" }}>2070</p>
               </div>
             </div>
@@ -1549,7 +1549,7 @@ export default function DashboardPage() {
             <Link href="/onboarding">
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[14px] font-bold tracking-widest cursor-pointer"
-                style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa" }}>
+                style={{ background: "rgba(123,111,212,0.15)", border: "1px solid rgba(123,111,212,0.3)", color: "#a78bfa" }}>
                 + CHART
               </motion.button>
             </Link>

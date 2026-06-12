@@ -14,20 +14,20 @@ import { useWarpTo } from "@/components/ui/WarpTransition";
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Record<string, string> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
-  NorthNode: "#64748b", Chiron: "#6366f1",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
+  NorthNode: "#64748b", Chiron: "#7B6FD4",
 };
 
 const SIGN_COLORS: Record<ZodiacSign, string> = {
   Aries: "#ef4444", Taurus: "#22c55e", Gemini: "#eab308", Cancer: "#38bdf8",
   Leo: "#f97316", Virgo: "#4ade80", Libra: "#facc15", Scorpio: "#dc2626",
-  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#8b5cf6",
+  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#7B6FD4",
 };
 
 const ASPECT_CONFIG: Record<string, { symbol: string; color: string; label: string }> = {
-  conjunction: { symbol: "☌", color: "#a855f7", label: "Conjunction" },
+  conjunction: { symbol: "☌", color: "#9C8AC4", label: "Conjunction" },
   opposition:  { symbol: "☍", color: "#ef4444", label: "Opposition" },
   trine:       { symbol: "△", color: "#22c55e", label: "Trine" },
   square:      { symbol: "□", color: "#f59e0b", label: "Square" },
@@ -155,7 +155,7 @@ function MoonOrb({ angle, size = 56 }: { angle: number; size?: number }) {
   const cx = size / 2, cy = size / 2;
   const isWaxing = angle < 180;
   const termX = Math.cos(angle * Math.PI / 180) * r;
-  const moonColor = "#c4b5fd";
+  const moonColor = "#BFB6E8";
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       <circle cx={cx} cy={cy} r={r} fill="rgba(196,181,253,0.06)" stroke="rgba(196,181,253,0.2)" strokeWidth={1} />
@@ -448,7 +448,7 @@ function PlanetaryHoursPanel({ lat }: { lat: number }) {
                 <span className="text-[13px] font-mono flex-shrink-0" style={{ color: "#334155" }}>
                   {fmtTime(h.start)} – {fmtTime(h.end)}
                 </span>
-                <span className="text-[14px] w-4 text-right flex-shrink-0" style={{ color: h.isDay ? "#fbbf24" : "#c4b5fd" }}>
+                <span className="text-[14px] w-4 text-right flex-shrink-0" style={{ color: h.isDay ? "#fbbf24" : "#BFB6E8" }}>
                   {h.isDay ? "☀" : "☽"}
                 </span>
               </motion.div>
@@ -615,7 +615,7 @@ function WeekForecast({ now, moonLon, ingresses, warpTo }: {
               className="flex flex-col items-center gap-2 py-4 px-1 cursor-pointer transition-all duration-150"
               onClick={() => warpTo("/dashboard/transits")}
               style={{
-                background: day.isToday ? "rgba(124,58,237,0.12)" : "transparent",
+                background: day.isToday ? "rgba(123,111,212,0.12)" : "transparent",
                 borderRight: i < 6 ? "1px solid rgba(255,255,255,0.04)" : "none",
                 borderBottom: day.dayIngresses.length > 0 ? `2px solid ${rulerColor}40` : "none",
               }}
@@ -676,13 +676,13 @@ function WeekForecast({ now, moonLon, ingresses, warpTo }: {
         style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
       >
         <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded flex items-center justify-center" style={{ background: "rgba(124,58,237,0.2)" }}>
+          <div className="w-4 h-4 rounded flex items-center justify-center" style={{ background: "rgba(123,111,212,0.2)" }}>
             <span className="text-[13px]" style={{ color: "#a78bfa" }}>☉</span>
           </div>
           <span className="text-[14px]" style={{ color: "#334155" }}>Day ruler</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[14px]" style={{ color: "#c4b5fd" }}>♈</span>
+          <span className="text-[14px]" style={{ color: "#BFB6E8" }}>♈</span>
           <span className="text-[14px]" style={{ color: "#334155" }}>Moon sign (approx)</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -911,19 +911,19 @@ export default function BriefingPage() {
     return (
       <div className="h-screen flex overflow-hidden">
         <DashboardBg />
-        <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "5%", background: "rgba(124,58,237,0.07)", filter: "blur(100px)" }} />
+        <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "5%", background: "rgba(123,111,212,0.07)", filter: "blur(100px)" }} />
         <div className="flex-1 flex flex-col items-center justify-center gap-6 md:ml-[68px] mb-[60px] md:mb-0 px-6">
           <motion.div
             animate={{ scale: [1, 1.06, 1], opacity: [0.75, 1, 0.75] }}
             transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
             className="rounded-2xl flex items-center justify-center"
-            style={{ width: 72, height: 72, background: "linear-gradient(135deg, rgba(124,58,237,0.22), rgba(6,182,212,0.14))", border: "1px solid rgba(124,58,237,0.35)", boxShadow: "0 0 48px rgba(124,58,237,0.18)" }}
+            style={{ width: 72, height: 72, background: "linear-gradient(135deg, rgba(123,111,212,0.22), rgba(6,182,212,0.14))", border: "1px solid rgba(123,111,212,0.35)", boxShadow: "0 0 48px rgba(123,111,212,0.18)" }}
           >
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-              <circle cx="18" cy="18" r="14" stroke="rgba(124,58,237,0.6)" strokeWidth="1"/>
+              <circle cx="18" cy="18" r="14" stroke="rgba(123,111,212,0.6)" strokeWidth="1"/>
               <circle cx="18" cy="18" r="8" stroke="rgba(6,182,212,0.5)" strokeWidth="0.75"/>
-              <line x1="18" y1="4" x2="18" y2="32" stroke="rgba(124,58,237,0.35)" strokeWidth="0.75"/>
-              <line x1="4" y1="18" x2="32" y2="18" stroke="rgba(124,58,237,0.35)" strokeWidth="0.75"/>
+              <line x1="18" y1="4" x2="18" y2="32" stroke="rgba(123,111,212,0.35)" strokeWidth="0.75"/>
+              <line x1="4" y1="18" x2="32" y2="18" stroke="rgba(123,111,212,0.35)" strokeWidth="0.75"/>
               <circle cx="18" cy="18" r="2.5" fill="rgba(6,182,212,0.8)"/>
             </svg>
           </motion.div>
@@ -936,7 +936,7 @@ export default function BriefingPage() {
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
               className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
+              style={{ background: "linear-gradient(135deg, #7B6FD4, #7B6FD4)", color: "white", border: "1px solid rgba(123,111,212,0.4)" }}
             >
               Begin Your Chart →
             </motion.button>
@@ -950,7 +950,7 @@ export default function BriefingPage() {
     <div className="h-screen flex overflow-hidden">
       <DashboardBg />
       <div className="nebula-orb" style={{ width: 600, height: 600, left: "-5%", top: "-10%", background: "rgba(245,158,11,0.04)", filter: "blur(120px)" }} />
-      <div className="nebula-orb" style={{ width: 400, height: 400, right: "5%", bottom: "0%", background: "rgba(124,58,237,0.05)", filter: "blur(90px)" }} />
+      <div className="nebula-orb" style={{ width: 400, height: 400, right: "5%", bottom: "0%", background: "rgba(123,111,212,0.05)", filter: "blur(90px)" }} />
 
 
       <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-x-hidden">
@@ -1024,7 +1024,7 @@ export default function BriefingPage() {
                   >
                     <MoonOrb angle={moonPhase.angle} size={72} />
                     <div className="text-center">
-                      <p className="text-[14px] font-bold" style={{ color: "#c4b5fd" }}>{moonPhase.name}</p>
+                      <p className="text-[14px] font-bold" style={{ color: "#BFB6E8" }}>{moonPhase.name}</p>
                       <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
                         {moonPhase.illumination.toFixed(0)}% illuminated
                       </p>
@@ -1059,12 +1059,12 @@ export default function BriefingPage() {
                   <div
                     className="md:col-span-2 rounded-2xl p-5 flex flex-col justify-between"
                     style={{
-                      background: "rgba(124,58,237,0.06)",
-                      border: "1px solid rgba(124,58,237,0.15)",
+                      background: "rgba(123,111,212,0.06)",
+                      border: "1px solid rgba(123,111,212,0.15)",
                     }}
                   >
                     <div>
-                      <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#7c3aed" }}>
+                      <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#7B6FD4" }}>
                         TODAY'S CONTEXT
                       </p>
                       <div className="flex items-start gap-4 flex-wrap">
@@ -1079,7 +1079,7 @@ export default function BriefingPage() {
                         </div>
                         <div>
                           <p className="text-[13px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
-                          <p className="text-[14px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
+                          <p className="text-[14px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#BFB6E8" }}>
                             {chart.sect === "day" ? "☀ Day Chart" : "☽ Night Chart"}
                           </p>
                         </div>
@@ -1096,7 +1096,7 @@ export default function BriefingPage() {
 
                     {/* Active transit planets row */}
                     {transitsData && (
-                      <div className="mt-4 pt-4" style={{ borderTop: "1px solid rgba(124,58,237,0.08)" }}>
+                      <div className="mt-4 pt-4" style={{ borderTop: "1px solid rgba(123,111,212,0.08)" }}>
                         <p className="text-[13px] tracking-widest mb-2" style={{ color: "#334155" }}>SKY SNAPSHOT</p>
                         <div className="flex flex-wrap gap-2">
                           {transitsData.transitPlanets.slice(0, 7).map(p => {
@@ -1180,8 +1180,8 @@ export default function BriefingPage() {
                 <SectionLabel label="EXPLORE" />
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    { label: "Full Transits", href: "/dashboard/transits", icon: "⊙", color: "#6366f1" },
-                    { label: "Oracle Chat",   href: "/dashboard/oracle",   icon: "◈", color: "#a855f7" },
+                    { label: "Full Transits", href: "/dashboard/transits", icon: "⊙", color: "#7B6FD4" },
+                    { label: "Oracle Chat",   href: "/dashboard/oracle",   icon: "◈", color: "#9C8AC4" },
                     { label: "Timeline",      href: "/dashboard/timeline",  icon: "◷", color: "#06b6d4" },
                     { label: "Natal Chart",   href: "/dashboard/chart",    icon: "◎", color: "#fbbf24" },
                   ].map(item => (

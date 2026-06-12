@@ -111,7 +111,7 @@ export function DashboardBg() {
         s.a += s.da;
         if (s.a < 0.05 || s.a > 0.95) s.da *= -1;
         ctx.globalAlpha = s.a * 0.6;
-        ctx.fillStyle = "#c4b5fd";
+        ctx.fillStyle = "#BFB6E8";
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
         ctx.fill();

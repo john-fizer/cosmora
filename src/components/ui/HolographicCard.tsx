@@ -15,7 +15,7 @@ interface HolographicCardProps {
 export function HolographicCard({
   children,
   className,
-  glowColor = "rgba(124,58,237,0.28)",
+  glowColor = "rgba(123,111,212,0.28)",
   delay = 0,
   scanLine = false,
   style,
@@ -40,8 +40,8 @@ export function HolographicCard({
         ...style,
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = "rgba(124,58,237,0.38)";
-        e.currentTarget.style.boxShadow = `0 0 48px ${glowColor}, inset 0 0 24px rgba(124,58,237,0.04)`;
+        e.currentTarget.style.borderColor = "rgba(123,111,212,0.38)";
+        e.currentTarget.style.boxShadow = `0 0 48px ${glowColor}, inset 0 0 24px rgba(123,111,212,0.04)`;
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
@@ -66,8 +66,8 @@ export function HolographicCard({
             position: "absolute",
             inset: 0,
             backgroundImage: [
-              "linear-gradient(rgba(124,58,237,0.035) 1px, transparent 1px)",
-              "linear-gradient(90deg, rgba(124,58,237,0.035) 1px, transparent 1px)",
+              "linear-gradient(rgba(123,111,212,0.035) 1px, transparent 1px)",
+              "linear-gradient(90deg, rgba(123,111,212,0.035) 1px, transparent 1px)",
             ].join(","),
             backgroundSize: "28px 28px",
           }}

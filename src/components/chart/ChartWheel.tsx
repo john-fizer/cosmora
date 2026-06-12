@@ -24,7 +24,7 @@ const SIGNS = [
 const PLANET_COLORS: Record<string, string> = {
   Sun: "#fbbf24", Moon: "#94a3b8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#8b9ab4", Uranus: "#06b6d4",
-  Neptune: "#3b82f6", Pluto: "#8b5cf6", NorthNode: "#64748b", Chiron: "#6366f1",
+  Neptune: "#3b82f6", Pluto: "#7B6FD4", NorthNode: "#64748b", Chiron: "#7B6FD4",
 };
 
 const PLANET_SYMBOLS: Record<string, string> = {
@@ -34,7 +34,7 @@ const PLANET_SYMBOLS: Record<string, string> = {
 };
 
 const ASPECT_CFG: Record<string, { color: string; dash: string; opacity: number }> = {
-  conjunction: { color: "#a855f7", dash: "none", opacity: 0.55 },
+  conjunction: { color: "#9C8AC4", dash: "none", opacity: 0.55 },
   opposition:  { color: "#ef4444", dash: "4 3",  opacity: 0.50 },
   trine:       { color: "#22c55e", dash: "none", opacity: 0.45 },
   square:      { color: "#f59e0b", dash: "3 2",  opacity: 0.45 },
@@ -193,8 +193,8 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
   // ASC/DSC/MC/IC positions
   const cardinals = [
-    { label: "ASC", lon: ascLon,         color: "#c4b5fd" },
-    { label: "DC",  lon: ascLon + 180,   color: "#c4b5fd" },
+    { label: "ASC", lon: ascLon,         color: "#BFB6E8" },
+    { label: "DC",  lon: ascLon + 180,   color: "#BFB6E8" },
     { label: "MC",  lon: chart?.midheaven ?? (ascLon + 270), color: "#fbbf24" },
     { label: "IC",  lon: (chart?.midheaven ?? (ascLon + 270)) + 180, color: "#fbbf24" },
   ];
@@ -220,7 +220,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
         animate={{ rotate: 360 }}
         transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
         style={{
-          background: "conic-gradient(from 0deg, transparent 0deg, transparent 330deg, rgba(124,58,237,0.10) 350deg, rgba(167,139,250,0.16) 358deg, transparent 360deg)",
+          background: "conic-gradient(from 0deg, transparent 0deg, transparent 330deg, rgba(123,111,212,0.10) 350deg, rgba(167,139,250,0.16) 358deg, transparent 360deg)",
           mixBlendMode: "screen",
         }}
       />
@@ -233,7 +233,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
       {/* ── Outer ambient glow ── */}
       <div className="absolute inset-0 rounded-full pointer-events-none" style={{
-        background: "radial-gradient(ellipse at center, rgba(124,58,237,0.18) 0%, rgba(6,182,212,0.08) 45%, transparent 72%)",
+        background: "radial-gradient(ellipse at center, rgba(123,111,212,0.18) 0%, rgba(6,182,212,0.08) 45%, transparent 72%)",
         filter: "blur(4px)",
       }} />
 
@@ -245,9 +245,9 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
         className="absolute z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-lg cursor-pointer"
         style={{
           top: 8, right: 8,
-          background: showDecans ? "rgba(124,58,237,0.25)" : "rgba(255,255,255,0.04)",
-          border: `1px solid ${showDecans ? "rgba(124,58,237,0.5)" : "rgba(255,255,255,0.1)"}`,
-          color: showDecans ? "#c4b5fd" : "#475569",
+          background: showDecans ? "rgba(123,111,212,0.25)" : "rgba(255,255,255,0.04)",
+          border: `1px solid ${showDecans ? "rgba(123,111,212,0.5)" : "rgba(255,255,255,0.1)"}`,
+          color: showDecans ? "#BFB6E8" : "#475569",
           fontSize: 11,
           letterSpacing: "0.08em",
           fontFamily: "'Fragment Mono', monospace",
@@ -262,14 +262,14 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
         width={size} height={size}
         viewBox={`0 0 ${size} ${size}`}
         className="relative z-10 chart-wheel-export"
-        style={{ filter: "drop-shadow(0 0 28px rgba(124,58,237,0.45)) drop-shadow(0 0 60px rgba(6,182,212,0.15))" }}
+        style={{ filter: "drop-shadow(0 0 28px rgba(123,111,212,0.45)) drop-shadow(0 0 60px rgba(6,182,212,0.15))" }}
       >
         <defs>
           {/* Core gradient */}
           <radialGradient id="cwCoreGrad" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
             <stop offset="20%" stopColor="#a78bfa" stopOpacity="0.8" />
-            <stop offset="55%" stopColor="#4f46e5" stopOpacity="0.5" />
+            <stop offset="55%" stopColor="#7B6FD4" stopOpacity="0.5" />
             <stop offset="85%" stopColor="#06b6d4" stopOpacity="0.2" />
             <stop offset="100%" stopColor="#00000f" stopOpacity="0" />
           </radialGradient>
@@ -312,7 +312,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
           transition={{ duration: 180, repeat: Infinity, ease: "linear" }}
           style={{ originX: `${cx}px`, originY: `${cy}px` }}
         >
-          <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="rgba(124,58,237,0.2)" strokeWidth="0.8" />
+          <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="rgba(123,111,212,0.2)" strokeWidth="0.8" />
           {Array.from({ length: 72 }).map((_, i) => {
             const isMaj = i % 6 === 0; const isMed = i % 3 === 0;
             const a = i * 5 - 90;
@@ -320,7 +320,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
             const p2 = polarToXY(a, outerR - (isMaj ? 12 : isMed ? 7 : 4), cx, cy);
             return (
               <line key={i} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-                stroke={isMaj ? "rgba(124,58,237,0.7)" : "rgba(124,58,237,0.22)"}
+                stroke={isMaj ? "rgba(123,111,212,0.7)" : "rgba(123,111,212,0.22)"}
                 strokeWidth={isMaj ? "1.2" : "0.6"} />
             );
           })}
@@ -407,9 +407,9 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
         {/* ── House ring ── */}
         <circle cx={cx} cy={cy} r={zodInner} fill="rgba(4,4,20,0.6)"
-          stroke="rgba(99,102,241,0.25)" strokeWidth="0.8" />
+          stroke="rgba(123,111,212,0.25)" strokeWidth="0.8" />
         <circle cx={cx} cy={cy} r={zodInner * 0.80} fill="none"
-          stroke="rgba(99,102,241,0.12)" strokeWidth="0.5" />
+          stroke="rgba(123,111,212,0.12)" strokeWidth="0.5" />
 
         {/* House cusp lines + numbers */}
         {(chart?.houses ?? Array.from({ length: 12 }, (_, i) => ({ longitude: i * 30 + ascLon }))).map((house, i) => {
@@ -428,7 +428,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
             <g key={i} style={onHouseClick ? { cursor: "pointer" } : {}}
               onClick={() => onHouseClick?.(i)}>
               <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-                stroke={isDerivedAsc ? "#e879f9" : isAngular ? "rgba(168,85,247,0.5)" : "rgba(99,102,241,0.2)"}
+                stroke={isDerivedAsc ? "#e879f9" : isAngular ? "rgba(168,85,247,0.5)" : "rgba(123,111,212,0.2)"}
                 strokeWidth={isDerivedAsc ? "2" : isAngular ? "1.2" : "0.6"} />
               <text
                 x={textPt.x} y={textPt.y}
@@ -538,7 +538,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
         {/* ── Inner field ── */}
         <circle cx={cx} cy={cy} r={zodInner * 0.62}
-          fill="rgba(3,3,15,0.92)" stroke="rgba(124,58,237,0.2)" strokeWidth="0.8" />
+          fill="rgba(3,3,15,0.92)" stroke="rgba(123,111,212,0.2)" strokeWidth="0.8" />
 
         {/* ── Aspect lines ── */}
         {aspects.length > 0
@@ -595,7 +595,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
         />
         {/* Energy ring 1 */}
         <motion.circle cx={cx} cy={cy} r={coreR * 2.0} fill="none"
-          stroke="rgba(124,58,237,0.4)" strokeWidth="0.8"
+          stroke="rgba(123,111,212,0.4)" strokeWidth="0.8"
           animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.8, 0.4] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
           style={{ originX: `${cx}px`, originY: `${cy}px` }}
@@ -608,8 +608,8 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
           style={{ originX: `${cx}px`, originY: `${cy}px` }}
         />
         {/* Core */}
-        <circle cx={cx} cy={cy} r={coreR} fill="rgba(124,58,237,0.7)"
-          style={{ filter: "drop-shadow(0 0 8px rgba(124,58,237,0.9))" }} />
+        <circle cx={cx} cy={cy} r={coreR} fill="rgba(123,111,212,0.7)"
+          style={{ filter: "drop-shadow(0 0 8px rgba(123,111,212,0.9))" }} />
         <motion.circle cx={cx} cy={cy} r={coreR * 0.55}
           fill="rgba(255,255,255,0.9)"
           animate={{ scale: [1, 1.35, 1], opacity: [0.7, 1, 0.7] }}
@@ -624,7 +624,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
           const p2 = polarToXY(a, coreR * 1.85, cx, cy);
           return (
             <line key={i} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-              stroke="rgba(124,58,237,0.25)" strokeWidth="0.5" />
+              stroke="rgba(123,111,212,0.25)" strokeWidth="0.5" />
           );
         })}
 

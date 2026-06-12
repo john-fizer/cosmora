@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 export const CHAPTERS = [
-  { label: "COSMOS",    hint: "home base",        href: "/dashboard",          color: "#7c3aed" },
+  { label: "COSMOS",    hint: "home base",        href: "/dashboard",          color: "#7B6FD4" },
   { label: "CHART",     hint: "natal wheel",       href: "/dashboard/chart",    color: "#06b6d4" },
   { label: "ORACLE",    hint: "ai readings",       href: "/dashboard/oracle",   color: "#a78bfa" },
   { label: "TRANSITS",  hint: "live sky",          href: "/dashboard/transits", color: "#f59e0b" },

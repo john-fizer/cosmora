@@ -42,9 +42,9 @@ interface ToolCallEvent {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
 };
 
 const ORACLE_PROMPT_CATEGORIES = [
@@ -194,7 +194,7 @@ function ToolCallCard({ toolCall }: { toolCall: ToolCallEvent }) {
 const MEMORY_CATS: { id: MemoryCategory; label: string; color: string }[] = [
   { id: "insight",      label: "Insight",      color: "#a78bfa" },
   { id: "timing",       label: "Timing",       color: "#f59e0b" },
-  { id: "relocation",   label: "Relocation",   color: "#32D5FF" },
+  { id: "relocation",   label: "Relocation",   color: "#C8A55B" },
   { id: "relationship", label: "Relationship", color: "#f472b6" },
   { id: "warning",      label: "Warning",      color: "#ef4444" },
   { id: "general",      label: "General",      color: "#64748b" },
@@ -219,7 +219,7 @@ function SaveMemoryPanel({
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       style={{
-        background: "rgba(4,4,28,0.97)", border: "1px solid rgba(124,58,237,0.3)",
+        background: "rgba(4,4,28,0.97)", border: "1px solid rgba(123,111,212,0.3)",
         borderRadius: 14, padding: 14, marginTop: 6, backdropFilter: "blur(24px)",
         boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
       }}
@@ -235,7 +235,7 @@ function SaveMemoryPanel({
             maxLength={80}
             placeholder="Memory title…"
             className="w-full text-[13px] mb-3 px-3 py-2 rounded-lg outline-none"
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(124,58,237,0.2)", color: "#e2d9f3" }}
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(123,111,212,0.2)", color: "#e2d9f3" }}
           />
           <div className="flex flex-wrap gap-1.5 mb-3">
             {MEMORY_CATS.map(c => (
@@ -251,7 +251,7 @@ function SaveMemoryPanel({
             <button onClick={handleSave} style={{
               flex: 1, padding: "7px 0", borderRadius: 10,
               background: "linear-gradient(135deg, #4c1d95, #1e3a5f)",
-              border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa",
+              border: "1px solid rgba(123,111,212,0.3)", color: "#a78bfa",
               fontSize: 12, letterSpacing: "0.1em", cursor: "pointer",
             }}>SAVE</button>
             <button onClick={onCancel} style={{
@@ -290,7 +290,7 @@ function OracleBubble({ message, isStreaming, voicePlanet, chartAspects, autoPla
     >
       {isOracle && (
         <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-[13px] font-bold mt-0.5"
-          style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 12px rgba(124,58,237,0.5)" }}>
+          style={{ background: "linear-gradient(135deg, #7B6FD4, #06b6d4)", boxShadow: "0 0 12px rgba(123,111,212,0.5)" }}>
           ✦
         </div>
       )}
@@ -299,13 +299,13 @@ function OracleBubble({ message, isStreaming, voicePlanet, chartAspects, autoPla
           className="relative max-w-lg px-4 py-3 rounded-2xl text-[14px] leading-relaxed"
           style={isOracle ? {
             background: "rgba(4,4,28,0.9)",
-            border: "1px solid rgba(124,58,237,0.25)",
+            border: "1px solid rgba(123,111,212,0.25)",
             backdropFilter: "blur(20px)",
             color: "#cbd5e1",
             borderTopLeftRadius: 4,
-            boxShadow: "0 0 20px rgba(124,58,237,0.06)",
+            boxShadow: "0 0 20px rgba(123,111,212,0.06)",
           } : {
-            background: "rgba(124,58,237,0.18)",
+            background: "rgba(123,111,212,0.18)",
             border: "1px solid rgba(168,85,247,0.35)",
             color: "#e2d9f3",
             borderTopRightRadius: 4,
@@ -328,7 +328,7 @@ function OracleBubble({ message, isStreaming, voicePlanet, chartAspects, autoPla
               animate={{ opacity: [1, 0, 1] }}
               transition={{ duration: 0.7, repeat: Infinity }}
               className="inline-block ml-1 w-0.5 h-3.5 align-middle rounded-full"
-              style={{ background: "#7c3aed" }}
+              style={{ background: "#7B6FD4" }}
             />
           )}
           {isOracle && (
@@ -357,8 +357,8 @@ function OracleBubble({ message, isStreaming, voicePlanet, chartAspects, autoPla
                 onClick={() => setShowSave(true)}
                 style={{
                   alignSelf: "flex-start", marginTop: 4, padding: "3px 10px",
-                  background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.22)",
-                  borderRadius: 20, color: "#7c3aed", fontSize: 13,
+                  background: "rgba(123,111,212,0.1)", border: "1px solid rgba(123,111,212,0.22)",
+                  borderRadius: 20, color: "#7B6FD4", fontSize: 13,
                   letterSpacing: "0.1em", cursor: "pointer",
                   fontFamily: "'Fragment Mono', monospace",
                 }}
@@ -408,15 +408,15 @@ function FollowUpSuggestions({ suggestions, onSelect }: {
           initial={{ opacity: 0, x: -8 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.06 * i }}
-          whileHover={{ x: 4, borderColor: "rgba(124,58,237,0.4)" }}
+          whileHover={{ x: 4, borderColor: "rgba(123,111,212,0.4)" }}
           whileTap={{ scale: 0.97 }}
           onClick={() => onSelect(s)}
           className="flex items-start gap-2.5 text-left px-3 py-2 rounded-xl cursor-pointer transition-all duration-200"
-          style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.14)" }}
+          style={{ background: "rgba(123,111,212,0.06)", border: "1px solid rgba(123,111,212,0.14)" }}
         >
           <span
             className="flex-shrink-0 w-4 h-4 rounded-md text-[13px] font-black flex items-center justify-center mt-0.5"
-            style={{ background: "rgba(124,58,237,0.2)", color: "#a78bfa" }}
+            style={{ background: "rgba(123,111,212,0.2)", color: "#a78bfa" }}
           >
             {labels[i]}
           </span>
@@ -464,9 +464,9 @@ function ModelSelector({ currentModelId, availability, onChange }: {
               className="absolute right-0 top-full mt-2 z-50 w-72 rounded-2xl overflow-hidden"
               style={{
                 background: "rgba(4,4,28,0.97)",
-                border: "1px solid rgba(124,58,237,0.25)",
+                border: "1px solid rgba(123,111,212,0.25)",
                 backdropFilter: "blur(24px)",
-                boxShadow: "0 0 40px rgba(124,58,237,0.15)",
+                boxShadow: "0 0 40px rgba(123,111,212,0.15)",
               }}
             >
               <div className="p-2">
@@ -477,13 +477,13 @@ function ModelSelector({ currentModelId, availability, onChange }: {
                   return (
                     <motion.button
                       key={model.id}
-                      whileHover={{ background: "rgba(124,58,237,0.08)" }}
+                      whileHover={{ background: "rgba(123,111,212,0.08)" }}
                       onClick={() => { if (isAvailable) { onChange(model.id); setOpen(false); } }}
                       disabled={!isAvailable}
                       className="w-full flex items-start gap-3 px-3 py-2.5 rounded-xl text-left cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                       style={{
-                        background: isActive ? "rgba(124,58,237,0.12)" : "transparent",
-                        border: isActive ? "1px solid rgba(124,58,237,0.25)" : "1px solid transparent",
+                        background: isActive ? "rgba(123,111,212,0.12)" : "transparent",
+                        border: isActive ? "1px solid rgba(123,111,212,0.25)" : "1px solid transparent",
                       }}
                     >
                       <span className="text-base mt-0.5 flex-shrink-0" style={{ color: model.color }}>{model.icon}</span>
@@ -926,7 +926,7 @@ export default function OraclePage() {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className="flex-shrink-0 flex items-center justify-between px-6 py-3 hud-scan-bar"
-          style={{ borderBottom: "1px solid rgba(124,58,237,0.2)", background: "rgba(3,4,10,0.85)", backdropFilter: "blur(24px)" }}
+          style={{ borderBottom: "1px solid rgba(123,111,212,0.2)", background: "rgba(3,4,10,0.85)", backdropFilter: "blur(24px)" }}
         >
           <div className="flex items-center gap-3">
             <Link href="/dashboard">
@@ -946,7 +946,7 @@ export default function OraclePage() {
             <motion.button
               whileHover={{ opacity: 0.8 }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] tracking-[0.12em] font-bold"
-              style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.18)", color: "#7c3aed" }}
+              style={{ background: "rgba(123,111,212,0.08)", border: "1px solid rgba(123,111,212,0.18)", color: "#7B6FD4" }}
             >
               ✦ MEMORIES
             </motion.button>
@@ -987,10 +987,10 @@ export default function OraclePage() {
               onClick={() => setDualMode(v => !v)}
               className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[13px] font-bold tracking-wider cursor-pointer"
               style={{
-                background: dualMode ? "rgba(124,58,237,0.2)" : "rgba(255,255,255,0.03)",
-                border: dualMode ? "1px solid rgba(124,58,237,0.5)" : "1px solid rgba(255,255,255,0.08)",
+                background: dualMode ? "rgba(123,111,212,0.2)" : "rgba(255,255,255,0.03)",
+                border: dualMode ? "1px solid rgba(123,111,212,0.5)" : "1px solid rgba(255,255,255,0.08)",
                 color: dualMode ? "#a78bfa" : "#475569",
-                boxShadow: dualMode ? "0 0 12px rgba(124,58,237,0.3)" : "none",
+                boxShadow: dualMode ? "0 0 12px rgba(123,111,212,0.3)" : "none",
               }}
               title="Run Claude + Llama in parallel, synthesize results"
             >
@@ -1016,7 +1016,7 @@ export default function OraclePage() {
           {/* ── Left panel ── */}
           <motion.div initial={{ x: -30, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }}
             className="flex-shrink-0 hidden md:flex flex-col items-center gap-5 px-6 py-8 overflow-y-auto"
-            style={{ width: 320, borderRight: "1px solid rgba(124,58,237,0.12)", background: "rgba(3,4,10,0.5)", scrollbarWidth: "none" }}>
+            style={{ width: 320, borderRight: "1px solid rgba(123,111,212,0.12)", background: "rgba(3,4,10,0.5)", scrollbarWidth: "none" }}>
 
             <div className="flex flex-col items-center gap-3">
               <LiquidMetalOrb state={orbState} size={240} />
@@ -1030,13 +1030,13 @@ export default function OraclePage() {
               </div>
             </div>
 
-            <div style={{ width: "80%", height: 1, background: "linear-gradient(90deg, transparent, rgba(124,58,237,0.3), transparent)" }} />
+            <div style={{ width: "80%", height: 1, background: "linear-gradient(90deg, transparent, rgba(123,111,212,0.3), transparent)" }} />
 
             {chart && (
               <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={sendDailyBriefing}
                 disabled={orbState !== "idle"}
                 className="w-full py-2.5 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer disabled:opacity-40"
-                style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.2))", border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa" }}>
+                style={{ background: "linear-gradient(135deg, rgba(123,111,212,0.2), rgba(6,182,212,0.2))", border: "1px solid rgba(123,111,212,0.3)", color: "#a78bfa" }}>
                 ✦ TODAY&apos;S COSMIC BRIEFING
               </motion.button>
             )}
@@ -1045,9 +1045,9 @@ export default function OraclePage() {
               <motion.div whileHover={{ scale: 1.02, borderColor: "rgba(196,181,253,0.3)" }}
                 className="w-full py-2.5 px-3 rounded-xl flex items-center gap-2 cursor-pointer"
                 style={{ background: "rgba(168,85,247,0.06)", border: "1px solid rgba(168,85,247,0.15)" }}>
-                <span className="text-[13px]" style={{ color: "#c4b5fd" }}>✦</span>
+                <span className="text-[13px]" style={{ color: "#BFB6E8" }}>✦</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-bold tracking-widest" style={{ color: "#c4b5fd" }}>NATAL REPORT</p>
+                  <p className="text-[13px] font-bold tracking-widest" style={{ color: "#BFB6E8" }}>NATAL REPORT</p>
                   <p className="text-[13px]" style={{ color: "#334155" }}>Full AI chart interpretation</p>
                 </div>
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3 h-3 flex-shrink-0" style={{ color: "#334155" }}>
@@ -1102,7 +1102,7 @@ export default function OraclePage() {
                       <motion.button initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
                         whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} onClick={sendDailyBriefing}
                         className="px-5 py-2.5 rounded-xl text-[13px] font-bold tracking-wider cursor-pointer"
-                        style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.25), rgba(6,182,212,0.25))", border: "1px solid rgba(124,58,237,0.4)", color: "#a78bfa" }}>
+                        style={{ background: "linear-gradient(135deg, rgba(123,111,212,0.25), rgba(6,182,212,0.25))", border: "1px solid rgba(123,111,212,0.4)", color: "#a78bfa" }}>
                         ✦ Get Today&apos;s Cosmic Briefing
                       </motion.button>
                     )}
@@ -1112,7 +1112,7 @@ export default function OraclePage() {
                         whileHover={{ scale: 1.03, borderColor: "rgba(168,85,247,0.5)" }} whileTap={{ scale: 0.97 }}
                         onClick={() => sendMessage(p)}
                         className="px-4 py-2 rounded-xl text-[13px] cursor-pointer transition-all duration-200"
-                        style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)", color: "#7c3aed" }}>
+                        style={{ background: "rgba(123,111,212,0.08)", border: "1px solid rgba(123,111,212,0.2)", color: "#7B6FD4" }}>
                         {p}
                       </motion.button>
                     ))}
@@ -1176,7 +1176,7 @@ export default function OraclePage() {
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                               className="ml-10 flex items-center gap-2 px-3 py-1.5 rounded-lg"
-                              style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.2)" }}
+                              style={{ background: "rgba(123,111,212,0.08)", border: "1px solid rgba(123,111,212,0.2)" }}
                             >
                               <motion.div
                                 animate={{ opacity: [0.4, 1, 0.4] }}
@@ -1216,14 +1216,14 @@ export default function OraclePage() {
             </div>
 
             {/* Input */}
-            <div className="flex-shrink-0 px-6 pb-6 pt-3" style={{ borderTop: "1px solid rgba(124,58,237,0.1)" }}>
+            <div className="flex-shrink-0 px-6 pb-6 pt-3" style={{ borderTop: "1px solid rgba(123,111,212,0.1)" }}>
               <div className="flex items-center gap-3 px-5 py-4 rounded-2xl"
-                style={{ background: "rgba(4,4,28,0.8)", border: "1px solid rgba(124,58,237,0.22)", backdropFilter: "blur(20px)", boxShadow: "0 0 30px rgba(124,58,237,0.05)" }}>
+                style={{ background: "rgba(4,4,28,0.8)", border: "1px solid rgba(123,111,212,0.22)", backdropFilter: "blur(20px)", boxShadow: "0 0 30px rgba(123,111,212,0.05)" }}>
                 <motion.div
-                  animate={{ scale: orbState !== "idle" ? [1, 1.3, 1] : 1, boxShadow: orbState === "thinking" ? ["0 0 8px rgba(245,158,11,0.4)", "0 0 18px rgba(245,158,11,0.7)", "0 0 8px rgba(245,158,11,0.4)"] : orbState === "speaking" ? ["0 0 8px rgba(6,182,212,0.4)", "0 0 18px rgba(6,182,212,0.7)", "0 0 8px rgba(6,182,212,0.4)"] : "0 0 10px rgba(124,58,237,0.4)" }}
+                  animate={{ scale: orbState !== "idle" ? [1, 1.3, 1] : 1, boxShadow: orbState === "thinking" ? ["0 0 8px rgba(245,158,11,0.4)", "0 0 18px rgba(245,158,11,0.7)", "0 0 8px rgba(245,158,11,0.4)"] : orbState === "speaking" ? ["0 0 8px rgba(6,182,212,0.4)", "0 0 18px rgba(6,182,212,0.7)", "0 0 8px rgba(6,182,212,0.4)"] : "0 0 10px rgba(123,111,212,0.4)" }}
                   transition={{ duration: 1.2, repeat: orbState !== "idle" ? Infinity : 0 }}
                   className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-[14px] font-bold"
-                  style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)" }}>
+                  style={{ background: "linear-gradient(135deg, #7B6FD4, #06b6d4)" }}>
                   ✦
                 </motion.div>
                 <input ref={inputRef} type="text" value={query}
@@ -1244,7 +1244,7 @@ export default function OraclePage() {
                     <motion.button key="send" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
                       whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.9 }} onClick={() => dualMode ? sendDualMessage() : sendMessage()}
                       disabled={!query.trim()} className="flex-shrink-0 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                      style={{ color: "#7c3aed" }}>
+                      style={{ color: "#7B6FD4" }}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
                         <path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
                       </svg>

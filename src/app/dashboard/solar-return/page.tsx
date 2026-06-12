@@ -13,15 +13,15 @@ import type { StoredProfile } from "@/lib/storage";
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
-  Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
+  Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
-  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#8b5cf6",
+  Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
 };
 
 const SIGN_COLORS: Record<ZodiacSign, string> = {
   Aries: "#ef4444", Taurus: "#22c55e", Gemini: "#eab308", Cancer: "#38bdf8",
   Leo: "#f97316", Virgo: "#4ade80", Libra: "#facc15", Scorpio: "#dc2626",
-  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#8b5cf6",
+  Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#7B6FD4",
 };
 
 const HOUSE_THEMES: Record<number, string> = {
@@ -94,7 +94,7 @@ function SRNatalAspects({ srChart, natalChart }: { srChart: ChartData; natalChar
             <div className="flex items-center gap-1 flex-1">
               <span className="text-[13px]" style={{ color: natColor }}>{PLANET_SYMBOLS[asp.natalPlanet]}</span>
               <span className="text-[13px] font-medium" style={{ color: natColor }}>{asp.natalPlanet}</span>
-              <span className="text-[14px] font-bold ml-1 px-1 py-0.5 rounded" style={{ background: "rgba(124,58,237,0.12)", color: "#a78bfa" }}>NATAL</span>
+              <span className="text-[14px] font-bold ml-1 px-1 py-0.5 rounded" style={{ background: "rgba(123,111,212,0.12)", color: "#a78bfa" }}>NATAL</span>
             </div>
             <span className="text-[13px] hidden md:block flex-shrink-0" style={{ color: "#334155" }}>{asp.type.name}</span>
           </motion.div>
@@ -117,7 +117,7 @@ function PlanetCompare({ natalChart, srChart }: { natalChart: ChartData; srChart
       {/* Header */}
       <div className="grid grid-cols-3 gap-2 px-2 mb-2">
         <span className="text-[14px] font-bold tracking-widest" style={{ color: "#334155" }}>PLANET</span>
-        <span className="text-[14px] font-bold tracking-widest" style={{ color: "#7c3aed" }}>NATAL</span>
+        <span className="text-[14px] font-bold tracking-widest" style={{ color: "#7B6FD4" }}>NATAL</span>
         <span className="text-[14px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>SOLAR RETURN</span>
       </div>
       {natalChart.planets.slice(0, 10).map(np => {
@@ -384,19 +384,19 @@ export default function SolarReturnPage() {
     return (
       <div className="h-screen flex overflow-hidden">
         <DashboardBg />
-        <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "5%", background: "rgba(124,58,237,0.07)", filter: "blur(100px)" }} />
+        <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "5%", background: "rgba(123,111,212,0.07)", filter: "blur(100px)" }} />
         <div className="flex-1 flex flex-col items-center justify-center gap-6 md:ml-[68px] mb-[60px] md:mb-0 px-6">
           <motion.div
             animate={{ scale: [1, 1.06, 1], opacity: [0.75, 1, 0.75] }}
             transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
             className="rounded-2xl flex items-center justify-center"
-            style={{ width: 72, height: 72, background: "linear-gradient(135deg, rgba(124,58,237,0.22), rgba(6,182,212,0.14))", border: "1px solid rgba(124,58,237,0.35)", boxShadow: "0 0 48px rgba(124,58,237,0.18)" }}
+            style={{ width: 72, height: 72, background: "linear-gradient(135deg, rgba(123,111,212,0.22), rgba(6,182,212,0.14))", border: "1px solid rgba(123,111,212,0.35)", boxShadow: "0 0 48px rgba(123,111,212,0.18)" }}
           >
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-              <circle cx="18" cy="18" r="14" stroke="rgba(124,58,237,0.6)" strokeWidth="1"/>
+              <circle cx="18" cy="18" r="14" stroke="rgba(123,111,212,0.6)" strokeWidth="1"/>
               <circle cx="18" cy="18" r="8" stroke="rgba(6,182,212,0.5)" strokeWidth="0.75"/>
-              <line x1="18" y1="4" x2="18" y2="32" stroke="rgba(124,58,237,0.35)" strokeWidth="0.75"/>
-              <line x1="4" y1="18" x2="32" y2="18" stroke="rgba(124,58,237,0.35)" strokeWidth="0.75"/>
+              <line x1="18" y1="4" x2="18" y2="32" stroke="rgba(123,111,212,0.35)" strokeWidth="0.75"/>
+              <line x1="4" y1="18" x2="32" y2="18" stroke="rgba(123,111,212,0.35)" strokeWidth="0.75"/>
               <circle cx="18" cy="18" r="2.5" fill="rgba(6,182,212,0.8)"/>
             </svg>
           </motion.div>
@@ -409,7 +409,7 @@ export default function SolarReturnPage() {
             <motion.button
               whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
               className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
-              style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
+              style={{ background: "linear-gradient(135deg, #7B6FD4, #7B6FD4)", color: "white", border: "1px solid rgba(123,111,212,0.4)" }}
             >
               Begin Your Chart →
             </motion.button>
@@ -424,7 +424,7 @@ export default function SolarReturnPage() {
     <div className="h-screen flex overflow-hidden">
       <DashboardBg />
       <div className="nebula-orb" style={{ width: 500, height: 500, right: "0%", top: "-10%", background: "rgba(245,158,11,0.06)", filter: "blur(100px)" }} />
-      <div className="nebula-orb" style={{ width: 300, height: 300, left: "5%", bottom: "10%", background: "rgba(124,58,237,0.05)", filter: "blur(80px)" }} />
+      <div className="nebula-orb" style={{ width: 300, height: 300, left: "5%", bottom: "10%", background: "rgba(123,111,212,0.05)", filter: "blur(80px)" }} />
 
       <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-x-hidden">
 
@@ -528,9 +528,9 @@ export default function SolarReturnPage() {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                           {[
                             { label: "SR ASC", value: `${SIGN_SYMBOLS[srChart.houses[0].sign]} ${srChart.houses[0].sign}`, color: "#06b6d4" },
-                            { label: "SR MC", value: (() => { const mc = srChart.houses[9]; return `${SIGN_SYMBOLS[mc?.sign ?? "Aries"]} ${mc?.sign ?? "—"}`; })(), color: "#a855f7" },
-                            { label: "SR MOON", value: (() => { const m = srChart.planets.find(p => p.name === "Moon"); return m ? `${SIGN_SYMBOLS[m.sign]} ${m.sign} H${m.house}` : "—"; })(), color: "#c4b5fd" },
-                            { label: "SR SECT", value: srChart.sect.toUpperCase(), color: srChart.sect === "day" ? "#fbbf24" : "#c4b5fd" },
+                            { label: "SR MC", value: (() => { const mc = srChart.houses[9]; return `${SIGN_SYMBOLS[mc?.sign ?? "Aries"]} ${mc?.sign ?? "—"}`; })(), color: "#9C8AC4" },
+                            { label: "SR MOON", value: (() => { const m = srChart.planets.find(p => p.name === "Moon"); return m ? `${SIGN_SYMBOLS[m.sign]} ${m.sign} H${m.house}` : "—"; })(), color: "#BFB6E8" },
+                            { label: "SR SECT", value: srChart.sect.toUpperCase(), color: srChart.sect === "day" ? "#fbbf24" : "#BFB6E8" },
                           ].map(({ label, value, color }) => (
                             <div key={label} className="flex flex-col gap-1">
                               <p className="text-[14px] tracking-widest font-bold" style={{ color: "#334155" }}>{label}</p>
@@ -634,7 +634,7 @@ export default function SolarReturnPage() {
                         if (stelliums.length === 0) return null;
                         return (
                           <div className="rounded-2xl p-4" style={{ background: "rgba(168,85,247,0.05)", border: "1px solid rgba(168,85,247,0.18)" }}>
-                            <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#a855f7" }}>✦ SR STELLIUMS</p>
+                            <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#9C8AC4" }}>✦ SR STELLIUMS</p>
                             {stelliums.map(s => {
                               const signColor = SIGN_COLORS[s.sign];
                               return (

@@ -13,7 +13,7 @@ import {
 } from "@/lib/storage";
 import type { StoredProfile } from "@/lib/storage";
 
-// â”€â”€â”€ Synastry computation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Synastry computation ─────────────────────────────────────────────────────
 
 const ASPECT_ANGLES = [
   { type: "conjunction" as const, angle: 0,   orb: 8, harmony: 0.5 },
@@ -84,7 +84,7 @@ function computeScore(aspects: SynastryAspect[]): {
     else tensionScore += Math.abs(asp.harmony) * weight * orbFactor;
   }
 
-  // Normalize to 0â€“100
+  // Normalize to 0–100
   const total = Math.round(Math.min(100, Math.max(0, 50 + rawScore * 5)));
 
   // Category breakdown (by planet pairs)
@@ -119,7 +119,7 @@ function computeScore(aspects: SynastryAspect[]): {
   };
 }
 
-// â”€â”€â”€ Composite midpoints + archetype â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Composite midpoints + archetype ─────────────────────────────────────────
 
 type CompositePlanet = { name: PlanetName; longitude: number; sign: ZodiacSign; signDegree: number; house: number };
 
@@ -161,16 +161,16 @@ function getRelationshipArchetype(aspects: SynastryAspect[]): { name: string; de
   }
   const [top] = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const archMap: Record<string, { name: string; description: string; color: string }> = {
-    soulBond:     { name: "Soul Bond",         description: "Deep recognition and emotional attunement â€” you feel like you've known each other before.", color: "#a855f7" },
-    romanticFire: { name: "Magnetic Union",     description: "Intense attraction and creative chemistry â€” a passionate, activating connection.",            color: "#f472b6" },
+    soulBond:     { name: "Soul Bond",         description: "Deep recognition and emotional attunement — you feel like you've known each other before.", color: "#a855f7" },
+    romanticFire: { name: "Magnetic Union",     description: "Intense attraction and creative chemistry — a passionate, activating connection.",            color: "#f472b6" },
     karmic:       { name: "Karmic Contract",    description: "This relationship brings lessons, structure, and long-term commitment themes.",              color: "#94a3b8" },
-    mental:       { name: "Meeting of Minds",   description: "Intellectual synergy and mutual fascination â€” you think alike and stimulate each other.",    color: "#06b6d4" },
+    mental:       { name: "Meeting of Minds",   description: "Intellectual synergy and mutual fascination — you think alike and stimulate each other.",    color: "#06b6d4" },
     growth:       { name: "Growth Partnership", description: "This connection expands your worldview, beliefs, and sense of possibility.",                 color: "#f59e0b" },
   };
   return archMap[top?.[0]] ?? archMap.soulBond;
 }
 
-// â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
   Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
@@ -185,7 +185,7 @@ const ASPECT_COLORS: Record<string, string> = {
 };
 
 const ASPECT_GLYPHS: Record<string, string> = {
-  conjunction: "â˜Œ", opposition: "â˜", trine: "â–³", square: "â–¡", sextile: "âš¹", quincunx: "âš»",
+  conjunction: "☌", opposition: "☍", trine: "△", square: "□", sextile: "⚹", quincunx: "⚻",
 };
 
 const SIGN_COLORS: Record<ZodiacSign, string> = {
@@ -194,7 +194,7 @@ const SIGN_COLORS: Record<ZodiacSign, string> = {
   Sagittarius: "#f59e0b", Capricorn: "#94a3b8", Aquarius: "#06b6d4", Pisces: "#8b5cf6",
 };
 
-// â”€â”€â”€ Compatibility Oracle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Compatibility Oracle ────────────────────────────────────────────────────
 
 function CompatibilityOracle({ profileA, profileB, score, aspects }: {
   profileA: StoredProfile; profileB: StoredProfile;
@@ -211,7 +211,7 @@ function CompatibilityOracle({ profileA, profileB, score, aspects }: {
     hasFired.current = true;
 
     const top5 = aspects.slice(0, 5).map(a =>
-      `${a.personAplanet} ${a.type} ${a.personBplanet} (orb ${a.orb.toFixed(1)}Â°, ${a.harmony > 0 ? "harmonious" : "challenging"})`
+      `${a.personAplanet} ${a.type} ${a.personBplanet} (orb ${a.orb.toFixed(1)}°, ${a.harmony > 0 ? "harmonious" : "challenging"})`
     ).join("; ");
 
     const romantic = score.breakdown.find(b => b.category === "Romance")?.score ?? 50;
@@ -263,7 +263,7 @@ Write 3 paragraphs: (1) the overall nature and dynamic of this relationship base
     >
       <div className="px-5 py-3" style={{ borderBottom: "1px solid rgba(244,114,182,0.1)" }}>
         <p className="text-[13px] font-bold tracking-widest" style={{ color: "#f472b6" }}>
-          âœ¦ ORACLE â€” {profileA.name} & {profileB.name}
+          ✦ ORACLE — {profileA.name} & {profileB.name}
         </p>
       </div>
       <div className="p-5">
@@ -275,7 +275,7 @@ Write 3 paragraphs: (1) the overall nature and dynamic of this relationship base
               className="w-4 h-4 rounded-full border border-t-transparent flex-shrink-0"
               style={{ borderColor: "#f472b6" }}
             />
-            <span className="text-[13px]" style={{ color: "#475569" }}>Oracle is reading your connectionâ€¦</span>
+            <span className="text-[13px]" style={{ color: "#475569" }}>Oracle is reading your connection…</span>
           </div>
         )}
         {text && (
@@ -296,7 +296,7 @@ Write 3 paragraphs: (1) the overall nature and dynamic of this relationship base
   );
 }
 
-// â”€â”€â”€ Sub-components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 function ProfileSelector({
   label, profiles, selectedId, onSelect, accentColor,
@@ -340,7 +340,7 @@ function ProfileSelector({
                 {p.name}
               </p>
               <p className="text-[13px] truncate" style={{ color: "#334155" }}>
-                {p.birthDate} Â· {p.birthPlace}
+                {p.birthDate} · {p.birthPlace}
               </p>
             </div>
             {selectedId === p.id && (
@@ -430,7 +430,7 @@ function AspectRow({ aspect, nameA, nameB }: {
           {ASPECT_GLYPHS[aspect.type]}
         </span>
         <span className="text-[14px] tracking-wider" style={{ color: "#334155" }}>
-          {aspect.orb.toFixed(1)}Â°
+          {aspect.orb.toFixed(1)}°
         </span>
       </div>
 
@@ -475,10 +475,10 @@ function SynastryBiWheel({ chartA, chartB, nameA, nameB, aspects }: {
   const R_PLANETS_A = 80; // A's planets inside zodiac ring
   const R_PLANETS_B = 128; // B's planets outside zodiac ring
 
-  const ZODIAC = ["â™ˆ","â™‰","â™Š","â™‹","â™Œ","â™","â™Ž","â™","â™","â™‘","â™’","â™“"];
+  const ZODIAC = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
   const ZODIAC_COLORS = ["#ef4444","#22c55e","#eab308","#a855f7","#f97316","#6366f1","#ec4899","#dc2626","#f59e0b","#64748b","#06b6d4","#8b5cf6"];
 
-  // Convert ecliptic longitude to SVG angle (0Â° Aries at top, clockwise)
+  // Convert ecliptic longitude to SVG angle (0° Aries at top, clockwise)
   function lonToAngle(lon: number): number {
     return (lon / 360) * 2 * Math.PI - Math.PI / 2;
   }
@@ -486,7 +486,7 @@ function SynastryBiWheel({ chartA, chartB, nameA, nameB, aspects }: {
     return [CX + r * Math.cos(angle), CY + r * Math.sin(angle)];
   }
 
-  // Aspect lines â€” only the top 6 by tightness (lowest orb)
+  // Aspect lines — only the top 6 by tightness (lowest orb)
   const topAspects = aspects.slice(0, 6);
   const ASPECT_COLORS_LOCAL: Record<string, string> = {
     conjunction: "#a855f7", opposition: "#ef4444", trine: "#22c55e",
@@ -566,7 +566,7 @@ function SynastryBiWheel({ chartA, chartB, nameA, nameB, aspects }: {
         <circle cx={CX} cy={CY} r={R_ZODIAC_OUT} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={0.5} />
         <circle cx={CX} cy={CY} r={R_PLANETS_B + 18} fill="none" stroke="rgba(244,114,182,0.08)" strokeWidth={0.5} strokeDasharray="2 4" />
 
-        {/* Synastry aspect lines (A planet â†’ B planet through center area) */}
+        {/* Synastry aspect lines (A planet → B planet through center area) */}
         {topAspects.map((asp, i) => {
           const pA = chartA.planets.find(p => p.name === asp.personAplanet);
           const pB = chartB.planets.find(p => p.name === asp.personBplanet);
@@ -665,7 +665,7 @@ function PlanetOverlay({ chartA, chartB, nameA, nameB }: {
               <span className="text-[13px] font-medium" style={{ color }}>
                 {person}&apos;s {planet}
               </span>
-              <span className="text-[13px] mx-1" style={{ color: "#334155" }}>â†’</span>
+              <span className="text-[13px] mx-1" style={{ color: "#334155" }}>→</span>
               <span className="text-[13px]" style={{ color: "#475569" }}>
                 falls in {targetName}&apos;s H{houseInTarget > 0 ? houseInTarget : "?"} ({pl.sign})
               </span>
@@ -686,7 +686,7 @@ function PlanetOverlay({ chartA, chartB, nameA, nameB }: {
   );
 }
 
-// â”€â”€â”€ Main page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function CompatibilityPage() {
   const [allProfiles, setAllProfiles] = useState<StoredProfile[]>([]);
@@ -739,7 +739,7 @@ export default function CompatibilityPage() {
     ? score.total >= 70 ? "#22c55e" : score.total >= 50 ? "#f59e0b" : "#ef4444"
     : "#94a3b8";
 
-  // â”€â”€â”€ Empty / single profile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Empty / single profile ─────────────────────────────────────────────────
 
   if (!loading && allProfiles.length < 2) {
     return (
@@ -928,7 +928,7 @@ export default function CompatibilityPage() {
               {score && chartA && chartB && profileA && profileB && (
 
                 <>
-                  {/* â”€â”€â”€ OVERVIEW TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                  {/* ─── OVERVIEW TAB ─────────────────────────────────────────── */}
                   {activeTab === "score" && (
                     <motion.div
                       key="score"
@@ -954,10 +954,10 @@ export default function CompatibilityPage() {
                           </h3>
                           <p className="text-[13px] mb-3" style={{ color: "#475569" }}>
                             {score.total >= 75
-                              ? "Strong cosmic resonance â€” multiple harmonious connections"
+                              ? "Strong cosmic resonance — multiple harmonious connections"
                               : score.total >= 55
                               ? "Good compatibility with areas of growth and tension"
-                              : "Dynamic chart â€” significant tension drives transformation"}
+                              : "Dynamic chart — significant tension drives transformation"}
                           </p>
                           <div className="flex gap-4">
                             <div>
@@ -988,7 +988,7 @@ export default function CompatibilityPage() {
                           <div
                             className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center text-lg"
                             style={{ background: `${archetype.color}15`, color: archetype.color }}
-                          >âœ¦</div>
+                          >✦</div>
                           <div>
                             <p className="text-[14px] font-bold tracking-widest mb-0.5" style={{ color: archetype.color }}>RELATIONSHIP ARCHETYPE</p>
                             <p className="text-[14px] font-bold" style={{ color: "#e2e8f0" }}>{archetype.name}</p>
@@ -1052,7 +1052,7 @@ export default function CompatibilityPage() {
                     </motion.div>
                   )}
 
-                  {/* â”€â”€â”€ ASPECTS TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                  {/* ─── ASPECTS TAB ───────────────────────────────────────────── */}
                   {activeTab === "aspects" && (
                     <motion.div
                       key="aspects"
@@ -1089,7 +1089,7 @@ export default function CompatibilityPage() {
                       {harmoniousAspects.length > 0 && (
                         <div className="mb-5">
                           <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#22c55e" }}>
-                            HARMONIOUS Â· {harmoniousAspects.length}
+                            HARMONIOUS · {harmoniousAspects.length}
                           </p>
                           <div className="space-y-1.5">
                             {harmoniousAspects.map((asp, i) => (
@@ -1103,7 +1103,7 @@ export default function CompatibilityPage() {
                       {challengingAspects.length > 0 && (
                         <div>
                           <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#f59e0b" }}>
-                            CHALLENGING Â· {challengingAspects.length}
+                            CHALLENGING · {challengingAspects.length}
                           </p>
                           <div className="space-y-1.5">
                             {challengingAspects.map((asp, i) => (
@@ -1115,7 +1115,7 @@ export default function CompatibilityPage() {
                     </motion.div>
                   )}
 
-                  {/* â”€â”€â”€ OVERLAY TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                  {/* ─── OVERLAY TAB ───────────────────────────────────────────── */}
                   {activeTab === "overlay" && (
                     <motion.div
                       key="overlay"
@@ -1129,7 +1129,7 @@ export default function CompatibilityPage() {
                           SYNASTRY BI-WHEEL
                         </p>
                         <p className="text-[13px] mb-4" style={{ color: "#334155" }}>
-                          {profileA.name} inner Â· {profileB.name} outer
+                          {profileA.name} inner · {profileB.name} outer
                         </p>
                         <SynastryBiWheel
                           chartA={chartA} chartB={chartB}
@@ -1209,7 +1209,7 @@ export default function CompatibilityPage() {
                     </motion.div>
                   )}
 
-                  {/* â”€â”€â”€ COMPOSITE TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                  {/* ─── COMPOSITE TAB ─────────────────────────────────────────── */}
                   {activeTab === "composite" && (
                     <motion.div
                       key="composite"
@@ -1220,7 +1220,7 @@ export default function CompatibilityPage() {
                       <div className="mb-4">
                         <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#f472b6" }}>COMPOSITE MIDPOINT CHART</p>
                         <p className="text-[13px]" style={{ color: "#334155" }}>
-                          The relationship&apos;s own planetary identity â€” midpoints between {profileA.name} & {profileB.name}
+                          The relationship&apos;s own planetary identity — midpoints between {profileA.name} & {profileB.name}
                         </p>
                       </div>
                       <div className="space-y-1.5">
@@ -1244,7 +1244,7 @@ export default function CompatibilityPage() {
                                 <span className="text-[14px]" style={{ color: signColor }}>{SIGN_SYMBOLS[cp.sign]}</span>
                                 <span className="text-[13px]" style={{ color: signColor }}>{cp.sign.substring(0, 3)}</span>
                               </div>
-                              <p className="text-[13px]" style={{ color: "#475569" }}>{cp.signDegree.toFixed(1)}Â°</p>
+                              <p className="text-[13px]" style={{ color: "#475569" }}>{cp.signDegree.toFixed(1)}°</p>
                               <p className="text-[13px]" style={{ color: "#334155" }}>H{cp.house}</p>
                             </motion.div>
                           );
@@ -1265,7 +1265,7 @@ export default function CompatibilityPage() {
                                 {SIGN_SYMBOLS[compSun.sign]} {compSun.sign}
                               </p>
                               <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
-                                House {compSun.house} Â· {compSun.signDegree.toFixed(1)}Â°
+                                House {compSun.house} · {compSun.signDegree.toFixed(1)}°
                               </p>
                               <p className="text-[13px] mt-1" style={{ color: "#334155" }}>The relationship&apos;s core purpose</p>
                             </div>
@@ -1275,7 +1275,7 @@ export default function CompatibilityPage() {
                                 {SIGN_SYMBOLS[compMoon.sign]} {compMoon.sign}
                               </p>
                               <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
-                                House {compMoon.house} Â· {compMoon.signDegree.toFixed(1)}Â°
+                                House {compMoon.house} · {compMoon.signDegree.toFixed(1)}°
                               </p>
                               <p className="text-[13px] mt-1" style={{ color: "#334155" }}>The emotional tone of the bond</p>
                             </div>
@@ -1285,7 +1285,7 @@ export default function CompatibilityPage() {
                     </motion.div>
                   )}
 
-                  {/* â”€â”€â”€ ORACLE TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                  {/* ─── ORACLE TAB ───────────────────────────────────────────── */}
                   {activeTab === "oracle" && (
                     <motion.div
                       key="oracle"

@@ -13,7 +13,7 @@ import type { StoredProfile } from "@/lib/storage";
 import { calculateProgressions, calculateFirdaria } from "@/lib/astrology/calculator";
 import type { ProgressedPlanet, FirdarPeriod } from "@/lib/astrology/calculator";
 
-// â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 // Hellenistic zodiacal releasing period lengths (years per sign)
 const ZR_YEARS: Record<ZodiacSign, number> = {
@@ -47,7 +47,7 @@ const HOUSE_THEMES: Record<number, string> = {
   9: "Wisdom", 10: "Career", 11: "Community", 12: "Shadow",
 };
 
-// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function signIndex(sign: ZodiacSign): number {
   return ZODIAC_SIGNS.indexOf(sign);
@@ -63,7 +63,7 @@ function addYearsToDate(d: Date, years: number): Date {
   return result;
 }
 
-// â”€â”€â”€ Data builders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Data builders ────────────────────────────────────────────────────────────
 
 interface ProfectionYear {
   age: number;
@@ -171,7 +171,7 @@ function buildZRPeriods(lotLon: number, birthDatetime: string, numPeriods = 24):
   return { l1, l2, currentL1 };
 }
 
-// â”€â”€â”€ Components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Components ───────────────────────────────────────────────────────────────
 
 function SectionHeader({ label, sub }: { label: string; sub?: string }) {
   return (
@@ -220,7 +220,7 @@ function CurrentTimingCard({ profection, chart }: { profection: ProfectionYear; 
               {SIGN_SYMBOLS[profection.activatedSign]} {profection.activatedSign}
             </span>
             <span className="text-[13px]" style={{ color: "#475569" }}>
-              House {profection.activatedHouse} Â· {HOUSE_THEMES[profection.activatedHouse]}
+              House {profection.activatedHouse} · {HOUSE_THEMES[profection.activatedHouse]}
             </span>
           </div>
         </div>
@@ -237,9 +237,9 @@ function CurrentTimingCard({ profection, chart }: { profection: ProfectionYear; 
           </div>
           {lordPlanet && (
             <span className="text-[13px]" style={{ color: "#475569" }}>
-              {SIGN_SYMBOLS[lordPlanet.sign]} {lordPlanet.sign} Â· H{lordPlanet.house}
-              {lordPlanet.dignity === "domicile" && " Â· Domicile"}
-              {lordPlanet.dignity === "exaltation" && " Â· Exalted"}
+              {SIGN_SYMBOLS[lordPlanet.sign]} {lordPlanet.sign} · H{lordPlanet.house}
+              {lordPlanet.dignity === "domicile" && " · Domicile"}
+              {lordPlanet.dignity === "exaltation" && " · Exalted"}
             </span>
           )}
         </div>
@@ -343,14 +343,14 @@ function ProfectionDetail({ year, chart }: { year: ProfectionYear; chart: ChartD
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <p className="text-[13px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>
-            AGE {year.age} Â· {formatDate(year.yearStart)} â€“ {formatDate(year.yearEnd)}
+            AGE {year.age} · {formatDate(year.yearStart)} – {formatDate(year.yearEnd)}
           </p>
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[14px] font-bold" style={{ color: signColor }}>
               {SIGN_SYMBOLS[year.activatedSign]} {year.activatedSign}
             </span>
             <span className="text-[13px]" style={{ color: "#475569" }}>
-              House {year.activatedHouse} Â· {HOUSE_THEMES[year.activatedHouse]}
+              House {year.activatedHouse} · {HOUSE_THEMES[year.activatedHouse]}
             </span>
             <span className="text-[13px] px-1.5 py-0.5 rounded" style={{
               background: `${signColor}15`, color: signColor,
@@ -367,7 +367,7 @@ function ProfectionDetail({ year, chart }: { year: ProfectionYear; chart: ChartD
             {lordPlanet && (
               <p className="text-[13px]" style={{ color: "#475569" }}>
                 {SIGN_SYMBOLS[lordPlanet.sign]} {lordPlanet.sign} H{lordPlanet.house}
-                {lordPlanet.dignity && ` Â· ${lordPlanet.dignity}`}
+                {lordPlanet.dignity && ` · ${lordPlanet.dignity}`}
               </p>
             )}
           </div>
@@ -411,7 +411,7 @@ function ZRBar({ periods, level, title }: {
                 borderRight: i < periods.length - 1 ? "1px solid rgba(0,0,0,0.3)" : "none",
                 boxShadow: p.isCurrent ? `inset 0 0 12px ${color}20` : "none",
               }}
-              title={`${p.sign} (${p.years}y) Â· ${formatDate(p.start)} â€“ ${formatDate(p.end)}`}
+              title={`${p.sign} (${p.years}y) · ${formatDate(p.start)} – ${formatDate(p.end)}`}
             >
               {p.isCurrent && (
                 <motion.div
@@ -456,7 +456,7 @@ function ZRBar({ periods, level, title }: {
             {SIGN_SYMBOLS[p.sign]} {p.sign}
           </span>
           <span className="text-[13px]" style={{ color: "#475569" }}>
-            {p.years}yr period Â· {formatDate(p.start)} â†’ {formatDate(p.end)}
+            {p.years}yr period · {formatDate(p.start)} → {formatDate(p.end)}
           </span>
           <span className="text-[13px]" style={{ color: "#334155" }}>
             Lord: <span style={{ color: PLANET_COLORS[TRADITIONAL_RULERS[p.sign]] ?? "#94a3b8" }}>
@@ -469,7 +469,7 @@ function ZRBar({ periods, level, title }: {
   );
 }
 
-// â”€â”€â”€ Profection cycle grid (12-year wheel overview) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Profection cycle grid (12-year wheel overview) ───────────────────────────
 
 function ProfectionWheel({ chart }: { chart: ChartData }) {
   const ascSignIdx = Math.floor(chart.ascendant / 30);
@@ -479,7 +479,7 @@ function ProfectionWheel({ chart }: { chart: ChartData }) {
   const CX = 150, CY = 150, OUTER = 130, INNER = 68, LABEL_R = 145;
 
   function angleFor(house: number, offset = 0): number {
-    // House 1 at top (-90Â°), clockwise
+    // House 1 at top (-90°), clockwise
     return ((house - 1) / 12) * 2 * Math.PI - Math.PI / 2 + offset;
   }
   function arc(house: number): string {
@@ -663,7 +663,7 @@ function TwelveYearCycle({ chart }: { chart: ChartData }) {
   );
 }
 
-// â”€â”€â”€ Year Ahead Oracle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Year Ahead Oracle ────────────────────────────────────────────────────────
 
 function YearAheadOracle({ chart, profection, zrL1, zrL2 }: {
   chart: ChartData;
@@ -693,7 +693,7 @@ function YearAheadOracle({ chart, profection, zrL1, zrL2 }: {
 
 CURRENT PROFECTION YEAR:
 - Age ${profection.age}, H${profection.activatedHouse} (${profection.activatedSign}) activated
-- Lord of Year: ${profection.lordOfYear} â€” natal placement: ${lord?.sign ?? "?"} H${lord?.house ?? "?"}${lord?.retrograde ? " Rx" : ""}, dignity: ${lord?.dignity ?? "peregrine"}
+- Lord of Year: ${profection.lordOfYear} — natal placement: ${lord?.sign ?? "?"} H${lord?.house ?? "?"}${lord?.retrograde ? " Rx" : ""}, dignity: ${lord?.dignity ?? "peregrine"}
 ${zrLines ? `\nTIMING TECHNIQUES:\n${zrLines}` : ""}
 
 NATAL CONTEXT:
@@ -701,7 +701,7 @@ NATAL CONTEXT:
 - Moon: ${moon?.sign ?? "?"} H${moon?.house ?? "?"}
 - Sect: ${chart.sect}
 
-Write 3 focused paragraphs: (1) The overarching theme this profection year brings and what life domain comes forward through H${profection.activatedHouse}; (2) How the Lord of Year â€” ${profection.lordOfYear} in its natal sign â€” will express itself and where to direct energy; (3) Specific opportunities and friction points to navigate, and what this timing means for growth. Be specific, grounded, and avoid generic statements.`;
+Write 3 focused paragraphs: (1) The overarching theme this profection year brings and what life domain comes forward through H${profection.activatedHouse}; (2) How the Lord of Year — ${profection.lordOfYear} in its natal sign — will express itself and where to direct energy; (3) Specific opportunities and friction points to navigate, and what this timing means for growth. Be specific, grounded, and avoid generic statements.`;
 
     let fullText = "";
     fetch("/api/chat", {
@@ -745,7 +745,7 @@ Write 3 focused paragraphs: (1) The overarching theme this profection year bring
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex-1 min-w-0">
             <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#f59e0b" }}>
-              âœ¦ YEAR AHEAD ORACLE
+              ✦ YEAR AHEAD ORACLE
             </p>
             <p className="text-[14px]" style={{ color: "#475569" }}>
               AI interpretation of your H{profection.activatedHouse} profection year, the role of {profection.lordOfYear} as Lord of Year
@@ -763,7 +763,7 @@ Write 3 focused paragraphs: (1) The overarching theme this profection year bring
               color: "#fbbf24",
             }}
           >
-            GENERATE READING â†’
+            GENERATE READING →
           </motion.button>
         </div>
       </motion.div>
@@ -797,7 +797,7 @@ Write 3 focused paragraphs: (1) The overarching theme this profection year bring
             style={{ background: streaming ? "#f59e0b" : "#22c55e" }}
           />
           <p className="text-[13px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>
-            YEAR AHEAD ORACLE Â· Age {profection.age} Â· H{profection.activatedHouse}
+            YEAR AHEAD ORACLE · Age {profection.age} · H{profection.activatedHouse}
           </p>
         </div>
       </div>
@@ -810,7 +810,7 @@ Write 3 focused paragraphs: (1) The overarching theme this profection year bring
               className="w-3 h-3 rounded-full border border-t-transparent flex-shrink-0"
               style={{ borderColor: "#f59e0b" }}
             />
-            <span className="text-[14px]" style={{ color: "#475569" }}>Calculating year aheadâ€¦</span>
+            <span className="text-[14px]" style={{ color: "#475569" }}>Calculating year ahead…</span>
           </div>
         ) : (
           <div className="space-y-4">
@@ -834,7 +834,7 @@ Write 3 focused paragraphs: (1) The overarching theme this profection year bring
   );
 }
 
-// â”€â”€â”€ Main Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function TimelinePage() {
   const [chart, setChart] = useState<ChartData | null>(null);
@@ -896,7 +896,7 @@ export default function TimelinePage() {
     }
   }, [profections, currentProfection]);
 
-  // â”€â”€â”€ Empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Empty state ──────────────────────────────────────────────────────────
 
   if (!loading && !chart) {
     return (
@@ -929,7 +929,7 @@ export default function TimelinePage() {
               className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
               style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
             >
-              Begin Your Chart â†’
+              Begin Your Chart →
             </motion.button>
           </Link>
         </div>
@@ -1021,7 +1021,7 @@ export default function TimelinePage() {
 
             <AnimatePresence mode="wait">
 
-              {/* â”€â”€â”€ PROFECTIONS TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── PROFECTIONS TAB ─────────────────────────────────────────── */}
               {activeTab === "profections" && (
                 <motion.div
                   key="profections"
@@ -1058,8 +1058,8 @@ export default function TimelinePage() {
                   {/* Horizontal scrollable timeline */}
                   <div className="mt-6">
                     <SectionHeader
-                      label="Life Timeline Â· Ages 0â€“83"
-                      sub="Each card is one year Â· Click any year for details"
+                      label="Life Timeline · Ages 0–83"
+                      sub="Each card is one year · Click any year for details"
                     />
                     <div
                       ref={scrollRef}
@@ -1104,7 +1104,7 @@ export default function TimelinePage() {
                 </motion.div>
               )}
 
-              {/* â”€â”€â”€ ZODIACAL RELEASING TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── ZODIACAL RELEASING TAB ──────────────────────────────────── */}
               {activeTab === "releasing" && zr && chart && (
                 <motion.div
                   key="releasing"
@@ -1124,11 +1124,11 @@ export default function TimelinePage() {
                     }}
                   >
                     <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#06b6d4" }}>
-                      ZODIACAL RELEASING Â· FROM LOT OF FORTUNE
+                      ZODIACAL RELEASING · FROM LOT OF FORTUNE
                     </p>
                     <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>
                       A Hellenistic timing technique that divides life into sequential sign-periods.
-                      Each sign rules for a fixed number of years (its minor years), producing nested L1 â†’ L2 periods.
+                      Each sign rules for a fixed number of years (its minor years), producing nested L1 → L2 periods.
                       The current periods reveal the dominant life theme and sub-theme.
                     </p>
                     <div className="flex items-center gap-2 mt-3">
@@ -1144,7 +1144,7 @@ export default function TimelinePage() {
                       >
                         {SIGN_SYMBOLS[ZODIAC_SIGNS[Math.floor(chart.lotOfFortune / 30)] as ZodiacSign]}{" "}
                         {ZODIAC_SIGNS[Math.floor(chart.lotOfFortune / 30)]}{" "}
-                        {(chart.lotOfFortune % 30).toFixed(1)}Â°
+                        {(chart.lotOfFortune % 30).toFixed(1)}°
                       </span>
                     </div>
                   </motion.div>
@@ -1165,7 +1165,7 @@ export default function TimelinePage() {
                         }}
                       >
                         <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#06b6d4" }}>
-                          L1 Â· MAJOR PERIOD
+                          L1 · MAJOR PERIOD
                         </p>
                         <div className="flex items-start justify-between">
                           <div>
@@ -1176,7 +1176,7 @@ export default function TimelinePage() {
                               {zr.currentL1.sign}
                             </p>
                             <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
-                              {ELEMENT_LABEL[zr.currentL1.sign]} Â· {zr.currentL1.years}yr period
+                              {ELEMENT_LABEL[zr.currentL1.sign]} · {zr.currentL1.years}yr period
                             </p>
                           </div>
                           <div className="text-right">
@@ -1191,7 +1191,7 @@ export default function TimelinePage() {
                         </div>
                         <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${SIGN_COLORS[zr.currentL1.sign]}15` }}>
                           <p className="text-[13px]" style={{ color: "#475569" }}>
-                            {formatDate(zr.currentL1.start)} â†’ {formatDate(zr.currentL1.end)}
+                            {formatDate(zr.currentL1.start)} → {formatDate(zr.currentL1.end)}
                           </p>
                         </div>
                       </div>
@@ -1207,7 +1207,7 @@ export default function TimelinePage() {
                             }}
                           >
                             <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#a855f7" }}>
-                              L2 Â· MINOR PERIOD
+                              L2 · MINOR PERIOD
                             </p>
                             <div className="flex items-start justify-between">
                               <div>
@@ -1218,7 +1218,7 @@ export default function TimelinePage() {
                                   {l2curr.sign}
                                 </p>
                                 <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
-                                  {ELEMENT_LABEL[l2curr.sign]} Â· sub-period
+                                  {ELEMENT_LABEL[l2curr.sign]} · sub-period
                                 </p>
                               </div>
                               <div className="text-right">
@@ -1233,7 +1233,7 @@ export default function TimelinePage() {
                             </div>
                             <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${SIGN_COLORS[l2curr.sign]}15` }}>
                               <p className="text-[13px]" style={{ color: "#475569" }}>
-                                {formatDate(l2curr.start)} â†’ {formatDate(l2curr.end)}
+                                {formatDate(l2curr.start)} → {formatDate(l2curr.end)}
                               </p>
                             </div>
                           </div>
@@ -1243,14 +1243,14 @@ export default function TimelinePage() {
                   )}
 
                   {/* L1 timeline bar */}
-                  <SectionHeader label="Level 1 Â· Major Periods" sub="Complete life sequence from Lot of Fortune" />
-                  <ZRBar periods={zr.l1} level={1} title="L1 MAJOR PERIODS Â· FULL SEQUENCE" />
+                  <SectionHeader label="Level 1 · Major Periods" sub="Complete life sequence from Lot of Fortune" />
+                  <ZRBar periods={zr.l1} level={1} title="L1 MAJOR PERIODS · FULL SEQUENCE" />
 
                   {/* L2 timeline bar */}
                   {zr.l2.length > 0 && (
                     <>
-                      <SectionHeader label="Level 2 Â· Minor Periods" sub={`Sub-divisions within the current ${zr.currentL1?.sign ?? ""} major period`} />
-                      <ZRBar periods={zr.l2} level={2} title="L2 MINOR PERIODS Â· WITHIN CURRENT MAJOR PERIOD" />
+                      <SectionHeader label="Level 2 · Minor Periods" sub={`Sub-divisions within the current ${zr.currentL1?.sign ?? ""} major period`} />
+                      <ZRBar periods={zr.l2} level={2} title="L2 MINOR PERIODS · WITHIN CURRENT MAJOR PERIOD" />
                     </>
                   )}
 
@@ -1295,7 +1295,7 @@ export default function TimelinePage() {
                                 )}
                               </p>
                               <p className="text-[13px]" style={{ color: "#334155" }}>
-                                {formatDate(p.start)} â†’ {formatDate(p.end)}
+                                {formatDate(p.start)} → {formatDate(p.end)}
                               </p>
                             </div>
                             <div className="text-right flex-shrink-0">
@@ -1312,7 +1312,7 @@ export default function TimelinePage() {
                 </motion.div>
               )}
 
-              {/* â”€â”€â”€ SECONDARY PROGRESSIONS TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── SECONDARY PROGRESSIONS TAB ─────────────────────────── */}
               {activeTab === "progressions" && (
                 <motion.div
                   key="progressions"
@@ -1329,13 +1329,13 @@ export default function TimelinePage() {
                     style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.18)" }}
                   >
                     <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#a78bfa" }}>
-                      SECONDARY PROGRESSIONS Â· DAY FOR A YEAR
+                      SECONDARY PROGRESSIONS · DAY FOR A YEAR
                     </p>
                     <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>
                       Each day after birth represents one year of life. The sky on the day equal to your current age in years is your progressed chart. Inner planets (Sun, Moon, Mercury, Venus, Mars) move meaningfully; outer planets move less than a degree in a lifetime.
                     </p>
                     <p className="text-[13px] mt-2" style={{ color: "#334155" }}>
-                      Shown as of today Â· {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                      Shown as of today · {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                     </p>
                   </motion.div>
 
@@ -1383,14 +1383,14 @@ export default function TimelinePage() {
                           {/* Natal */}
                           <div>
                             <span className="text-[13px]" style={{ color: SIGN_COLORS[natalSign] }}>
-                              {SIGN_SYMBOLS[natalSign]} {(p.natalLon % 30).toFixed(1)}Â°
+                              {SIGN_SYMBOLS[natalSign]} {(p.natalLon % 30).toFixed(1)}°
                             </span>
                           </div>
                           {/* Progressed */}
                           <div>
                             <span className="text-[13px] font-semibold" style={{ color: signColor }}>
-                              {SIGN_SYMBOLS[p.sign]} {p.signDegree.toFixed(1)}Â°
-                              {p.retrograde && <span style={{ color: "#ef4444" }}> â„ž</span>}
+                              {SIGN_SYMBOLS[p.sign]} {p.signDegree.toFixed(1)}°
+                              {p.retrograde && <span style={{ color: "#ef4444" }}> ℞</span>}
                             </span>
                             {signChanged && (
                               <span className="ml-1 text-[14px] px-1 rounded" style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b" }}>
@@ -1401,7 +1401,7 @@ export default function TimelinePage() {
                           {/* Movement */}
                           <div className="flex items-center gap-1">
                             <span className="text-[13px]" style={{ color: p.movement > 0 ? "#22c55e" : "#ef4444" }}>
-                              {p.movement >= 0 ? "+" : ""}{p.movement.toFixed(2)}Â°
+                              {p.movement >= 0 ? "+" : ""}{p.movement.toFixed(2)}°
                             </span>
                           </div>
                           {/* Status */}
@@ -1445,7 +1445,7 @@ export default function TimelinePage() {
                               <div className="flex-1">
                                 <p className="text-[13px] font-bold" style={{ color: "#e2e8f0" }}>{p.name}</p>
                                 <p className="text-[13px]" style={{ color: "#64748b" }}>
-                                  Natal: {SIGN_SYMBOLS[natalSign]} {natalSign} â†’ Progressed: {SIGN_SYMBOLS[p.sign]} {p.sign}
+                                  Natal: {SIGN_SYMBOLS[natalSign]} {natalSign} → Progressed: {SIGN_SYMBOLS[p.sign]} {p.sign}
                                 </p>
                               </div>
                               <span className="text-[13px] font-bold px-2 py-1 rounded" style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b" }}>
@@ -1460,7 +1460,7 @@ export default function TimelinePage() {
                 </motion.div>
               )}
 
-              {/* â”€â”€â”€ FIRDARIA TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── FIRDARIA TAB ─────────────────────────────────────────────── */}
               {activeTab === "firdaria" && (
                 <motion.div
                   key="firdaria"
@@ -1477,7 +1477,7 @@ export default function TimelinePage() {
                     style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.18)" }}
                   >
                     <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#06b6d4" }}>
-                      FIRDARIA Â· HELLENISTIC TIME LORDS
+                      FIRDARIA · HELLENISTIC TIME LORDS
                     </p>
                     <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>
                       An ancient Persian timing system. Seven planets govern sequential main periods (firdars) of life, each subdivided into 7 sub-periods. The sequence differs for day and night sect charts.
@@ -1486,10 +1486,10 @@ export default function TimelinePage() {
                       <div className="flex items-center gap-2 mt-3">
                         <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>SECT</span>
                         <span className="text-[13px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
-                          {chart.sect === "day" ? "â˜€ Day" : "â˜½ Night"}
+                          {chart.sect === "day" ? "☀ Day" : "☽ Night"}
                         </span>
                         <span className="text-[13px]" style={{ color: "#334155" }}>
-                          â€” using {chart.sect === "day" ? "Sun" : "Moon"}-led sequence
+                          — using {chart.sect === "day" ? "Sun" : "Moon"}-led sequence
                         </span>
                       </div>
                     )}
@@ -1515,7 +1515,7 @@ export default function TimelinePage() {
                           style={{ background: `${mainColor}10`, border: `1px solid ${mainColor}28` }}
                         >
                           <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#06b6d4" }}>
-                            CURRENT FIRDAR Â· MAIN PERIOD
+                            CURRENT FIRDAR · MAIN PERIOD
                           </p>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
@@ -1543,7 +1543,7 @@ export default function TimelinePage() {
                           </div>
                           <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${mainColor}15` }}>
                             <p className="text-[13px]" style={{ color: "#475569" }}>
-                              {formatDate(mainCurr.start)} â†’ {formatDate(mainCurr.end)}
+                              {formatDate(mainCurr.start)} → {formatDate(mainCurr.end)}
                             </p>
                           </div>
                         </div>
@@ -1587,7 +1587,7 @@ export default function TimelinePage() {
                             </div>
                             <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${subColor}15` }}>
                               <p className="text-[13px]" style={{ color: "#475569" }}>
-                                {formatDate(subCurr.start)} â†’ {formatDate(subCurr.end)}
+                                {formatDate(subCurr.start)} → {formatDate(subCurr.end)}
                               </p>
                             </div>
                           </div>
@@ -1597,7 +1597,7 @@ export default function TimelinePage() {
                   })()}
 
                   {/* Main periods bar */}
-                  <SectionHeader label="Main Periods Â· Full Sequence" sub="One full Firdaria cycle" />
+                  <SectionHeader label="Main Periods · Full Sequence" sub="One full Firdaria cycle" />
                   {(() => {
                     const mainPeriods = firdaria.filter(f => f.isMainPeriod);
                     const total = mainPeriods.reduce((s, f) => s + f.years, 0);
@@ -1613,7 +1613,7 @@ export default function TimelinePage() {
                               animate={{ opacity: 1 }}
                               transition={{ delay: i * 0.06 }}
                               className="relative flex flex-col items-center justify-center overflow-hidden"
-                              title={`${f.lord} (${f.years}y) Â· ${formatDate(f.start)} â€“ ${formatDate(f.end)}`}
+                              title={`${f.lord} (${f.years}y) · ${formatDate(f.start)} – ${formatDate(f.end)}`}
                               style={{
                                 width: `${widthPct}%`,
                                 background: f.isCurrent ? `${color}30` : f.isPast ? `${color}08` : `${color}12`,
@@ -1644,7 +1644,7 @@ export default function TimelinePage() {
                   {firdaria.some(f => f.isCurrent && f.isMainPeriod) && (
                     <>
                       <SectionHeader
-                        label={`Sub-Periods Â· ${firdaria.find(f => f.isCurrent && f.isMainPeriod)?.lord ?? ""} Firdar`}
+                        label={`Sub-Periods · ${firdaria.find(f => f.isCurrent && f.isMainPeriod)?.lord ?? ""} Firdar`}
                         sub="7 sub-lords dividing the current main period"
                       />
                       <div className="space-y-1.5 mb-6">
@@ -1675,7 +1675,7 @@ export default function TimelinePage() {
                                   {f.isCurrent && <span className="ml-2 text-[14px] tracking-widest font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}20`, color }}>NOW</span>}
                                 </p>
                                 <p className="text-[13px]" style={{ color: "#334155" }}>
-                                  {formatDate(f.start)} â†’ {formatDate(f.end)}
+                                  {formatDate(f.start)} → {formatDate(f.end)}
                                 </p>
                               </div>
                               <span className="text-[13px] text-right flex-shrink-0" style={{ color: "#334155" }}>
@@ -1713,7 +1713,7 @@ export default function TimelinePage() {
                               {f.isCurrent && <span className="ml-2 text-[14px] tracking-widest font-bold px-1.5 py-0.5 rounded" style={{ background: `${color}20`, color }}>CURRENT</span>}
                             </p>
                             <p className="text-[13px]" style={{ color: "#334155" }}>
-                              {formatDate(f.start)} â†’ {formatDate(f.end)}
+                              {formatDate(f.start)} → {formatDate(f.end)}
                             </p>
                           </div>
                           <span className="text-[13px]" style={{ color: "#475569" }}>{f.years} yrs</span>
@@ -1724,7 +1724,7 @@ export default function TimelinePage() {
                 </motion.div>
               )}
 
-              {/* â”€â”€â”€ SOLAR ARC TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── SOLAR ARC TAB ───────────────────────────────────────────── */}
               {activeTab === "solar-arc" && chart && profile && (
                 <motion.div
                   key="solar-arc"
@@ -1741,12 +1741,12 @@ export default function TimelinePage() {
                     style={{ background: "rgba(6,182,212,0.06)", border: "1px solid rgba(6,182,212,0.18)" }}
                   >
                     <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#06b6d4" }}>
-                      SOLAR ARC DIRECTIONS Â· 1Â° PER YEAR
+                      SOLAR ARC DIRECTIONS · 1° PER YEAR
                     </p>
                     <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>
-                      Every planet in your chart advances by the same arc as your progressed Sun. Unlike secondary progressions where each planet moves at its own speed, solar arc directions move all planets in lock-step. One degree per year â€” your current solar arc is approximately{" "}
+                      Every planet in your chart advances by the same arc as your progressed Sun. Unlike secondary progressions where each planet moves at its own speed, solar arc directions move all planets in lock-step. One degree per year — your current solar arc is approximately{" "}
                       <strong style={{ color: "#06b6d4" }}>
-                        {chart.annualProfection.age}Â°
+                        {chart.annualProfection.age}°
                       </strong>
                       .
                     </p>
@@ -1754,7 +1754,7 @@ export default function TimelinePage() {
 
                   {(() => {
                     const age = chart.annualProfection.age;
-                    const arc = age; // ~1Â° per year
+                    const arc = age; // ~1° per year
 
                     const natalPlanets = chart.planets.slice(0, 10);
                     const directed = natalPlanets.map(p => ({
@@ -1765,7 +1765,7 @@ export default function TimelinePage() {
                       directedDeg: ((p.longitude + arc) % 360) % 30,
                     }));
 
-                    // Check for conjunctions within 1Â°
+                    // Check for conjunctions within 1°
                     const triggers: { dir: typeof directed[0]; natal: typeof directed[0]; orb: number }[] = [];
                     for (const d of directed) {
                       for (const n of natalPlanets) {
@@ -1783,7 +1783,7 @@ export default function TimelinePage() {
                           <div>
                             <SectionHeader
                               label="Active Solar Arc Triggers"
-                              sub={`Directed planets within 2Â° of natal points at age ${age}`}
+                              sub={`Directed planets within 2° of natal points at age ${age}`}
                             />
                             <div className="space-y-2">
                               {triggers.sort((a, b) => a.orb - b.orb).map((t, i) => {
@@ -1812,12 +1812,12 @@ export default function TimelinePage() {
                                     <div className="flex items-center gap-1.5">
                                       <span className="text-base" style={{ color: dColor }}>{PLANET_SYMBOLS[t.dir.name as PlanetName]}</span>
                                       <span className="text-[13px] font-bold" style={{ color: dColor }}>{t.dir.name}</span>
-                                      <span className="text-[13px]" style={{ color: "#475569" }}>arc â˜Œ</span>
+                                      <span className="text-[13px]" style={{ color: "#475569" }}>arc ☌</span>
                                       <span className="text-base" style={{ color: nColor }}>{PLANET_SYMBOLS[t.natal.name as PlanetName]}</span>
                                       <span className="text-[13px] font-bold" style={{ color: nColor }}>natal {t.natal.name}</span>
                                     </div>
                                     <span className="ml-auto text-[13px] font-mono" style={{ color: t.orb <= 0.5 ? dColor : "#475569" }}>
-                                      {t.orb.toFixed(2)}Â° orb
+                                      {t.orb.toFixed(2)}° orb
                                     </span>
                                     {t.orb <= 0.5 && (
                                       <span className="text-[14px] font-bold px-1.5 py-0.5 rounded" style={{ background: `${dColor}20`, color: dColor }}>PEAK</span>
@@ -1833,7 +1833,7 @@ export default function TimelinePage() {
                         <div>
                           <SectionHeader
                             label="Directed Positions"
-                            sub="All planets advanced by solar arc Â· click to compare"
+                            sub="All planets advanced by solar arc · click to compare"
                           />
                           <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.06)", background: "rgba(4,4,28,0.6)" }}>
                             <div className="grid grid-cols-4 px-4 py-2 text-[14px] font-bold tracking-widest"
@@ -1866,11 +1866,11 @@ export default function TimelinePage() {
                                     <span className="text-[13px] font-medium" style={{ color: "#94a3b8" }}>{p.name}</span>
                                   </div>
                                   <span className="text-[13px]" style={{ color: SIGN_COLORS[nSign] }}>
-                                    {SIGN_SYMBOLS[nSign]} {(p.natalLon % 30).toFixed(1)}Â°
+                                    {SIGN_SYMBOLS[nSign]} {(p.natalLon % 30).toFixed(1)}°
                                   </span>
                                   <div>
                                     <span className="text-[13px] font-semibold" style={{ color: signChanged ? "#06b6d4" : SIGN_COLORS[dSign] }}>
-                                      {SIGN_SYMBOLS[dSign]} {p.directedDeg.toFixed(1)}Â°
+                                      {SIGN_SYMBOLS[dSign]} {p.directedDeg.toFixed(1)}°
                                     </span>
                                     {signChanged && (
                                       <span className="ml-1 text-[14px] px-1 rounded" style={{ background: "rgba(6,182,212,0.15)", color: "#06b6d4" }}>
@@ -1878,7 +1878,7 @@ export default function TimelinePage() {
                                       </span>
                                     )}
                                   </div>
-                                  <span className="text-[13px] font-mono" style={{ color: "#475569" }}>+{arc.toFixed(1)}Â°</span>
+                                  <span className="text-[13px] font-mono" style={{ color: "#475569" }}>+{arc.toFixed(1)}°</span>
                                 </motion.div>
                               );
                             })}
@@ -1916,7 +1916,7 @@ export default function TimelinePage() {
                                       <div className="flex-1">
                                         <p className="text-[13px] font-bold" style={{ color: "#e2e8f0" }}>{p.name}</p>
                                         <p className="text-[13px]" style={{ color: "#64748b" }}>
-                                          Natal: {SIGN_SYMBOLS[nSign]} {nSign} â†’ Directed: {SIGN_SYMBOLS[dSign]} {dSign}
+                                          Natal: {SIGN_SYMBOLS[nSign]} {nSign} → Directed: {SIGN_SYMBOLS[dSign]} {dSign}
                                         </p>
                                       </div>
                                       <span className="text-[13px] font-bold px-2 py-1 rounded" style={{ background: "rgba(6,182,212,0.15)", color: "#06b6d4" }}>
@@ -1935,7 +1935,7 @@ export default function TimelinePage() {
                 </motion.div>
               )}
 
-              {/* â”€â”€â”€ LIFE MAP TAB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── LIFE MAP TAB ─────────────────────────────────────────── */}
               {activeTab === "life-map" && chart && profile && (
                 <motion.div
                   key="life-map"
@@ -1950,34 +1950,34 @@ export default function TimelinePage() {
                     const birthYear  = new Date(profile.birthDate).getFullYear();
                     const MAX_AGE    = 84;
 
-                    // â”€â”€ Major astrological milestones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                    // ── Major astrological milestones ─────────────────────────
                     type Milestone = { age: number; label: string; sublabel: string; color: string; tier: "major" | "minor" };
                     const milestones: Milestone[] = [
                       // Jupiter Returns (every ~12 years)
                       ...[12, 24, 36, 48, 60, 72].map(age => ({
                         age, tier: "minor" as const,
-                        label: "â™ƒ Return", sublabel: `Jupiter Return â€” renewal of faith & opportunity`,
+                        label: "♃ Return", sublabel: `Jupiter Return — renewal of faith & opportunity`,
                         color: "#f59e0b",
                       })),
                       // Saturn Returns (~29.5 & ~59)
-                      { age: 29, tier: "major" as const, label: "â™„ Return", sublabel: "1st Saturn Return â€” initiation into adult authority", color: "#94a3b8" },
-                      { age: 59, tier: "major" as const, label: "â™„ Return", sublabel: "2nd Saturn Return â€” legacy and mastery", color: "#94a3b8" },
+                      { age: 29, tier: "major" as const, label: "♄ Return", sublabel: "1st Saturn Return — initiation into adult authority", color: "#94a3b8" },
+                      { age: 59, tier: "major" as const, label: "♄ Return", sublabel: "2nd Saturn Return — legacy and mastery", color: "#94a3b8" },
                       // Chiron Return (~50-51)
-                      { age: 51, tier: "major" as const, label: "âš· Return", sublabel: "Chiron Return â€” healing the core wound", color: "#22c55e" },
+                      { age: 51, tier: "major" as const, label: "⚷ Return", sublabel: "Chiron Return — healing the core wound", color: "#22c55e" },
                       // Uranus Opposition (~42)
-                      { age: 42, tier: "major" as const, label: "â™… Opp.", sublabel: "Uranus Opposition â€” midlife awakening", color: "#06b6d4" },
+                      { age: 42, tier: "major" as const, label: "♅ Opp.", sublabel: "Uranus Opposition — midlife awakening", color: "#06b6d4" },
                       // Neptune Square (~41 for current gen)
-                      { age: 41, tier: "minor" as const, label: "â™† â–¡", sublabel: "Neptune Square â€” dissolution of illusions", color: "#3b82f6" },
+                      { age: 41, tier: "minor" as const, label: "♆ □", sublabel: "Neptune Square — dissolution of illusions", color: "#3b82f6" },
                       // Pluto Square (~36-40 for current gen, varies by sign)
-                      { age: 38, tier: "minor" as const, label: "â™‡ â–¡", sublabel: "Pluto Square â€” power confrontation with fate", color: "#8b5cf6" },
+                      { age: 38, tier: "minor" as const, label: "♇ □", sublabel: "Pluto Square — power confrontation with fate", color: "#8b5cf6" },
                       // Node Return (~18.6 years)
-                      { age: 19, tier: "minor" as const, label: "â˜Š Return", sublabel: "Nodal Return â€” karmic reset", color: "#64748b" },
-                      { age: 37, tier: "minor" as const, label: "â˜Š Return", sublabel: "Nodal Return â€” karmic reset", color: "#64748b" },
-                      { age: 56, tier: "minor" as const, label: "â˜Š Return", sublabel: "Nodal Return â€” karmic reset", color: "#64748b" },
-                      { age: 75, tier: "minor" as const, label: "â˜Š Return", sublabel: "Nodal Return â€” karmic reset", color: "#64748b" },
+                      { age: 19, tier: "minor" as const, label: "☊ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
+                      { age: 37, tier: "minor" as const, label: "☊ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
+                      { age: 56, tier: "minor" as const, label: "☊ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
+                      { age: 75, tier: "minor" as const, label: "☊ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
                     ].filter(m => m.age <= MAX_AGE);
 
-                    // â”€â”€ Profection year data (all 84 years, cycling 1â€“12) â”€â”€â”€â”€â”€
+                    // ── Profection year data (all 84 years, cycling 1–12) ─────
                     const profectionYears = Array.from({ length: MAX_AGE + 1 }, (_, age) => {
                       const house = ((age % 12) + 1);
                       const signIdx = (signIndex(chart.houses[0].sign) + age) % 12;
@@ -1986,7 +1986,7 @@ export default function TimelinePage() {
                       return { age, house, sign, lord };
                     });
 
-                    // â”€â”€ SVG dimensions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                    // ── SVG dimensions ─────────────────────────────────────────
                     const W = 900, H = 200;
                     const PAD_L = 40, PAD_R = 20;
                     const RULER_W = W - PAD_L - PAD_R;
@@ -1999,7 +1999,7 @@ export default function TimelinePage() {
                         <div>
                           <p className="text-[13px] font-bold tracking-widest mb-1" style={{ color: "#475569" }}>COSMIC LIFE TIMELINE</p>
                           <p className="text-[14px]" style={{ color: "#334155" }}>
-                            Your astrological cycles from birth to age 84 Â· Born {birthYear} Â· Currently age {currentAge}
+                            Your astrological cycles from birth to age 84 · Born {birthYear} · Currently age {currentAge}
                           </p>
                         </div>
 
@@ -2035,7 +2035,7 @@ export default function TimelinePage() {
                               if (age >= MAX_AGE) return null;
                               const x1 = ageToX(age);
                               const x2 = ageToX(age + 1);
-                              const hue = ((house - 1) / 12) * 220 + 200; // 200â€“420 hue range
+                              const hue = ((house - 1) / 12) * 220 + 200; // 200–420 hue range
                               return (
                                 <rect
                                   key={age}
@@ -2111,7 +2111,7 @@ export default function TimelinePage() {
                         {/* Profection cycle for current 12-year block */}
                         <div>
                           <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#475569" }}>
-                            CURRENT PROFECTION CYCLE Â· Ages {Math.floor(currentAge / 12) * 12}â€“{Math.floor(currentAge / 12) * 12 + 11}
+                            CURRENT PROFECTION CYCLE · Ages {Math.floor(currentAge / 12) * 12}–{Math.floor(currentAge / 12) * 12 + 11}
                           </p>
                           <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
                             {profectionYears

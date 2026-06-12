@@ -10,7 +10,7 @@ import type { TransitsData } from "@/lib/astrology/transits";
 import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
 import type { StoredProfile } from "@/lib/storage";
 
-// â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Record<string, string> = {
   Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
@@ -28,7 +28,7 @@ const SIGN_COLORS: Record<ZodiacSign, string> = {
 const CHALDEAN: PlanetName[] = ["Saturn", "Jupiter", "Mars", "Sun", "Venus", "Mercury", "Moon"];
 const DAY_RULERS: PlanetName[] = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"];
 
-// â”€â”€â”€ Activity definitions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Activity definitions ─────────────────────────────────────────────────────
 
 interface Activity {
   id: string;
@@ -48,7 +48,7 @@ const ACTIVITIES: Activity[] = [
   {
     id: "business",
     name: "Business & Career",
-    icon: "â¬¡",
+    icon: "⬡",
     color: "#fbbf24",
     description: "Starting ventures, signing contracts, making deals",
     bestPlanets: ["Sun", "Jupiter", "Mercury"],
@@ -65,7 +65,7 @@ const ACTIVITIES: Activity[] = [
   {
     id: "romance",
     name: "Love & Romance",
-    icon: "â™¡",
+    icon: "♡",
     color: "#f472b6",
     description: "First dates, confessions, deepening bonds",
     bestPlanets: ["Venus", "Moon", "Jupiter"],
@@ -82,7 +82,7 @@ const ACTIVITIES: Activity[] = [
   {
     id: "legal",
     name: "Legal & Contracts",
-    icon: "Â§",
+    icon: "§",
     color: "#a78bfa",
     description: "Signing documents, court dates, negotiations",
     bestPlanets: ["Mercury", "Jupiter", "Sun"],
@@ -99,7 +99,7 @@ const ACTIVITIES: Activity[] = [
   {
     id: "health",
     name: "Health & Wellness",
-    icon: "âœš",
+    icon: "✚",
     color: "#22c55e",
     description: "Surgery, doctor visits, starting health routines",
     bestPlanets: ["Sun", "Moon", "Jupiter"],
@@ -116,7 +116,7 @@ const ACTIVITIES: Activity[] = [
   {
     id: "travel",
     name: "Travel & Adventure",
-    icon: "â—ˆ",
+    icon: "◈",
     color: "#06b6d4",
     description: "Starting journeys, booking trips, exploration",
     bestPlanets: ["Jupiter", "Mercury", "Sun"],
@@ -133,7 +133,7 @@ const ACTIVITIES: Activity[] = [
   {
     id: "creative",
     name: "Creative Projects",
-    icon: "âœ¦",
+    icon: "✦",
     color: "#f59e0b",
     description: "Art, music, writing, inspired work",
     bestPlanets: ["Venus", "Moon", "Neptune", "Jupiter"],
@@ -150,7 +150,7 @@ const ACTIVITIES: Activity[] = [
   {
     id: "financial",
     name: "Financial Decisions",
-    icon: "â—Ž",
+    icon: "◎",
     color: "#4ade80",
     description: "Investments, spending, saving, financial planning",
     bestPlanets: ["Jupiter", "Venus", "Sun"],
@@ -167,7 +167,7 @@ const ACTIVITIES: Activity[] = [
   {
     id: "spiritual",
     name: "Spiritual Practice",
-    icon: "âŠ¹",
+    icon: "⊹",
     color: "#818cf8",
     description: "Meditation, ritual, prayer, shadow work",
     bestPlanets: ["Moon", "Saturn", "Neptune", "Jupiter"],
@@ -183,7 +183,7 @@ const ACTIVITIES: Activity[] = [
   },
 ];
 
-// â”€â”€â”€ Planetary Hours â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Planetary Hours ──────────────────────────────────────────────────────────
 
 interface PlanetaryHour {
   planet: PlanetName;
@@ -229,7 +229,7 @@ function computePlanetaryHours(date: Date, lat = 40.0): PlanetaryHour[] {
   return allHours;
 }
 
-// â”€â”€â”€ Score calculation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Score calculation ────────────────────────────────────────────────────────
 
 function scoreWindow(hour: PlanetaryHour, moonSign: ZodiacSign, isVoid: boolean, activity: Activity): number {
   let score = 0;
@@ -249,7 +249,7 @@ function getScoreLabel(score: number): { label: string; color: string } {
   return                  { label: "Avoid",     color: "#ef4444" };
 }
 
-// â”€â”€â”€ Activity Selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Activity Selector ────────────────────────────────────────────────────────
 
 function ActivityCard({ activity, selected, onClick }: {
   activity: Activity;
@@ -276,7 +276,7 @@ function ActivityCard({ activity, selected, onClick }: {
   );
 }
 
-// â”€â”€â”€ Hour Timeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Hour Timeline ────────────────────────────────────────────────────────────
 
 function HourTimeline({ hours, now, activity, moonSign, isVoid }: {
   hours: PlanetaryHour[];
@@ -363,7 +363,7 @@ function HourTimeline({ hours, now, activity, moonSign, isVoid }: {
                 )}
               </div>
               <p className="text-[13px]" style={{ color: "#334155" }}>
-                {fmtTime(h.start)} â€“ {fmtTime(h.end)} Â· {h.isDay ? "â˜€" : "â˜½"}
+                {fmtTime(h.start)} – {fmtTime(h.end)} · {h.isDay ? "☀" : "☽"}
               </p>
             </div>
 
@@ -383,7 +383,7 @@ function HourTimeline({ hours, now, activity, moonSign, isVoid }: {
   );
 }
 
-// â”€â”€â”€ Best Windows summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Best Windows summary ─────────────────────────────────────────────────────
 
 function BestWindows({ hours, now, activity, moonSign, isVoid }: {
   hours: PlanetaryHour[];
@@ -436,9 +436,9 @@ function BestWindows({ hours, now, activity, moonSign, isVoid }: {
             <div className="flex-1 min-w-0">
               <p className="text-[14px] font-bold" style={{ color: pColor }}>
                 Hour of {h.planet}
-                {isCurrent && <span className="ml-1.5 text-[13px]" style={{ color }}>Â· ACTIVE NOW</span>}
+                {isCurrent && <span className="ml-1.5 text-[13px]" style={{ color }}>· ACTIVE NOW</span>}
               </p>
-              <p className="text-[13px]" style={{ color: "#475569" }}>{fmtTime(h.start)} â€“ {fmtTime(h.end)}</p>
+              <p className="text-[13px]" style={{ color: "#475569" }}>{fmtTime(h.start)} – {fmtTime(h.end)}</p>
             </div>
             <span className="text-[13px] font-bold px-2 py-0.5 rounded" style={{ background: `${color}20`, color }}>{label}</span>
           </motion.div>
@@ -448,7 +448,7 @@ function BestWindows({ hours, now, activity, moonSign, isVoid }: {
   );
 }
 
-// â”€â”€â”€ Timing Oracle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Timing Oracle ────────────────────────────────────────────────────────────
 
 function TimingOracle({
   activity, hourRuler, moonSign, isVoid, score, scoreLabel,
@@ -487,11 +487,11 @@ function TimingOracle({
           messages: [{
             role: "user",
             content: [
-              `I want to do: ${activity.name} â€” ${activity.description}`,
+              `I want to do: ${activity.name} — ${activity.description}`,
               `Current planetary hour: ${hourRuler ?? "unknown"}`,
               `Moon in ${moonSign}${isVoid ? " (void of course)" : ""}`,
               `Current timing score: ${score > 0 ? "+" : ""}${score} (${scoreLabel})`,
-              "Give me a concise, direct timing oracle in 3-4 sentences. Be specific about whether NOW is good or when to wait. Start directly with your advice â€” no preamble."
+              "Give me a concise, direct timing oracle in 3-4 sentences. Be specific about whether NOW is good or when to wait. Start directly with your advice — no preamble."
             ].join("\n"),
           }],
           systemPrompt: "You are Cosmora's electional astrology oracle. Give sharp, actionable timing advice. Be direct and specific. Under 100 words total.",
@@ -541,7 +541,7 @@ function TimingOracle({
             className="text-[13px] font-bold tracking-wider px-3 py-1.5 rounded-lg cursor-pointer"
             style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)", color: "#a78bfa" }}
           >
-            âœ¦ ASK ORACLE
+            ✦ ASK ORACLE
           </motion.button>
         )}
         {started && !streaming && (
@@ -550,7 +550,7 @@ function TimingOracle({
             className="text-[13px] tracking-wider px-3 py-1.5 rounded-lg cursor-pointer"
             style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", color: "#475569" }}
           >
-            â†º NEW
+            ↺ NEW
           </button>
         )}
       </div>
@@ -582,7 +582,7 @@ function TimingOracle({
   );
 }
 
-// â”€â”€â”€ Main page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function ElectionalPage() {
   const [chart, setChart] = useState<ChartData | null>(null);
@@ -671,7 +671,7 @@ export default function ElectionalPage() {
               className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
               style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
             >
-              Begin Your Chart â†’
+              Begin Your Chart →
             </motion.button>
           </Link>
         </div>
@@ -728,7 +728,7 @@ export default function ElectionalPage() {
             )}
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: `${SIGN_COLORS[moonSign]}10`, border: `1px solid ${SIGN_COLORS[moonSign]}20` }}>
               <span className="text-[14px]" style={{ color: SIGN_COLORS[moonSign] }}>{SIGN_SYMBOLS[moonSign]}</span>
-              <span className="text-[13px] font-bold" style={{ color: SIGN_COLORS[moonSign] }}>â˜½ {moonSign}</span>
+              <span className="text-[13px] font-bold" style={{ color: SIGN_COLORS[moonSign] }}>☽ {moonSign}</span>
               {isVoid && <span className="text-[14px] font-bold" style={{ color: "#f97316" }}>VoC</span>}
             </div>
           </div>
@@ -812,7 +812,7 @@ export default function ElectionalPage() {
                         </div>
                         {isVoid && selectedActivity.avoidVoid && (
                           <span className="text-[13px] px-2 py-1 rounded" style={{ background: "rgba(249,115,22,0.1)", color: "#f97316" }}>
-                            âš  Moon Void
+                            ⚠ Moon Void
                           </span>
                         )}
                       </div>
@@ -824,7 +824,7 @@ export default function ElectionalPage() {
                       <div className="space-y-1">
                         {selectedActivity.tips.map((tip, i) => (
                           <div key={i} className="flex items-start gap-2">
-                            <span className="text-[13px] mt-0.5 flex-shrink-0" style={{ color: selectedActivity.color }}>â—ˆ</span>
+                            <span className="text-[13px] mt-0.5 flex-shrink-0" style={{ color: selectedActivity.color }}>◈</span>
                             <p className="text-[13px] leading-relaxed" style={{ color: "#475569" }}>{tip}</p>
                           </div>
                         ))}
@@ -851,10 +851,10 @@ export default function ElectionalPage() {
                   style={{ background: `${SIGN_COLORS[moonSign]}08`, border: `1px solid ${SIGN_COLORS[moonSign]}20` }}
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-base" style={{ color: SIGN_COLORS[moonSign] }}>â˜½ {SIGN_SYMBOLS[moonSign]}</span>
+                    <span className="text-base" style={{ color: SIGN_COLORS[moonSign] }}>☽ {SIGN_SYMBOLS[moonSign]}</span>
                     <p className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>
                       MOON IN {moonSign.toUpperCase()}
-                      {isVoid && " Â· VOID OF COURSE"}
+                      {isVoid && " · VOID OF COURSE"}
                     </p>
                   </div>
                   <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>
@@ -891,7 +891,7 @@ export default function ElectionalPage() {
                 style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
               >
                 <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>HOUR-BY-HOUR</span>
-                <span className="text-[13px] ml-1" style={{ color: "#1e293b" }}>Â· {selectedActivity.name}</span>
+                <span className="text-[13px] ml-1" style={{ color: "#1e293b" }}>· {selectedActivity.name}</span>
               </div>
 
               <div className="flex-1 overflow-y-auto p-3" style={{ scrollbarWidth: "thin" }}>

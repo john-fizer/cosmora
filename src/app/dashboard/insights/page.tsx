@@ -11,7 +11,7 @@ import { getActiveProfileId, getProfile, getCachedChart, getChatHistory, pushCha
 import type { StoredProfile } from "@/lib/storage";
 import { useWarpTo } from "@/components/ui/WarpTransition";
 
-// â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
   Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
@@ -31,7 +31,7 @@ const ASPECT_COLORS: Record<string, string> = {
 };
 
 const ASPECT_GLYPHS: Record<string, string> = {
-  conjunction: "â˜Œ", opposition: "â˜", trine: "â–³", square: "â–¡", sextile: "âš¹", quincunx: "âš»",
+  conjunction: "☌", opposition: "☍", trine: "△", square: "□", sextile: "⚹", quincunx: "⚻",
 };
 
 const DIGNITY_LABELS: Record<string, { label: string; color: string; bg: string }> = {
@@ -58,42 +58,42 @@ const PLANET_KEYWORDS: Partial<Record<PlanetName, string>> = {
 };
 
 const SIGN_KEYWORDS: Record<ZodiacSign, string> = {
-  Aries:       "Bold Â· Pioneer Â· Direct",
-  Taurus:      "Steady Â· Sensual Â· Patient",
-  Gemini:      "Curious Â· Versatile Â· Witty",
-  Cancer:      "Nurturing Â· Protective Â· Intuitive",
-  Leo:         "Expressive Â· Proud Â· Creative",
-  Virgo:       "Analytical Â· Precise Â· Service",
-  Libra:       "Harmonious Â· Diplomatic Â· Fair",
-  Scorpio:     "Intense Â· Strategic Â· Penetrating",
-  Sagittarius: "Expansive Â· Philosophical Â· Free",
-  Capricorn:   "Ambitious Â· Patient Â· Pragmatic",
-  Aquarius:    "Independent Â· Visionary Â· Inventive",
-  Pisces:      "Compassionate Â· Dreamy Â· Fluid",
+  Aries:       "Bold · Pioneer · Direct",
+  Taurus:      "Steady · Sensual · Patient",
+  Gemini:      "Curious · Versatile · Witty",
+  Cancer:      "Nurturing · Protective · Intuitive",
+  Leo:         "Expressive · Proud · Creative",
+  Virgo:       "Analytical · Precise · Service",
+  Libra:       "Harmonious · Diplomatic · Fair",
+  Scorpio:     "Intense · Strategic · Penetrating",
+  Sagittarius: "Expansive · Philosophical · Free",
+  Capricorn:   "Ambitious · Patient · Pragmatic",
+  Aquarius:    "Independent · Visionary · Inventive",
+  Pisces:      "Compassionate · Dreamy · Fluid",
 };
 
 const ASPECT_QUALITY: Record<string, { label: string; color: string }> = {
-  trine:       { label: "Harmonious Â· Natural flow",          color: "#22c55e" },
-  sextile:     { label: "Supportive Â· Skill through effort",  color: "#06b6d4" },
-  conjunction: { label: "Fusion Â· Intensified energy",        color: "#a855f7" },
-  square:      { label: "Tension Â· Growth through friction",  color: "#f59e0b" },
-  opposition:  { label: "Polarity Â· Balance & awareness",     color: "#ef4444" },
-  quincunx:    { label: "Adjustment Â· Subtle friction",       color: "#94a3b8" },
+  trine:       { label: "Harmonious · Natural flow",          color: "#22c55e" },
+  sextile:     { label: "Supportive · Skill through effort",  color: "#06b6d4" },
+  conjunction: { label: "Fusion · Intensified energy",        color: "#a855f7" },
+  square:      { label: "Tension · Growth through friction",  color: "#f59e0b" },
+  opposition:  { label: "Polarity · Balance & awareness",     color: "#ef4444" },
+  quincunx:    { label: "Adjustment · Subtle friction",       color: "#94a3b8" },
 };
 
 const HOUSE_THEMES: Record<number, { name: string; keywords: string }> = {
-  1:  { name: "Self",           keywords: "Identity Â· Appearance Â· Beginnings" },
-  2:  { name: "Resources",      keywords: "Money Â· Possessions Â· Self-worth" },
-  3:  { name: "Mind",           keywords: "Siblings Â· Communication Â· Local travel" },
-  4:  { name: "Roots",          keywords: "Home Â· Family Â· Foundations" },
-  5:  { name: "Creativity",     keywords: "Joy Â· Romance Â· Self-expression" },
-  6:  { name: "Health",         keywords: "Work Â· Wellness Â· Service" },
-  7:  { name: "Partnership",    keywords: "Relationships Â· Marriage Â· Others" },
-  8:  { name: "Transformation", keywords: "Shared resources Â· Death Â· Rebirth" },
-  9:  { name: "Wisdom",         keywords: "Philosophy Â· Travel Â· Higher mind" },
-  10: { name: "Career",         keywords: "Ambition Â· Public role Â· Legacy" },
-  11: { name: "Community",      keywords: "Friendships Â· Goals Â· Collective" },
-  12: { name: "Shadow",         keywords: "Solitude Â· Hidden matters Â· Transcendence" },
+  1:  { name: "Self",           keywords: "Identity · Appearance · Beginnings" },
+  2:  { name: "Resources",      keywords: "Money · Possessions · Self-worth" },
+  3:  { name: "Mind",           keywords: "Siblings · Communication · Local travel" },
+  4:  { name: "Roots",          keywords: "Home · Family · Foundations" },
+  5:  { name: "Creativity",     keywords: "Joy · Romance · Self-expression" },
+  6:  { name: "Health",         keywords: "Work · Wellness · Service" },
+  7:  { name: "Partnership",    keywords: "Relationships · Marriage · Others" },
+  8:  { name: "Transformation", keywords: "Shared resources · Death · Rebirth" },
+  9:  { name: "Wisdom",         keywords: "Philosophy · Travel · Higher mind" },
+  10: { name: "Career",         keywords: "Ambition · Public role · Legacy" },
+  11: { name: "Community",      keywords: "Friendships · Goals · Collective" },
+  12: { name: "Shadow",         keywords: "Solitude · Hidden matters · Transcendence" },
 };
 
 const ELEMENT_SIGNS: Record<"Fire" | "Earth" | "Air" | "Water", ZodiacSign[]> = {
@@ -123,7 +123,7 @@ const READING_PROMPTS = [
 
 type InsightTab = "overview" | "planets" | "aspects" | "timing" | "oracle";
 
-// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function SectionHeader({ label, sub }: { label: string; sub?: string }) {
   return (
@@ -141,7 +141,7 @@ function formatDate(d: Date): string {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
-// â”€â”€â”€ Chart snapshot â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Chart snapshot ───────────────────────────────────────────────────────────
 
 function ChartSnapshot({ chart }: { chart: ChartData }) {
   const sun  = chart.planets.find(p => p.name === "Sun");
@@ -150,11 +150,11 @@ function ChartSnapshot({ chart }: { chart: ChartData }) {
   const prof = chart.annualProfection;
 
   const pills = [
-    { label: "SUN",  value: sun  ? `${SIGN_SYMBOLS[sun.sign] ?? ""}${sun.sign}`   : "â€“", color: "#fbbf24" },
-    { label: "MOON", value: moon ? `${SIGN_SYMBOLS[moon.sign] ?? ""}${moon.sign}` : "â€“", color: "#c4b5fd" },
-    { label: "ASC",  value: asc  ? `${SIGN_SYMBOLS[asc] ?? ""}${asc}`             : "â€“", color: "#06b6d4" },
+    { label: "SUN",  value: sun  ? `${SIGN_SYMBOLS[sun.sign] ?? ""}${sun.sign}`   : "–", color: "#fbbf24" },
+    { label: "MOON", value: moon ? `${SIGN_SYMBOLS[moon.sign] ?? ""}${moon.sign}` : "–", color: "#c4b5fd" },
+    { label: "ASC",  value: asc  ? `${SIGN_SYMBOLS[asc] ?? ""}${asc}`             : "–", color: "#06b6d4" },
     { label: "SECT", value: chart.sect.toUpperCase(), color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" },
-    { label: `AGE ${prof.age}`, value: `H${prof.activatedHouse} Â· ${prof.lordOfYear}`, color: "#f59e0b" },
+    { label: `AGE ${prof.age}`, value: `H${prof.activatedHouse} · ${prof.lordOfYear}`, color: "#f59e0b" },
   ];
 
   return (
@@ -170,7 +170,7 @@ function ChartSnapshot({ chart }: { chart: ChartData }) {
   );
 }
 
-// â”€â”€â”€ Convergence Radar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Convergence Radar ────────────────────────────────────────────────────────
 
 function ConvergenceRadar({ chart }: { chart: ChartData }) {
   const prof = chart.annualProfection;
@@ -188,7 +188,7 @@ function ConvergenceRadar({ chart }: { chart: ChartData }) {
   const max = Math.max(...rawScores.slice(1));
   const scores = rawScores.map(s => max > 0 ? s / max : 0);
 
-  // SVG radar chart â€” 12 axes at 30Â° intervals, house 1 at top
+  // SVG radar chart — 12 axes at 30° intervals, house 1 at top
   const CX = 110, CY = 110, R = 90;
   const angleFor = (h: number) => ((h - 1) * 30 - 90) * (Math.PI / 180);
   const pts = Array.from({ length: 12 }, (_, i) => {
@@ -216,7 +216,7 @@ function ConvergenceRadar({ chart }: { chart: ChartData }) {
       style={{ background: "rgba(4,4,28,0.7)", border: "1px solid rgba(99,102,241,0.18)" }}
     >
       <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "#64748b" }}>
-        CONVERGENCE SCORE â€” HOUSE ACTIVATION MAP
+        CONVERGENCE SCORE — HOUSE ACTIVATION MAP
       </p>
       <div className="flex flex-col md:flex-row gap-6 items-center">
         {/* Radar SVG */}
@@ -320,7 +320,7 @@ function ConvergenceRadar({ chart }: { chart: ChartData }) {
                   {HOUSE_THEMES[h]?.name}
                 </p>
                 <p className="text-[14px]" style={{ color: "#334155" }}>
-                  {HOUSE_THEMES[h]?.keywords.split(" Â· ")[0]}
+                  {HOUSE_THEMES[h]?.keywords.split(" · ")[0]}
                 </p>
               </div>
             </div>
@@ -335,7 +335,7 @@ function ConvergenceRadar({ chart }: { chart: ChartData }) {
   );
 }
 
-// â”€â”€â”€ Overview tab â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Overview tab ─────────────────────────────────────────────────────────────
 
 function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (prompt: string) => void }) {
   // Element counts
@@ -394,9 +394,9 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
           {[
             { label: "SUN",       value: sun?.sign,           color: "#fbbf24", symbol: PLANET_SYMBOLS.Sun },
             { label: "MOON",      value: moon?.sign,          color: "#c4b5fd", symbol: PLANET_SYMBOLS.Moon },
-            { label: "RISING",    value: asc?.sign,           color: "#06b6d4", symbol: "â†‘" },
+            { label: "RISING",    value: asc?.sign,           color: "#06b6d4", symbol: "↑" },
             { label: "SECT",      value: chart.sect === "day" ? "Day Chart" : "Night Chart",
-                                                              color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd", symbol: chart.sect === "day" ? "â˜€" : "â˜½" },
+                                                              color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd", symbol: chart.sect === "day" ? "☀" : "☽" },
           ].map(({ label, value, color, symbol }) => value ? (
             <div key={label}>
               <p className="text-[14px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>{label}</p>
@@ -404,7 +404,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                 <span className="text-lg" style={{ color }}>{symbol}</span>
                 <div>
                   <p className="text-[14px] font-bold" style={{ color }}>{value}</p>
-                  <p className="text-[13px]" style={{ color: "#475569" }}>{SIGN_KEYWORDS[value as ZodiacSign]?.split(" Â· ")[0]}</p>
+                  <p className="text-[13px]" style={{ color: "#475569" }}>{SIGN_KEYWORDS[value as ZodiacSign]?.split(" · ")[0]}</p>
                 </div>
               </div>
             </div>
@@ -444,18 +444,18 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
             <span className="text-2xl" style={{ color: lordColor }}>{PLANET_SYMBOLS[prof.lordOfYear]}</span>
             <div>
               <p className="text-[14px] font-bold" style={{ color: lordColor }}>{prof.lordOfYear}</p>
-              <p className="text-[13px]" style={{ color: "#475569" }}>Age {prof.age} Â· H{prof.activatedHouse}</p>
+              <p className="text-[13px]" style={{ color: "#475569" }}>Age {prof.age} · H{prof.activatedHouse}</p>
             </div>
           </div>
           <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>
-            {prof.activatedSign} house activated Â· {HOUSE_THEMES[prof.activatedHouse]?.name} themes dominate this year.
+            {prof.activatedSign} house activated · {HOUSE_THEMES[prof.activatedHouse]?.name} themes dominate this year.
           </p>
           <button
             onClick={() => onAskOracle(READING_PROMPTS.find(r => r.id === "timing")!.prompt)}
             className="mt-3 text-[13px] font-bold tracking-widest cursor-pointer"
             style={{ color: lordColor }}
           >
-            ASK ORACLE â†’
+            ASK ORACLE →
           </button>
         </motion.div>
 
@@ -478,7 +478,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                   {dignifiedPlanets[0].name}
                 </p>
                 <p className="text-[13px]" style={{ color: "#475569" }}>
-                  {SIGN_SYMBOLS[dignifiedPlanets[0].sign]} {dignifiedPlanets[0].sign} Â· H{dignifiedPlanets[0].house}
+                  {SIGN_SYMBOLS[dignifiedPlanets[0].sign]} {dignifiedPlanets[0].sign} · H{dignifiedPlanets[0].house}
                 </p>
               </div>
             </div>
@@ -574,7 +574,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
 
         return (
           <div>
-            <SectionHeader label="Sect Analysis" sub={`${isDay ? "Day" : "Night"} chart â€” traditional Hellenistic sect`} />
+            <SectionHeader label="Sect Analysis" sub={`${isDay ? "Day" : "Night"} chart — traditional Hellenistic sect`} />
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -585,11 +585,11 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
                   style={{ background: `${sectLightColor}15`, border: `1px solid ${sectLightColor}30` }}>
-                  <span style={{ color: sectLightColor }}>{isDay ? "â˜€" : "â˜½"}</span>
+                  <span style={{ color: sectLightColor }}>{isDay ? "☀" : "☽"}</span>
                 </div>
                 <div>
                   <p className="text-[13px] font-bold" style={{ color: sectLightColor }}>
-                    {isDay ? "Day Chart â€” Sun is your Sect Light" : "Night Chart â€” Moon is your Sect Light"}
+                    {isDay ? "Day Chart — Sun is your Sect Light" : "Night Chart — Moon is your Sect Light"}
                   </p>
                   <p className="text-[13px] mt-0.5 leading-relaxed" style={{ color: "#475569" }}>
                     {isDay
@@ -598,8 +598,8 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                   </p>
                   {sectLightPlanet && (
                     <p className="text-[13px] mt-1 font-mono" style={{ color: "#334155" }}>
-                      {sectLight} in {SIGN_SYMBOLS[sectLightPlanet.sign]} {sectLightPlanet.sign} Â· H{sectLightPlanet.house}
-                      {sectLightPlanet.dignity && sectLightPlanet.dignity !== "peregrine" ? ` Â· ${sectLightPlanet.dignity}` : ""}
+                      {sectLight} in {SIGN_SYMBOLS[sectLightPlanet.sign]} {sectLightPlanet.sign} · H{sectLightPlanet.house}
+                      {sectLightPlanet.dignity && sectLightPlanet.dignity !== "peregrine" ? ` · ${sectLightPlanet.dignity}` : ""}
                     </p>
                   )}
                 </div>
@@ -608,7 +608,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
               {/* Key sect planets */}
               <div className="grid grid-cols-3 gap-3">
                 {([
-                  { label: "SECT LIGHT",   name: sectLight,      color: sectLightColor,   desc: "Primary luminary â€” life's guiding force" },
+                  { label: "SECT LIGHT",   name: sectLight,      color: sectLightColor,   desc: "Primary luminary — life's guiding force" },
                   { label: "SECT BENEFIC", name: sectBenefic,    color: sectBeneficColor, desc: "Gifts and grace flow naturally" },
                   { label: "SECT MALEFIC", name: sectMalefic,    color: sectMaleficColor, desc: "Tests aligned with your growth path" },
                 ] as { label: string; name: PlanetName; color: string; desc: string }[]).map(({ label, name, color, desc }) => {
@@ -621,7 +621,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                       <p className="text-[13px] font-bold" style={{ color }}>{name}</p>
                       {planet && (
                         <p className="text-[14px] mt-0.5" style={{ color: "#475569" }}>
-                          {SIGN_SYMBOLS[planet.sign]} {planet.sign} Â· H{planet.house}
+                          {SIGN_SYMBOLS[planet.sign]} {planet.sign} · H{planet.house}
                         </p>
                       )}
                       <p className="text-[14px] mt-1.5 leading-tight" style={{ color: "#334155" }}>{desc}</p>
@@ -632,7 +632,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
 
               {/* All 7 planets sect grid */}
               <div>
-                <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>TRADITIONAL 7 â€” SECT STATUS</p>
+                <p className="text-[14px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>TRADITIONAL 7 — SECT STATUS</p>
                 <div className="grid grid-cols-7 gap-1.5">
                   {sevenPlanets.map(name => {
                     const planet = chart.planets.find(p => p.name === name);
@@ -652,7 +652,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                           {name.substring(0, 3).toUpperCase()}
                         </span>
                         <span className="text-[14px] font-bold" style={{ color: inSect ? "#22c55e" : "#475569" }}>
-                          {inSect ? "âœ“" : "â—‹"}
+                          {inSect ? "✓" : "○"}
                         </span>
                       </div>
                     );
@@ -664,28 +664,28 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
               <div className="grid md:grid-cols-2 gap-3 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                 <div className="rounded-xl p-3" style={{ background: `${outSectMalColor}08`, border: `1px solid ${outSectMalColor}20` }}>
                   <p className="text-[13px] font-bold mb-1.5" style={{ color: outSectMalColor }}>
-                    {PLANET_SYMBOLS[outSectMalefic]} {outSectMalefic} â€” Out-of-Sect Malefic
+                    {PLANET_SYMBOLS[outSectMalefic]} {outSectMalefic} — Out-of-Sect Malefic
                   </p>
                   <p className="text-[13px] leading-relaxed" style={{ color: "#475569" }}>
                     {isDay
-                      ? "Mars is contrary to sect and may act with excess or aggression. Its drive lacks moderation â€” channel it consciously."
+                      ? "Mars is contrary to sect and may act with excess or aggression. Its drive lacks moderation — channel it consciously."
                       : "Saturn is contrary to sect and tends toward excessive restriction. Isolation and harsh limits must be actively balanced."}
                   </p>
                   {outSectMalPlanet && (
                     <p className="text-[14px] mt-2 font-mono" style={{ color: "#334155" }}>
-                      Currently in {outSectMalPlanet.sign} Â· H{outSectMalPlanet.house}
-                      {outSectMalPlanet.retrograde ? " Â· â„ž" : ""}
+                      Currently in {outSectMalPlanet.sign} · H{outSectMalPlanet.house}
+                      {outSectMalPlanet.retrograde ? " · ℞" : ""}
                     </p>
                   )}
                 </div>
                 <div className="rounded-xl p-3" style={{ background: "rgba(99,102,241,0.05)", border: "1px solid rgba(99,102,241,0.15)" }}>
                   <p className="text-[13px] font-bold mb-1.5" style={{ color: "#a78bfa" }}>
-                    {PLANET_SYMBOLS[outSectBenefic]} {outSectBenefic} â€” Out-of-Sect Benefic
+                    {PLANET_SYMBOLS[outSectBenefic]} {outSectBenefic} — Out-of-Sect Benefic
                   </p>
                   <p className="text-[13px] leading-relaxed" style={{ color: "#475569" }}>
                     {isDay
-                      ? "Venus brings gifts that may need cultivation â€” love, beauty, and pleasure require active engagement rather than passive reception."
-                      : "Jupiter's expansion may scatter without focus â€” wisdom and abundance come through deliberate structure rather than blind faith."}
+                      ? "Venus brings gifts that may need cultivation — love, beauty, and pleasure require active engagement rather than passive reception."
+                      : "Jupiter's expansion may scatter without focus — wisdom and abundance come through deliberate structure rather than blind faith."}
                   </p>
                 </div>
               </div>
@@ -828,11 +828,11 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                       <span className="text-[13px] px-2 py-0.5 rounded-full font-bold" style={{ background: `${crColor}15`, color: crColor }}>CHART RULER</span>
                     </div>
                     <p className="text-[14px]" style={{ color: "#64748b" }}>
-                      {chartRuler.sign} Â· House {chartRuler.house} Â· {chartRuler.dignity ? chartRuler.dignity.charAt(0).toUpperCase() + chartRuler.dignity.slice(1) : "Peregrine"}
-                      {chartRuler.retrograde ? " Â· â„ž" : ""}
+                      {chartRuler.sign} · House {chartRuler.house} · {chartRuler.dignity ? chartRuler.dignity.charAt(0).toUpperCase() + chartRuler.dignity.slice(1) : "Peregrine"}
+                      {chartRuler.retrograde ? " · ℞" : ""}
                     </p>
                     <p className="text-[13px] mt-1" style={{ color: "#475569" }}>
-                      Rules the {HOUSE_THEMES[1]?.name} â€” the most personal planet in your chart, coloring your entire life expression.
+                      Rules the {HOUSE_THEMES[1]?.name} — the most personal planet in your chart, coloring your entire life expression.
                     </p>
                   </div>
                 </motion.div>
@@ -842,7 +842,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
             {/* Mutual Receptions */}
             {mutualReceptions.length > 0 && (
               <div>
-                <SectionHeader label="Mutual Receptions" sub="Each planet in the other's sign â€” hidden strength" />
+                <SectionHeader label="Mutual Receptions" sub="Each planet in the other's sign — hidden strength" />
                 <div className="space-y-2">
                   {mutualReceptions.map(({ a, b, aSign, bSign }, i) => {
                     const aColor = PLANET_COLORS[a.name] ?? "#94a3b8";
@@ -860,7 +860,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                           <span className="text-xl" style={{ color: aColor }}>{PLANET_SYMBOLS[a.name]}</span>
                           <span className="text-[13px]" style={{ color: "#475569" }}>in {SIGN_SYMBOLS[b.sign as ZodiacSign]} {bSign}</span>
                         </div>
-                        <span className="text-base" style={{ color: "#334155" }}>â‡„</span>
+                        <span className="text-base" style={{ color: "#334155" }}>⇄</span>
                         <div className="flex items-center gap-1.5">
                           <span className="text-xl" style={{ color: bColor }}>{PLANET_SYMBOLS[b.name]}</span>
                           <span className="text-[13px]" style={{ color: "#475569" }}>in {SIGN_SYMBOLS[a.sign as ZodiacSign]} {aSign}</span>
@@ -874,7 +874,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
                     );
                   })}
                   <p className="text-[13px] px-1" style={{ color: "#334155" }}>
-                    These planets act as if in their own domicile â€” each gains strength and purpose through the other.
+                    These planets act as if in their own domicile — each gains strength and purpose through the other.
                   </p>
                 </div>
               </div>
@@ -898,7 +898,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
             >
               <p className="text-[13px] font-bold tracking-wider" style={{ color: "#a78bfa" }}>{rp.label}</p>
               <p className="text-[13px] mt-1 leading-relaxed" style={{ color: "#475569" }}>
-                {rp.prompt.substring(0, 60)}â€¦
+                {rp.prompt.substring(0, 60)}…
               </p>
             </motion.button>
           ))}
@@ -908,13 +908,13 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
   );
 }
 
-// â”€â”€â”€ Dispositor Tree â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Dispositor Tree ──────────────────────────────────────────────────────────
 
 function DispositorTree({ chart }: { chart: ChartData }) {
   const planets = chart.planets.slice(0, 10);
   const W = 380, H = 320, CX = W / 2, CY = H / 2, R = 118;
 
-  // Map planet name â†’ index in our display order
+  // Map planet name → index in our display order
   const DISPLAY_ORDER: PlanetName[] = ["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"];
 
   // Position each planet on the circle (starting top, clockwise)
@@ -926,7 +926,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
     return [CX + R * Math.cos(a), CY + R * Math.sin(a)];
   }
 
-  // Build dispositor map: planet â†’ traditional ruler of its sign
+  // Build dispositor map: planet → traditional ruler of its sign
   const planetByName = new Map(planets.map(p => [p.name, p]));
   const dispositorOf = new Map<PlanetName, PlanetName>();
   for (const p of planets) {
@@ -941,7 +941,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
   planets.forEach(p => {
     if (!dispositorOf.has(p.name)) finalDispositors.add(p.name);
   });
-  // Mutual reception: A disposits B AND B disposits A â†’ both are final
+  // Mutual reception: A disposits B AND B disposits A → both are final
   dispositorOf.forEach((bName, aName) => {
     if (dispositorOf.get(bName) === aName) {
       finalDispositors.add(aName);
@@ -987,10 +987,10 @@ function DispositorTree({ chart }: { chart: ChartData }) {
       style={{ background: "rgba(4,4,28,0.7)", border: "1px solid rgba(99,102,241,0.15)" }}
     >
       <div className="flex items-center justify-between mb-4">
-        <p className="text-[13px] font-bold tracking-widest" style={{ color: "#64748b" }}>DISPOSITOR TREE â€” RULERSHIP FLOW</p>
+        <p className="text-[13px] font-bold tracking-widest" style={{ color: "#64748b" }}>DISPOSITOR TREE — RULERSHIP FLOW</p>
         <div className="flex items-center gap-3 text-[14px] tracking-widest font-bold" style={{ color: "#334155" }}>
-          <span>â†’ DISPOSITS</span>
-          <span style={{ color: "#fbbf24" }}>â—Ž FINAL</span>
+          <span>→ DISPOSITS</span>
+          <span style={{ color: "#fbbf24" }}>◎ FINAL</span>
         </div>
       </div>
 
@@ -1012,7 +1012,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
           {/* Subtle circle guide */}
           <circle cx={CX} cy={CY} r={R} fill="none" stroke="rgba(99,102,241,0.06)" strokeWidth={1} strokeDasharray="3 5" />
 
-          {/* Arrows â€” draw all dispositor relationships */}
+          {/* Arrows — draw all dispositor relationships */}
           {Array.from(dispositorOf.entries()).map(([fromName, toName]) => {
             const fromIdx = DISPLAY_ORDER.indexOf(fromName);
             const toIdx = DISPLAY_ORDER.indexOf(toName);
@@ -1101,11 +1101,11 @@ function DispositorTree({ chart }: { chart: ChartData }) {
                 {p.retrograde && (
                   <text x={x - NODE_R + 2} y={y - NODE_R + 5}
                     fontSize={6} fill="#f97316" textAnchor="middle" dominantBaseline="central">
-                    â„ž
+                    ℞
                   </text>
                 )}
 
-                {/* Dispositor label: small "â†’ X" next to arrow origin */}
+                {/* Dispositor label: small "→ X" next to arrow origin */}
                 {disp && !isFinal && (
                   <text
                     x={x}
@@ -1116,7 +1116,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
                     fill="#1e293b"
                     letterSpacing={0.5}
                   >
-                    â†’ {disp.substring(0, 3).toUpperCase()}
+                    → {disp.substring(0, 3).toUpperCase()}
                   </text>
                 )}
               </motion.g>
@@ -1145,7 +1145,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
           exaltation
         </div>
         <div className="flex items-center gap-1.5">
-          <span style={{ fontSize: 13, color: "#f97316" }}>â„ž</span>
+          <span style={{ fontSize: 13, color: "#f97316" }}>℞</span>
           retrograde
         </div>
       </div>
@@ -1153,7 +1153,7 @@ function DispositorTree({ chart }: { chart: ChartData }) {
   );
 }
 
-// â”€â”€â”€ Planets tab â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Planets tab ──────────────────────────────────────────────────────────────
 
 function PlanetsTab({ chart }: { chart: ChartData }) {
   const [selected, setSelected] = useState<PlanetName | null>(null);
@@ -1195,13 +1195,13 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-[14px] font-bold" style={{ color: "#e2e8f0" }}>{p.name}</span>
-                    {p.retrograde && <span className="text-[13px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(239,68,68,0.12)", color: "#ef4444" }}>â„ž</span>}
+                    {p.retrograde && <span className="text-[13px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(239,68,68,0.12)", color: "#ef4444" }}>℞</span>}
                   </div>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <span className="text-[14px]" style={{ color: signColor }}>{SIGN_SYMBOLS[p.sign]} {p.sign}</span>
-                    <span className="text-[13px]" style={{ color: "#334155" }}>Â·</span>
-                    <span className="text-[13px]" style={{ color: "#475569" }}>{p.signDegree.toFixed(1)}Â°</span>
-                    <span className="text-[13px]" style={{ color: "#334155" }}>Â·</span>
+                    <span className="text-[13px]" style={{ color: "#334155" }}>·</span>
+                    <span className="text-[13px]" style={{ color: "#475569" }}>{p.signDegree.toFixed(1)}°</span>
+                    <span className="text-[13px]" style={{ color: "#334155" }}>·</span>
                     <span className="text-[13px]" style={{ color: "#4f46e5" }}>H{p.house}</span>
                   </div>
                 </div>
@@ -1249,8 +1249,8 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                       </div>
                       <div className="grid grid-cols-3 gap-2 mb-3">
                         {[
-                          { label: "HOUSE", value: `H${p.house} Â· ${HOUSE_THEMES[p.house]?.name ?? ""}` },
-                          { label: "LONGITUDE", value: `${p.longitude.toFixed(2)}Â°` },
+                          { label: "HOUSE", value: `H${p.house} · ${HOUSE_THEMES[p.house]?.name ?? ""}` },
+                          { label: "LONGITUDE", value: `${p.longitude.toFixed(2)}°` },
                           { label: "DIGNITY", value: p.dignity ? p.dignity.charAt(0).toUpperCase() + p.dignity.slice(1) : "Peregrine" },
                         ].map(r => (
                           <div key={r.label}>
@@ -1270,7 +1270,7 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                           color,
                         }}
                       >
-                        FULL {p.name.toUpperCase()} READING â†’
+                        FULL {p.name.toUpperCase()} READING →
                       </motion.button>
                     </div>
                   </motion.div>
@@ -1331,7 +1331,7 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
             })}
           </div>
           <p className="text-[14px] mt-3 pt-3 tracking-widest" style={{ color: "#1e293b", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-            DOMICILE +10 Â· EXALTATION +8 Â· PEREGRINE 0 Â· DETRIMENT âˆ’5 Â· FALL âˆ’7
+            DOMICILE +10 · EXALTATION +8 · PEREGRINE 0 · DETRIMENT −5 · FALL −7
           </p>
         </div>
       </div>
@@ -1362,7 +1362,7 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
 
         return (
           <div className="mt-6">
-            <SectionHeader label="Almuten Figuris" sub="The most dignified planet â€” overall chart ruler by total dignity score" />
+            <SectionHeader label="Almuten Figuris" sub="The most dignified planet — overall chart ruler by total dignity score" />
             <div className="space-y-3">
               {/* Winner card */}
               <motion.div
@@ -1388,11 +1388,11 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                     <span className="text-[13px] font-mono font-bold" style={{ color: "#475569" }}>Score {winner.total > 0 ? "+" : ""}{winner.total}</span>
                   </div>
                   <p className="text-[14px] leading-relaxed" style={{ color: "#64748b" }}>
-                    {winner.planet.sign} Â· House {winner.planet.house} Â· {winner.planet.dignity ? winner.planet.dignity.charAt(0).toUpperCase() + winner.planet.dignity.slice(1) : "Peregrine"}
-                    {winner.planet.retrograde ? " Â· â„ž Retrograde" : ""}
+                    {winner.planet.sign} · House {winner.planet.house} · {winner.planet.dignity ? winner.planet.dignity.charAt(0).toUpperCase() + winner.planet.dignity.slice(1) : "Peregrine"}
+                    {winner.planet.retrograde ? " · ℞ Retrograde" : ""}
                   </p>
                   <p className="text-[13px] mt-1" style={{ color: "#334155" }}>
-                    Essential {winner.essential > 0 ? "+" : ""}{winner.essential}  Â·  Angular +{winner.angular}  Â·  Sect +{winner.sectBonus}{winner.retroPenalty ? `  Â·  Rx ${winner.retroPenalty}` : ""}
+                    Essential {winner.essential > 0 ? "+" : ""}{winner.essential}  ·  Angular +{winner.angular}  ·  Sect +{winner.sectBonus}{winner.retroPenalty ? `  ·  Rx ${winner.retroPenalty}` : ""}
                   </p>
                 </div>
               </motion.div>
@@ -1430,7 +1430,7 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                   })}
                 </div>
                 <p className="text-[14px] mt-3 pt-3 tracking-widest" style={{ color: "#1e293b", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-                  ESSENTIAL DIGNITY + ANGULAR HOUSE + SECT BONUS âˆ’ RETROGRADE PENALTY
+                  ESSENTIAL DIGNITY + ANGULAR HOUSE + SECT BONUS − RETROGRADE PENALTY
                 </p>
               </div>
             </div>
@@ -1440,7 +1440,7 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
 
       {/* Dispositor Tree */}
       <div className="mt-6">
-        <SectionHeader label="Dispositor Tree" sub="Planetary rulership chain â€” who governs whom" />
+        <SectionHeader label="Dispositor Tree" sub="Planetary rulership chain — who governs whom" />
         <DispositorTree chart={chart} />
       </div>
 
@@ -1467,7 +1467,7 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
                 <span className="text-base" style={{ color: signColor }}>{SIGN_SYMBOLS[h.sign]}</span>
                 <div>
                   <p className="text-[13px] font-semibold" style={{ color: signColor }}>{h.sign}</p>
-                  <p className="text-[13px]" style={{ color: "#334155" }}>{h.longitude.toFixed(1)}Â°</p>
+                  <p className="text-[13px]" style={{ color: "#334155" }}>{h.longitude.toFixed(1)}°</p>
                 </div>
               </div>
             );
@@ -1478,7 +1478,7 @@ function PlanetsTab({ chart }: { chart: ChartData }) {
   );
 }
 
-// â”€â”€â”€ Chart Pattern Detector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Chart Pattern Detector ───────────────────────────────────────────────────
 
 type PatternType = "Grand Trine" | "T-Square" | "Grand Cross" | "Yod" | "Stellium" | "Mystic Rectangle" | "Opposition";
 
@@ -1510,13 +1510,13 @@ const PATTERN_COLORS: Record<PatternType, string> = {
 };
 
 const PATTERN_DESCRIPTIONS: Record<PatternType, string> = {
-  "Grand Trine":       "Three planets in mutual trine â€” natural talent, ease, and protection in one element",
-  "T-Square":          "Two oppositions meeting at an apex planet â€” dynamic tension driving growth",
-  "Grand Cross":       "Four planets in square/opposition â€” intense cross-pressure demanding integration",
-  "Yod":               "Two sextile planets quincunx a third â€” fated adjustment and spiritual mission",
-  "Stellium":          "Three or more planets concentrated in one sign â€” extraordinary focused energy",
-  "Mystic Rectangle":  "Two trines + two sextiles + two oppositions â€” organized creative tension",
-  "Opposition":        "Planets in direct polarity â€” awareness through contrast and relationship",
+  "Grand Trine":       "Three planets in mutual trine — natural talent, ease, and protection in one element",
+  "T-Square":          "Two oppositions meeting at an apex planet — dynamic tension driving growth",
+  "Grand Cross":       "Four planets in square/opposition — intense cross-pressure demanding integration",
+  "Yod":               "Two sextile planets quincunx a third — fated adjustment and spiritual mission",
+  "Stellium":          "Three or more planets concentrated in one sign — extraordinary focused energy",
+  "Mystic Rectangle":  "Two trines + two sextiles + two oppositions — organized creative tension",
+  "Opposition":        "Planets in direct polarity — awareness through contrast and relationship",
 };
 
 function detectPatterns(chart: ChartData): DetectedPattern[] {
@@ -1531,7 +1531,7 @@ function detectPatterns(chart: ChartData): DetectedPattern[] {
       ((a.planet1 === p1 && a.planet2 === p2) || (a.planet1 === p2 && a.planet2 === p1))
     );
 
-  // â”€ Stellium: 3+ planets in same sign
+  // ─ Stellium: 3+ planets in same sign
   const signGroups: Record<string, PlanetName[]> = {};
   planets.forEach(p => {
     signGroups[p.sign] = signGroups[p.sign] ? [...signGroups[p.sign], p.name] : [p.name];
@@ -1541,13 +1541,13 @@ function detectPatterns(chart: ChartData): DetectedPattern[] {
       patterns.push({
         type: "Stellium",
         planets: ps,
-        description: `${ps.length} planets in ${sign} â€” ${PATTERN_DESCRIPTIONS["Stellium"]}`,
+        description: `${ps.length} planets in ${sign} — ${PATTERN_DESCRIPTIONS["Stellium"]}`,
         color: PATTERN_COLORS["Stellium"],
       });
     }
   });
 
-  // â”€ Grand Trine: 3 planets all trine each other
+  // ─ Grand Trine: 3 planets all trine each other
   const pNames = planets.map(p => p.name);
   for (let i = 0; i < pNames.length - 2; i++) {
     for (let j = i + 1; j < pNames.length - 1; j++) {
@@ -1561,7 +1561,7 @@ function detectPatterns(chart: ChartData): DetectedPattern[] {
             type: "Grand Trine",
             planets: trio,
             description: el
-              ? `${el} Grand Trine â€” ${PATTERN_DESCRIPTIONS["Grand Trine"]}`
+              ? `${el} Grand Trine — ${PATTERN_DESCRIPTIONS["Grand Trine"]}`
               : PATTERN_DESCRIPTIONS["Grand Trine"],
             color: el ? ELEMENT_COLORS_MAP[el] : PATTERN_COLORS["Grand Trine"],
             element: el,
@@ -1571,12 +1571,12 @@ function detectPatterns(chart: ChartData): DetectedPattern[] {
     }
   }
 
-  // â”€ Opposition pairs (for further pattern checks)
+  // ─ Opposition pairs (for further pattern checks)
   const oppPairs: [PlanetName, PlanetName][] = aspects
     .filter(a => a.type === "opposition" && a.orb <= ORBLIMIT)
     .map(a => [a.planet1, a.planet2]);
 
-  // â”€ T-Square: 2 planets in opposition + 1 squares both
+  // ─ T-Square: 2 planets in opposition + 1 squares both
   for (const [p1, p2] of oppPairs) {
     pNames.forEach(apex => {
       if (apex === p1 || apex === p2) return;
@@ -1584,14 +1584,14 @@ function detectPatterns(chart: ChartData): DetectedPattern[] {
         patterns.push({
           type: "T-Square",
           planets: [p1, p2, apex],
-          description: `${p1}â€“${p2} opposition Â· ${apex} apex â€” ${PATTERN_DESCRIPTIONS["T-Square"]}`,
+          description: `${p1}–${p2} opposition · ${apex} apex — ${PATTERN_DESCRIPTIONS["T-Square"]}`,
           color: PATTERN_COLORS["T-Square"],
         });
       }
     });
   }
 
-  // â”€ Grand Cross: two opposition pairs, all squaring each other
+  // ─ Grand Cross: two opposition pairs, all squaring each other
   for (let i = 0; i < oppPairs.length - 1; i++) {
     for (let j = i + 1; j < oppPairs.length; j++) {
       const [a, b] = oppPairs[i];
@@ -1609,7 +1609,7 @@ function detectPatterns(chart: ChartData): DetectedPattern[] {
     }
   }
 
-  // â”€ Yod: 2 planets in sextile, both quincunx a third
+  // ─ Yod: 2 planets in sextile, both quincunx a third
   const sextPairs: [PlanetName, PlanetName][] = aspects
     .filter(a => a.type === "sextile" && a.orb <= ORBLIMIT)
     .map(a => [a.planet1, a.planet2]);
@@ -1620,7 +1620,7 @@ function detectPatterns(chart: ChartData): DetectedPattern[] {
         patterns.push({
           type: "Yod",
           planets: [p1, p2, apex],
-          description: `${p1} & ${p2} point to ${apex} â€” ${PATTERN_DESCRIPTIONS["Yod"]}`,
+          description: `${p1} & ${p2} point to ${apex} — ${PATTERN_DESCRIPTIONS["Yod"]}`,
           color: PATTERN_COLORS["Yod"],
         });
       }
@@ -1682,10 +1682,10 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
                     </svg>
                   )}
                   {(p.type === "Stellium") && (
-                    <span style={{ color: p.color, fontSize: 16 }}>âœ¦</span>
+                    <span style={{ color: p.color, fontSize: 16 }}>✦</span>
                   )}
                   {(p.type === "Mystic Rectangle" || p.type === "Opposition") && (
-                    <span style={{ color: p.color, fontSize: 14 }}>â˜</span>
+                    <span style={{ color: p.color, fontSize: 14 }}>☍</span>
                   )}
                 </div>
                 {p.element && (
@@ -1717,7 +1717,7 @@ function ChartPatterns({ chart }: { chart: ChartData }) {
   );
 }
 
-// â”€â”€â”€ Aspects tab â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Aspects tab ──────────────────────────────────────────────────────────────
 
 function AspectsTab({ chart }: { chart: ChartData }) {
   const [filter, setFilter] = useState<string>("all");
@@ -1759,7 +1759,7 @@ function AspectsTab({ chart }: { chart: ChartData }) {
       {/* Exact aspects highlight */}
       {exactAspects.length > 0 && (
         <div className="rounded-2xl p-4" style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.2)" }}>
-          <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#7c3aed" }}>EXACT ASPECTS Â· MOST POWERFUL</p>
+          <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#7c3aed" }}>EXACT ASPECTS · MOST POWERFUL</p>
           <div className="flex flex-wrap gap-2">
             {exactAspects.map((a, i) => {
               const color = ASPECT_COLORS[a.type] ?? "#94a3b8";
@@ -1769,7 +1769,7 @@ function AspectsTab({ chart }: { chart: ChartData }) {
                   <span style={{ color: PLANET_COLORS[a.planet1] ?? "#94a3b8" }}>{PLANET_SYMBOLS[a.planet1]}</span>
                   <span className="text-[14px] font-bold" style={{ color }}>{ASPECT_GLYPHS[a.type]}</span>
                   <span style={{ color: PLANET_COLORS[a.planet2] ?? "#94a3b8" }}>{PLANET_SYMBOLS[a.planet2]}</span>
-                  <span className="text-[13px] font-bold" style={{ color }}>{a.orb.toFixed(2)}Â°</span>
+                  <span className="text-[13px] font-bold" style={{ color }}>{a.orb.toFixed(2)}°</span>
                 </div>
               );
             })}
@@ -1777,7 +1777,7 @@ function AspectsTab({ chart }: { chart: ChartData }) {
         </div>
       )}
 
-      {/* Power Aspects â€” top 5 by composite strength */}
+      {/* Power Aspects — top 5 by composite strength */}
       {(() => {
         const ASPECT_WEIGHT: Record<string, number> = {
           conjunction: 3, opposition: 2, trine: 1.5, square: 1.5, sextile: 1, quincunx: 0.5,
@@ -1803,7 +1803,7 @@ function AspectsTab({ chart }: { chart: ChartData }) {
 
         return (
           <div>
-            <SectionHeader label="Power Aspects" sub="Top 5 by exactness Â· type weight Â· dignity strength" />
+            <SectionHeader label="Power Aspects" sub="Top 5 by exactness · type weight · dignity strength" />
             <div className="space-y-2">
               {scored.map((a, i) => {
                 const color = ASPECT_COLORS[a.type] ?? "#94a3b8";
@@ -1825,7 +1825,7 @@ function AspectsTab({ chart }: { chart: ChartData }) {
                       <span className="text-base font-bold" style={{ color }}>{ASPECT_GLYPHS[a.type]}</span>
                       <span className="text-lg" style={{ color: p2Color }}>{PLANET_SYMBOLS[a.planet2]}</span>
                       <span className="text-[13px] font-bold capitalize ml-1" style={{ color }}>{a.type}</span>
-                      <span className="text-[13px] font-mono ml-auto" style={{ color: "#475569" }}>{a.orb.toFixed(2)}Â°</span>
+                      <span className="text-[13px] font-mono ml-auto" style={{ color: "#475569" }}>{a.orb.toFixed(2)}°</span>
                       {a.exact && <span className="text-[14px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(124,58,237,0.15)", color: "#a78bfa" }}>EXACT</span>}
                       {a.applying && !a.exact && <span className="text-[14px] font-bold px-1.5 py-0.5 rounded" style={{ background: "rgba(34,197,94,0.1)", color: "#22c55e" }}>APPL.</span>}
                     </div>
@@ -1901,7 +1901,7 @@ function AspectsTab({ chart }: { chart: ChartData }) {
                   <span className="text-[14px] font-bold px-1.5 py-0.5 rounded"
                     style={{ background: `${color}18`, color }}>EXACT</span>
                 )}
-                <span className="text-[13px]" style={{ color: "#475569" }}>{a.orb.toFixed(2)}Â°</span>
+                <span className="text-[13px]" style={{ color: "#475569" }}>{a.orb.toFixed(2)}°</span>
               </div>
             </motion.div>
           );
@@ -1911,9 +1911,9 @@ function AspectsTab({ chart }: { chart: ChartData }) {
   );
 }
 
-// â”€â”€â”€ Timing tab â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Timing tab ───────────────────────────────────────────────────────────────
 
-// â”€â”€â”€ Live convergence computation (shared with dashboard widget) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Live convergence computation (shared with dashboard widget) ──────────────
 
 const OUTER_PLANET_NAMES: PlanetName[] = ["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
 
@@ -1934,8 +1934,8 @@ function computeTimingConvergence(chart: ChartData, transits: TransitHit[]): {
   else if (lordPlanetData?.dignity === "detriment" || lordPlanetData?.dignity === "fall") score -= 8;
 
   const towardLord = transits.filter(t => t.natalPlanet === lord && OUTER_PLANET_NAMES.includes(t.transitPlanet) && t.applying && t.orb <= 3);
-  if (towardLord.length >= 2) { score += 32; factors.push({ text: `${towardLord.length}Ã— outer transits to ${lord}`, pts: 32 }); }
-  else if (towardLord.length === 1) { const pts = towardLord[0].exact ? 22 : 16; score += pts; factors.push({ text: `${towardLord[0].transitPlanet}â†’${lord} (${towardLord[0].orb.toFixed(1)}Â°)`, pts }); }
+  if (towardLord.length >= 2) { score += 32; factors.push({ text: `${towardLord.length}× outer transits to ${lord}`, pts: 32 }); }
+  else if (towardLord.length === 1) { const pts = towardLord[0].exact ? 22 : 16; score += pts; factors.push({ text: `${towardLord[0].transitPlanet}→${lord} (${towardLord[0].orb.toFixed(1)}°)`, pts }); }
 
   const inProfHouse = transits.filter(t => t.natalHouse === profHouse && t.applying && t.orb <= 5);
   if (inProfHouse.length >= 2) { score += 20; factors.push({ text: `H${profHouse} has ${inProfHouse.length} transits`, pts: 20 }); }
@@ -1953,7 +1953,7 @@ function computeTimingConvergence(chart: ChartData, transits: TransitHit[]): {
   return { score, label, color, factors };
 }
 
-// â”€â”€â”€ Timing tab â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Timing tab ───────────────────────────────────────────────────────────────
 
 function TimingTab({ chart }: { chart: ChartData }) {
   const prof = chart.annualProfection;
@@ -2005,7 +2005,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
         }}
       >
         <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#475569" }}>
-          CURRENT PROFECTION YEAR Â· AGE {prof.age}
+          CURRENT PROFECTION YEAR · AGE {prof.age}
         </p>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
@@ -2058,7 +2058,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
           <div>
             <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
             <p className="text-[13px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
-              {chart.sect === "day" ? "â˜€ Day" : "â˜½ Night"}
+              {chart.sect === "day" ? "☀ Day" : "☽ Night"}
             </p>
           </div>
         </div>
@@ -2073,7 +2073,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
         style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
       >
         <p className="text-[13px] font-bold tracking-widest mb-3" style={{ color: "#334155" }}>
-          NEXT PROFECTION YEAR Â· AGE {prof.age + 1}
+          NEXT PROFECTION YEAR · AGE {prof.age + 1}
         </p>
         <div className="flex items-center gap-3">
           <span className="text-2xl" style={{ color: PLANET_COLORS[nextLord] ?? "#94a3b8" }}>
@@ -2081,10 +2081,10 @@ function TimingTab({ chart }: { chart: ChartData }) {
           </span>
           <div className="flex-1">
             <p className="text-[14px] font-bold" style={{ color: "#94a3b8" }}>
-              {nextLord} year Â· {SIGN_SYMBOLS[nextSign]} {nextSign}
+              {nextLord} year · {SIGN_SYMBOLS[nextSign]} {nextSign}
             </p>
             <p className="text-[13px]" style={{ color: "#475569" }}>
-              Begins {formatDate(nextBirthday)} Â· {daysUntilNext} days away
+              Begins {formatDate(nextBirthday)} · {daysUntilNext} days away
             </p>
           </div>
         </div>
@@ -2127,8 +2127,8 @@ function TimingTab({ chart }: { chart: ChartData }) {
         <SectionHeader label="Arabic Lots" sub="Hellenistic sensitive points" />
         <div className="grid grid-cols-2 gap-3">
           {[
-            { label: "Lot of Fortune",  lon: chart.lotOfFortune, color: "#f59e0b", desc: "Material prosperity Â· Life's fortune & body" },
-            { label: "Lot of Spirit",   lon: chart.lotOfSpirit,  color: "#a78bfa", desc: "Soul's path Â· Action & intention" },
+            { label: "Lot of Fortune",  lon: chart.lotOfFortune, color: "#f59e0b", desc: "Material prosperity · Life's fortune & body" },
+            { label: "Lot of Spirit",   lon: chart.lotOfSpirit,  color: "#a78bfa", desc: "Soul's path · Action & intention" },
           ].map(({ label, lon, color, desc }) => {
             const sign = ZODIAC_SIGNS[Math.floor(lon / 30)];
             const degree = lon % 30;
@@ -2148,7 +2148,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
                   <span className="text-xl" style={{ color: SIGN_COLORS[sign] }}>{SIGN_SYMBOLS[sign]}</span>
                   <div>
                     <p className="text-[13px] font-bold" style={{ color: SIGN_COLORS[sign] }}>{sign}</p>
-                    <p className="text-[13px]" style={{ color: "#475569" }}>{degree.toFixed(1)}Â° Â· H{house > 0 ? house : 1}</p>
+                    <p className="text-[13px]" style={{ color: "#475569" }}>{degree.toFixed(1)}° · H{house > 0 ? house : 1}</p>
                   </div>
                 </div>
                 <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>{desc}</p>
@@ -2174,7 +2174,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
             style={{ background: `${color}0a`, border: `1px solid ${color}18` }}
           >
             <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color }}>
-              LIVE TIMING ALIGNMENT â€” TRANSIT-BASED CONVERGENCE
+              LIVE TIMING ALIGNMENT — TRANSIT-BASED CONVERGENCE
             </p>
             <div className="flex items-center gap-4">
               {/* Arc gauge */}
@@ -2199,7 +2199,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
               {/* Factors */}
               <div className="flex-1 min-w-0 space-y-1.5">
                 {factors.length === 0 ? (
-                  <p className="text-[13px]" style={{ color: "#334155" }}>No major alignments active right now. This is normal â€” windows of high convergence are relatively brief.</p>
+                  <p className="text-[13px]" style={{ color: "#334155" }}>No major alignments active right now. This is normal — windows of high convergence are relatively brief.</p>
                 ) : factors.slice(0, 4).map((f, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <div className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: color }} />
@@ -2220,14 +2220,14 @@ function TimingTab({ chart }: { chart: ChartData }) {
           className="w-full py-3 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
           style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.25)", color: "#a78bfa" }}
         >
-          VIEW FULL TIMELINE â†’ PROFECTIONS Â· ZOD. RELEASING Â· PROGRESSIONS Â· FIRDARIA
+          VIEW FULL TIMELINE → PROFECTIONS · ZOD. RELEASING · PROGRESSIONS · FIRDARIA
         </motion.button>
       </Link>
     </div>
   );
 }
 
-// â”€â”€â”€ Oracle tab (AI chat) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Oracle tab (AI chat) ─────────────────────────────────────────────────────
 
 function MessageBubble({ role, content, streaming = false }: { role: "user" | "assistant"; content: string; streaming?: boolean }) {
   if (role === "user") {
@@ -2244,7 +2244,7 @@ function MessageBubble({ role, content, streaming = false }: { role: "user" | "a
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex gap-3">
       <div className="w-7 h-7 rounded-xl flex-shrink-0 flex items-center justify-center mt-1"
         style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 16px rgba(124,58,237,0.5)" }}>
-        <span className="text-[13px] text-white font-bold">âœ¦</span>
+        <span className="text-[13px] text-white font-bold">✦</span>
       </div>
       <div className="flex-1 px-4 py-3 rounded-2xl rounded-tl-sm text-[14px] leading-relaxed"
         style={{ background: "rgba(4,4,28,0.8)", border: "1px solid rgba(99,102,241,0.2)", color: "#cbd5e1", whiteSpace: "pre-wrap" }}>
@@ -2336,7 +2336,7 @@ function OracleTab({
                   >
                     <p className="text-[13px] font-bold tracking-wider" style={{ color: "#a78bfa" }}>{rp.label}</p>
                     <p className="text-[13px] leading-relaxed" style={{ color: "#475569" }}>
-                      {rp.prompt.substring(0, 55)}â€¦
+                      {rp.prompt.substring(0, 55)}…
                     </p>
                   </motion.button>
                 ))}
@@ -2393,7 +2393,7 @@ function OracleTab({
           style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(124,58,237,0.2)" }}>
           <div className="w-7 h-7 rounded-xl flex-shrink-0 flex items-center justify-center mb-0.5"
             style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)", boxShadow: "0 0 14px rgba(124,58,237,0.4)" }}>
-            <span className="text-[13px] text-white font-bold">âœ¦</span>
+            <span className="text-[13px] text-white font-bold">✦</span>
           </div>
           <textarea
             ref={inputRef} rows={1} value={input}
@@ -2403,7 +2403,7 @@ function OracleTab({
               e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
             }}
             onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input); } }}
-            placeholder={chart ? "Ask about your chart, timing, relationshipsâ€¦" : "Create a birth profile to beginâ€¦"}
+            placeholder={chart ? "Ask about your chart, timing, relationships…" : "Create a birth profile to begin…"}
             disabled={streaming || !chart}
             className="flex-1 bg-transparent text-[14px] outline-none resize-none leading-relaxed disabled:opacity-40"
             style={{ color: "#e2e8f0", minHeight: 24, maxHeight: 120 }}
@@ -2424,13 +2424,13 @@ function OracleTab({
             }
           </motion.button>
         </div>
-        <p className="text-[13px] text-center mt-1.5" style={{ color: "#1e293b" }}>Shift+Enter for new line Â· Enter to send</p>
+        <p className="text-[13px] text-center mt-1.5" style={{ color: "#1e293b" }}>Shift+Enter for new line · Enter to send</p>
       </div>
     </div>
   );
 }
 
-// â”€â”€â”€ Main page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function InsightsPage() {
   const [chart, setChart] = useState<ChartData | null>(null);
@@ -2620,7 +2620,7 @@ export default function InsightsPage() {
                   <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                     className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
                     style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}>
-                    Begin Your Chart â†’
+                    Begin Your Chart →
                   </motion.button>
                 </Link>
               </div>

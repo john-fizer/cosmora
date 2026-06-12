@@ -11,7 +11,7 @@ import type { ForecastEvent } from "@/app/api/transits/forecast/route";
 import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
 import { useWarpTo } from "@/components/ui/WarpTransition";
 
-// â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Constants ───────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Record<string, string> = {
   Sun: "#fbbf24", Moon: "#94a3b8", Mercury: "#a78bfa", Venus: "#f472b6",
@@ -20,12 +20,12 @@ const PLANET_COLORS: Record<string, string> = {
 };
 
 const ASPECT_CONFIG: Record<string, { symbol: string; color: string; label: string }> = {
-  conjunction: { symbol: "â˜Œ", color: "#a855f7", label: "Conjunction" },
-  opposition:  { symbol: "â˜", color: "#ef4444", label: "Opposition" },
-  trine:       { symbol: "â–³", color: "#22c55e", label: "Trine" },
-  square:      { symbol: "â–¡", color: "#f59e0b", label: "Square" },
-  sextile:     { symbol: "âš¹", color: "#06b6d4", label: "Sextile" },
-  quincunx:    { symbol: "âš»", color: "#94a3b8", label: "Quincunx" },
+  conjunction: { symbol: "☌", color: "#a855f7", label: "Conjunction" },
+  opposition:  { symbol: "☍", color: "#ef4444", label: "Opposition" },
+  trine:       { symbol: "△", color: "#22c55e", label: "Trine" },
+  square:      { symbol: "□", color: "#f59e0b", label: "Square" },
+  sextile:     { symbol: "⚹", color: "#06b6d4", label: "Sextile" },
+  quincunx:    { symbol: "⚻", color: "#94a3b8", label: "Quincunx" },
 };
 
 const SIGN_COLORS: Record<ZodiacSign, string> = {
@@ -40,7 +40,7 @@ const PLANET_ORDER: PlanetName[] = [
   "Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto","NorthNode",
 ];
 
-// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function formatDate(d: Date): string {
   return d.toLocaleDateString("en-US", { weekday: "short", month: "long", day: "numeric", year: "numeric" });
@@ -49,7 +49,7 @@ function formatDate(d: Date): string {
 function formatDeg(lon: number): string {
   const deg = Math.floor(lon % 30);
   const min = Math.floor(((lon % 30) - deg) * 60);
-  return `${deg}Â°${String(min).padStart(2,"0")}â€²`;
+  return `${deg}°${String(min).padStart(2,"0")}′`;
 }
 
 function isToday(d: Date): boolean {
@@ -59,7 +59,7 @@ function isToday(d: Date): boolean {
     d.getDate() === now.getDate();
 }
 
-// â”€â”€â”€ Sub-components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 function SkyStrip({ planets }: { planets: TransitsData["transitPlanets"] }) {
   const ordered = PLANET_ORDER
@@ -95,9 +95,9 @@ function SkyStrip({ planets }: { planets: TransitsData["transitPlanets"] }) {
             <span className="text-[14px] leading-none" style={{ color }}>{PLANET_SYMBOLS[p.name as PlanetName]}</span>
             <div>
               <span className="text-[13px] font-bold" style={{ color }}>{p.name}</span>
-              {p.retrograde && <span className="text-[13px] ml-0.5" style={{ color: "#f97316" }}>â„ž</span>}
+              {p.retrograde && <span className="text-[13px] ml-0.5" style={{ color: "#f97316" }}>℞</span>}
               <p className="text-[13px]" style={{ color: "#64748b" }}>
-                {formatDeg(p.longitude)} {SIGN_SYMBOLS[p.sign as ZodiacSign]} Â· H{p.house}
+                {formatDeg(p.longitude)} {SIGN_SYMBOLS[p.sign as ZodiacSign]} · H{p.house}
               </p>
             </div>
           </motion.div>
@@ -132,7 +132,7 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
           className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[13px] font-bold tracking-wider px-2 py-1 rounded-lg z-10 cursor-pointer"
           style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", color: "#a78bfa" }}
         >
-          âœ¦ Ask
+          ✦ Ask
         </motion.button>
       )}
       <div
@@ -159,7 +159,7 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
         <div>
           <span className="text-[13px] font-semibold" style={{ color: tColor }}>
             {aspect.transitPlanet}
-            {aspect.transitRetrograde && <span className="ml-1 text-[13px]" style={{ color: "#f97316" }}>â„ž</span>}
+            {aspect.transitRetrograde && <span className="ml-1 text-[13px]" style={{ color: "#f97316" }}>℞</span>}
           </span>
           <p className="text-[13px]" style={{ color: "#475569" }}>
             {SIGN_SYMBOLS[aspect.transitSign]} {formatDeg(aspect.transitLon)}
@@ -184,7 +184,7 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
             {aspect.natalPlanet}
           </span>
           <p className="text-[13px]" style={{ color: "#475569" }}>
-            {SIGN_SYMBOLS[aspect.natalSign]} Â· H{aspect.natalHouse}
+            {SIGN_SYMBOLS[aspect.natalSign]} · H{aspect.natalHouse}
           </p>
         </div>
       </div>
@@ -195,7 +195,7 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
           className="text-[13px] font-mono"
           style={{ color: aspect.orb < 0.5 ? cfg?.color : "#64748b" }}
         >
-          {aspect.orb.toFixed(1)}Â°
+          {aspect.orb.toFixed(1)}°
         </span>
       </div>
 
@@ -213,7 +213,7 @@ function TransitRow({ aspect, index, onNatalClick, onOracleClick }: { aspect: Tr
             className="text-[13px] font-medium"
             style={{ color: aspect.applying ? "#22c55e" : "#475569" }}
           >
-            {aspect.applying ? "â–² Appl." : "â–¼ Sep."}
+            {aspect.applying ? "▲ Appl." : "▼ Sep."}
           </span>
         )}
       </div>
@@ -256,22 +256,22 @@ function IngressCard({ ingress, index }: { ingress: Ingress; index: number }) {
         <div className="flex items-center gap-1.5">
           <span className="text-[13px] font-semibold" style={{ color }}>
             {ingress.planet}
-            {ingress.retrograde && <span className="ml-1 text-[13px]" style={{ color: "#f97316" }}>â„ž</span>}
+            {ingress.retrograde && <span className="ml-1 text-[13px]" style={{ color: "#f97316" }}>℞</span>}
           </span>
-          <span className="text-[13px]" style={{ color: "#334155" }}>â†’</span>
+          <span className="text-[13px]" style={{ color: "#334155" }}>→</span>
           <span className="text-[13px] font-semibold" style={{ color: toColor }}>
             {SIGN_SYMBOLS[ingress.toSign]} {ingress.toSign}
           </span>
         </div>
         <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
-          {ingress.date} Â· in {ingress.daysUntil} day{ingress.daysUntil === 1 ? "" : "s"}
+          {ingress.date} · in {ingress.daysUntil} day{ingress.daysUntil === 1 ? "" : "s"}
         </p>
       </div>
     </motion.div>
   );
 }
 
-// â”€â”€â”€ Transit Heatmap â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Transit Heatmap ─────────────────────────────────────────────────────────
 
 const TRANSIT_WINDOW: Record<string, number> = {
   Moon: 1, Sun: 5, Mercury: 7, Venus: 10, Mars: 14,
@@ -332,7 +332,7 @@ function TransitHeatmap({ data, baseDate }: { data: TransitsData; baseDate: Date
           90-DAY TRANSIT INTENSITY
         </p>
         <p className="text-[13px]" style={{ color: "#334155" }}>
-          Bar height = cumulative transit pressure Â· hover for details
+          Bar height = cumulative transit pressure · hover for details
         </p>
       </div>
 
@@ -399,7 +399,7 @@ function TransitHeatmap({ data, baseDate }: { data: TransitsData; baseDate: Date
               return (
                 <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#7c3aed" }}>
                   {d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
-                  {hoveredDay === 0 && " Â· TODAY"}
+                  {hoveredDay === 0 && " · TODAY"}
                 </p>
               );
             })()}
@@ -464,7 +464,7 @@ function TransitHeatmap({ data, baseDate }: { data: TransitsData; baseDate: Date
                   <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: color, boxShadow: `0 0 4px ${color}` }} />
                   <span className="text-[13px] font-medium" style={{ color: "#94a3b8" }}>
                     {d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
-                    {day === 0 && " Â· Today"}
+                    {day === 0 && " · Today"}
                   </span>
                   <span className="ml-auto text-[13px]" style={{ color }}>
                     {aspects.length} transit{aspects.length !== 1 ? "s" : ""}
@@ -479,7 +479,7 @@ function TransitHeatmap({ data, baseDate }: { data: TransitsData; baseDate: Date
   );
 }
 
-// â”€â”€â”€ Transit bi-wheel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Transit bi-wheel ────────────────────────────────────────────────────────
 
 function TransitBiWheel({ natal, data }: { natal: ChartData; data: TransitsData }) {
   const SIZE = 360, CX = 180, CY = 180;
@@ -489,7 +489,7 @@ function TransitBiWheel({ natal, data }: { natal: ChartData; data: TransitsData 
   const R_ZOD_OUT = 125;
   const R_TRANSIT = 145; // transit planets
 
-  const ZODIAC_SYMBOLS = ["â™ˆ","â™‰","â™Š","â™‹","â™Œ","â™","â™Ž","â™","â™","â™‘","â™’","â™“"];
+  const ZODIAC_SYMBOLS = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
   const ZODIAC_COLORS_ZW = ["#ef4444","#22c55e","#eab308","#a855f7","#f97316","#6366f1","#ec4899","#dc2626","#f59e0b","#64748b","#06b6d4","#8b5cf6"];
 
   function lonToAngle(lon: number): number {
@@ -560,7 +560,7 @@ function TransitBiWheel({ natal, data }: { natal: ChartData; data: TransitsData 
         <circle cx={CX} cy={CY} r={R_ZOD_OUT} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth={0.5} />
         <circle cx={CX} cy={CY} r={R_TRANSIT + 16} fill="none" stroke="rgba(245,158,11,0.1)" strokeWidth={0.5} strokeDasharray="2 4" />
 
-        {/* Aspect lines (transit â†’ natal) */}
+        {/* Aspect lines (transit → natal) */}
         {topAspects.map((asp, i) => {
           const natP = natal.planets.find(p => p.name === asp.natalPlanet);
           const trP  = data.transitPlanets.find(p => p.name === asp.transitPlanet);
@@ -615,13 +615,13 @@ function TransitBiWheel({ natal, data }: { natal: ChartData; data: TransitsData 
       <div className="flex gap-4 text-[13px]">
         <div className="flex items-center gap-1.5">
           <div className="w-6 h-6 rounded-full flex items-center justify-center border" style={{ background: "rgba(4,4,28,0.9)", borderColor: "rgba(99,102,241,0.4)" }}>
-            <span style={{ color: "#a78bfa", fontSize: 13 }}>â˜‰</span>
+            <span style={{ color: "#a78bfa", fontSize: 13 }}>☉</span>
           </div>
           <span style={{ color: "#475569" }}>Natal (inner)</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-6 h-6 rounded-full flex items-center justify-center border" style={{ background: "rgba(245,158,11,0.1)", borderColor: "rgba(245,158,11,0.5)" }}>
-            <span style={{ color: "#fbbf24", fontSize: 13 }}>â˜‰</span>
+            <span style={{ color: "#fbbf24", fontSize: 13 }}>☉</span>
           </div>
           <span style={{ color: "#475569" }}>Transit (outer)</span>
         </div>
@@ -630,7 +630,7 @@ function TransitBiWheel({ natal, data }: { natal: ChartData; data: TransitsData 
   );
 }
 
-// â”€â”€â”€ Calendar view â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Calendar view ───────────────────────────────────────────────────────────
 
 function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }) {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
@@ -783,7 +783,7 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
                   <span className="text-[13px] font-semibold" style={{ color: pColor }}>{ing.planet}</span>
                   <span className="text-[13px]" style={{ color: "#334155" }}>enters</span>
                   <span className="text-[13px] font-bold flex-1" style={{ color: sColor }}>{SIGN_SYMBOLS[ing.toSign as ZodiacSign]} {ing.toSign}</span>
-                  {ing.retrograde && <span className="text-[13px]" style={{ color: "#f97316" }}>â„ž</span>}
+                  {ing.retrograde && <span className="text-[13px]" style={{ color: "#f97316" }}>℞</span>}
                   <span className="text-[13px] px-1.5 py-0.5 rounded" style={{ background: `${pColor}15`, color: pColor }}>INGRESS</span>
                 </div>
               );
@@ -799,7 +799,7 @@ function CalendarView({ data, baseDate }: { data: TransitsData; baseDate: Date }
   );
 }
 
-// â”€â”€â”€ Forecast timeline component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Forecast timeline component ─────────────────────────────────────────────
 
 const SIG_COLORS: Record<string, string> = {
   major: "#f59e0b",
@@ -918,7 +918,7 @@ function ForecastTimeline({
                         </span>
                         <span className="text-[13px] font-semibold" style={{ color: tColor }}>
                           {ev.transitPlanet}
-                          {ev.transitRetrograde && <span className="ml-0.5 text-[11px]" style={{ color: "#f97316" }}>â„ž</span>}
+                          {ev.transitRetrograde && <span className="ml-0.5 text-[11px]" style={{ color: "#f97316" }}>℞</span>}
                         </span>
                         {aConfig && (
                           <span className="text-[15px] font-bold" style={{ color: aConfig.color }}>{aConfig.symbol}</span>
@@ -938,7 +938,7 @@ function ForecastTimeline({
                         )}
                         {ev.theme && (
                           <span className="text-[12px] truncate hidden md:block" style={{ color: "#334155" }}>
-                            â€” {ev.theme}
+                            — {ev.theme}
                           </span>
                         )}
                       </>
@@ -949,9 +949,9 @@ function ForecastTimeline({
                         </span>
                         <span className="text-[13px] font-semibold" style={{ color: tColor }}>
                           {ev.transitPlanet}
-                          {ev.transitRetrograde && <span className="ml-0.5 text-[11px]" style={{ color: "#f97316" }}>â„ž</span>}
+                          {ev.transitRetrograde && <span className="ml-0.5 text-[11px]" style={{ color: "#f97316" }}>℞</span>}
                         </span>
-                        <span className="text-[13px]" style={{ color: "#334155" }}>â†’</span>
+                        <span className="text-[13px]" style={{ color: "#334155" }}>→</span>
                         {ev.toSign && (
                           <>
                             <span className="text-[14px]" style={{ color: SIGN_COLORS[ev.toSign] ?? "#94a3b8" }}>
@@ -974,10 +974,10 @@ function ForecastTimeline({
                           className="text-[13px] font-bold px-2 py-0.5 rounded"
                           style={{ background: ev.transitRetrograde ? "rgba(239,68,68,0.15)" : "rgba(34,197,94,0.12)", color: ev.transitRetrograde ? "#ef4444" : "#4ade80" }}
                         >
-                          {ev.transitRetrograde ? "â„ž RETROGRADE" : "DIRECT"}
+                          {ev.transitRetrograde ? "℞ RETROGRADE" : "DIRECT"}
                         </span>
                         {ev.theme && (
-                          <span className="text-[12px] hidden md:block" style={{ color: "#334155" }}>â€” {ev.theme}</span>
+                          <span className="text-[12px] hidden md:block" style={{ color: "#334155" }}>— {ev.theme}</span>
                         )}
                       </>
                     )}
@@ -993,7 +993,7 @@ function ForecastTimeline({
                         {SIG_LABEL[ev.significance]}
                       </span>
                     )}
-                    <span className="text-[11px]" style={{ color: "#1e293b" }}>âœ¦</span>
+                    <span className="text-[11px]" style={{ color: "#1e293b" }}>✦</span>
                   </div>
                 </motion.div>
               );
@@ -1005,7 +1005,7 @@ function ForecastTimeline({
   );
 }
 
-// â”€â”€â”€ Event reading panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Event reading panel ──────────────────────────────────────────────────────
 
 function EventReadingPanel({
   event,
@@ -1029,7 +1029,7 @@ function EventReadingPanel({
 
   const buildPrompt = (): string => {
     if (event.type === "station") {
-      return `Give a concise reading for: ${event.transitPlanet} stations ${event.transitRetrograde ? "retrograde" : "direct"} on ${event.date}. What does this station mean â€” what area of life is being reviewed or released? What is one practical thing to do or avoid during this period? Under 180 words.\n\nNATAL CONTEXT:\n${natalContext}`;
+      return `Give a concise reading for: ${event.transitPlanet} stations ${event.transitRetrograde ? "retrograde" : "direct"} on ${event.date}. What does this station mean — what area of life is being reviewed or released? What is one practical thing to do or avoid during this period? Under 180 words.\n\nNATAL CONTEXT:\n${natalContext}`;
     }
     if (event.type === "ingress") {
       return `Give a concise reading for: ${event.transitPlanet} entering ${event.toSign} on ${event.date}. What energy shift does this bring, and how does it interact with this person's natal chart? Under 180 words.\n\nNATAL CONTEXT:\n${natalContext}`;
@@ -1078,7 +1078,7 @@ function EventReadingPanel({
           className="text-[13px] cursor-pointer px-2 py-1 rounded-lg transition-all hover:bg-white/5"
           style={{ color: "#475569" }}
         >
-          âœ•
+          ✕
         </button>
       </div>
 
@@ -1092,7 +1092,7 @@ function EventReadingPanel({
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[16px]" style={{ color: tColor }}>{PLANET_SYMBOLS[event.transitPlanet as PlanetName]}</span>
             <span className="text-[14px] font-bold" style={{ color: tColor }}>
-              {event.transitPlanet}{event.transitRetrograde ? " â„ž" : ""}
+              {event.transitPlanet}{event.transitRetrograde ? " ℞" : ""}
             </span>
             {aConfig && <span className="text-[18px] font-bold" style={{ color: aConfig.color }}>{aConfig.symbol}</span>}
             {event.natalPlanet && (
@@ -1113,7 +1113,7 @@ function EventReadingPanel({
           <div className="flex items-center gap-2">
             <span className="text-[16px]" style={{ color: tColor }}>{PLANET_SYMBOLS[event.transitPlanet as PlanetName]}</span>
             <span className="text-[14px] font-bold" style={{ color: tColor }}>{event.transitPlanet}</span>
-            <span style={{ color: "#334155" }}>â†’</span>
+            <span style={{ color: "#334155" }}>→</span>
             <span className="text-[14px] font-bold" style={{ color: event.toSign ? (SIGN_COLORS[event.toSign] ?? "#94a3b8") : "#94a3b8" }}>
               {event.toSign && SIGN_SYMBOLS[event.toSign]} {event.toSign}
             </span>
@@ -1145,7 +1145,7 @@ function EventReadingPanel({
             className="w-full py-3 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
             style={{ background: "linear-gradient(135deg, rgba(99,102,241,0.2), rgba(124,58,237,0.2))", border: "1px solid rgba(99,102,241,0.3)", color: "#c4b5fd" }}
           >
-            âœ¦ GENERATE READING
+            ✦ GENERATE READING
           </motion.button>
         ) : loading ? (
           <div className="space-y-2">
@@ -1174,7 +1174,7 @@ function EventReadingPanel({
   );
 }
 
-// â”€â”€â”€ Main page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main page ─────────────────────────────────────────────────────────────
 
 export default function TransitsPage() {
   const warpTo = useWarpTo();
@@ -1305,7 +1305,7 @@ export default function TransitsPage() {
     if (!natal) return "";
     const asc = natal.houses[0]?.sign ?? "Unknown";
     const top = natal.planets.slice(0, 8).map(p =>
-      `${p.name}: ${p.signDegree.toFixed(0)}Â° ${p.sign} H${p.house}${p.retrograde ? " Rx" : ""}`
+      `${p.name}: ${p.signDegree.toFixed(0)}° ${p.sign} H${p.house}${p.retrograde ? " Rx" : ""}`
     ).join(", ");
     return `${asc} Rising. ${top}. Age ${natal.annualProfection.age}, Lord of Year: ${natal.annualProfection.lordOfYear}.`;
   }, [natal]);
@@ -1350,7 +1350,7 @@ export default function TransitsPage() {
                 className="px-8 py-3 rounded-2xl text-[14px] font-bold tracking-wider cursor-pointer"
                 style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", boxShadow: "0 0 30px rgba(124,58,237,0.4)" }}
               >
-                Begin Setup â†’
+                Begin Setup →
               </motion.button>
             </Link>
           </motion.div>
@@ -1479,7 +1479,7 @@ export default function TransitsPage() {
                       border: forecastFilter === f ? "1px solid rgba(99,102,241,0.35)" : "1px solid transparent",
                     }}
                   >
-                    {f === "all" ? "ALL" : f === "outer" ? "â™ƒ OUTER" : "âœ¦ MAJOR"}
+                    {f === "all" ? "ALL" : f === "outer" ? "♃ OUTER" : "✦ MAJOR"}
                   </motion.button>
                 ))}
               </div>
@@ -1504,7 +1504,7 @@ export default function TransitsPage() {
                 color: filterOuter ? "#a78bfa" : "#64748b",
               }}
             >
-              â™ƒ OUTER
+              ♃ OUTER
             </motion.button>
 
             {/* Applying toggle */}
@@ -1518,7 +1518,7 @@ export default function TransitsPage() {
                 color: filterApplying ? "#4ade80" : "#64748b",
               }}
             >
-              â–² APPLYING
+              ▲ APPLYING
             </motion.button>
 
             {/* Aspect type pills */}
@@ -1611,7 +1611,7 @@ export default function TransitsPage() {
                         border: viewMode === mode ? "1px solid rgba(124,58,237,0.4)" : "1px solid transparent",
                       }}
                     >
-                      {mode === "list" ? "â‰¡ LIST" : mode === "calendar" ? "âŠž CAL" : mode === "heat" ? "â–¬ HEAT" : mode === "wheel" ? "âŠ™ WHEEL" : "â—Ž FORECAST"}
+                      {mode === "list" ? "≡ LIST" : mode === "calendar" ? "⊞ CAL" : mode === "heat" ? "▬ HEAT" : mode === "wheel" ? "⊙ WHEEL" : "◎ FORECAST"}
                     </motion.button>
                   ))}
                 </div>
@@ -1650,7 +1650,7 @@ export default function TransitsPage() {
                             index={i}
                             onNatalClick={() => warpTo(`/dashboard/chart/${a.natalPlanet.toLowerCase()}`)}
                             onOracleClick={() => {
-                              const q = encodeURIComponent(`Explain ${a.transitPlanet} ${a.type} natal ${a.natalPlanet} â€” ${a.applying ? "applying" : "separating"}, ${a.orb.toFixed(1)}Â° orb${a.daysToExact !== null && a.daysToExact > 0 ? `, exact in ${a.daysToExact} days` : ""}. What does this transit mean for me right now?`);
+                              const q = encodeURIComponent(`Explain ${a.transitPlanet} ${a.type} natal ${a.natalPlanet} — ${a.applying ? "applying" : "separating"}, ${a.orb.toFixed(1)}° orb${a.daysToExact !== null && a.daysToExact > 0 ? `, exact in ${a.daysToExact} days` : ""}. What does this transit mean for me right now?`);
                               warpTo(`/dashboard/oracle?q=${q}`);
                             }}
                           />
@@ -1696,7 +1696,7 @@ export default function TransitsPage() {
                           style={{ borderColor: "#f59e0b" }}
                         />
                         <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>SCANNING THE COSMIC CALENDAR</p>
-                        <p className="text-[12px]" style={{ color: "#334155" }}>Calculating {forecastMonths === 12 ? "365" : forecastMonths === 6 ? "183" : "91"} days of planetary motionâ€¦</p>
+                        <p className="text-[12px]" style={{ color: "#334155" }}>Calculating {forecastMonths === 12 ? "365" : forecastMonths === 6 ? "183" : "91"} days of planetary motion…</p>
                       </div>
                     ) : !forecastEvents ? (
                       <div className="flex-1 flex items-center justify-center">
@@ -1828,7 +1828,7 @@ export default function TransitsPage() {
                           {illumination}% illuminated
                         </p>
                         <p className="text-[13px]" style={{ color: "#334155" }}>
-                          â˜½ {SIGN_SYMBOLS[moon.sign as import("@/lib/astrology/types").ZodiacSign]} {moon.sign} Â· H{moon.house}
+                          ☽ {SIGN_SYMBOLS[moon.sign as import("@/lib/astrology/types").ZodiacSign]} {moon.sign} · H{moon.house}
                         </p>
                       </div>
                     </div>
@@ -1877,11 +1877,11 @@ export default function TransitsPage() {
                       </p>
                       <p className="text-[13px]" style={{ color: "#475569" }}>
                         {isVoid
-                          ? `No applying aspects Â· Avoid major decisions`
+                          ? `No applying aspects · Avoid major decisions`
                           : `${moonAspects.length} applying aspect${moonAspects.length > 1 ? "s" : ""} remaining`}
                       </p>
                       <p className="text-[13px] mt-1" style={{ color: "#334155" }}>
-                        Enters {nextSignName} in {fmtHours(hoursToNextSign)} Â· {nextSignDate.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                        Enters {nextSignName} in {fmtHours(hoursToNextSign)} · {nextSignDate.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
                       </p>
                     </div>
                   </div>

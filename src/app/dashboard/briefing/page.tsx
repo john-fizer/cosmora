@@ -11,7 +11,7 @@ import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
 import type { StoredProfile } from "@/lib/storage";
 import { useWarpTo } from "@/components/ui/WarpTransition";
 
-// â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const PLANET_COLORS: Record<string, string> = {
   Sun: "#fbbf24", Moon: "#c4b5fd", Mercury: "#a78bfa", Venus: "#f472b6",
@@ -27,12 +27,12 @@ const SIGN_COLORS: Record<ZodiacSign, string> = {
 };
 
 const ASPECT_CONFIG: Record<string, { symbol: string; color: string; label: string }> = {
-  conjunction: { symbol: "â˜Œ", color: "#a855f7", label: "Conjunction" },
-  opposition:  { symbol: "â˜", color: "#ef4444", label: "Opposition" },
-  trine:       { symbol: "â–³", color: "#22c55e", label: "Trine" },
-  square:      { symbol: "â–¡", color: "#f59e0b", label: "Square" },
-  sextile:     { symbol: "âš¹", color: "#06b6d4", label: "Sextile" },
-  quincunx:    { symbol: "âš»", color: "#94a3b8", label: "Quincunx" },
+  conjunction: { symbol: "☌", color: "#a855f7", label: "Conjunction" },
+  opposition:  { symbol: "☍", color: "#ef4444", label: "Opposition" },
+  trine:       { symbol: "△", color: "#22c55e", label: "Trine" },
+  square:      { symbol: "□", color: "#f59e0b", label: "Square" },
+  sextile:     { symbol: "⚹", color: "#06b6d4", label: "Sextile" },
+  quincunx:    { symbol: "⚻", color: "#94a3b8", label: "Quincunx" },
 };
 
 // Chaldean order: Saturn, Jupiter, Mars, Sun, Venus, Mercury, Moon
@@ -41,23 +41,23 @@ const CHALDEAN: PlanetName[] = ["Saturn", "Jupiter", "Mars", "Sun", "Venus", "Me
 const DAY_RULERS: PlanetName[] = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"];
 
 const PLANETARY_HOUR_MEANINGS: Partial<Record<PlanetName, { keywords: string; good: string; avoid: string }>> = {
-  Sun:     { keywords: "Vitality Â· Success Â· Authority", good: "Leadership decisions, health, recognition", avoid: "Humility-requiring tasks" },
-  Moon:    { keywords: "Intuition Â· Home Â· Nurturing", good: "Travel, emotional conversations, cooking", avoid: "Starting bold new ventures" },
-  Mercury: { keywords: "Communication Â· Learning Â· Trade", good: "Writing, contracts, networking, study", avoid: "Lazy thinking, rash decisions" },
-  Venus:   { keywords: "Love Â· Beauty Â· Pleasure", good: "Art, romance, socializing, luxury", avoid: "Conflict, harsh dealings" },
-  Mars:    { keywords: "Action Â· Courage Â· Drive", good: "Surgery, exercise, confrontation", avoid: "Important negotiations, signing papers" },
-  Jupiter: { keywords: "Expansion Â· Wisdom Â· Fortune", good: "Spiritual work, travel, publishing, wealth", avoid: "Pettiness, small-minded tasks" },
-  Saturn:  { keywords: "Structure Â· Discipline Â· Limits", good: "Study, solitary work, long-term plans", avoid: "Social events, new relationships" },
+  Sun:     { keywords: "Vitality · Success · Authority", good: "Leadership decisions, health, recognition", avoid: "Humility-requiring tasks" },
+  Moon:    { keywords: "Intuition · Home · Nurturing", good: "Travel, emotional conversations, cooking", avoid: "Starting bold new ventures" },
+  Mercury: { keywords: "Communication · Learning · Trade", good: "Writing, contracts, networking, study", avoid: "Lazy thinking, rash decisions" },
+  Venus:   { keywords: "Love · Beauty · Pleasure", good: "Art, romance, socializing, luxury", avoid: "Conflict, harsh dealings" },
+  Mars:    { keywords: "Action · Courage · Drive", good: "Surgery, exercise, confrontation", avoid: "Important negotiations, signing papers" },
+  Jupiter: { keywords: "Expansion · Wisdom · Fortune", good: "Spiritual work, travel, publishing, wealth", avoid: "Pettiness, small-minded tasks" },
+  Saturn:  { keywords: "Structure · Discipline · Limits", good: "Study, solitary work, long-term plans", avoid: "Social events, new relationships" },
 };
 
-// â”€â”€â”€ Planetary Hours â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Planetary Hours ──────────────────────────────────────────────────────────
 
 interface PlanetaryHour {
   planet: PlanetName;
   start: Date;
   end: Date;
   isDay: boolean;
-  number: number; // 1â€“24
+  number: number; // 1–24
 }
 
 function computePlanetaryHours(date: Date, lat = 40.0): PlanetaryHour[] {
@@ -96,7 +96,7 @@ function computePlanetaryHours(date: Date, lat = 40.0): PlanetaryHour[] {
   const hours: PlanetaryHour[] = [];
 
   // Previous night hours (midnight to sunrise today)
-  // They belong to yesterday's night â€” ruled from yesterday's sunset
+  // They belong to yesterday's night — ruled from yesterday's sunset
   const prevDate = new Date(date);
   prevDate.setDate(prevDate.getDate() - 1);
   const prevDow = prevDate.getDay();
@@ -140,7 +140,7 @@ function getCurrentHour(hours: PlanetaryHour[], now: Date): PlanetaryHour | null
   return hours.find(h => t >= h.start.getTime() && t < h.end.getTime()) ?? null;
 }
 
-// â”€â”€â”€ Moon phase helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Moon phase helpers ───────────────────────────────────────────────────────
 
 function getMoonPhase(moonLon: number, sunLon: number): { name: string; illumination: number; angle: number } {
   const angle = ((moonLon - sunLon) + 360) % 360;
@@ -175,7 +175,7 @@ function MoonOrb({ angle, size = 56 }: { angle: number; size?: number }) {
   );
 }
 
-// â”€â”€â”€ AI Morning Report â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── AI Morning Report ────────────────────────────────────────────────────────
 
 function MorningReport({ chart, transitsData, profile }: {
   chart: ChartData;
@@ -199,11 +199,11 @@ function MorningReport({ chart, transitsData, profile }: {
     const topAspects = transitsData.aspects
       .filter(a => a.applying || a.exact)
       .slice(0, 5)
-      .map(a => `${a.transitPlanet}${a.transitRetrograde ? " Rx" : ""} ${a.type} natal ${a.natalPlanet} (orb ${a.orb.toFixed(1)}Â°${a.exact ? " â€” EXACT" : ""})`)
+      .map(a => `${a.transitPlanet}${a.transitRetrograde ? " Rx" : ""} ${a.type} natal ${a.natalPlanet} (orb ${a.orb.toFixed(1)}°${a.exact ? " — EXACT" : ""})`)
       .join("; ");
 
     const ingresses = transitsData.ingresses.slice(0, 3)
-      .map(i => `${i.planet} â†’ ${i.toSign} in ${i.daysUntil}d`)
+      .map(i => `${i.planet} → ${i.toSign} in ${i.daysUntil}d`)
       .join("; ");
 
     const now = new Date();
@@ -215,15 +215,15 @@ function MorningReport({ chart, transitsData, profile }: {
 PERSON: ${profile.name}
 DATE: ${dayName}, ${fullDate}
 NATAL: Sun ${chart.planets.find(p => p.name === "Sun")?.sign ?? "?"} H${chart.planets.find(p => p.name === "Sun")?.house ?? "?"}, Moon ${chart.planets.find(p => p.name === "Moon")?.sign ?? "?"}, Rising ${ZODIAC_SIGNS[Math.floor(chart.ascendant / 30)]}
-PROFECTION: Age ${chart.annualProfection.age} Â· H${chart.annualProfection.activatedHouse} Â· Lord ${chart.annualProfection.lordOfYear}
+PROFECTION: Age ${chart.annualProfection.age} · H${chart.annualProfection.activatedHouse} · Lord ${chart.annualProfection.lordOfYear}
 
 CURRENT SKY:
-- Moon: ${moon?.sign ?? "?"} H${moon?.house ?? "?"}${moon?.retrograde ? " Rx" : ""} â€” ${moonPhase?.name ?? ""} (${moonPhase?.illumination.toFixed(0) ?? "?"}% illuminated)
+- Moon: ${moon?.sign ?? "?"} H${moon?.house ?? "?"}${moon?.retrograde ? " Rx" : ""} — ${moonPhase?.name ?? ""} (${moonPhase?.illumination.toFixed(0) ?? "?"}% illuminated)
 - Top applying transits: ${topAspects || "None in tight orb"}
 - Upcoming ingresses: ${ingresses || "None imminent"}
 
 Write a personal morning cosmic briefing for ${profile.name}. 3 tight paragraphs:
-1. Today's overall tone and dominant sky energy â€” vivid, atmospheric, specific to the date
+1. Today's overall tone and dominant sky energy — vivid, atmospheric, specific to the date
 2. Most significant transit(s) affecting ${profile.name} personally and what they mean for today
 3. One concrete recommendation for how to work with today's cosmic weather
 
@@ -277,7 +277,7 @@ Be specific, poetic but grounded. Max 200 words total. Avoid generic phrases.`;
           style={{ background: streaming ? "#f59e0b" : "#22c55e" }}
         />
         <span className="text-[13px] font-bold tracking-widest" style={{ color: "#f59e0b" }}>
-          âœ¦ MORNING COSMIC BRIEFING
+          ✦ MORNING COSMIC BRIEFING
         </span>
         {streaming && (
           <motion.div
@@ -298,7 +298,7 @@ Be specific, poetic but grounded. Max 200 words total. Avoid generic phrases.`;
               className="w-3 h-3 rounded-full border border-t-transparent flex-shrink-0"
               style={{ borderColor: "#f59e0b" }}
             />
-            <span className="text-[14px]" style={{ color: "#475569" }}>Reading the sky for {profile.name}â€¦</span>
+            <span className="text-[14px]" style={{ color: "#475569" }}>Reading the sky for {profile.name}…</span>
           </div>
         ) : (
           <div className="space-y-4">
@@ -333,7 +333,7 @@ Be specific, poetic but grounded. Max 200 words total. Avoid generic phrases.`;
   );
 }
 
-// â”€â”€â”€ Planetary Hours Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Planetary Hours Panel ────────────────────────────────────────────────────
 
 function PlanetaryHoursPanel({ lat }: { lat: number }) {
   const [now, setNow] = useState(new Date());
@@ -407,11 +407,11 @@ function PlanetaryHoursPanel({ lat }: { lat: number }) {
       {meaning && (
         <div className="grid grid-cols-2 gap-3 px-5 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
           <div>
-            <p className="text-[14px] font-bold tracking-widest mb-1.5" style={{ color: "#22c55e" }}>âœ“ GOOD FOR</p>
+            <p className="text-[14px] font-bold tracking-widest mb-1.5" style={{ color: "#22c55e" }}>✓ GOOD FOR</p>
             <p className="text-[14px] leading-relaxed" style={{ color: "#64748b" }}>{meaning.good}</p>
           </div>
           <div>
-            <p className="text-[14px] font-bold tracking-widest mb-1.5" style={{ color: "#ef4444" }}>âœ— AVOID</p>
+            <p className="text-[14px] font-bold tracking-widest mb-1.5" style={{ color: "#ef4444" }}>✗ AVOID</p>
             <p className="text-[14px] leading-relaxed" style={{ color: "#64748b" }}>{meaning.avoid}</p>
           </div>
         </div>
@@ -446,10 +446,10 @@ function PlanetaryHoursPanel({ lat }: { lat: number }) {
                   {isCurrent && <span className="ml-1.5 text-[14px] font-bold tracking-widest" style={{ color }}>NOW</span>}
                 </div>
                 <span className="text-[13px] font-mono flex-shrink-0" style={{ color: "#334155" }}>
-                  {fmtTime(h.start)} â€“ {fmtTime(h.end)}
+                  {fmtTime(h.start)} – {fmtTime(h.end)}
                 </span>
                 <span className="text-[14px] w-4 text-right flex-shrink-0" style={{ color: h.isDay ? "#fbbf24" : "#c4b5fd" }}>
-                  {h.isDay ? "â˜€" : "â˜½"}
+                  {h.isDay ? "☀" : "☽"}
                 </span>
               </motion.div>
             );
@@ -460,7 +460,7 @@ function PlanetaryHoursPanel({ lat }: { lat: number }) {
   );
 }
 
-// â”€â”€â”€ Transit Snapshot â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Transit Snapshot ─────────────────────────────────────────────────────────
 
 function TransitSnapshot({ aspects, warpTo }: { aspects: TransitAspect[]; warpTo: (href: string) => void }) {
   const top = aspects
@@ -499,10 +499,10 @@ function TransitSnapshot({ aspects, warpTo }: { aspects: TransitAspect[]; warpTo
 
             <div className="flex-1 min-w-0">
               <p className="text-[13px] font-medium truncate" style={{ color: "#94a3b8" }}>
-                {asp.transitPlanet}{asp.transitRetrograde ? " â„ž" : ""} {asp.type} natal {asp.natalPlanet}
+                {asp.transitPlanet}{asp.transitRetrograde ? " ℞" : ""} {asp.type} natal {asp.natalPlanet}
               </p>
               <p className="text-[13px]" style={{ color: "#475569" }}>
-                {SIGN_SYMBOLS[asp.transitSign]} {asp.transitSign} Â· orb {asp.orb.toFixed(1)}Â°
+                {SIGN_SYMBOLS[asp.transitSign]} {asp.transitSign} · orb {asp.orb.toFixed(1)}°
               </p>
             </div>
 
@@ -525,7 +525,7 @@ function TransitSnapshot({ aspects, warpTo }: { aspects: TransitAspect[]; warpTo
   );
 }
 
-// â”€â”€â”€ Upcoming Ingresses â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Upcoming Ingresses ───────────────────────────────────────────────────────
 
 function IngressBadges({ ingresses }: { ingresses: Ingress[] }) {
   const near = ingresses.filter(i => i.daysUntil <= 30).slice(0, 4);
@@ -545,11 +545,11 @@ function IngressBadges({ ingresses }: { ingresses: Ingress[] }) {
             style={{ background: `${pColor}0d`, border: `1px solid ${pColor}20` }}
           >
             <span className="text-[14px]" style={{ color: pColor }}>{PLANET_SYMBOLS[ing.planet as PlanetName]}</span>
-            <span className="text-[13px]" style={{ color: "#475569" }}>â†’</span>
+            <span className="text-[13px]" style={{ color: "#475569" }}>→</span>
             <span className="text-[14px]" style={{ color: sColor }}>{SIGN_SYMBOLS[ing.toSign]}</span>
             <div>
               <p className="text-[13px] font-bold" style={{ color: pColor }}>
-                {ing.planet}{ing.retrograde ? " â„ž" : ""} â†’ {ing.toSign}
+                {ing.planet}{ing.retrograde ? " ℞" : ""} → {ing.toSign}
               </p>
               <p className="text-[13px]" style={{ color: "#334155" }}>
                 in {ing.daysUntil} day{ing.daysUntil !== 1 ? "s" : ""}
@@ -562,7 +562,7 @@ function IngressBadges({ ingresses }: { ingresses: Ingress[] }) {
   );
 }
 
-// â”€â”€â”€ 7-Day Forecast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── 7-Day Forecast ──────────────────────────────────────────────────────────
 
 interface ForecastDay {
   date: Date;
@@ -579,7 +579,7 @@ function buildWeekForecast(now: Date, moonLon: number, ingresses: Ingress[]): Fo
     const date = new Date(today);
     date.setDate(today.getDate() + i);
     const dayRuler = DAY_RULERS[date.getDay()];
-    // Moon moves ~13.176Â° per day
+    // Moon moves ~13.176° per day
     const approxMoonLon = (moonLon + i * 13.176) % 360;
     const moonSign = ZODIAC_SIGNS[Math.floor(approxMoonLon / 30)] as ZodiacSign;
     const dayIngresses = ingresses.filter(ing => ing.daysUntil === i || ing.daysUntil === i - 1);
@@ -658,7 +658,7 @@ function WeekForecast({ now, moonLon, ingresses, warpTo }: {
                       key={j}
                       className="w-1.5 h-1.5 rounded-full"
                       style={{ background: PLANET_COLORS[ing.planet] ?? "#64748b" }}
-                      title={`${ing.planet} â†’ ${ing.toSign}`}
+                      title={`${ing.planet} → ${ing.toSign}`}
                     />
                   ))}
                 </div>
@@ -677,12 +677,12 @@ function WeekForecast({ now, moonLon, ingresses, warpTo }: {
       >
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4 rounded flex items-center justify-center" style={{ background: "rgba(124,58,237,0.2)" }}>
-            <span className="text-[13px]" style={{ color: "#a78bfa" }}>â˜‰</span>
+            <span className="text-[13px]" style={{ color: "#a78bfa" }}>☉</span>
           </div>
           <span className="text-[14px]" style={{ color: "#334155" }}>Day ruler</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[14px]" style={{ color: "#c4b5fd" }}>â™ˆ</span>
+          <span className="text-[14px]" style={{ color: "#c4b5fd" }}>♈</span>
           <span className="text-[14px]" style={{ color: "#334155" }}>Moon sign (approx)</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -694,7 +694,7 @@ function WeekForecast({ now, moonLon, ingresses, warpTo }: {
   );
 }
 
-// â”€â”€â”€ Dignity Leaderboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Dignity Leaderboard ─────────────────────────────────────────────────────
 
 const DIGNITY_SCORES: Record<string, number> = {
   domicile:   5,
@@ -747,14 +747,14 @@ function DignityLeaderboard({ chart }: { chart: ChartData }) {
         className="flex items-center justify-between px-5 py-3"
         style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
       >
-        <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>ESSENTIAL DIGNITIES Â· 7 TRADITIONAL PLANETS</span>
+        <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>ESSENTIAL DIGNITIES · 7 TRADITIONAL PLANETS</span>
         <div className="flex items-center gap-2">
           <span className="text-[13px]" style={{ color: "#334155" }}>CHART SCORE</span>
           <span
             className="text-[14px] font-bold px-2 py-0.5 rounded-lg"
             style={{ background: `${strengthColor}15`, color: strengthColor, border: `1px solid ${strengthColor}30` }}
           >
-            {chartStrength > 0 ? "+" : ""}{chartStrength} Â· {strengthLabel}
+            {chartStrength > 0 ? "+" : ""}{chartStrength} · {strengthLabel}
           </span>
         </div>
       </div>
@@ -828,8 +828,8 @@ function DignityLeaderboard({ chart }: { chart: ChartData }) {
           { label: "Domicile +5", color: "#22c55e" },
           { label: "Exalted +4", color: "#fbbf24" },
           { label: "Peregrine 0", color: "#475569" },
-          { label: "Fall âˆ’4", color: "#f97316" },
-          { label: "Detriment âˆ’5", color: "#ef4444" },
+          { label: "Fall −4", color: "#f97316" },
+          { label: "Detriment −5", color: "#ef4444" },
         ].map(({ label, color }) => (
           <div key={label} className="flex items-center gap-1">
             <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
@@ -841,7 +841,7 @@ function DignityLeaderboard({ chart }: { chart: ChartData }) {
   );
 }
 
-// â”€â”€â”€ Section label â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Section label ────────────────────────────────────────────────────────────
 
 function SectionLabel({ label, sub }: { label: string; sub?: string }) {
   return (
@@ -853,7 +853,7 @@ function SectionLabel({ label, sub }: { label: string; sub?: string }) {
   );
 }
 
-// â”€â”€â”€ Main page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function BriefingPage() {
   const warpTo = useWarpTo();
@@ -938,7 +938,7 @@ export default function BriefingPage() {
               className="px-6 py-3 rounded-xl text-[14px] font-bold tracking-wider cursor-pointer"
               style={{ background: "linear-gradient(135deg, #7c3aed, #4f46e5)", color: "white", border: "1px solid rgba(124,58,237,0.4)" }}
             >
-              Begin Your Chart â†’
+              Begin Your Chart →
             </motion.button>
           </Link>
         </div>
@@ -988,7 +988,7 @@ export default function BriefingPage() {
           {/* Live clock */}
           <div className="text-right hidden md:block">
             <p className="text-[13px] font-mono font-bold tabular-nums" style={{ color: "#475569" }}>{timeStr}</p>
-            <p className="text-[13px] tracking-widest" style={{ color: "#1e293b" }}>{dayName.toUpperCase()} Â· {dateStr.toUpperCase()}</p>
+            <p className="text-[13px] tracking-widest" style={{ color: "#1e293b" }}>{dayName.toUpperCase()} · {dateStr.toUpperCase()}</p>
           </div>
         </motion.div>
 
@@ -1007,7 +1007,7 @@ export default function BriefingPage() {
           <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
             <div className="px-5 py-5 max-w-4xl mx-auto space-y-8">
 
-              {/* â”€â”€â”€ Hero: Moon + Profection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── Hero: Moon + Profection ─────────────────────────────── */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -1029,7 +1029,7 @@ export default function BriefingPage() {
                         {moonPhase.illumination.toFixed(0)}% illuminated
                       </p>
                       <p className="text-[13px] mt-0.5" style={{ color: "#64748b" }}>
-                        â˜½ {SIGN_SYMBOLS[moon.sign]} {moon.sign} H{moon.house}
+                        ☽ {SIGN_SYMBOLS[moon.sign]} {moon.sign} H{moon.house}
                       </p>
                     </div>
                     {/* Void indicator */}
@@ -1071,7 +1071,7 @@ export default function BriefingPage() {
                         <div>
                           <p className="text-[13px] tracking-widest mb-1" style={{ color: "#334155" }}>PROFECTION YEAR</p>
                           <p className="text-[14px] font-bold" style={{ color: "#a78bfa" }}>
-                            Age {chart.annualProfection.age} Â· House {chart.annualProfection.activatedHouse}
+                            Age {chart.annualProfection.age} · House {chart.annualProfection.activatedHouse}
                           </p>
                           <p className="text-[13px]" style={{ color: "#64748b" }}>
                             Lord: {PLANET_SYMBOLS[chart.annualProfection.lordOfYear]} {chart.annualProfection.lordOfYear}
@@ -1080,14 +1080,14 @@ export default function BriefingPage() {
                         <div>
                           <p className="text-[13px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
                           <p className="text-[14px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#c4b5fd" }}>
-                            {chart.sect === "day" ? "â˜€ Day Chart" : "â˜½ Night Chart"}
+                            {chart.sect === "day" ? "☀ Day Chart" : "☽ Night Chart"}
                           </p>
                         </div>
                         {sun && (
                           <div>
                             <p className="text-[13px] tracking-widest mb-1" style={{ color: "#334155" }}>SUN NOW</p>
                             <p className="text-[14px] font-bold" style={{ color: "#fbbf24" }}>
-                              â˜‰ {SIGN_SYMBOLS[sun.sign]} {sun.sign}
+                              ☉ {SIGN_SYMBOLS[sun.sign]} {sun.sign}
                             </p>
                           </div>
                         )}
@@ -1109,7 +1109,7 @@ export default function BriefingPage() {
                               >
                                 <span className="text-[14px]" style={{ color }}>{PLANET_SYMBOLS[p.name as PlanetName]}</span>
                                 <span className="text-[13px]" style={{ color: SIGN_COLORS[p.sign] }}>{SIGN_SYMBOLS[p.sign]}</span>
-                                {p.retrograde && <span className="text-[14px]" style={{ color: "#f97316" }}>â„ž</span>}
+                                {p.retrograde && <span className="text-[14px]" style={{ color: "#f97316" }}>℞</span>}
                               </div>
                             );
                           })}
@@ -1120,20 +1120,20 @@ export default function BriefingPage() {
                 )}
               </motion.div>
 
-              {/* â”€â”€â”€ Morning Report (AI) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── Morning Report (AI) ─────────────────────────────────── */}
               {chart && transitsData && profile && (
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
                   <MorningReport chart={chart} transitsData={transitsData} profile={profile} />
                 </motion.div>
               )}
 
-              {/* â”€â”€â”€ Planetary Hours â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── Planetary Hours ─────────────────────────────────────── */}
               <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                 <SectionLabel label="PLANETARY HOURS" sub="Traditional Chaldean timing" />
                 <PlanetaryHoursPanel lat={lat} />
               </motion.div>
 
-              {/* â”€â”€â”€ Applying Transits â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── Applying Transits ───────────────────────────────────── */}
               {transitsData && (
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
                   <SectionLabel label="APPLYING TRANSITS" sub="Personal transits within 14 days" />
@@ -1141,7 +1141,7 @@ export default function BriefingPage() {
                 </motion.div>
               )}
 
-              {/* â”€â”€â”€ Upcoming Ingresses â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── Upcoming Ingresses ──────────────────────────────────── */}
               {transitsData && transitsData.ingresses.length > 0 && (
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
                   <SectionLabel label="UPCOMING SIGN CHANGES" sub="Next 30 days" />
@@ -1149,10 +1149,10 @@ export default function BriefingPage() {
                 </motion.div>
               )}
 
-              {/* â”€â”€â”€ 7-Day Forecast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── 7-Day Forecast ─────────────────────────────────────── */}
               {transitsData && moon && (
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.33 }}>
-                  <SectionLabel label="7-DAY FORECAST" sub="Day rulers Â· Moon signs Â· Ingresses" />
+                  <SectionLabel label="7-DAY FORECAST" sub="Day rulers · Moon signs · Ingresses" />
                   <WeekForecast
                     now={now}
                     moonLon={moon.longitude}
@@ -1162,7 +1162,7 @@ export default function BriefingPage() {
                 </motion.div>
               )}
 
-              {/* â”€â”€â”€ Dignity Leaderboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── Dignity Leaderboard ────────────────────────────────── */}
               {chart && (
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38 }}>
                   <SectionLabel label="CHART STRENGTH" sub="Essential dignities of the 7 traditional planets" />
@@ -1170,7 +1170,7 @@ export default function BriefingPage() {
                 </motion.div>
               )}
 
-              {/* â”€â”€â”€ Quick Links â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+              {/* ─── Quick Links ─────────────────────────────────────────── */}
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -1180,10 +1180,10 @@ export default function BriefingPage() {
                 <SectionLabel label="EXPLORE" />
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
-                    { label: "Full Transits", href: "/dashboard/transits", icon: "âŠ™", color: "#6366f1" },
-                    { label: "Oracle Chat",   href: "/dashboard/oracle",   icon: "â—ˆ", color: "#a855f7" },
-                    { label: "Timeline",      href: "/dashboard/timeline",  icon: "â—·", color: "#06b6d4" },
-                    { label: "Natal Chart",   href: "/dashboard/chart",    icon: "â—Ž", color: "#fbbf24" },
+                    { label: "Full Transits", href: "/dashboard/transits", icon: "⊙", color: "#6366f1" },
+                    { label: "Oracle Chat",   href: "/dashboard/oracle",   icon: "◈", color: "#a855f7" },
+                    { label: "Timeline",      href: "/dashboard/timeline",  icon: "◷", color: "#06b6d4" },
+                    { label: "Natal Chart",   href: "/dashboard/chart",    icon: "◎", color: "#fbbf24" },
                   ].map(item => (
                     <Link key={item.href} href={item.href}>
                       <motion.div

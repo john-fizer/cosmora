@@ -8,7 +8,8 @@ export type ReportType =
   | "vocation"
   | "solar_return"
   | "saturn_return"
-  | "progressed_planets";
+  | "progressed_planets"
+  | "dual_zodiac";
 
 export interface ReportTypeMeta {
   id: ReportType;
@@ -99,6 +100,17 @@ export const REPORT_TYPES: ReportTypeMeta[] = [
     estimatedMinutes: 4,
     icon: "♄",
     color: "#8899BB",
+  },
+  {
+    id: "dual_zodiac",
+    title: "Dual Zodiac Convergence",
+    subtitle: "Where Two Skies Agree",
+    description: "The same birth, read through two independent systems — Western tropical with decans and degree theory, Vedic sidereal with nakshatras and padas. Where both skies testify to the same truth, the signal is undeniable. The convergence report ranks what survives translation.",
+    techniques: ["Tropical core reading", "Decans & critical degrees", "Sidereal rashi shift", "Nakshatra & pada analysis", "Convergence synthesis"],
+    expiryDays: 3650,
+    estimatedMinutes: 4,
+    icon: "◎",
+    color: "#E8A33D",
   },
   {
     id: "progressed_planets",

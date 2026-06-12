@@ -4,6 +4,7 @@ import type { ChartData } from "@/lib/astrology/types";
 import type { ReportType, ReportSection } from "@/lib/reports/types";
 import { PLANET_SYMBOLS } from "@/lib/astrology/types";
 import { getPersonaById } from "@/lib/oracle/personas";
+import { buildVedicContext, buildDegreeContext } from "@/lib/astrology/sidereal";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -45,13 +46,19 @@ interface Technique {
   prompt: string;
 }
 
-function getTechniques(type: ReportType, chartContext: string, birthYear: number): Technique[] {
+function getTechniques(
+  type: ReportType,
+  chartContext: string,
+  birthYear: number,
+  dual?: { vedicContext: string; degreeContext: string },
+): Technique[] {
   const base = `You are Cosmora, the world's most advanced astrological intelligence. You analyze charts with precision, referencing specific placements. Write in flowing paragraphs — authoritative, specific, never generic. No bullet points. Reference exact degrees and placements.\n\nNATIVE'S CHART:\n${chartContext}`;
 
   const currentYear = new Date().getFullYear();
   const age = currentYear - birthYear;
 
   const map: Record<ReportType, Technique[]> = {
+    dual_zodiac: [], // built dynamically below — requires sidereal + degree contexts
     natal_delineation: [
       { id: "solar_identity", label: "Sun Sign & House", areaOfLife: "Identity", prompt: `${base}\n\nWrite a precise, deeply specific analysis of this native's Sun — its sign, degree, house position, aspects, and dignity. What is the core solar mission? How does this placement shape their fundamental identity and life purpose? 3–4 paragraphs. Be specific to the exact placements you see.` },
       { id: "lunar_emotional", label: "Moon & Emotional Body", areaOfLife: "Emotions", prompt: `${base}\n\nAnalyze the native's Moon in depth — sign, house, aspects, dignity, phase if discernible. What is their emotional default? What do they need to feel safe? How do their instincts operate? Where do they retreat? 3–4 paragraphs.` },
@@ -110,7 +117,87 @@ function getTechniques(type: ReportType, chartContext: string, birthYear: number
     ],
   };
 
+  // Dual zodiac runs two independent system agents plus degree-layer specialists.
+  // Convergence itself is a separate sequential phase (see runConvergence).
+  if (type === "dual_zodiac" && dual) {
+    return [
+      {
+        id: "western_core", label: "Tropical Core Reading", areaOfLife: "Western Testimony",
+        prompt: `${base}\n\nRead this tropical chart as a master Western astrologer: the essential story of identity (Sun, Moon, Ascendant), relationship pattern (Venus, 7th), vocation (MC, Saturn), and current life emphasis. Commit to specific claims — name the 3–4 strongest themes this chart testifies to. These claims will be cross-examined against an independent system, so be precise, not generic. 3–4 paragraphs.`,
+      },
+      {
+        id: "western_degrees", label: "Decans & Critical Degrees", areaOfLife: "Degree Theory",
+        prompt: `${base}\n\n${dual.degreeContext}\n\nAnalyze the degree-level testimony: which planets sit in revealing decans (the Chaldean lord colors the planet's expression), which occupy critical or anaretic degrees, and what these degree placements add that sign-level reading misses. Focus on the 3–4 most loaded degree placements. 3 paragraphs.`,
+      },
+      {
+        id: "vedic_core", label: "Sidereal Rashi Reading", areaOfLife: "Vedic Testimony",
+        prompt: `${base}\n\n${dual.vedicContext}\n\nRead this sidereal chart as a Jyotish practitioner: the Lagna and its lord, the Moon's rashi (the Vedic foundation of personality), key house placements in the sidereal frame, and what shifts when the ~24° ayanamsa moves planets into earlier signs. Name the 3–4 strongest themes THIS system testifies to — independently, without referencing the tropical reading. 3–4 paragraphs.`,
+      },
+      {
+        id: "vedic_nakshatra", label: "Nakshatra & Pada Analysis", areaOfLife: "Lunar Mansions",
+        prompt: `${base}\n\n${dual.vedicContext}\n\nAnalyze the nakshatra placements in depth — especially the Moon's nakshatra (the janma nakshatra, foundation of Vedic personality analysis), the Ascendant's nakshatra, and the Sun's. For each: the deity, symbol, and nature; what the pada (quarter) refines via its navamsa sign; and what the nakshatra lord's own placement adds. 3–4 paragraphs.`,
+      },
+    ];
+  }
+
   return map[type] ?? [];
+}
+
+// ─── Convergence agent — sequential phase for dual_zodiac ─────────────────────
+// Receives both systems' independent readings and identifies where they agree.
+
+async function runConvergence(
+  results: { technique: Technique; body: string }[],
+  vedicContext: string,
+  chartContext: string,
+): Promise<ReportSection> {
+  const western = results.filter(r => r.technique.id.startsWith("western")).map(r => `[${r.technique.label}]\n${r.body}`).join("\n\n");
+  const vedic   = results.filter(r => r.technique.id.startsWith("vedic")).map(r => `[${r.technique.label}]\n${r.body}`).join("\n\n");
+
+  const msg = await anthropic.messages.create({
+    model: "claude-sonnet-4-6",
+    max_tokens: 1600,
+    messages: [{
+      role: "user",
+      content: `You are the convergence analyst of Cosmora — the final arbiter between two independent astrological systems reading the same birth.
+
+The tropical and sidereal zodiacs disagree by ~24°. Placements differ; that is expected and uninteresting. What matters is THEME-level agreement: when both systems, through different signs, houses, and techniques, independently testify to the same life pattern — that testimony is high-confidence. Where they diverge, confidence is lower and should be said plainly.
+
+TROPICAL CHART:
+${chartContext}
+
+${vedicContext}
+
+WESTERN READING (independent):
+${western}
+
+VEDIC READING (independent):
+${vedic}
+
+Produce the convergence analysis:
+1. Identify 3–5 themes where BOTH systems independently agree. For each: state the theme, then cite the specific testimony from each system (tropical placement vs sidereal/nakshatra placement) that supports it. Rank by strength of agreement.
+2. Note 1–2 significant divergences — where the systems tell different stories — and what each version would mean.
+3. Close with one paragraph: the portrait that survives translation between both skies.
+
+Write in flowing paragraphs with clear theme statements. This is the most authoritative section of the report — the findings two independent instruments could not disagree on.`,
+    }],
+  });
+
+  const body = msg.content
+    .filter(b => b.type === "text")
+    .map(b => (b as { type: "text"; text: string }).text)
+    .join("");
+
+  return {
+    id: "sec_convergence",
+    heading: "Convergence Findings",
+    subheading: "Where Both Skies Agree",
+    body,
+    confidence: 0.92,
+    technique: "convergence",
+    areaOfLife: "Synthesis",
+    convergenceCount: 2,
+  };
 }
 
 // ─── Run one technique agent ───────────────────────────────────────────────────
@@ -247,7 +334,13 @@ export async function POST(req: NextRequest) {
 
     const chartContext = buildChartContext(chart);
     const birthYear = new Date(birthDatetime).getFullYear();
-    const techniques = getTechniques(reportType, chartContext, birthYear);
+
+    // Dual-zodiac extras — sidereal conversion + degree theory, computed once
+    const dual = reportType === "dual_zodiac"
+      ? { vedicContext: buildVedicContext(chart, birthDatetime), degreeContext: buildDegreeContext(chart) }
+      : undefined;
+
+    const techniques = getTechniques(reportType, chartContext, birthYear, dual);
 
     if (!techniques.length) {
       return new Response(JSON.stringify({ error: "Unknown report type" }), { status: 400 });
@@ -275,6 +368,11 @@ export async function POST(req: NextRequest) {
 
           emit({ type: "synthesizing" });
 
+          // ── Phase 1.5: Convergence (dual_zodiac only) — sequential, needs all results ──
+          const convergenceSection = dual
+            ? await runConvergence(results, dual.vedicContext, chartContext)
+            : null;
+
           // ── Phase 2: Synthesis ─────────────────────────────────────────────
           const { headline: rawHeadline, overallConfidence } = await synthesize(reportType, results, chartContext);
 
@@ -289,6 +387,7 @@ export async function POST(req: NextRequest) {
             areaOfLife: r.technique.areaOfLife,
             convergenceCount: 1,
           }));
+          if (convergenceSection) sections = [...sections, convergenceSection];
 
           let headline = rawHeadline;
 

@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import {
   SIGN_SYMBOLS, PLANET_SYMBOLS, ZODIAC_SIGNS, TRADITIONAL_RULERS,
@@ -746,7 +745,6 @@ export default function CompatibilityPage() {
     return (
       <div className="h-screen flex overflow-hidden">
         <DashboardBg />
-        <Sidebar />
         <div className="flex-1 flex flex-col items-center justify-center gap-5 md:ml-[68px] mb-[60px] md:mb-0 px-6">
           <div
             className="w-16 h-16 rounded-2xl flex items-center justify-center"
@@ -790,7 +788,6 @@ export default function CompatibilityPage() {
       <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "-20%", background: "rgba(244,114,182,0.05)", filter: "blur(100px)" }} />
       <div className="nebula-orb" style={{ width: 400, height: 400, right: "10%", bottom: "0%", background: "rgba(124,58,237,0.05)", filter: "blur(80px)" }} />
 
-      <Sidebar />
 
       <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-x-hidden">
 

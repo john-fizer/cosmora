@@ -13,7 +13,7 @@
 import { chromium } from 'playwright';
 import { existsSync } from 'fs';
 
-const BASE = 'http://localhost:3000';
+const BASE = process.env.COSMORA_BASE || 'http://localhost:3000';
 const VIEWPORT = { width: 1440, height: 900 };
 
 function slug(path) {

@@ -10,6 +10,7 @@ import { SignGlyph, PlanetGlyph } from "@/components/ui/AstroGlyph";
 import type { Ingress } from "@/lib/astrology/transits";
 import { getActiveProfileId, getProfile, getCachedChart, setCachedChart } from "@/lib/storage";
 import { DashboardBg } from "@/components/ui/DashboardBg";
+import { LoopingVideo } from "@/components/ui/LoopingVideo";
 import { useWarpTo } from "@/components/ui/WarpTransition";
 import { ScanBar } from "@/components/three/HUDPanel";
 import { ChatInput } from "@/components/dashboard/ChatInput";
@@ -1455,11 +1456,19 @@ export default function DashboardPage() {
     );
   }
 
+  const VOID_PLANET = "https://d8j0ntlcm91z4.cloudfront.net/user_3EJVjiEA4WaVDp4iCvA6Qzd9BpD/hf_20260603_160849_b4723a21-2d1d-4d62-99f5-756068f42d94.mp4";
+
   return (
-    <div className="relative h-screen overflow-hidden">
+    <div className="relative">
+      {/* Chapter 0 — Home Base */}
+      <div className="relative h-screen overflow-hidden">
+
+      {/* Looping video background */}
+      <LoopingVideo src={VOID_PLANET} opacity={0.55} />
+      <div className="fixed inset-0" style={{ zIndex: 3, background: "rgba(2,2,18,0.35)" }} />
 
       {/* â”€â”€ Full-screen 3D canvas â”€â”€ */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0" style={{ zIndex: 4 }}>
         {loading ? (
           <div className="h-full flex items-center justify-center">
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
@@ -1600,6 +1609,19 @@ export default function DashboardPage() {
           </div>
         </motion.div>
 
+        {/* Scroll hint */}
+        <motion.div
+          animate={{ y: [0, 6, 0], opacity: [0.35, 0.6, 0.35] }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 pointer-events-none"
+          style={{ zIndex: 12 }}
+        >
+          <span style={{ fontFamily: "'Fragment Mono', monospace", fontSize: 10, letterSpacing: "0.2em", color: "rgba(255,255,255,0.3)" }}>SCROLL</span>
+          <svg viewBox="0 0 16 10" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" className="w-4 h-2.5">
+            <path d="M1 1l7 7 7-7" />
+          </svg>
+        </motion.div>
+
       </div>
 
       {/* Signature Card Modal */}
@@ -1632,6 +1654,64 @@ export default function DashboardPage() {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>{/* end chapter 0 */}
+
+      {/* Chapter 1 — Chart */}
+      <div className="relative min-h-screen flex items-center justify-center" style={{ zIndex: 4, overflow: "hidden" }}>
+        <LoopingVideo src="https://d8j0ntlcm91z4.cloudfront.net/user_3EJVjiEA4WaVDp4iCvA6Qzd9BpD/hf_20260603_160202_ae2861ec-6ea8-4772-81ff-0036e51bfdca.mp4" opacity={0.6} />
+        <div className="fixed inset-0" style={{ zIndex: 3, background: "rgba(2,2,18,0.5)" }} />
+        <div className="relative flex flex-col items-center justify-center gap-8 px-6 text-center" style={{ zIndex: 5 }}>
+          <p className="text-[11px] font-bold tracking-[0.22em]" style={{ color: "#06b6d4", opacity: 0.7 }}>CHAPTER II</p>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 600, color: "rgba(255,255,255,0.92)", letterSpacing: "0.04em", lineHeight: 1.15 }}>The Natal Wheel</h2>
+          <p className="text-base leading-relaxed" style={{ maxWidth: 480, color: "rgba(200,190,178,0.55)" }}>Your birth chart as an 8K precision map — houses, aspects, dignities, and the planetary architecture of your soul.</p>
+          <Link href="/dashboard/chart">
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="px-8 py-3 rounded-xl cursor-pointer text-[13px] font-bold tracking-[0.16em]" style={{ border: "1px solid rgba(6,182,212,0.25)", background: "rgba(6,182,212,0.08)", color: "#06b6d4" }}>OPEN CHART →</motion.div>
+          </Link>
+        </div>
+      </div>
+
+      {/* Chapter 2 — Oracle */}
+      <div className="relative min-h-screen flex items-center justify-center" style={{ zIndex: 4, overflow: "hidden" }}>
+        <LoopingVideo src="https://d8j0ntlcm91z4.cloudfront.net/user_3EJVjiEA4WaVDp4iCvA6Qzd9BpD/hf_20260603_160206_2beaac9d-c6a7-4aa8-9578-91aa79e900a3.mp4" opacity={0.65} />
+        <div className="fixed inset-0" style={{ zIndex: 3, background: "rgba(2,2,18,0.45)" }} />
+        <div className="relative flex flex-col items-center justify-center gap-8 px-6 text-center" style={{ zIndex: 5 }}>
+          <p className="text-[11px] font-bold tracking-[0.22em]" style={{ color: "#a78bfa", opacity: 0.7 }}>CHAPTER III</p>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 600, color: "rgba(255,255,255,0.92)", letterSpacing: "0.04em", lineHeight: 1.15 }}>The Oracle</h2>
+          <p className="text-base leading-relaxed" style={{ maxWidth: 480, color: "rgba(200,190,178,0.55)" }}>An AI astrologer that knows your chart deeply — ask anything, receive channeled delineations from the cosmos.</p>
+          <Link href="/dashboard/oracle">
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="px-8 py-3 rounded-xl cursor-pointer text-[13px] font-bold tracking-[0.16em]" style={{ border: "1px solid rgba(167,139,250,0.25)", background: "rgba(167,139,250,0.08)", color: "#a78bfa" }}>CONSULT ORACLE →</motion.div>
+          </Link>
+        </div>
+      </div>
+
+      {/* Chapter 3 — Transits */}
+      <div className="relative min-h-screen flex items-center justify-center" style={{ zIndex: 4, overflow: "hidden" }}>
+        <LoopingVideo src="https://d8j0ntlcm91z4.cloudfront.net/user_3EJVjiEA4WaVDp4iCvA6Qzd9BpD/hf_20260603_160850_ad65ee26-b1be-4f76-a825-d045f9c89936.mp4" opacity={0.6} />
+        <div className="fixed inset-0" style={{ zIndex: 3, background: "rgba(2,2,18,0.5)" }} />
+        <div className="relative flex flex-col items-center justify-center gap-8 px-6 text-center" style={{ zIndex: 5 }}>
+          <p className="text-[11px] font-bold tracking-[0.22em]" style={{ color: "#f59e0b", opacity: 0.7 }}>CHAPTER IV</p>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 600, color: "rgba(255,255,255,0.92)", letterSpacing: "0.04em", lineHeight: 1.15 }}>Live Transit Forecast</h2>
+          <p className="text-base leading-relaxed" style={{ maxWidth: 480, color: "rgba(200,190,178,0.55)" }}>The sky in motion against your natal positions — 3-month, 6-month, and 1-year forecasts with AI delineation.</p>
+          <Link href="/dashboard/transits">
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="px-8 py-3 rounded-xl cursor-pointer text-[13px] font-bold tracking-[0.16em]" style={{ border: "1px solid rgba(245,158,11,0.25)", background: "rgba(245,158,11,0.08)", color: "#f59e0b" }}>VIEW FORECAST →</motion.div>
+          </Link>
+        </div>
+      </div>
+
+      {/* Chapter 4 — Map */}
+      <div className="relative min-h-screen flex items-center justify-center" style={{ zIndex: 4, overflow: "hidden" }}>
+        <LoopingVideo src="https://d8j0ntlcm91z4.cloudfront.net/user_3EJVjiEA4WaVDp4iCvA6Qzd9BpD/hf_20260603_160202_ae2861ec-6ea8-4772-81ff-0036e51bfdca.mp4" opacity={0.5} />
+        <div className="fixed inset-0" style={{ zIndex: 3, background: "rgba(2,2,18,0.55)" }} />
+        <div className="relative flex flex-col items-center justify-center gap-8 px-6 text-center" style={{ zIndex: 5 }}>
+          <p className="text-[11px] font-bold tracking-[0.22em]" style={{ color: "#22c55e", opacity: 0.7 }}>CHAPTER V</p>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 600, color: "rgba(255,255,255,0.92)", letterSpacing: "0.04em", lineHeight: 1.15 }}>Astrocartography</h2>
+          <p className="text-base leading-relaxed" style={{ maxWidth: 480, color: "rgba(200,190,178,0.55)" }}>Find your power locations on Earth — planetary lines, energy scoring, and AI readings for any city on the globe.</p>
+          <Link href="/dashboard/map">
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="px-8 py-3 rounded-xl cursor-pointer text-[13px] font-bold tracking-[0.16em]" style={{ border: "1px solid rgba(34,197,94,0.25)", background: "rgba(34,197,94,0.08)", color: "#22c55e" }}>EXPLORE MAP →</motion.div>
+          </Link>
+        </div>
+      </div>
+
     </div>
   );
 }

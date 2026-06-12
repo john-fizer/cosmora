@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona, setOraclePersona } from "@/lib/storage";
 import { ORACLE_PERSONAS, getPersonaById } from "@/lib/oracle/personas";
 import type { PersonaId } from "@/lib/oracle/personas";
@@ -588,7 +587,6 @@ export default function ReportsPage() {
   if (noProfile) {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ background: "#04050E" }}>
-        <Sidebar />
         <div style={{ textAlign: "center", padding: 32 }}>
           <p style={{ color: "#C8A55B", fontSize: 17, fontFamily: "'Cormorant Garamond', serif", marginBottom: 8 }}>
             Birth data required to generate reports.
@@ -600,7 +598,6 @@ export default function ReportsPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#04050E" }}>
-      <Sidebar />
 
       <AnimatePresence>
         {generatingMeta && (

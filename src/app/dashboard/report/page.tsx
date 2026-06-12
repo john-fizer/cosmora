@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { PLANET_SYMBOLS, SIGN_SYMBOLS } from "@/lib/astrology/types";
 import type { ChartData, PlanetName } from "@/lib/astrology/types";
@@ -561,7 +560,6 @@ export default function ReportPage() {
   return (
     <div className="h-screen flex overflow-hidden">
       <DashboardBg />
-      <Sidebar />
 
       <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10">
 

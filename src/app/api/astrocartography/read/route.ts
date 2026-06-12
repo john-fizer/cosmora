@@ -1,7 +1,8 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import type { LocationScore } from "@/lib/astrology/astrocartography";
 import { getPersonaById, COSMORA_IDENTITY } from "@/lib/oracle/personas";
+import { isPro } from "@/lib/subscription";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -12,12 +13,17 @@ interface ReadRequest {
   scores: LocationScore[];
   profileContext?: string;
   persona?: string;
+  customerId?: string;
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json() as ReadRequest;
-    const { lat, lon, cityHint, scores, profileContext, persona = "oracle" } = body;
+    const { lat, lon, cityHint, scores, profileContext, persona = "oracle", customerId } = body;
+
+    if (!isPro(customerId ?? null)) {
+      return NextResponse.json({ error: "pro_required" }, { status: 403 });
+    }
 
     if (!scores || scores.length === 0) {
       return new Response(JSON.stringify({ error: "no location scores provided" }), { status: 400 });

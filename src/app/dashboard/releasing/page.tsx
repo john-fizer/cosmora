@@ -3,8 +3,8 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { DashboardBg } from "@/components/ui/DashboardBg";
+import { ProGate } from "@/components/ui/ProGate";
 import {
   SIGN_SYMBOLS, PLANET_SYMBOLS, ZODIAC_SIGNS, TRADITIONAL_RULERS,
 } from "@/lib/astrology/types";
@@ -713,7 +713,6 @@ export default function ReleasingPage() {
     return (
       <div className="h-screen flex overflow-hidden">
         <DashboardBg />
-        <Sidebar />
         <div className="flex-1 flex flex-col items-center justify-center gap-6 md:ml-[68px] mb-[60px] md:mb-0 px-6">
           <div className="text-center">
             <p className="text-[14px] font-bold tracking-[0.2em] mb-2" style={{ color: "#334155" }}>NO CHART DATA</p>
@@ -738,12 +737,12 @@ export default function ReleasingPage() {
   const lotColor = SIGN_COLORS[lotSignDisplay];
 
   return (
+    <ProGate feature="Zodiacal Releasing">
     <div className="h-screen flex overflow-hidden">
       <DashboardBg />
       <div className="nebula-orb" style={{ width: 500, height: 500, left: "-5%", top: "-10%", background: "rgba(6,182,212,0.04)", filter: "blur(100px)" }} />
       <div className="nebula-orb" style={{ width: 400, height: 400, right: "0%", bottom: "0%", background: "rgba(124,58,237,0.04)", filter: "blur(80px)" }} />
 
-      <Sidebar />
 
       <div className="flex-1 flex min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10">
 
@@ -1065,6 +1064,7 @@ export default function ReleasingPage() {
         </AnimatePresence>
       </div>
     </div>
+    </ProGate>
   );
 }
 

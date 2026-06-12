@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { getActiveProfileId } from "@/lib/storage";
 import { REPORT_TYPES } from "@/lib/reports/types";
 import type { Report, ReportSection, ReportTypeMeta, SectionFeedback } from "@/lib/reports/types";
@@ -395,7 +395,6 @@ export default function ReportPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#04050E" }}>
-      <Sidebar />
 
       <AnimatePresence>
         {showFeedback && (
@@ -516,6 +515,27 @@ export default function ReportPage() {
             />
           ))}
         </div>
+
+        {/* ── Love Life → Marriage Patterns bridge ── */}
+        {report.type === "love_life" && visibleCount >= report.sections.length && report.sections.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            style={{ padding: "8px 52px 24px" }}
+          >
+            <Link
+              href="/dashboard/marriages"
+              style={{
+                fontFamily: "'Fragment Mono', monospace",
+                fontSize: 11, letterSpacing: "0.18em",
+                color: "#C8A55B", textDecoration: "none",
+              }}
+            >
+              SEE YOUR MARRIAGE PATTERN ANALYSIS →
+            </Link>
+          </motion.div>
+        )}
 
         {/* ── Footer actions ── */}
         {visibleCount >= report.sections.length && report.sections.length > 0 && (

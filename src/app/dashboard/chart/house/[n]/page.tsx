@@ -3,7 +3,6 @@
 import { use, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { DashboardBg } from "@/components/ui/DashboardBg";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { HolographicCard } from "@/components/ui/HolographicCard";
 import { useWarpTo } from "@/components/ui/WarpTransition";
 import { SIGN_SYMBOLS, PLANET_SYMBOLS, TRADITIONAL_RULERS } from "@/lib/astrology/types";
@@ -185,7 +184,6 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
         }}
       />
 
-      <Sidebar />
 
       <main style={{ flex: 1, marginLeft: 64, padding: "32px 32px 80px", position: "relative", zIndex: 1, maxWidth: 1100 }}>
 

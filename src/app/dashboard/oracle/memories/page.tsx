@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import {
   getActiveProfileId, getOracleMemories, deleteOracleMemory, updateOracleMemory,
@@ -189,7 +188,6 @@ export default function OracleMemoriesPage() {
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: "var(--bg-base, #08080F)" }}>
-      <Sidebar />
       <DashboardBg />
 
       <div className="flex-1 flex flex-col overflow-hidden" style={{ marginLeft: 64 }}>

@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef } from "react";
+import { LoopingVideo } from "@/components/ui/LoopingVideo";
+import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "framer-motion";
 import Link from "next/link";
+import ScrollStory from "@/components/landing/ScrollStory";
 import {
   Sparkles, Download, Wand2, BookOpen, ArrowRight, Menu,
   MessageCircle, Briefcase, Camera, Clock, Star, Layers, Compass,
@@ -59,25 +61,40 @@ function FAQItem({ q, a, i }: { q: string; a: string; i: number }) {
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Hero parallax exit — fades and scales away as the story begins
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroScale   = useTransform(heroScroll, [0, 1], [1, 0.94]);
+  const heroOpacity = useTransform(heroScroll, [0, 0.75, 1], [1, 1, 0]);
+  const heroY       = useTransform(heroScroll, [0, 1], [0, 90]);
+
+  // Page scroll progress bar
+  const { scrollYProgress: pageScroll } = useScroll();
+  const pageProgress = useSpring(pageScroll, { stiffness: 120, damping: 30, restDelta: 0.001 });
+
   return (
     <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>
+
+      {/* Scroll progress filament */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-[2px] z-[100] origin-left pointer-events-none"
+        style={{ scaleX: pageProgress, background: "linear-gradient(90deg, #C8A55B, #7B6FD4)", boxShadow: "0 0 10px rgba(200,165,91,0.7)" }}
+      />
 
       {/* ══════════════════════════════════════════════════════════════
           HERO — full-screen video + two-panel glass split
       ══════════════════════════════════════════════════════════════ */}
-      <section className="relative min-h-screen flex overflow-hidden">
+      <motion.section ref={heroRef} style={{ scale: heroScale, opacity: heroOpacity, y: heroY }} className="relative min-h-screen flex overflow-hidden">
 
-        {/* Video background */}
-        <video
-          autoPlay loop muted playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ zIndex: 0 }}
-        >
-          <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260315_073750_51473149-4350-4920-ae24-c8214286f323.mp4" type="video/mp4" />
-        </video>
+        {/* Video background — crossfade loop */}
+        <LoopingVideo
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_3EJVjiEA4WaVDp4iCvA6Qzd9BpD/hf_20260603_160849_b4723a21-2d1d-4d62-99f5-756068f42d94.mp4"
+          position="absolute"
+          opacity={1}
+        />
 
         {/* Dark scrim for readability */}
-        <div className="absolute inset-0 bg-black/40" style={{ zIndex: 1 }} />
+        <div className="absolute inset-0 bg-black/40" style={{ zIndex: 3 }} />
 
         {/* ── LEFT PANEL (52%) ─────────────────────────────────────── */}
         <div className="relative w-full lg:w-[52%] flex flex-col min-h-screen" style={{ zIndex: 10 }}>
@@ -192,10 +209,14 @@ export default function LandingPage() {
                 transition={{ delay: 0.45 }}
                 className="flex flex-wrap gap-2 mb-16"
               >
-                {["Oracle Readings", "Live Transits", "Temporal Archive"].map(label => (
-                  <span key={label} className="liquid-glass rounded-full px-4 py-1.5 text-xs text-white/80 hover:scale-105 transition-transform cursor-default">
+                {[
+                  { label: "Oracle Readings", href: "/dashboard/oracle" },
+                  { label: "Live Transits", href: "/dashboard/transits" },
+                  { label: "Temporal Archive", href: "/dashboard/temporal" },
+                ].map(({ label, href }) => (
+                  <Link key={label} href={href} className="liquid-glass rounded-full px-4 py-1.5 text-xs text-white/80 hover:scale-105 transition-transform">
                     {label}
-                  </span>
+                  </Link>
                 ))}
               </motion.div>
 
@@ -230,23 +251,25 @@ export default function LandingPage() {
             <div className="flex items-center justify-between">
               <div className="liquid-glass flex items-center gap-1 px-3 py-2 rounded-full">
                 {[
-                  { icon: <MessageCircle size={14} />, href: "#" },
-                  { icon: <Briefcase size={14} />, href: "#" },
-                  { icon: <Camera size={14} />, href: "#" },
+                  { icon: <MessageCircle size={14} />, href: "/dashboard/oracle", title: "Oracle" },
+                  { icon: <Briefcase size={14} />, href: "/dashboard/reports", title: "Reports" },
+                  { icon: <Camera size={14} />, href: "/dashboard/map", title: "Astro Map" },
                 ].map((item, i) => (
-                  <a key={i} href={item.href} className="w-8 h-8 rounded-full flex items-center justify-center text-white hover:text-white/80 transition-colors bg-white/10">
+                  <Link key={i} href={item.href} title={item.title} className="w-8 h-8 rounded-full flex items-center justify-center text-white hover:text-white/80 hover:scale-110 transition-all bg-white/10">
                     {item.icon}
-                  </a>
+                  </Link>
                 ))}
                 <div className="w-px h-4 bg-white/20 mx-1" />
                 <ArrowRight size={14} className="text-white/40" />
               </div>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                className="liquid-glass flex items-center gap-2 px-4 py-2 rounded-full text-xs text-white/80"
-              >
-                <Sparkles size={13} /> Account
-              </motion.button>
+              <Link href="/dashboard/settings">
+                <motion.span
+                  whileHover={{ scale: 1.05 }}
+                  className="liquid-glass flex items-center gap-2 px-4 py-2 rounded-full text-xs text-white/80 cursor-pointer"
+                >
+                  <Sparkles size={13} /> Account
+                </motion.span>
+              </Link>
             </div>
 
             {/* Community card */}
@@ -310,18 +333,25 @@ export default function LandingPage() {
                     <p className="text-xs font-medium text-white mb-1">Advanced Chart Reading</p>
                     <p className="text-[11px] text-white/40 leading-relaxed">Dignity scores, aspects, Arabic lots</p>
                   </div>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    className="liquid-glass w-8 h-8 rounded-full flex items-center justify-center text-white/60 text-lg flex-shrink-0"
-                  >
-                    +
-                  </motion.button>
+                  <Link href="/dashboard/chart">
+                    <motion.span
+                      whileHover={{ scale: 1.1 }}
+                      className="liquid-glass w-8 h-8 rounded-full flex items-center justify-center text-white/60 text-lg flex-shrink-0 cursor-pointer"
+                    >
+                      +
+                    </motion.span>
+                  </Link>
                 </div>
               </motion.div>
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
+
+      {/* ══════════════════════════════════════════════════════════════
+          SCROLL STORY — the instrument assembles itself
+      ══════════════════════════════════════════════════════════════ */}
+      <ScrollStory />
 
       {/* ══════════════════════════════════════════════════════════════
           FEATURES

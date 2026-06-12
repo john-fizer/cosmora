@@ -1,10 +1,13 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
+import { GuideModeToggle } from "@/components/ui/GuideModeToggle";
+import { useSubscription } from "@/lib/useSubscription";
+import { useCosmicShell, CHAPTERS } from "@/components/layout/CosmicShell";
 
 const SPRING = { type: "spring" as const, stiffness: 300, damping: 26 };
 
@@ -85,6 +88,17 @@ const NAV_ITEMS = [
         <circle cx="12" cy="12" r="9" />
         <path d="M12 7v5l3.5 2" />
         <path d="M16.5 3.5l1 1.5M7.5 3.5l-1 1.5" />
+      </svg>
+    ),
+  },
+  {
+    label: "Unions",
+    hint: "marriage patterns",
+    href: "/dashboard/marriages",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+        <circle cx="9" cy="12" r="5.5" />
+        <circle cx="15" cy="12" r="5.5" />
       </svg>
     ),
   },
@@ -202,8 +216,160 @@ const NAV_ITEMS = [
   },
 ];
 
-function DesktopSidebar({ pathname }: { pathname: string }) {
+// ─── Journey Mode Sidebar (home page) ────────────────────────────────────────
+
+function JourneySidebar({ pathname }: { pathname: string }) {
+  const { activeChapter } = useCosmicShell();
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const { isPro, loading: subLoading } = useSubscription();
+
+  return (
+    <motion.aside
+      initial={{ x: -44, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed left-0 top-0 h-full z-50 hidden md:flex flex-col items-center liquid-glass-strong"
+      style={{ width: 44, padding: "20px 0" }}
+    >
+      {/* Logo mark */}
+      <Link href="/">
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          style={{
+            width: 28, height: 28, borderRadius: 8, flexShrink: 0,
+            background: "var(--logo-gradient)",
+            boxShadow: "0 2px 12px rgba(200,165,91,0.18)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >
+          <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="#08080F" strokeWidth="1.8">
+            <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
+            <line x1="12" y1="3" x2="12" y2="8" /><line x1="12" y1="16" x2="12" y2="21" />
+            <line x1="3" y1="12" x2="8" y2="12" /><line x1="16" y1="12" x2="21" y2="12" />
+          </svg>
+        </motion.div>
+      </Link>
+
+      {/* Top hairline */}
+      <div style={{ height: 1, width: 20, background: "var(--border)", margin: "14px 0" }} />
+
+      {/* Chapter dots */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20 }}>
+        {CHAPTERS.map((chapter, i) => {
+          const isActive = activeChapter === i;
+          const isHovered = hoveredIdx === i;
+
+          return (
+            <Link key={chapter.href} href={chapter.href} style={{ display: "flex", alignItems: "center", position: "relative" }}>
+              <motion.div
+                onHoverStart={() => setHoveredIdx(i)}
+                onHoverEnd={() => setHoveredIdx(null)}
+                style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, cursor: "pointer" }}
+              >
+                {/* Glow ring for active */}
+                {isActive && (
+                  <motion.div
+                    layoutId="journey-active-ring"
+                    style={{
+                      position: "absolute",
+                      width: 20, height: 20,
+                      borderRadius: "50%",
+                      border: `1.5px solid ${chapter.color}`,
+                      boxShadow: `0 0 10px ${chapter.color}60, 0 0 20px ${chapter.color}30`,
+                    }}
+                  />
+                )}
+
+                {/* Dot */}
+                <motion.div
+                  animate={{
+                    width: isActive ? 8 : isHovered ? 7 : 6,
+                    height: isActive ? 8 : isHovered ? 7 : 6,
+                    background: isActive ? chapter.color : isHovered ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.18)",
+                    boxShadow: isActive ? `0 0 8px ${chapter.color}` : "none",
+                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 28 }}
+                  style={{ borderRadius: "50%", flexShrink: 0 }}
+                />
+
+                {/* Tooltip flyout */}
+                <AnimatePresence>
+                  {isHovered && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -6 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -4 }}
+                      transition={{ duration: 0.15 }}
+                      style={{
+                        position: "absolute",
+                        left: 28,
+                        top: "50%", transform: "translateY(-50%)",
+                        pointerEvents: "none",
+                        whiteSpace: "nowrap",
+                        background: "rgba(4,4,28,0.95)",
+                        border: `1px solid ${chapter.color}30`,
+                        borderRadius: 8,
+                        padding: "5px 10px",
+                        backdropFilter: "blur(16px)",
+                        zIndex: 100,
+                      }}
+                    >
+                      <p style={{
+                        fontFamily: "'Fragment Mono', monospace",
+                        fontSize: 11, letterSpacing: "0.14em",
+                        color: chapter.color, textTransform: "uppercase",
+                        marginBottom: 2,
+                      }}>
+                        {chapter.label}
+                      </p>
+                      <p style={{
+                        fontFamily: "'Cormorant Garamond', serif",
+                        fontSize: 12, fontStyle: "italic",
+                        color: "rgba(200,190,178,0.5)",
+                      }}>
+                        {chapter.hint}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* Bottom */}
+      <div style={{ height: 1, width: 20, background: "var(--border)", margin: "14px 0" }} />
+
+      {/* Upgrade dot */}
+      {!subLoading && !isPro && (
+        <Link href="/dashboard/upgrade" style={{ marginBottom: 10 }}>
+          <motion.div
+            whileHover={{ scale: 1.15 }}
+            style={{
+              width: 20, height: 20, borderRadius: "50%",
+              background: "rgba(123,111,212,0.15)",
+              border: "1.5px solid rgba(123,111,212,0.4)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer",
+            }}
+            title="Upgrade to Pro"
+          >
+            <span style={{ fontSize: 9, color: "rgba(168,140,255,0.85)" }}>✦</span>
+          </motion.div>
+        </Link>
+      )}
+
+      <ThemeSwitcher />
+    </motion.aside>
+  );
+}
+
+// ─── Focus Mode Sidebar (tool pages) ─────────────────────────────────────────
+
+function FocusSidebar({ pathname }: { pathname: string }) {
   const [expanded, setExpanded] = useState(false);
+  const { isPro, loading: subLoading } = useSubscription();
 
   return (
     <motion.aside
@@ -282,7 +448,6 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                   background: active ? undefined : "transparent",
                 }}
               >
-                {/* Active indicator */}
                 <AnimatePresence>
                   {active && (
                     <motion.div
@@ -298,7 +463,6 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                   )}
                 </AnimatePresence>
 
-                {/* Icon */}
                 <motion.div
                   animate={{ scale: expanded ? 1 : 0.86 }}
                   transition={SPRING}
@@ -310,12 +474,8 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                   {item.icon}
                 </motion.div>
 
-                {/* Label + hint (derivative layer) */}
                 <motion.div
-                  animate={{
-                    opacity: expanded ? 1 : 0,
-                    x: expanded ? 0 : -5,
-                  }}
+                  animate={{ opacity: expanded ? 1 : 0, x: expanded ? 0 : -5 }}
                   transition={{ ...SPRING, delay: expanded ? i * 0.016 : 0 }}
                   style={{ overflow: "hidden", whiteSpace: "nowrap", lineHeight: 1.1 }}
                 >
@@ -323,16 +483,14 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
                     fontFamily: "'Fragment Mono', monospace",
                     fontSize: 13, letterSpacing: "0.10em",
                     color: active ? "var(--solar)" : "rgba(240,237,232,0.88)",
-                    textTransform: "uppercase",
-                    marginBottom: 2,
+                    textTransform: "uppercase", marginBottom: 2,
                   }}>
                     {item.label}
                   </div>
                   <div style={{
                     fontFamily: "'Cormorant Garamond', serif",
                     fontSize: 14, letterSpacing: "0.02em",
-                    color: "rgba(200,190,178,0.38)",
-                    fontStyle: "italic",
+                    color: "rgba(200,190,178,0.38)", fontStyle: "italic",
                   }}>
                     {item.hint}
                   </div>
@@ -346,6 +504,47 @@ function DesktopSidebar({ pathname }: { pathname: string }) {
       {/* Bottom */}
       <div style={{ flexShrink: 0 }}>
         <div style={{ height: 1, background: "var(--border)", margin: "6px 10px 10px" }} />
+
+        {!subLoading && !isPro && (
+          <Link href="/dashboard/upgrade" style={{ textDecoration: "none", display: "block", padding: "0 8px 8px" }}>
+            <motion.div
+              animate={{ opacity: expanded ? 1 : 0.5 }}
+              whileHover={{ opacity: 1 }}
+              transition={SPRING}
+              style={{
+                borderRadius: 9, padding: expanded ? "8px 10px" : "7px 0",
+                display: "flex", alignItems: "center", gap: 8,
+                justifyContent: expanded ? "flex-start" : "center",
+                background: "rgba(123,111,212,0.08)",
+                border: "1px solid rgba(123,111,212,0.22)",
+              }}
+            >
+              <span style={{ fontSize: 14, flexShrink: 0 }}>✦</span>
+              <motion.span
+                animate={{ opacity: expanded ? 1 : 0, x: expanded ? 0 : -4 }}
+                transition={{ ...SPRING, delay: expanded ? 0.06 : 0 }}
+                style={{
+                  fontFamily: "'Fragment Mono', monospace",
+                  fontSize: 10, letterSpacing: "0.18em",
+                  color: "rgba(168,140,255,0.85)",
+                  textTransform: "uppercase", whiteSpace: "nowrap",
+                }}
+              >
+                Upgrade to Pro
+              </motion.span>
+            </motion.div>
+          </Link>
+        )}
+
+        {/* Guide mode — visible when expanded */}
+        <motion.div
+          animate={{ opacity: expanded ? 1 : 0, height: expanded ? "auto" : 0 }}
+          transition={SPRING}
+          style={{ padding: expanded ? "0 12px 10px" : "0 12px", overflow: "hidden" }}
+        >
+          <GuideModeToggle compact />
+        </motion.div>
+
         <div style={{ padding: "0 12px 18px", display: "flex", alignItems: "center", gap: 10 }}>
           <ThemeSwitcher />
           <motion.kbd
@@ -421,9 +620,17 @@ function MobileNav({ pathname }: { pathname: string }) {
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { mode } = useCosmicShell();
+
   return (
     <>
-      <DesktopSidebar pathname={pathname} />
+      <AnimatePresence mode="wait">
+        {mode === "journey" ? (
+          <JourneySidebar key="journey" pathname={pathname} />
+        ) : (
+          <FocusSidebar key="focus" pathname={pathname} />
+        )}
+      </AnimatePresence>
       <MobileNav pathname={pathname} />
     </>
   );

@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
 import type { AstroLine, AstroLinePlanet, AstroLineAngle, LocationScore } from "@/lib/astrology/astrocartography";
 import {
@@ -602,7 +601,6 @@ export default function AstrocartographyPage() {
   if (noProfile) {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ background: "#010810" }}>
-        <Sidebar />
         <div className="text-center ml-16">
           <p style={{ color: "#C8A55B", fontSize: 13, marginBottom: 8, fontFamily: "'Fragment Mono', monospace" }}>BIRTH DATA REQUIRED</p>
           <p style={{ color: "#445577", fontSize: 11 }}>Complete your profile in Settings to activate your energy map.</p>
@@ -614,7 +612,6 @@ export default function AstrocartographyPage() {
   // ── Render ───────────────────────────────────────────────────────────────────
   return (
     <div className="fixed inset-0" style={{ background: "#010810", overflow: "hidden" }}>
-      <Sidebar />
 
       {/* ── Canvas ── */}
       <div className="absolute inset-0" style={{ left: 64, bottom: 74 }}>

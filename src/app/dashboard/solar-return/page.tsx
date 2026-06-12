@@ -3,8 +3,8 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { DashboardBg } from "@/components/ui/DashboardBg";
+import { ProGate } from "@/components/ui/ProGate";
 import { SIGN_SYMBOLS, PLANET_SYMBOLS, ZODIAC_SIGNS, TRADITIONAL_RULERS } from "@/lib/astrology/types";
 import type { ChartData, ZodiacSign, PlanetName } from "@/lib/astrology/types";
 import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
@@ -385,7 +385,6 @@ export default function SolarReturnPage() {
       <div className="h-screen flex overflow-hidden">
         <DashboardBg />
         <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "5%", background: "rgba(124,58,237,0.07)", filter: "blur(100px)" }} />
-        <Sidebar />
         <div className="flex-1 flex flex-col items-center justify-center gap-6 md:ml-[68px] mb-[60px] md:mb-0 px-6">
           <motion.div
             animate={{ scale: [1, 1.06, 1], opacity: [0.75, 1, 0.75] }}
@@ -421,11 +420,11 @@ export default function SolarReturnPage() {
   }
 
   return (
+    <ProGate feature="Solar Return">
     <div className="h-screen flex overflow-hidden">
       <DashboardBg />
       <div className="nebula-orb" style={{ width: 500, height: 500, right: "0%", top: "-10%", background: "rgba(245,158,11,0.06)", filter: "blur(100px)" }} />
       <div className="nebula-orb" style={{ width: 300, height: 300, left: "5%", bottom: "10%", background: "rgba(124,58,237,0.05)", filter: "blur(80px)" }} />
-      <Sidebar />
 
       <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-x-hidden">
 
@@ -764,6 +763,7 @@ export default function SolarReturnPage() {
         </div>
       </div>
     </div>
+    </ProGate>
   );
 }
 

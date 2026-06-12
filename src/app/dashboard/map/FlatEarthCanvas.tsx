@@ -104,81 +104,146 @@ function DiscBase() {
   );
 }
 
-// ─── Graticule ────────────────────────────────────────────────────────────────
-function GraticuleLines() {
-  const latLoops = useMemo(() =>
-    [-60, -30, 0, 30, 60].map(lat => {
-      const r  = (90 - lat) / 90 * DISC_R;
-      const pts: THREE.Vector3[] = [];
-      for (let i = 0; i <= 128; i++) {
-        const θ = (i / 128) * Math.PI * 2;
-        pts.push(new THREE.Vector3(r * Math.sin(θ), Y0, -r * Math.cos(θ)));
-      }
-      const g = new THREE.BufferGeometry().setFromPoints(pts);
-      return { g, lat };
-    }), []);
+// ─── Map face — baked azimuthal projection texture ────────────────────────────
+// Filled continents, ocean gradient, labeled graticule, Antarctic ice ring.
+function MapFace() {
+  const [tex, setTex] = useState<THREE.CanvasTexture | null>(null);
 
-  const meridians = useMemo(() =>
-    Array.from({ length: 12 }, (_, i) => i * 30).map(lon => {
-      const θ = lon * Math.PI / 180;
-      const g = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(0, Y0, 0),
-        new THREE.Vector3(DISC_R * Math.sin(θ), Y0, -DISC_R * Math.cos(θ)),
-      ]);
-      return { g, lon };
-    }), []);
-
-  return (
-    <group>
-      {latLoops.map(({ g, lat }) => (
-        <primitive key={lat} object={new THREE.Line(g,
-          new THREE.LineBasicMaterial({
-            color: lat === 0 ? 0x2244AA : 0x111E55,
-            transparent: true,
-            opacity: lat === 0 ? 0.22 : 0.1,
-          })
-        )} />
-      ))}
-      {meridians.map(({ g, lon }) => (
-        <primitive key={lon} object={new THREE.Line(g,
-          new THREE.LineBasicMaterial({ color: 0x111E55, transparent: true, opacity: 0.1 })
-        )} />
-      ))}
-    </group>
-  );
-}
-
-// ─── Coastlines ───────────────────────────────────────────────────────────────
-function CoastlineLayer() {
-  const [coastlines, setCoastlines] = useState<number[][][]>([]);
   useEffect(() => {
-    fetch("/geo/coastlines.json").then(r => r.json()).then(setCoastlines).catch(() => {});
+    let cancelled = false;
+    fetch("/geo/coastlines.json")
+      .then(r => r.json())
+      .then((coastlines: number[][][]) => {
+        if (cancelled) return;
+        const W = 2048;
+        const canvas = document.createElement("canvas");
+        canvas.width = canvas.height = W;
+        const ctx = canvas.getContext("2d")!;
+        const cx = W / 2, cy = W / 2;
+        const Rpx = W / 2 - 8;
+
+        // Map lat/lon → canvas px (matches project(): x = r·sinθ, z = -r·cosθ)
+        const toPx = (lon: number, lat: number): [number, number] => {
+          const r = Math.max(0, 90 - lat) / 90 * Rpx;
+          const θ = (lon * Math.PI) / 180;
+          return [cx + r * Math.sin(θ), cy - r * Math.cos(θ)];
+        };
+
+        // ── Ocean ──
+        const ocean = ctx.createRadialGradient(cx, cy, 0, cx, cy, Rpx);
+        ocean.addColorStop(0,    "#03102A");
+        ocean.addColorStop(0.65, "#020B1E");
+        ocean.addColorStop(1,    "#010614");
+        ctx.fillStyle = ocean;
+        ctx.beginPath(); ctx.arc(cx, cy, Rpx, 0, Math.PI * 2); ctx.fill();
+
+        // ── Graticule — parallels ──
+        ctx.font = "22px monospace";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        for (let lat = 75; lat >= -60; lat -= 15) {
+          const r = (90 - lat) / 90 * Rpx;
+          const isEquator = lat === 0;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.strokeStyle = isEquator ? "rgba(50,120,255,0.40)" : "rgba(28,52,130,0.30)";
+          ctx.lineWidth = isEquator ? 2.5 : 1;
+          if (!isEquator) ctx.setLineDash([6, 8]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          // Latitude label down the prime meridian
+          if (lat !== 75) {
+            ctx.fillStyle = "rgba(80,140,255,0.5)";
+            ctx.fillText(`${Math.abs(lat)}°${lat > 0 ? "N" : lat < 0 ? "S" : ""}`, cx + 28, cy - r + 16);
+          }
+        }
+
+        // ── Graticule — meridians with rim labels ──
+        for (let lon = 0; lon < 360; lon += 30) {
+          const θ = (lon * Math.PI) / 180;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Rpx * Math.sin(θ), cy - Rpx * Math.cos(θ));
+          ctx.strokeStyle = "rgba(28,52,130,0.28)";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          // Label just inside the rim
+          const lr = Rpx - 34;
+          const display = lon <= 180 ? lon : 360 - lon;
+          const suffix = lon === 0 || lon === 180 ? "" : lon < 180 ? "E" : "W";
+          ctx.fillStyle = "rgba(80,140,255,0.55)";
+          ctx.fillText(`${display}°${suffix}`, cx + lr * Math.sin(θ), cy - lr * Math.cos(θ));
+        }
+
+        // ── Land — filled polygons ──
+        for (const ring of coastlines) {
+          if (ring.length < 4) continue;
+          const meanLat = ring.reduce((a, p) => a + p[1], 0) / ring.length;
+          if (meanLat < -60) continue; // Antarctica → ice ring instead
+          ctx.beginPath();
+          ring.forEach(([lon, lat], i) => {
+            const [px, py] = toPx(lon, lat);
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+          });
+          ctx.closePath();
+          const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Rpx);
+          grad.addColorStop(0, "rgba(16,48,96,0.85)");
+          grad.addColorStop(1, "rgba(10,32,68,0.85)");
+          ctx.fillStyle = grad;
+          ctx.fill();
+        }
+
+        // ── Coast strokes with glow ──
+        ctx.shadowColor = "rgba(40,110,255,0.8)";
+        ctx.shadowBlur = 6;
+        ctx.strokeStyle = "rgba(58,130,255,0.85)";
+        ctx.lineWidth = 1.6;
+        for (const ring of coastlines) {
+          if (ring.length < 2) continue;
+          const meanLat = ring.reduce((a, p) => a + p[1], 0) / ring.length;
+          if (meanLat < -60) continue;
+          ctx.beginPath();
+          let started = false;
+          let prevLon = ring[0][0];
+          for (const [lon, lat] of ring) {
+            if (Math.abs(lon - prevLon) > 120) started = false;
+            const [px, py] = toPx(lon, lat);
+            if (!started) { ctx.moveTo(px, py); started = true; }
+            else ctx.lineTo(px, py);
+            prevLon = lon;
+          }
+          ctx.stroke();
+        }
+        ctx.shadowBlur = 0;
+
+        // ── Antarctic ice ring at the rim ──
+        const iceInner = (90 - -60) / 90 * Rpx;
+        const ice = ctx.createRadialGradient(cx, cy, iceInner, cx, cy, Rpx);
+        ice.addColorStop(0, "rgba(140,180,255,0)");
+        ice.addColorStop(0.55, "rgba(150,190,255,0.10)");
+        ice.addColorStop(1, "rgba(190,220,255,0.22)");
+        ctx.beginPath();
+        ctx.arc(cx, cy, Rpx, 0, Math.PI * 2);
+        ctx.arc(cx, cy, iceInner, 0, Math.PI * 2, true);
+        ctx.fillStyle = ice;
+        ctx.fill();
+
+        const t = new THREE.CanvasTexture(canvas);
+        t.anisotropy = 8;
+        t.colorSpace = THREE.SRGBColorSpace;
+        setTex(t);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
   }, []);
 
-  const obj = useMemo(() => {
-    if (!coastlines.length) return null;
-    const positions: number[] = [];
-    for (const seg of coastlines) {
-      if (seg.length < 2) continue;
-      let prev: THREE.Vector3 | null = null;
-      let prevLon = seg[0][0];
-      for (const [lon, lat] of seg) {
-        if (lat <= -78) { prev = null; continue; }
-        if (Math.abs(lon - prevLon) > 120) { prev = null; }
-        const pt = project(lon, lat);
-        if (prev) { positions.push(prev.x, prev.y, prev.z, pt.x, pt.y, pt.z); }
-        prev = pt;
-        prevLon = lon;
-      }
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-    return new THREE.LineSegments(g, new THREE.LineBasicMaterial({
-      color: 0x1A5EFF, transparent: true, opacity: 0.48,
-    }));
-  }, [coastlines]);
-
-  return obj ? <primitive object={obj} /> : null;
+  if (!tex) return null;
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, Y0 * 0.5, 0]}>
+      <circleGeometry args={[DISC_R, 128]} />
+      <meshBasicMaterial map={tex} transparent opacity={0.96} />
+    </mesh>
+  );
 }
 
 // ─── Planet lines ─────────────────────────────────────────────────────────────
@@ -402,8 +467,7 @@ function FlatEarthScene({
 
       <StarField />
       <DiscBase />
-      <GraticuleLines />
-      <CoastlineLayer />
+      <MapFace />
 
       {showLines && (
         <PlanetLineLayer

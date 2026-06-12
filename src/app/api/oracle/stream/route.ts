@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { getPersonaById, COSMORA_IDENTITY } from "@/lib/oracle/personas";
+import { isPro, getOracleUsageToday, incrementOracleUsage, FREE_ORACLE_DAILY_LIMIT } from "@/lib/subscription";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -10,9 +11,22 @@ export async function POST(req: NextRequest) {
       prompt: string;
       maxTokens?: number;
       persona?: string;
+      customerId?: string;
     };
 
-    const { prompt, maxTokens = 400, persona = "oracle" } = body;
+    const { prompt, maxTokens = 400, persona = "oracle", customerId } = body;
+
+    // Rate-gate free users
+    if (customerId && !isPro(customerId)) {
+      const used = getOracleUsageToday(customerId);
+      if (used >= FREE_ORACLE_DAILY_LIMIT) {
+        return new Response(
+          JSON.stringify({ error: "daily_limit", limit: FREE_ORACLE_DAILY_LIMIT }),
+          { status: 429 }
+        );
+      }
+      incrementOracleUsage(customerId);
+    }
 
     if (!prompt?.trim()) {
       return new Response(JSON.stringify({ error: "prompt required" }), { status: 400 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { LoopingVideo } from "@/components/ui/LoopingVideo";
 import { getActiveProfileId, getCachedChart, getProfile, getOraclePersona } from "@/lib/storage";
 import type { ChartData } from "@/lib/astrology/types";
 
@@ -275,7 +276,13 @@ Speak as the living memory of the cosmos. Present tense for past events (the cos
   }
 
   return (
-    <div className="relative min-h-screen bg-[#050810] text-white overflow-x-hidden">
+    <div className="relative min-h-screen text-white overflow-x-hidden">
+      <LoopingVideo
+        src="https://d8j0ntlcm91z4.cloudfront.net/user_3EJVjiEA4WaVDp4iCvA6Qzd9BpD/hf_20260603_160202_ae2861ec-6ea8-4772-81ff-0036e51bfdca.mp4"
+        opacity={0.7}
+      />
+      <div className="fixed inset-0" style={{ zIndex: 3, background: "rgba(3,4,18,0.45)" }} />
+
       <style>{`
         @keyframes twinkle {
           0%, 100% { opacity: 0.15; } 50% { opacity: 0.8; }
@@ -298,8 +305,6 @@ Speak as the living memory of the cosmos. Present tense for past events (the cos
         .result-card:nth-child(4) { animation-delay: 0.3s; opacity: 0; }
         .portal-ring { animation: portalPulse 4s ease-in-out infinite; }
       `}</style>
-
-      <StarField />
 
       {/* Scanline overlay */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.03]">

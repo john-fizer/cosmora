@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import {
   listProfiles, getProfile, saveProfile, deleteProfile,
@@ -574,7 +573,6 @@ export default function SettingsPage() {
     <div className="h-screen flex overflow-hidden">
       <DashboardBg />
 
-      <Sidebar />
 
       <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-x-hidden">
 

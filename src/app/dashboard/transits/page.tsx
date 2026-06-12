@@ -2,9 +2,8 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { LoopingVideo } from "@/components/ui/LoopingVideo";
 import Link from "next/link";
-import { DashboardBg } from "@/components/ui/DashboardBg";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { PLANET_SYMBOLS, SIGN_SYMBOLS } from "@/lib/astrology/types";
 import type { PlanetName, ZodiacSign, ChartData } from "@/lib/astrology/types";
 import type { TransitsData, TransitAspect, Ingress } from "@/lib/astrology/transits";
@@ -1314,10 +1313,11 @@ export default function TransitsPage() {
   if (!loading && (!profileId || !natal)) {
     return (
       <div className="h-screen flex overflow-hidden">
-        <DashboardBg />
-        <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "10%", background: "rgba(6,182,212,0.05)", filter: "blur(120px)" }} />
-        <div className="nebula-orb" style={{ width: 400, height: 400, right: "10%", bottom: "5%", background: "rgba(124,58,237,0.06)", filter: "blur(80px)" }} />
-        <Sidebar />
+        <LoopingVideo
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_3EJVjiEA4WaVDp4iCvA6Qzd9BpD/hf_20260603_160850_ad65ee26-b1be-4f76-a825-d045f9c89936.mp4"
+          opacity={0.7}
+        />
+        <div className="fixed inset-0" style={{ zIndex: 3, background: "rgba(3,4,18,0.45)" }} />
         <div className="flex-1 flex items-center justify-center md:ml-[68px] relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1361,11 +1361,12 @@ export default function TransitsPage() {
 
   return (
     <div className="h-screen flex overflow-hidden">
-      <DashboardBg />
-      <div className="nebula-orb" style={{ width:500, height:500, left:"20%", top:"10%", background:"rgba(6,182,212,0.05)", filter:"blur(120px)" }} />
-      <div className="nebula-orb" style={{ width:400, height:400, right:"10%", bottom:"5%", background:"rgba(124,58,237,0.06)", filter:"blur(80px)" }} />
+      <LoopingVideo
+        src="https://d8j0ntlcm91z4.cloudfront.net/user_3EJVjiEA4WaVDp4iCvA6Qzd9BpD/hf_20260603_160850_ad65ee26-b1be-4f76-a825-d045f9c89936.mp4"
+        opacity={0.7}
+      />
+      <div className="fixed inset-0" style={{ zIndex: 3, background: "rgba(3,4,18,0.45)" }} />
 
-      <Sidebar />
 
       <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-x-hidden">
 

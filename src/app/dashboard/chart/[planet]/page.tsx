@@ -3,7 +3,6 @@
 import { use, useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { DashboardBg } from "@/components/ui/DashboardBg";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { getPlanetMeta, PLANET_ORDER } from "@/lib/astrology/planetMeta";
 import { useWarpTo } from "@/components/ui/WarpTransition";
 import { getActiveProfileId, getCachedChart } from "@/lib/storage";
@@ -249,7 +248,6 @@ export default function PlanetDetailPage({
   return (
     <div className="relative min-h-screen">
       <DashboardBg />
-      <Sidebar />
 
       {/* ── Horizon Hero ── */}
       <section style={{ position: "relative", height: "62vh", minHeight: 480, overflow: "hidden", marginLeft: 68 }}>

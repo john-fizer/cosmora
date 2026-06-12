@@ -68,6 +68,104 @@ function lonToVec3(lon: number, radius: number): THREE.Vector3 {
   return new THREE.Vector3(radius * Math.cos(rad), 0, -radius * Math.sin(rad));
 }
 
+// ─── Procedural planet surfaces ───────────────────────────────────────────────
+// Real worlds, not glowing balls: banded gas giants, cratered rock, swirling cloud.
+
+function hashSeed(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0) / 4294967295;
+}
+
+function makeValueNoise(seed: number, grid = 24) {
+  const vals = new Float32Array(grid * grid);
+  let s = seed * 1e6;
+  const rnd = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+  for (let i = 0; i < vals.length; i++) vals[i] = rnd();
+  return (x: number, y: number): number => {
+    const gx = ((x % 1) + 1) % 1 * grid, gy = ((y % 1) + 1) % 1 * grid;
+    const x0 = Math.floor(gx) % grid, y0 = Math.floor(gy) % grid;
+    const x1 = (x0 + 1) % grid, y1 = (y0 + 1) % grid;
+    const fx = gx - Math.floor(gx), fy = gy - Math.floor(gy);
+    const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
+    const a = vals[y0 * grid + x0], b = vals[y0 * grid + x1];
+    const c = vals[y1 * grid + x0], d = vals[y1 * grid + x1];
+    return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy;
+  };
+}
+
+function makePlanetTexture(name: string, baseColor: string): THREE.CanvasTexture {
+  const W = 512, H = 256;
+  const canvas = document.createElement("canvas");
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext("2d")!;
+  const img = ctx.createImageData(W, H);
+  const base = new THREE.Color(baseColor);
+
+  const seed = hashSeed(name);
+  const n1 = makeValueNoise(seed, 16);
+  const n2 = makeValueNoise(seed + 0.37, 48);
+  const n3 = makeValueNoise(seed + 0.71, 96);
+  const fbm = (x: number, y: number) => n1(x, y) * 0.55 + n2(x, y) * 0.3 + n3(x, y) * 0.15;
+
+  const banded = name === "Jupiter" || name === "Saturn";
+  const icy    = name === "Uranus" || name === "Neptune";
+  const cloudy = name === "Venus";
+
+  const px = new THREE.Color();
+  for (let y = 0; y < H; y++) {
+    const v = y / H;
+    for (let x = 0; x < W; x++) {
+      const u = x / W;
+      let light: number;
+      if (banded) {
+        // Latitudinal bands warped by turbulence
+        const turb = fbm(u * 3, v * 2) * 0.35;
+        const band = Math.sin((v + turb) * Math.PI * (name === "Jupiter" ? 14 : 10));
+        light = 0.72 + band * 0.20 + (fbm(u * 6, v * 6) - 0.5) * 0.12;
+      } else if (icy) {
+        // Smooth ice-giant gradient with faint streaks
+        const streak = Math.sin((v + fbm(u * 2, v) * 0.15) * Math.PI * 6) * 0.05;
+        light = 0.82 + streak + (fbm(u * 4, v * 4) - 0.5) * 0.06;
+      } else if (cloudy) {
+        // Swirling sulfuric cloud deck
+        const swirl = fbm(u * 4 + fbm(u * 2, v * 2) * 0.8, v * 3);
+        light = 0.75 + (swirl - 0.5) * 0.45;
+      } else {
+        // Rocky regolith mottling
+        const m = fbm(u * 5, v * 5);
+        light = 0.55 + (m - 0.5) * 0.75;
+      }
+      px.copy(base).multiplyScalar(Math.max(0.15, light));
+      const i = (y * W + x) * 4;
+      img.data[i] = px.r * 255; img.data[i + 1] = px.g * 255; img.data[i + 2] = px.b * 255; img.data[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+
+  // Craters for airless rock
+  if (["Moon", "Mercury", "Pluto", "Chiron"].includes(name)) {
+    let s = seed * 233280;
+    const rnd = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+    const count = name === "Moon" ? 90 : 60;
+    for (let i = 0; i < count; i++) {
+      const cxp = rnd() * W, cyp = rnd() * H, cr = 1.5 + rnd() * rnd() * 9;
+      const g = ctx.createRadialGradient(cxp, cyp, 0, cxp, cyp, cr);
+      g.addColorStop(0, "rgba(0,0,0,0.38)");
+      g.addColorStop(0.75, "rgba(0,0,0,0.18)");
+      g.addColorStop(0.9, "rgba(255,255,255,0.12)");
+      g.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(cxp, cyp, cr, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  return tex;
+}
+
 // ─── Shaders ─────────────────────────────────────────────────────────────────
 
 const CORONA_VERT = `
@@ -144,8 +242,8 @@ function Sun() {
 
   return (
     <group>
-      <pointLight color="#fff8e0" intensity={4.0} distance={140} decay={1.1} />
-      <ambientLight color="#0d0a20" intensity={0.45} />
+      <pointLight color="#fff8e0" intensity={7.0} distance={220} decay={0.9} />
+      <ambientLight color="#1a1535" intensity={0.55} />
       <group ref={rotRef}>
         <mesh ref={coreRef}>
           <sphereGeometry args={[1.35, 48, 48]} />
@@ -164,14 +262,42 @@ function Sun() {
   );
 }
 
-// ─── Orbit ring ───────────────────────────────────────────────────────────────
+// ─── Orbit ring + motion trail ────────────────────────────────────────────────
 
 function OrbitRing({ radius, color }: { radius: number; color: string }) {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]}>
-      <ringGeometry args={[radius - 0.018, radius + 0.018, 160]} />
-      <meshBasicMaterial color={color} transparent opacity={0.10} side={THREE.DoubleSide} depthWrite={false} />
+      <ringGeometry args={[radius - 0.012, radius + 0.012, 160]} />
+      <meshBasicMaterial color={color} transparent opacity={0.07} side={THREE.DoubleSide} depthWrite={false} />
     </mesh>
+  );
+}
+
+// Golden comet-trail arc fading behind the planet (additive, vertex-faded)
+function OrbitTrail({ radius, longitude, color }: { radius: number; longitude: number; color: string }) {
+  const geo = useMemo(() => {
+    const SEGS = 90, SWEEP = 130; // degrees of trail behind the body
+    const pos: number[] = [], col: number[] = [];
+    const c = new THREE.Color(color);
+    for (let i = 0; i < SEGS; i++) {
+      const f0 = i / SEGS, f1 = (i + 1) / SEGS;
+      const a0 = ((longitude - f0 * SWEEP) * Math.PI) / 180;
+      const a1 = ((longitude - f1 * SWEEP) * Math.PI) / 180;
+      pos.push(radius * Math.cos(a0), 0, -radius * Math.sin(a0));
+      pos.push(radius * Math.cos(a1), 0, -radius * Math.sin(a1));
+      const w0 = Math.pow(1 - f0, 2.2), w1 = Math.pow(1 - f1, 2.2);
+      col.push(c.r * w0, c.g * w0, c.b * w0, c.r * w1, c.g * w1, c.b * w1);
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("color",    new THREE.Float32BufferAttribute(col, 3));
+    return g;
+  }, [radius, longitude, color]);
+
+  return (
+    <lineSegments geometry={geo}>
+      <lineBasicMaterial vertexColors transparent opacity={0.85} blending={THREE.AdditiveBlending} depthWrite={false} />
+    </lineSegments>
   );
 }
 
@@ -216,6 +342,9 @@ function Planet({
   const selfRotRef = useRef<THREE.Group>(null);
   const rotSpeed   = ROTATION_SPEEDS[name] ?? 0.03;
 
+  // Procedural surface texture — generated once per planet
+  const surfaceTex = useMemo(() => makePlanetTexture(name, color), [name, color]);
+
   // Per-planet atmospheric haze material
   const atmoMat = useMemo(() => new THREE.ShaderMaterial({
     vertexShader: ATMO_VERT,
@@ -258,7 +387,7 @@ function Planet({
         <meshBasicMaterial color={color} transparent opacity={isHovered ? 0.16 : 0.06} depthWrite={false} />
       </mesh>
 
-      {/* Planet body — self-rotating */}
+      {/* Planet body — sun-lit textured surface, self-rotating */}
       <group ref={selfRotRef}>
         <mesh
           ref={meshRef}
@@ -266,13 +395,14 @@ function Planet({
           onPointerEnter={(e) => { e.stopPropagation(); onPointerEnter(); }}
           onPointerLeave={() => onPointerLeave()}
         >
-          <sphereGeometry args={[size, 32, 32]} />
+          <sphereGeometry args={[size, 48, 48]} />
           <meshStandardMaterial
-            color={color}
+            map={surfaceTex}
+            color="#ffffff"
             emissive={color}
-            emissiveIntensity={isHovered ? 2.0 : 1.1}
-            roughness={0.55}
-            metalness={0.08}
+            emissiveIntensity={isHovered ? 0.5 : 0.12}
+            roughness={0.82}
+            metalness={0.02}
           />
         </mesh>
       </group>
@@ -331,6 +461,19 @@ function AspectLine({
       <meshBasicMaterial ref={matRef} color={color} transparent opacity={0.35} depthWrite={false} />
     </mesh>
   );
+}
+
+// ─── Depth grid — holographic floor plane ─────────────────────────────────────
+
+function DepthGrid() {
+  const grid = useMemo(() => {
+    const g = new THREE.GridHelper(160, 64, 0x2a1e66, 0x14103a);
+    g.position.y = -4.2;
+    const mats = Array.isArray(g.material) ? g.material : [g.material];
+    mats.forEach(m => { m.transparent = true; m.opacity = 0.22; m.depthWrite = false; });
+    return g;
+  }, []);
+  return <primitive object={grid} />;
 }
 
 // ─── Zodiac belt ──────────────────────────────────────────────────────────────
@@ -497,8 +640,16 @@ function OrreryScene({
         const r = ORBITAL_RADII[p.name];
         if (!r) return null;
         const meta = getPlanetMeta(p.name as PlanetName);
-        return <OrbitRing key={p.name} radius={r} color={meta.color} />;
+        return (
+          <group key={p.name}>
+            <OrbitRing radius={r} color={meta.color} />
+            <OrbitTrail radius={r} longitude={p.longitude} color={meta.color} />
+          </group>
+        );
       })}
+
+      {/* Depth grid — perspective plane fading into the void */}
+      <DepthGrid />
 
       {saturnPos && <SaturnRings pos={saturnPos} />}
 

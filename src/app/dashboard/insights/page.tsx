@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { ScanBar } from "@/components/three/HUDPanel";
 import { PLANET_SYMBOLS, SIGN_SYMBOLS, ZODIAC_SIGNS, TRADITIONAL_RULERS } from "@/lib/astrology/types";
@@ -2518,7 +2517,6 @@ export default function InsightsPage() {
       <div className="nebula-orb" style={{ width: 500, height: 500, left: "10%", top: "0%", background: "rgba(124,58,237,0.06)", filter: "blur(100px)" }} />
       <div className="nebula-orb" style={{ width: 400, height: 400, right: "5%", bottom: "10%", background: "rgba(6,182,212,0.04)", filter: "blur(80px)" }} />
 
-      <Sidebar />
 
       <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-x-hidden">
 

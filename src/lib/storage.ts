@@ -1,4 +1,5 @@
 import type { ChartData } from "@/lib/astrology/types";
+import type { MarriageSignificator } from "@/lib/astrology/marriages";
 
 export interface StoredProfile {
   id: string;
@@ -157,6 +158,74 @@ export function deleteOracleMemory(profileId: string, memoryId: string): void {
 export function updateOracleMemory(profileId: string, memoryId: string, patch: Partial<Pick<OracleMemory, "title" | "category" | "context">>): void {
   const list = getOracleMemories(profileId).map(m => m.id === memoryId ? { ...m, ...patch } : m);
   localStorage.setItem(memoriesKey(profileId), JSON.stringify(list));
+}
+
+// ── Guide Mode (Star = astrological | Spirit = spiritual) ─────────────────────
+
+export type GuideMode = "star" | "spirit";
+
+const GUIDE_MODE_KEY = "cosmora_guide_mode";
+
+export function getGuideMode(): GuideMode {
+  if (typeof window === "undefined") return "star";
+  return (localStorage.getItem(GUIDE_MODE_KEY) as GuideMode) ?? "star";
+}
+
+export function setGuideMode(mode: GuideMode): void {
+  localStorage.setItem(GUIDE_MODE_KEY, mode);
+  // Live-notify any mounted pages so readings can crossfade immediately
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("cosmora-guide-mode", { detail: mode }));
+  }
+}
+
+// ── Marriage unlock progression (1 = first marriage visible, etc.) ────────────
+
+const unlockKey = (profileId: string) => `cosmora_marriage_unlocked_${profileId}`;
+
+export function getUnlockedMarriages(profileId: string): number {
+  if (typeof window === "undefined") return 1;
+  const n = parseInt(localStorage.getItem(unlockKey(profileId)) ?? "1", 10);
+  return Math.min(4, Math.max(1, isNaN(n) ? 1 : n));
+}
+
+export function unlockNextMarriage(profileId: string): number {
+  const next = Math.min(4, getUnlockedMarriages(profileId) + 1);
+  localStorage.setItem(unlockKey(profileId), String(next));
+  return next;
+}
+
+// ── Marriage Reading Archive ───────────────────────────────────────────────────
+
+export interface MarriageReading {
+  id: string;
+  profileId: string;
+  generatedAt: string;
+  guideMode: GuideMode;
+  starText: string;    // full astrological interpretation (always stored)
+  finalText: string;   // displayed text (spirit rewrite if applicable)
+  significators: MarriageSignificator[];
+}
+
+const marriageKey = (profileId: string) => `cosmora_marriages_${profileId}`;
+
+export function getMarriageReadings(profileId: string): MarriageReading[] {
+  if (typeof window === "undefined") return [];
+  try { return JSON.parse(localStorage.getItem(marriageKey(profileId)) ?? "[]"); } catch { return []; }
+}
+
+export function saveMarriageReading(reading: Omit<MarriageReading, "id">): MarriageReading {
+  const full: MarriageReading = { ...reading, id: generateId() };
+  const list = getMarriageReadings(reading.profileId);
+  list.unshift(full);
+  if (list.length > 50) list.splice(50);
+  localStorage.setItem(marriageKey(reading.profileId), JSON.stringify(list));
+  return full;
+}
+
+export function deleteMarriageReading(profileId: string, readingId: string): void {
+  const list = getMarriageReadings(profileId).filter(r => r.id !== readingId);
+  localStorage.setItem(marriageKey(profileId), JSON.stringify(list));
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

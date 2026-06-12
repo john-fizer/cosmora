@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { PLANET_SYMBOLS, SIGN_SYMBOLS, ZODIAC_SIGNS } from "@/lib/astrology/types";
 import type { ChartData, PlanetName, ZodiacSign } from "@/lib/astrology/types";
@@ -646,7 +645,6 @@ export default function ElectionalPage() {
       <div className="h-screen flex overflow-hidden">
         <DashboardBg />
         <div className="nebula-orb" style={{ width: 500, height: 500, left: "20%", top: "5%", background: "rgba(124,58,237,0.07)", filter: "blur(100px)" }} />
-        <Sidebar />
         <div className="flex-1 flex flex-col items-center justify-center gap-6 md:ml-[68px] mb-[60px] md:mb-0 px-6">
           <motion.div
             animate={{ scale: [1, 1.06, 1], opacity: [0.75, 1, 0.75] }}
@@ -687,7 +685,6 @@ export default function ElectionalPage() {
       <div className="nebula-orb" style={{ width: 500, height: 500, left: "-5%", top: "-5%", background: "rgba(34,197,94,0.04)", filter: "blur(100px)" }} />
       <div className="nebula-orb" style={{ width: 400, height: 400, right: "5%", bottom: "10%", background: "rgba(124,58,237,0.05)", filter: "blur(90px)" }} />
 
-      <Sidebar />
 
       <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-x-hidden">
 

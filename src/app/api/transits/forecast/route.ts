@@ -78,7 +78,13 @@ function getSig(
 
 export async function POST(req: NextRequest) {
   try {
-    const { natal, months } = await req.json() as { natal: ChartData; months: number };
+    const { natal, months, customerId } = await req.json() as { natal: ChartData; months: number; customerId?: string };
+
+    // Pro-gate
+    const { isPro } = await import("@/lib/subscription");
+    if (!isPro(customerId ?? null)) {
+      return NextResponse.json({ error: "pro_required" }, { status: 403 });
+    }
 
     if (!natal) {
       return NextResponse.json({ error: "natal chart required" }, { status: 400 });

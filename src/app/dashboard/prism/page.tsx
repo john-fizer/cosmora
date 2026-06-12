@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sidebar } from "@/components/dashboard/Sidebar";
 import { ChartWheel } from "@/components/chart/ChartWheel";
 import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
 import type { ChartData, PlanetName } from "@/lib/astrology/types";
@@ -208,7 +207,6 @@ export default function PrismPage() {
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ background: "#050510" }}>
-        <Sidebar />
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
@@ -220,7 +218,6 @@ export default function PrismPage() {
 
   return (
     <div className="fixed inset-0 overflow-hidden" style={{ background: "#050510" }}>
-      <Sidebar />
 
       {/* ── Background prismatic gradient ── */}
       <div className="absolute inset-0 pointer-events-none" style={{

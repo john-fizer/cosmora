@@ -149,6 +149,17 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
   const [hoveredPlanet, setHoveredPlanet] = useState<string | null>(null);
   const [showDecans, setShowDecans] = useState(initShowDecans);
 
+  // Holographic parallax tilt — the wheel responds to the viewer like a projection
+  const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
+  const handleTiltMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!interactive) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ rx: -py * 10, ry: px * 10 });
+  };
+  const handleTiltLeave = () => setTilt({ rx: 0, ry: 0 });
+
   const cx = size / 2;
   const cy = size / 2;
 
@@ -189,7 +200,30 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
   ];
 
   return (
-    <div className="relative" style={{ width: size, height: size }}>
+    <div
+      className="relative"
+      style={{ width: size, height: size, perspective: 900 }}
+      onMouseMove={handleTiltMove}
+      onMouseLeave={handleTiltLeave}
+    >
+     <motion.div
+      className="relative w-full h-full"
+      initial={{ opacity: 0, scale: 0.92, rotateZ: -8 }}
+      animate={{ opacity: 1, scale: 1, rotateZ: 0, rotateX: tilt.rx, rotateY: tilt.ry }}
+      transition={{ rotateX: { type: "spring", stiffness: 120, damping: 18 }, rotateY: { type: "spring", stiffness: 120, damping: 18 }, default: { duration: 1.1, ease: [0.16, 1, 0.3, 1] } }}
+      style={{ transformStyle: "preserve-3d" }}
+     >
+
+      {/* ── Rotating holographic scan beam ── */}
+      <motion.div
+        className="absolute inset-0 rounded-full pointer-events-none z-10"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+        style={{
+          background: "conic-gradient(from 0deg, transparent 0deg, transparent 330deg, rgba(124,58,237,0.10) 350deg, rgba(167,139,250,0.16) 358deg, transparent 360deg)",
+          mixBlendMode: "screen",
+        }}
+      />
 
       {/* ── Holographic ambient orbs ── */}
       <HoloOrb x={-88} y={size * 0.12} scale={1.0} hue={250} delay={0} />
@@ -708,6 +742,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
           );
         })()}
       </AnimatePresence>
+     </motion.div>
     </div>
   );
 }

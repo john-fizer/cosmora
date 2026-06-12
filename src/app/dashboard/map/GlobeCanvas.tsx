@@ -57,6 +57,146 @@ function buildLineGeo(lines: number[][][], r: number): THREE.BufferGeometry {
   return new THREE.BufferGeometry().setFromPoints(pts);
 }
 
+// ─── Atmosphere — Fresnel rim glow (real-time tracker look) ───────────────────
+const atmoVertex = /* glsl */ `
+  varying vec3 vNormal;
+  varying vec3 vViewDir;
+  void main() {
+    vNormal = normalize(normalMatrix * normal);
+    vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+    vViewDir = normalize(-mvPos.xyz);
+    gl_Position = projectionMatrix * mvPos;
+  }
+`;
+
+const atmoFragment = /* glsl */ `
+  varying vec3 vNormal;
+  varying vec3 vViewDir;
+  uniform vec3 uColor;
+  uniform float uPower;
+  uniform float uIntensity;
+  void main() {
+    float fres = pow(1.0 - abs(dot(vNormal, vViewDir)), uPower);
+    gl_FragColor = vec4(uColor, fres * uIntensity);
+  }
+`;
+
+function Atmosphere() {
+  const innerUniforms = useMemo(() => ({
+    uColor:     { value: new THREE.Color("#2E7FFF") },
+    uPower:     { value: 3.2 },
+    uIntensity: { value: 1.15 },
+  }), []);
+  const outerUniforms = useMemo(() => ({
+    uColor:     { value: new THREE.Color("#1A56E8") },
+    uPower:     { value: 4.5 },
+    uIntensity: { value: 0.55 },
+  }), []);
+  return (
+    <>
+      {/* Inner limb glow — hugs the surface */}
+      <mesh>
+        <sphereGeometry args={[GLOBE_R * 1.015, 64, 64]} />
+        <shaderMaterial
+          vertexShader={atmoVertex} fragmentShader={atmoFragment}
+          uniforms={innerUniforms} transparent depthWrite={false}
+          blending={THREE.AdditiveBlending} side={THREE.FrontSide}
+        />
+      </mesh>
+      {/* Outer halo — soft expansive scatter */}
+      <mesh>
+        <sphereGeometry args={[GLOBE_R * 1.13, 64, 64]} />
+        <shaderMaterial
+          vertexShader={atmoVertex} fragmentShader={atmoFragment}
+          uniforms={outerUniforms} transparent depthWrite={false}
+          blending={THREE.AdditiveBlending} side={THREE.BackSide}
+        />
+      </mesh>
+    </>
+  );
+}
+
+// ─── City night lights — clustered glow like Earth at night ──────────────────
+// Major population centers: [lat, lon, weight]
+const NIGHT_CITIES: [number, number, number][] = [
+  // North America
+  [40.7, -74.0, 9], [34.1, -118.2, 8], [41.9, -87.6, 7], [29.8, -95.4, 6], [33.7, -84.4, 6],
+  [25.8, -80.2, 6], [32.8, -96.8, 6], [39.0, -77.0, 6], [42.4, -71.1, 5], [37.8, -122.4, 6],
+  [47.6, -122.3, 5], [45.5, -73.6, 5], [43.7, -79.4, 6], [19.4, -99.1, 8], [49.3, -123.1, 4],
+  [36.2, -115.1, 5], [33.4, -112.1, 5], [39.7, -105.0, 4], [44.98, -93.27, 4], [29.4, -98.5, 4],
+  // South America
+  [-23.6, -46.6, 8], [-22.9, -43.2, 7], [-34.6, -58.4, 7], [-33.4, -70.7, 5], [4.7, -74.1, 5],
+  [-12.0, -77.0, 5], [10.5, -66.9, 4], [-3.1, -60.0, 3], [-15.8, -47.9, 4], [6.2, -75.6, 4],
+  // Europe
+  [51.5, -0.1, 8], [48.9, 2.4, 8], [40.4, -3.7, 6], [41.4, 2.2, 5], [52.5, 13.4, 6],
+  [45.5, 9.2, 5], [41.9, 12.5, 5], [52.4, 4.9, 5], [50.8, 4.4, 4], [48.2, 16.4, 4],
+  [55.8, 37.6, 7], [59.9, 30.3, 5], [50.45, 30.5, 4], [52.2, 21.0, 4], [47.5, 19.0, 4],
+  [38.7, -9.1, 4], [53.3, -6.2, 3], [59.3, 18.1, 4], [60.2, 24.9, 3], [55.7, 12.6, 4],
+  // Africa & Middle East
+  [30.0, 31.2, 7], [6.5, 3.4, 6], [-26.2, 28.0, 6], [-33.9, 18.4, 4], [9.0, 38.7, 4],
+  [-1.3, 36.8, 4], [14.7, -17.5, 3], [33.6, -7.6, 4], [36.8, 10.2, 3], [32.1, 34.8, 5],
+  [25.3, 55.3, 6], [24.7, 46.7, 5], [35.7, 51.4, 6], [33.3, 44.4, 4], [41.0, 29.0, 7],
+  // Asia
+  [35.7, 139.7, 9], [34.7, 135.5, 7], [37.6, 127.0, 8], [39.9, 116.4, 8], [31.2, 121.5, 9],
+  [22.3, 114.2, 7], [23.1, 113.3, 7], [30.6, 104.1, 6], [22.5, 88.4, 6], [28.6, 77.2, 8],
+  [19.1, 72.9, 8], [13.1, 80.3, 5], [12.97, 77.6, 6], [24.9, 67.0, 6], [23.8, 90.4, 6],
+  [13.8, 100.5, 6], [1.3, 103.8, 5], [-6.2, 106.8, 7], [14.6, 121.0, 6], [10.8, 106.7, 5],
+  [21.0, 105.8, 4], [3.1, 101.7, 5], [25.0, 121.5, 6], [35.0, 135.8, 4], [43.1, 141.3, 3],
+  // Oceania
+  [-33.9, 151.2, 6], [-37.8, 145.0, 5], [-27.5, 153.0, 4], [-31.9, 115.9, 3], [-36.8, 174.8, 3],
+];
+
+function NightLights() {
+  const { coreGeo, hazeGeo } = useMemo(() => {
+    const rand = seededRand(42);
+    const corePos: number[] = [], coreCol: number[] = [];
+    const hazePos: number[] = [], hazeCol: number[] = [];
+    const warm = new THREE.Color("#FFD9A0");
+    const cool = new THREE.Color("#BFD9FF");
+
+    for (const [lat, lon, w] of NIGHT_CITIES) {
+      // Core city point
+      const p = ll2xyz(lat, lon, GLOBE_R + 0.008);
+      corePos.push(p.x, p.y, p.z);
+      const c = warm.clone().lerp(cool, rand() * 0.35);
+      coreCol.push(c.r, c.g, c.b);
+
+      // Sprawl cluster — density scales with weight
+      const n = w * 7;
+      for (let i = 0; i < n; i++) {
+        const spread = 0.4 + w * 0.22;
+        const dLat = (rand() - 0.5) * spread * 2;
+        const dLon = (rand() - 0.5) * spread * 2.6;
+        const fall = Math.exp(-(dLat * dLat + dLon * dLon) / (spread * spread * 0.5));
+        if (rand() > fall) continue;
+        const q = ll2xyz(lat + dLat, lon + dLon, GLOBE_R + 0.006);
+        hazePos.push(q.x, q.y, q.z);
+        const hc = warm.clone().multiplyScalar(0.35 + fall * 0.55);
+        hazeCol.push(hc.r, hc.g, hc.b);
+      }
+    }
+
+    const mk = (pos: number[], col: number[]) => {
+      const g = new THREE.BufferGeometry();
+      g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+      g.setAttribute("color",    new THREE.Float32BufferAttribute(col, 3));
+      return g;
+    };
+    return { coreGeo: mk(corePos, coreCol), hazeGeo: mk(hazePos, hazeCol) };
+  }, []);
+
+  return (
+    <>
+      <points geometry={coreGeo}>
+        <pointsMaterial size={0.026} vertexColors transparent opacity={0.95} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} />
+      </points>
+      <points geometry={hazeGeo}>
+        <pointsMaterial size={0.013} vertexColors transparent opacity={0.55} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} />
+      </points>
+    </>
+  );
+}
+
 // ─── Dot-matrix globe surface ─────────────────────────────────────────────────
 function DotSurface() {
   const geo = useMemo(() => {
@@ -487,11 +627,8 @@ function Scene({
       {/* Decorative orbital rings — outside globe rotation */}
       <OrbitalRings />
 
-      {/* Atmosphere halo — outside globe rotation */}
-      <mesh>
-        <sphereGeometry args={[ATMO_R, 32, 32]} />
-        <meshPhongMaterial color="#1A4AFF" transparent opacity={0.04} side={THREE.BackSide} depthWrite={false} />
-      </mesh>
+      {/* Atmosphere — Fresnel rim glow, outside globe rotation */}
+      <Atmosphere />
 
       {/* ── Everything geo: single rotating group ── */}
       <group ref={globeGroupRef}>
@@ -504,6 +641,9 @@ function Scene({
 
         {/* Dot-matrix surface */}
         <DotSurface />
+
+        {/* City night lights — Earth-at-night clusters */}
+        <NightLights />
 
         {/* Geography lines */}
         <GeoLines />

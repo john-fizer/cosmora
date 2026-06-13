@@ -331,7 +331,7 @@ export default function CosmicJourney({ progress, quality = "high" }: {
       camera={{ position: [0, 34, 110], fov: 46, near: 0.1, far: 900 }}
       dpr={quality === "high" ? [1, 2] : [1, 1.25]}
       gl={{ antialias: quality === "high", alpha: false, powerPreference: "high-performance" }}
-      style={{ position: "fixed", inset: 0, background: "#08080F" }}
+      style={{ position: "absolute", inset: 0, background: "#08080F" }}
     >
       <color attach="background" args={["#08080F"]} />
       <Suspense fallback={null}>

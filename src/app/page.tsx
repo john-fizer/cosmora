@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { COLOR, FONT, SOLAR, GLOW } from "@/lib/design/tokens";
 import { GlowButton, Panel, SectionHeading, Em, DataReadout } from "@/components/ui/primitives";
 import CinematicHero from "@/components/landing/CinematicHero";
+import ZodiacMatrix from "@/components/landing/ZodiacMatrix";
 
 // ─── Copy ─────────────────────────────────────────────────────────────────────
 
@@ -61,6 +62,9 @@ export default function LandingPage() {
 
       {/* ════════ HERO — cinematic cosmic video, liquid-glass chrome ════════ */}
       <CinematicHero />
+
+      {/* ════════ ZODIAC MATRIX — scroll telescopes into the living chart ════════ */}
+      <ZodiacMatrix />
 
       {/* ════════ THE INSTRUMENT — features ════════ */}
       <section id="instrument" className="relative px-7 lg:px-16 py-28" style={{ background: COLOR.void, zIndex: 20 }}>

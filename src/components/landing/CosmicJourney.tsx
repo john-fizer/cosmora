@@ -253,21 +253,18 @@ function JourneyEarth({ position, sunDir }: { position: THREE.Vector3; sunDir: T
 function JourneyMoon({ earthPos }: { earthPos: THREE.Vector3 }) {
   const tex = useLoader(THREE.TextureLoader, "/textures/planets/2k_moon.jpg");
   tex.colorSpace = THREE.SRGBColorSpace;
-  const orbit = useRef<THREE.Group>(null);
   const moon = useRef<THREE.Mesh>(null);
-  useFrame((_, dt) => {
-    if (orbit.current) orbit.current.rotation.y += dt * 0.12;
-    if (moon.current) moon.current.rotation.y += dt * 0.04;
-  });
+  useFrame((_, dt) => { if (moon.current) moon.current.rotation.y += dt * 0.04; });
+  // Parked upper-RIGHT of Earth and toward the camera (+x +y +z) so it sits in
+  // the open space beside Earth, in front (never occluded), clearly in frame.
+  // Soft emissive so the night side still reads (the Moon has no city lights).
   return (
-    <group position={earthPos}>
-      <group ref={orbit} rotation={[0.18, 0, 0.08]}>
-        <mesh ref={moon} position={[2.1, 0, 0]}>
-          <sphereGeometry args={[0.27, 48, 48]} />
-          <meshStandardMaterial map={tex} roughness={1} metalness={0} />
-        </mesh>
-      </group>
-    </group>
+    <mesh ref={moon} position={[earthPos.x + 1.85, earthPos.y + 0.95, earthPos.z + 0.4]}>
+      <sphereGeometry args={[0.27, 64, 64]} />
+      {/* Sun-lit (map) + faint self-illumination via the texture itself as the
+          emissive map, so craters read even on the night side facing the camera. */}
+      <meshStandardMaterial map={tex} roughness={1} metalness={0} emissiveMap={tex} emissive="#ffffff" emissiveIntensity={0.32} />
+    </mesh>
   );
 }
 

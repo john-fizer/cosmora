@@ -6,13 +6,11 @@
  */
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { COLOR, FONT, SOLAR, GLOW } from "@/lib/design/tokens";
 import { GlowButton, Panel, SectionHeading, Em, DataReadout } from "@/components/ui/primitives";
-
-const PlanetHero = dynamic(() => import("@/components/landing/PlanetHero"), { ssr: false });
+import CinematicHero from "@/components/landing/CinematicHero";
 
 // ─── Copy ─────────────────────────────────────────────────────────────────────
 
@@ -61,74 +59,8 @@ export default function LandingPage() {
   return (
     <div style={{ background: COLOR.void, color: COLOR.text1, fontFamily: FONT.body }}>
 
-      {/* Minimal fixed nav */}
-      <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-7 lg:px-16 py-5"
-        style={{ background: "linear-gradient(180deg, rgba(8,8,15,0.9), transparent)" }}>
-        <Link href="/" className="flex items-center gap-3 no-underline">
-          <svg viewBox="0 0 24 24" fill="none" stroke={COLOR.solar} strokeWidth="1.4" className="w-5 h-5">
-            <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
-            <line x1="12" y1="3" x2="12" y2="7" /><line x1="12" y1="17" x2="12" y2="21" />
-            <line x1="3" y1="12" x2="7" y2="12" /><line x1="17" y1="12" x2="21" y2="12" />
-          </svg>
-          <span style={{ fontFamily: FONT.data, fontSize: 13, letterSpacing: "0.3em", color: COLOR.solar }}>COSMORA</span>
-        </Link>
-        <div className="flex items-center gap-3">
-          <a href="#instrument" className="hidden sm:block no-underline" style={{ fontFamily: FONT.data, fontSize: 10, letterSpacing: "0.2em", color: COLOR.text3 }}>FEATURES</a>
-          <Link href="/dashboard" className="no-underline">
-            <span style={{
-              fontFamily: FONT.data, fontSize: 10, letterSpacing: "0.22em", color: COLOR.text2,
-              border: `1px solid ${COLOR.border}`, borderRadius: 999, padding: "8px 18px",
-            }}>
-              ENTER →
-            </span>
-          </Link>
-        </div>
-      </nav>
-
-      {/* ════════ HERO — two-panel, rotating planet on the right ════════ */}
-      <section className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Planet — right side, bleeds off-canvas */}
-        <div className="absolute inset-y-0 right-0 w-full lg:w-[58%] pointer-events-none"
-          style={{ zIndex: 1 }}>
-          <PlanetHero />
-        </div>
-        {/* Left fade so headline always reads over the planet on small screens */}
-        <div className="absolute inset-0 lg:hidden" style={{ zIndex: 2, background: "linear-gradient(180deg, rgba(8,8,15,0.4), rgba(8,8,15,0.82))" }} />
-        <div className="absolute inset-y-0 left-0 w-2/3 hidden lg:block" style={{ zIndex: 2, background: "linear-gradient(90deg, var(--void) 28%, transparent)" }} />
-
-        {/* Left content */}
-        <div className="relative px-7 lg:px-16 max-w-2xl" style={{ zIndex: 3 }}>
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
-            <p style={{ fontFamily: FONT.data, fontSize: 10, letterSpacing: "0.34em", color: SOLAR(0.75), marginBottom: 22 }}>
-              COSMORA · COSMIC INTELLIGENCE
-            </p>
-            <h1 style={{
-              fontFamily: FONT.body, fontWeight: 400, letterSpacing: "-0.03em", lineHeight: 1.05,
-              fontSize: "clamp(2.6rem, 6vw, 4.8rem)", color: COLOR.text1,
-            }}>
-              Decoding the <Em>architecture</Em> of time
-            </h1>
-            <p style={{ fontFamily: FONT.body, fontSize: 16, lineHeight: 1.75, color: COLOR.text2, marginTop: 26, maxWidth: 440 }}>
-              A precision astrology instrument from 2070. It computes the sky to the arcsecond, stacks two thousand years of timing technique, and reads it back in plain truth — anchored to the one chart that is yours.
-            </p>
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Link href="/dashboard"><GlowButton size="lg">Enter Cosmora</GlowButton></Link>
-              <a href="#instrument" className="no-underline"><GlowButton variant="ghost">See the instrument</GlowButton></a>
-            </div>
-            <div className="mt-12 flex flex-wrap gap-x-7 gap-y-2">
-              <DataReadout items={["8 HOUSE SYSTEMS", "TROPICAL + SIDEREAL", "AI ORACLE"]} color="muted" size={9} />
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Scroll cue */}
-        <div className="absolute bottom-7 left-1/2 -translate-x-1/2" style={{ zIndex: 3 }}>
-          <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            style={{ fontFamily: FONT.data, fontSize: 9, letterSpacing: "0.24em", color: SOLAR(0.5) }}>
-            SCROLL ↓
-          </motion.div>
-        </div>
-      </section>
+      {/* ════════ HERO — cinematic cosmic video, liquid-glass chrome ════════ */}
+      <CinematicHero />
 
       {/* ════════ THE INSTRUMENT — features ════════ */}
       <section id="instrument" className="relative px-7 lg:px-16 py-28" style={{ background: COLOR.void, zIndex: 20 }}>

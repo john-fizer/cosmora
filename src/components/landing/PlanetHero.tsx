@@ -6,9 +6,10 @@
  * Mouse parallax, auto-rotation, GPU-tier aware. No video.
  */
 
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useMemo, useRef, Suspense } from "react";
 import * as THREE from "three";
+import type { MotionValue } from "framer-motion";
 import { QUALITY, detectGpuTier } from "@/lib/design/gpuTier";
 
 const RIM_VERT = /* glsl */ `
@@ -40,7 +41,7 @@ function tex(file: string): THREE.Texture {
   return t;
 }
 
-function Saturn({ segments }: { segments: number }) {
+function Saturn({ segments, progress }: { segments: number; progress?: MotionValue<number> }) {
   const bodyTex = useMemo(() => tex("2k_saturn.jpg"), []);
   const ringTex = useMemo(() => tex("2k_saturn_ring_alpha.png"), []);
   const group = useRef<THREE.Group>(null);
@@ -67,10 +68,22 @@ function Saturn({ segments }: { segments: number }) {
 
   useFrame((_, dt) => {
     if (body.current) body.current.rotation.y += dt * 0.06;
+    // Scroll-driven: planet slides from right→center and grows to fill the frame.
+    // Bounded so the camera never flies past the surface into empty space.
+    if (group.current && progress) {
+      // Clamp the dive at its sweet spot so the planet does the dramatic
+      // zoom then HOLDS — it can never over-zoom out of frame into black.
+      const p = Math.min(0.42, Math.min(1, Math.max(0, progress.get())));
+      const targetX = 1.15 - p * 1.4;        // 1.15 → ~0.56 (drifts toward center)
+      const targetScale = 1 + p * 2.0;       // 1 → ~1.84×
+      group.current.position.x += (targetX - group.current.position.x) * Math.min(dt * 4, 1);
+      const s = group.current.scale.x + (targetScale - group.current.scale.x) * Math.min(dt * 4, 1);
+      group.current.scale.setScalar(s);
+    }
   });
 
   return (
-    <group ref={group} rotation={[0.42, 0, 0.28]}>
+    <group ref={group} position={[1.6, 0, 0]} rotation={[0.42, 0, 0.28]}>
       {/* Planet body */}
       <mesh ref={body}>
         <sphereGeometry args={[1, segments, segments]} />
@@ -115,21 +128,27 @@ function Starfield() {
   );
 }
 
-function ParallaxRig() {
+function ScrollRig({ progress }: { progress?: MotionValue<number> }) {
   const { camera } = useThree();
-  const target = useRef({ x: 0, y: 0 });
+  const px = useRef(0), py = useRef(0), pz = useRef(5);
   useFrame((state, dt) => {
-    const px = state.pointer.x, py = state.pointer.y;
-    target.current.x += (px * 0.5 - target.current.x) * Math.min(dt * 3, 1);
-    target.current.y += (py * 0.3 - target.current.y) * Math.min(dt * 3, 1);
-    camera.position.x = target.current.x;
-    camera.position.y = 0.3 + target.current.y;
+    const p = progress ? Math.min(1, Math.max(0, progress.get())) : 0;
+    // Mouse parallax (eases out as we zoom in so the dive stays steady)
+    const mx = state.pointer.x * 0.4 * (1 - p);
+    const my = state.pointer.y * 0.25 * (1 - p);
+    // Dolly the camera in gently — bounded well outside the growing sphere
+    // so the planet never flies past the frame into empty space.
+    const targetZ = 5 - p * 0.9;
+    px.current += (mx - px.current) * Math.min(dt * 3, 1);
+    py.current += (my - py.current) * Math.min(dt * 3, 1);
+    pz.current += (targetZ - pz.current) * Math.min(dt * 4, 1);
+    camera.position.set(px.current, 0.3 + py.current, pz.current);
     camera.lookAt(0, 0, 0);
   });
   return null;
 }
 
-export default function PlanetHero() {
+export default function PlanetHero({ progress }: { progress?: MotionValue<number> }) {
   const quality = useMemo(() => QUALITY[typeof window !== "undefined" ? detectGpuTier() : "high"], []);
   return (
     <Canvas
@@ -142,8 +161,8 @@ export default function PlanetHero() {
       <directionalLight position={[3, 2, 4]} intensity={2.6} color="#fff2d8" />
       <Suspense fallback={null}>
         <Starfield />
-        <Saturn segments={quality.sphereSegments} />
-        <ParallaxRig />
+        <Saturn segments={quality.sphereSegments} progress={progress} />
+        <ScrollRig progress={progress} />
       </Suspense>
     </Canvas>
   );

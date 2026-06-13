@@ -248,49 +248,80 @@ function JourneyEarth({ position, sunDir }: { position: THREE.Vector3; sunDir: T
   );
 }
 
+// ─── Moon — orbits Earth, the landing target of the dive ──────────────────────
+
+function JourneyMoon({ earthPos }: { earthPos: THREE.Vector3 }) {
+  const tex = useLoader(THREE.TextureLoader, "/textures/planets/2k_moon.jpg");
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const orbit = useRef<THREE.Group>(null);
+  const moon = useRef<THREE.Mesh>(null);
+  useFrame((_, dt) => {
+    if (orbit.current) orbit.current.rotation.y += dt * 0.12;
+    if (moon.current) moon.current.rotation.y += dt * 0.04;
+  });
+  return (
+    <group position={earthPos}>
+      <group ref={orbit} rotation={[0.18, 0, 0.08]}>
+        <mesh ref={moon} position={[2.1, 0, 0]}>
+          <sphereGeometry args={[0.27, 48, 48]} />
+          <meshStandardMaterial map={tex} roughness={1} metalness={0} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
 // ─── Camera rig — the journey ─────────────────────────────────────────────────
-// Spline keyframes: where the camera is and what it looks at, per scroll phase.
+// Both POSITION and LOOK follow smooth Catmull-Rom curves and are lerped each
+// frame, so the camera never snaps rotation at a keyframe (no jumpy/skippy dive).
 
 function CameraRig({ progress, earthPos }: { progress: MotionValue<number>; earthPos: THREE.Vector3 }) {
   const { camera } = useThree();
   const drift = useRef(0);
+  const lookRef = useRef<THREE.Vector3 | null>(null);
 
-  const { posCurve, lookKeys } = useMemo(() => {
+  const { posCurve, lookCurve } = useMemo(() => {
     const e = earthPos;
     const positions = [
-      new THREE.Vector3(0, 34, 110),                       // 0.00 hero — wide cosmos
-      new THREE.Vector3(46, 14, 64),                        // 0.20 entering the system (Saturn side)
-      new THREE.Vector3(24, 5, 30),                         // 0.42 inner system flythrough
-      new THREE.Vector3(e.x + 6.5, 2.6, e.z + 6.5),         // 0.62 Earth approach
-      new THREE.Vector3(e.x + 2.1, 0.7, e.z + 2.1),         // 0.82 close orbit
-      new THREE.Vector3(e.x + 2.9, 1.5, e.z + 3.4),         // 1.00 settle — the moment
+      new THREE.Vector3(0, 34, 110),                  // 0.00 hero — wide cosmos
+      new THREE.Vector3(46, 14, 64),                  // entering the system
+      new THREE.Vector3(24, 5, 30),                   // inner system flythrough
+      new THREE.Vector3(e.x + 6.0, 2.4, e.z + 6.0),   // Earth approach
+      new THREE.Vector3(e.x + 3.4, 1.2, e.z + 3.6),   // closing
+      new THREE.Vector3(e.x + 2.3, 0.8, e.z + 2.6),   // 1.00 settle — clean, always closer
     ];
+    // Look path is also a smooth curve, and it eases onto Earth well before the end
     const looks = [
-      new THREE.Vector3(0, 0, 0),       // at the sun
       new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(e.x * 0.6, 0, e.z * 0.6),
+      new THREE.Vector3(e.x * 0.25, 0, e.z * 0.25),
+      new THREE.Vector3(e.x * 0.7, 0, e.z * 0.7),
       e.clone(),
       e.clone(),
       e.clone(),
     ];
-    return { posCurve: new THREE.CatmullRomCurve3(positions, false, "centripetal", 0.6), lookKeys: looks };
+    return {
+      posCurve: new THREE.CatmullRomCurve3(positions, false, "centripetal", 0.5),
+      lookCurve: new THREE.CatmullRomCurve3(looks, false, "centripetal", 0.5),
+    };
   }, [earthPos]);
 
   useFrame((_, dt) => {
     drift.current += dt;
     const t = Math.min(1, Math.max(0, progress.get()));
+    const k = Math.min(dt * 3.5, 1); // shared follow factor — smooth, not snappy
 
-    // Position along spline + tiny ambient drift so the frame is never dead
+    // Position: smooth curve + tiny drift that fully fades to a calm settle
     const p = posCurve.getPoint(t);
-    p.x += Math.sin(drift.current * 0.13) * 0.35 * (1 - t * 0.7);
-    p.y += Math.cos(drift.current * 0.11) * 0.25 * (1 - t * 0.7);
-    camera.position.lerp(p, Math.min(dt * 5, 1));
+    const fade = Math.max(0, 1 - t * 1.15);
+    p.x += Math.sin(drift.current * 0.13) * 0.3 * fade;
+    p.y += Math.cos(drift.current * 0.11) * 0.22 * fade;
+    camera.position.lerp(p, k);
 
-    // Look target: interpolate between keyframes
-    const seg = Math.min(lookKeys.length - 2, Math.floor(t * (lookKeys.length - 1)));
-    const segT = t * (lookKeys.length - 1) - seg;
-    const look = lookKeys[seg].clone().lerp(lookKeys[seg + 1], segT);
-    camera.lookAt(look);
+    // Look: smooth curve, lerped → fluid rotation, never snaps at a keyframe
+    const desired = lookCurve.getPoint(t);
+    if (!lookRef.current) lookRef.current = desired.clone();
+    else lookRef.current.lerp(desired, k);
+    camera.lookAt(lookRef.current);
   });
 
   return null;
@@ -310,6 +341,7 @@ function JourneyScene({ progress }: { progress: MotionValue<number> }) {
       <JourneySun />
       {PLANET_DEFS.map(def => <PlanetProp key={def.name} def={def} date={date} />)}
       <JourneyEarth position={earthPos} sunDir={sunDir} />
+      <JourneyMoon earthPos={earthPos} />
       {/* Earth orbit ring */}
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[EARTH_ORBIT_R - 0.025, EARTH_ORBIT_R + 0.025, 256]} />

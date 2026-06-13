@@ -1,8 +1,11 @@
 "use client";
 
 import { use, useState, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { DashboardBg } from "@/components/ui/DashboardBg";
+
+const PlanetView3D = dynamic(() => import("@/components/three/PlanetView3D"), { ssr: false });
 import { getPlanetMeta, PLANET_ORDER } from "@/lib/astrology/planetMeta";
 import { useWarpTo } from "@/components/ui/WarpTransition";
 import { getActiveProfileId, getCachedChart } from "@/lib/storage";
@@ -260,24 +263,13 @@ export default function PlanetDetailPage({
           style={{ position: "absolute", bottom: -40, left: "50%", transform: "translateX(-50%)", width: 1200, height: 340, background: `radial-gradient(ellipse, ${meta.glowColor} 0%, transparent 60%)`, filter: "blur(55px)", zIndex: 1 }}
         />
 
-        {/* Planet sphere — only top hemisphere visible = horizon shot */}
+        {/* Realistic 3D planet rising over the horizon */}
         <motion.div
-          initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            position: "absolute", bottom: -400, left: "50%", transform: "translateX(-50%)",
-            width: 920, height: 920, borderRadius: "50%",
-            background: `radial-gradient(circle at 38% 32%, ${meta.color}ff 0%, ${meta.color}cc 22%, ${meta.color}77 50%, ${meta.color}33 72%, transparent 88%)`,
-            boxShadow: `0 0 100px ${meta.glowColor}, 0 0 230px ${meta.glowColor}55, inset 0 -30px 100px rgba(0,0,0,0.5), inset 60px 60px 80px rgba(255,255,255,0.04)`,
-            zIndex: 2,
-          }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }}
+          style={{ position: "absolute", inset: 0, zIndex: 2 }}
         >
-          <div style={{ position: "absolute", top: "11%", left: "17%", width: "28%", height: "18%", borderRadius: "50%", background: "radial-gradient(ellipse, rgba(255,255,255,0.20) 0%, transparent 70%)", transform: "rotate(-18deg)" }} />
-          <div style={{ position: "absolute", top: "7%", left: "24%", width: "10%", height: "7%", borderRadius: "50%", background: "radial-gradient(ellipse, rgba(255,255,255,0.14) 0%, transparent 70%)" }} />
+          <PlanetView3D name={planetName} color={meta.color} atmoColor={meta.glowColor} />
         </motion.div>
-
-        {/* Atmospheric rim glow at the horizon line */}
-        <div style={{ position: "absolute", bottom: 0, left: "50%", transform: "translateX(-50%)", width: 940, height: 10, background: `linear-gradient(to right, transparent, ${meta.color}55 20%, ${meta.color}88 50%, ${meta.color}55 80%, transparent)`, filter: "blur(4px)", zIndex: 3 }} />
 
         {/* Planet name watermark on the sphere surface */}
         <div style={{ position: "absolute", bottom: 24, left: "50%", transform: "translateX(-50%)", color: "rgba(255,255,255,0.04)", fontSize: "clamp(4rem, 9vw, 8rem)", fontFamily: "'Space Grotesk', sans-serif", fontWeight: 900, letterSpacing: "-0.04em", whiteSpace: "nowrap", userSelect: "none", zIndex: 3 }}>

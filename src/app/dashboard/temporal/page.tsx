@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { LoopingVideo } from "@/components/ui/LoopingVideo";
+import { DashboardBg } from "@/components/ui/DashboardBg";
 import { getActiveProfileId, getCachedChart, getProfile, getOraclePersona } from "@/lib/storage";
 import type { ChartData } from "@/lib/astrology/types";
 
@@ -277,11 +277,8 @@ Speak as the living memory of the cosmos. Present tense for past events (the cos
 
   return (
     <div className="relative min-h-screen text-white overflow-x-hidden">
-      <LoopingVideo
-        src="https://d8j0ntlcm91z4.cloudfront.net/user_3EJVjiEA4WaVDp4iCvA6Qzd9BpD/hf_20260603_160202_ae2861ec-6ea8-4772-81ff-0036e51bfdca.mp4"
-        opacity={0.7}
-      />
-      <div className="fixed inset-0" style={{ zIndex: 3, background: "rgba(3,4,18,0.45)" }} />
+      <DashboardBg />
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 3, background: "radial-gradient(ellipse 120% 110% at 50% 50%, transparent 70%, rgba(2,2,8,0.5))" }} />
 
       <style>{`
         @keyframes twinkle {

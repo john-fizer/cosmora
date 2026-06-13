@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { LoopingVideo } from "@/components/ui/LoopingVideo";
+import { DashboardBg } from "@/components/ui/DashboardBg";
 import Link from "next/link";
 import { PLANET_SYMBOLS, SIGN_SYMBOLS } from "@/lib/astrology/types";
 import type { PlanetName, ZodiacSign, ChartData } from "@/lib/astrology/types";
@@ -1313,11 +1313,8 @@ export default function TransitsPage() {
   if (!loading && (!profileId || !natal)) {
     return (
       <div className="h-screen flex overflow-hidden">
-        <LoopingVideo
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_3EJVjiEA4WaVDp4iCvA6Qzd9BpD/hf_20260603_160850_ad65ee26-b1be-4f76-a825-d045f9c89936.mp4"
-          opacity={0.7}
-        />
-        <div className="fixed inset-0" style={{ zIndex: 3, background: "rgba(3,4,18,0.45)" }} />
+        <DashboardBg />
+        <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 3, background: "radial-gradient(ellipse 120% 110% at 50% 50%, transparent 70%, rgba(2,2,8,0.5))" }} />
         <div className="flex-1 flex items-center justify-center md:ml-[68px] relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1361,11 +1358,8 @@ export default function TransitsPage() {
 
   return (
     <div className="h-screen flex overflow-hidden">
-      <LoopingVideo
-        src="https://d8j0ntlcm91z4.cloudfront.net/user_3EJVjiEA4WaVDp4iCvA6Qzd9BpD/hf_20260603_160850_ad65ee26-b1be-4f76-a825-d045f9c89936.mp4"
-        opacity={0.7}
-      />
-      <div className="fixed inset-0" style={{ zIndex: 3, background: "rgba(3,4,18,0.45)" }} />
+      <DashboardBg />
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 3, background: "radial-gradient(ellipse 120% 110% at 50% 50%, transparent 70%, rgba(2,2,8,0.5))" }} />
 
 
       <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-x-hidden">

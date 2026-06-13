@@ -31,11 +31,12 @@ export function DashboardBg() {
     init();
     window.addEventListener("resize", init);
 
+    // Brand palette only — Solar gold + Oracle violet
     const orbs = [
-      { bx: 0.12, by: 0.22, r: 0.30, color: [168, 85,  247], speed: 0.00016, phase: 0   },
-      { bx: 0.80, by: 0.68, r: 0.26, color: [6,  182, 212], speed: 0.00013, phase: 2.1 },
-      { bx: 0.50, by: 0.88, r: 0.22, color: [124, 58, 237], speed: 0.00022, phase: 4.3 },
-      { bx: 0.88, by: 0.15, r: 0.20, color: [34, 211, 238], speed: 0.00018, phase: 1.5 },
+      { bx: 0.12, by: 0.22, r: 0.30, color: [123, 111, 212], speed: 0.00016, phase: 0   },
+      { bx: 0.80, by: 0.68, r: 0.26, color: [200, 165, 91],  speed: 0.00013, phase: 2.1 },
+      { bx: 0.50, by: 0.88, r: 0.22, color: [123, 111, 212], speed: 0.00022, phase: 4.3 },
+      { bx: 0.88, by: 0.15, r: 0.20, color: [200, 165, 91],  speed: 0.00018, phase: 1.5 },
     ];
 
     const draw = () => {
@@ -52,11 +53,11 @@ export function DashboardBg() {
       const py = h * 0.76;
       const pr = Math.min(w, h) * 0.44;
 
-      // Atmospheric halo beyond the sphere
+      // Atmospheric halo beyond the sphere — solar gold
       const halo = ctx.createRadialGradient(px, py, pr * 0.85, px, py, pr * 1.6);
-      halo.addColorStop(0,   "rgba(50, 180, 160, 0.07)");
-      halo.addColorStop(0.4, "rgba(40, 150, 130, 0.04)");
-      halo.addColorStop(1,   "rgba(20, 80,  80,  0)");
+      halo.addColorStop(0,   "rgba(200, 165, 91, 0.07)");
+      halo.addColorStop(0.4, "rgba(160, 130, 70, 0.04)");
+      halo.addColorStop(1,   "rgba(90,  70,  40, 0)");
       ctx.fillStyle = halo;
       ctx.beginPath();
       ctx.arc(px, py, pr * 1.6, 0, Math.PI * 2);
@@ -73,18 +74,18 @@ export function DashboardBg() {
         px - pr * 0.28, py - pr * 0.22, 0,
         px + pr * 0.1,  py + pr * 0.1,  pr * 1.05
       );
-      surf.addColorStop(0,    "rgba(90, 185, 168, 0.22)");
-      surf.addColorStop(0.3,  "rgba(55, 145, 130, 0.15)");
-      surf.addColorStop(0.65, "rgba(25,  80,  90, 0.09)");
-      surf.addColorStop(1,    "rgba(8,   20,  35, 0.04)");
+      surf.addColorStop(0,    "rgba(210, 180, 110, 0.20)");
+      surf.addColorStop(0.3,  "rgba(160, 135, 80, 0.13)");
+      surf.addColorStop(0.65, "rgba(90,  75,  90, 0.08)");
+      surf.addColorStop(1,    "rgba(14,  14,  26, 0.04)");
       ctx.fillStyle = surf;
       ctx.fillRect(px - pr, py - pr, pr * 2, pr * 2);
 
-      // Rim light — cyan edge on upper-left
+      // Rim light — solar gold edge on upper-left
       const rim = ctx.createRadialGradient(px, py, pr * 0.82, px, py, pr);
-      rim.addColorStop(0,   "rgba(78, 205, 196, 0)");
-      rim.addColorStop(0.6, "rgba(78, 205, 196, 0.015)");
-      rim.addColorStop(1,   "rgba(78, 205, 196, 0.07)");
+      rim.addColorStop(0,   "rgba(200, 165, 91, 0)");
+      rim.addColorStop(0.6, "rgba(200, 165, 91, 0.02)");
+      rim.addColorStop(1,   "rgba(200, 165, 91, 0.08)");
       ctx.fillStyle = rim;
       ctx.fillRect(px - pr, py - pr, pr * 2, pr * 2);
 

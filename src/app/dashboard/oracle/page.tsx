@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { LoopingVideo } from "@/components/ui/LoopingVideo";
+import { DashboardBg } from "@/components/ui/DashboardBg";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { LiquidMetalOrb } from "@/components/ui/LiquidMetalOrb";
@@ -913,11 +913,8 @@ export default function OraclePage() {
 
   return (
     <div className="h-screen flex overflow-hidden">
-      <LoopingVideo
-        src="https://d8j0ntlcm91z4.cloudfront.net/user_3EJVjiEA4WaVDp4iCvA6Qzd9BpD/hf_20260603_160206_2beaac9d-c6a7-4aa8-9578-91aa79e900a3.mp4"
-        opacity={0.7}
-      />
-      <div className="fixed inset-0" style={{ zIndex: 3, background: "rgba(3,4,18,0.45)" }} />
+      <DashboardBg />
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 3, background: "radial-gradient(ellipse 120% 110% at 50% 50%, transparent 70%, rgba(2,2,8,0.5))" }} />
 
       <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10">
 

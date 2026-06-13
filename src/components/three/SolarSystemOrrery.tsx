@@ -3,7 +3,7 @@
 import { useRef, useMemo, useState, useEffect, Suspense } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Stars, OrbitControls, Html } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import { CinematicFX } from "./postfx/CinematicFX";
 import * as THREE from "three";
 import type { ChartData, PlanetName, Aspect } from "@/lib/astrology/types";
 import { PLANET_SYMBOLS } from "@/lib/astrology/types";
@@ -19,11 +19,13 @@ const ORBITAL_RADII: Record<string, number> = {
   NorthNode: 6.6, Chiron: 9.4,
 };
 
+// Artistic scale — true-to-scale planets are invisible dots at orbital distance;
+// bumped for visual presence while keeping relative ordering recognizable.
 const PLANET_SIZES: Record<string, number> = {
-  Sun: 1.35, Moon: 0.19, Mercury: 0.15, Venus: 0.21,
-  Mars: 0.18, Jupiter: 0.40, Saturn: 0.34,
-  Uranus: 0.25, Neptune: 0.25, Pluto: 0.14,
-  NorthNode: 0.11, Chiron: 0.11,
+  Sun: 1.35, Moon: 0.34, Mercury: 0.30, Venus: 0.42,
+  Mars: 0.36, Jupiter: 0.78, Saturn: 0.66,
+  Uranus: 0.48, Neptune: 0.48, Pluto: 0.26,
+  NorthNode: 0.18, Chiron: 0.18,
 };
 
 const ROTATION_SPEEDS: Record<string, number> = {
@@ -84,6 +86,25 @@ function loadPlanetFile(file: string): THREE.Texture {
   t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = 4;
   return t;
+}
+
+// ─── Nebula skybox — real cosmic backdrop instead of flat black ───────────────
+
+function Skybox() {
+  const stars = useMemo(() => { const t = new THREE.TextureLoader().load("/textures/space/8k_stars_milky_way.jpg"); t.colorSpace = THREE.SRGBColorSpace; return t; }, []);
+  const nebula = useMemo(() => { const t = new THREE.TextureLoader().load("/textures/space/nebula_brand.png"); t.colorSpace = THREE.SRGBColorSpace; return t; }, []);
+  return (
+    <>
+      <mesh scale={[-1, 1, 1]}>
+        <sphereGeometry args={[260, 48, 48]} />
+        <meshBasicMaterial map={stars} side={THREE.BackSide} color="#7d7799" />
+      </mesh>
+      <mesh scale={[-1, 1, 1]} rotation={[0.2, 1.6, 0.1]}>
+        <sphereGeometry args={[255, 32, 32]} />
+        <meshBasicMaterial map={nebula} side={THREE.BackSide} transparent opacity={0.5} blending={THREE.AdditiveBlending} depthWrite={false} />
+      </mesh>
+    </>
+  );
 }
 
 function hashSeed(s: string): number {
@@ -233,47 +254,27 @@ const ATMO_FRAG = `
 
 // ─── Sun ──────────────────────────────────────────────────────────────────────
 
-function Sun() {
-  const mat1 = useMemo(() => new THREE.ShaderMaterial({
-    vertexShader: CORONA_VERT, fragmentShader: CORONA_FRAG,
-    uniforms: { u_scale: { value: 1.0 } },
-    transparent: true, side: THREE.FrontSide, depthWrite: false,
-  }), []);
-  const mat2 = useMemo(() => new THREE.ShaderMaterial({
-    vertexShader: CORONA_VERT, fragmentShader: CORONA_FRAG,
-    uniforms: { u_scale: { value: 0.55 } },
-    transparent: true, side: THREE.FrontSide, depthWrite: false,
-  }), []);
+function Sun({ onCore }: { onCore?: (m: THREE.Mesh | null) => void }) {
   const coreRef = useRef<THREE.Mesh>(null);
   const rotRef = useRef<THREE.Group>(null);
   const sunTex = useMemo(() => loadPlanetFile("2k_sun.jpg"), []);
 
-  useFrame(({ clock }) => {
-    if (coreRef.current) {
-      const s = 1 + Math.sin(clock.elapsedTime * 1.4) * 0.018;
-      coreRef.current.scale.setScalar(s);
-    }
-    if (rotRef.current) rotRef.current.rotation.y += 0.004;
+  useFrame((_, dt) => {
+    if (rotRef.current) rotRef.current.rotation.y += dt * 0.05;
   });
 
   return (
     <group>
-      <pointLight color="#fff8e0" intensity={7.0} distance={220} decay={0.9} />
-      <ambientLight color="#1a1535" intensity={0.55} />
+      {/* The sun is the ONLY light source — gives every planet a real day/night terminator */}
+      <pointLight color="#fff4dc" intensity={4.5} distance={420} decay={0.55} />
+      <ambientLight color="#13112a" intensity={0.14} />
+      {/* Single bright textured star — bloom does the glow, no nested corona shells */}
       <group ref={rotRef}>
-        <mesh ref={coreRef}>
-          <sphereGeometry args={[1.35, 48, 48]} />
-          <meshStandardMaterial map={sunTex} color="#fff2cc" emissive="#ffb300" emissiveIntensity={1.6} roughness={0.4} metalness={0} />
+        <mesh ref={(m) => { coreRef.current = m as THREE.Mesh; onCore?.(m as THREE.Mesh | null); }}>
+          <sphereGeometry args={[1.35, 64, 64]} />
+          <meshBasicMaterial map={sunTex} color="#ffdca0" toneMapped={false} />
         </mesh>
       </group>
-      <mesh>
-        <sphereGeometry args={[2.0, 32, 32]} />
-        <primitive object={mat1} />
-      </mesh>
-      <mesh>
-        <sphereGeometry args={[3.2, 32, 32]} />
-        <primitive object={mat2} />
-      </mesh>
     </group>
   );
 }
@@ -283,8 +284,8 @@ function Sun() {
 function OrbitRing({ radius, color }: { radius: number; color: string }) {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]}>
-      <ringGeometry args={[radius - 0.012, radius + 0.012, 160]} />
-      <meshBasicMaterial color={color} transparent opacity={0.07} side={THREE.DoubleSide} depthWrite={false} />
+      <ringGeometry args={[radius - 0.01, radius + 0.01, 220]} />
+      <meshBasicMaterial color={color} transparent opacity={0.22} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
     </mesh>
   );
 }
@@ -370,65 +371,27 @@ function Planet({
     return file ? loadPlanetFile(file) : makePlanetTexture(name, color);
   }, [name, color]);
 
-  // Per-planet atmospheric haze material
-  const atmoMat = useMemo(() => new THREE.ShaderMaterial({
-    vertexShader: ATMO_VERT,
-    fragmentShader: ATMO_FRAG,
-    uniforms: {
-      u_color:     { value: new THREE.Color(color) },
-      u_intensity: { value: 0.65 },
-    },
-    transparent: true,
-    side: THREE.FrontSide,
-    depthWrite: false,
-  }), []); // color is stable per planet instance
-
   useFrame((_, dt) => {
     if (selfRotRef.current) selfRotRef.current.rotation.y += rotSpeed * dt;
-
     if (meshRef.current) {
-      const target = isHovered ? 1.4 : 1.0;
+      const target = isHovered ? 1.18 : 1.0;
       const cur = meshRef.current.scale.x;
       meshRef.current.scale.setScalar(cur + (target - cur) * Math.min(dt * 10, 1));
     }
-
-    // Animate atmosphere brightness on hover
-    const intensityTarget = isHovered ? 1.4 : 0.65;
-    atmoMat.uniforms.u_intensity.value +=
-      (intensityTarget - atmoMat.uniforms.u_intensity.value) * Math.min(dt * 6, 1);
   });
 
   return (
     <group position={pos.toArray()}>
-      {/* Atmospheric rim haze */}
-      <mesh>
-        <sphereGeometry args={[size * 3.8, 24, 24]} />
-        <primitive object={atmoMat} />
-      </mesh>
-
-      {/* Inner diffuse glow */}
-      <mesh>
-        <sphereGeometry args={[size * 2.2, 16, 16]} />
-        <meshBasicMaterial color={color} transparent opacity={isHovered ? 0.16 : 0.06} depthWrite={false} />
-      </mesh>
-
-      {/* Planet body — sun-lit textured surface, self-rotating */}
-      <group ref={selfRotRef}>
+      {/* ONE solid sphere, lit by the sun (real day/night terminator). No glow shells. */}
+      <group ref={selfRotRef} rotation={[0, 0, 0.41]}>
         <mesh
           ref={meshRef}
           onClick={(e) => { e.stopPropagation(); onClick(); }}
           onPointerEnter={(e) => { e.stopPropagation(); onPointerEnter(); }}
           onPointerLeave={() => onPointerLeave()}
         >
-          <sphereGeometry args={[size, 48, 48]} />
-          <meshStandardMaterial
-            map={surfaceTex}
-            color="#ffffff"
-            emissive={color}
-            emissiveIntensity={isHovered ? 0.5 : 0.12}
-            roughness={0.82}
-            metalness={0.02}
-          />
+          <sphereGeometry args={[size, 64, 64]} />
+          <meshStandardMaterial map={surfaceTex} roughness={0.95} metalness={0.0} />
         </mesh>
       </group>
 
@@ -624,6 +587,8 @@ function OrreryScene({
   autoRotate: boolean;
 }) {
   const [hovered, setHovered] = useState<string | null>(null);
+  const [sunMesh, setSunMesh] = useState<THREE.Mesh | null>(null);
+  const tier = useMemo(() => detectGpuTier(), []);
   const flyRef = useRef<FlyState>({ active: false, target: null, planetName: null, arrived: false });
 
   const planets = useMemo(() => {
@@ -655,11 +620,12 @@ function OrreryScene({
 
   return (
     <>
-      <color attach="background" args={["#000009"]} />
+      <color attach="background" args={["#05050E"]} />
 
-      <Stars radius={200} depth={60} count={8000} factor={3.5} saturation={0.1} fade speed={0.4} />
+      <Skybox />
+      <Stars radius={170} depth={50} count={3500} factor={2.8} saturation={0.1} fade speed={0.25} />
 
-      <Sun />
+      <Sun onCore={setSunMesh} />
 
       {planets.map(p => {
         const r = ORBITAL_RADII[p.name];
@@ -672,9 +638,6 @@ function OrreryScene({
           </group>
         );
       })}
-
-      {/* Depth grid — perspective plane fading into the void */}
-      <DepthGrid />
 
       {saturnPos && <SaturnRings pos={saturnPos} />}
 
@@ -706,10 +669,7 @@ function OrreryScene({
 
       <OrreryCamera flyRef={flyRef} onArrived={(name) => onNavigate?.(name)} autoRotate={autoRotate} />
 
-      <EffectComposer>
-        <Bloom luminanceThreshold={0.10} luminanceSmoothing={0.85} intensity={1.6} mipmapBlur />
-        <Vignette eskil={false} offset={0.3} darkness={0.7} />
-      </EffectComposer>
+      <CinematicFX quality={tier} sun={sunMesh} dof={tier === "high"} bokeh={1.4} bloom={1.5} />
     </>
   );
 }

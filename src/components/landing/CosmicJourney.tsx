@@ -261,9 +261,10 @@ function JourneyMoon({ earthPos }: { earthPos: THREE.Vector3 }) {
   return (
     <mesh ref={moon} position={[earthPos.x + 1.85, earthPos.y + 0.95, earthPos.z + 0.4]}>
       <sphereGeometry args={[0.27, 64, 64]} />
-      {/* Sun-lit (map) + faint self-illumination via the texture itself as the
-          emissive map, so craters read even on the night side facing the camera. */}
-      <meshStandardMaterial map={tex} roughness={1} metalness={0} emissiveMap={tex} emissive="#ffffff" emissiveIntensity={0.32} />
+      {/* Physically lit by the SUN (pointLight) → a real terminator, lit on the
+          sun-facing side like Earth. Faint bluish earthshine fill (Earth's
+          reflected light) keeps the dark side just visible — also real. */}
+      <meshStandardMaterial map={tex} roughness={1} metalness={0} emissiveMap={tex} emissive="#33405e" emissiveIntensity={0.14} />
     </mesh>
   );
 }

@@ -44,25 +44,30 @@ function sample(p: number): { x: number; y: number; s: number } {
   return { x: a[1] + (b[1] - a[1]) * e, y: a[2] + (b[2] - a[2]) * e, s: a[3] + (b[3] - a[3]) * e };
 }
 
-function Earth({ progress }: { progress?: MotionValue<number> }) {
-  const [day, night, clouds] = useLoader(THREE.TextureLoader, [
-    "/textures/planets/2k_earth_daymap.jpg",
-    "/textures/planets/2k_earth_nightmap.jpg",
-    "/textures/planets/2k_earth_clouds.jpg",
-  ]);
-  useMemo(() => { day.colorSpace = THREE.SRGBColorSpace; night.colorSpace = THREE.SRGBColorSpace; }, [day, night]);
+function Saturn({ progress }: { progress?: MotionValue<number> }) {
+  const bodyTex = useLoader(THREE.TextureLoader, "/textures/planets/2k_saturn.jpg");
+  const ringTex = useLoader(THREE.TextureLoader, "/textures/planets/2k_saturn_ring_alpha.png");
+  useMemo(() => { bodyTex.colorSpace = THREE.SRGBColorSpace; ringTex.colorSpace = THREE.SRGBColorSpace; }, [bodyTex, ringTex]);
 
   const group = useRef<THREE.Group>(null);
-  const earth = useRef<THREE.Mesh>(null);
-  const cloud = useRef<THREE.Mesh>(null);
+  const body = useRef<THREE.Mesh>(null);
+  const R = 1.5;
+
+  // Rings in the planet's equatorial plane (tilt with the body), radial UVs
+  const ringGeo = useMemo(() => {
+    const inner = R * 1.28, outer = R * 2.3;
+    const g = new THREE.RingGeometry(inner, outer, 200);
+    const pos = g.attributes.position, uv = g.attributes.uv; const v = new THREE.Vector3();
+    for (let i = 0; i < pos.count; i++) { v.fromBufferAttribute(pos, i); uv.setXY(i, (v.length() - inner) / (outer - inner), 0.5); }
+    return g;
+  }, []);
 
   const rimUniforms = useMemo(() => ({
-    uColor: { value: new THREE.Color("#6FA8FF") }, uPower: { value: 3.2 }, uIntensity: { value: 0.9 },
+    uColor: { value: new THREE.Color("#E8C98A") }, uPower: { value: 3.6 }, uIntensity: { value: 0.6 },
   }), []);
 
   useFrame((_, dt) => {
-    if (earth.current) earth.current.rotation.y += dt * 0.05;
-    if (cloud.current) cloud.current.rotation.y += dt * 0.065;
+    if (body.current) body.current.rotation.y += dt * 0.05;
     if (group.current && progress) {
       const { x, y, s } = sample(THREE.MathUtils.clamp(progress.get(), 0, 1));
       group.current.position.x += (x - group.current.position.x) * Math.min(dt * 3, 1);
@@ -72,21 +77,22 @@ function Earth({ progress }: { progress?: MotionValue<number> }) {
     }
   });
 
+  // Tilted axis (Saturn ~26.7°)
   return (
-    <group ref={group} position={[2.5, 0.1, 0]} scale={1.25} rotation={[0, 0, 0.41]}>
-      <mesh ref={earth}>
-        <sphereGeometry args={[1.6, 96, 96]} />
-        {/* day side lit; night side shows city lights via emissive map */}
-        <meshStandardMaterial map={day} emissiveMap={night} emissive="#ffffff" emissiveIntensity={0.55} roughness={0.95} metalness={0} />
+    <group ref={group} position={[2.5, 0.1, 0]} scale={1.1} rotation={[0.32, 0, 0.42]}>
+      <mesh ref={body}>
+        <sphereGeometry args={[R, 96, 96]} />
+        <meshStandardMaterial map={bodyTex} roughness={0.92} metalness={0} />
       </mesh>
-      <mesh ref={cloud}>
-        <sphereGeometry args={[1.625, 64, 64]} />
-        <meshStandardMaterial map={clouds} transparent opacity={0.5} depthWrite={false} blending={THREE.AdditiveBlending} roughness={1} />
-      </mesh>
+      {/* gold atmosphere rim */}
       <mesh>
-        <sphereGeometry args={[1.68, 64, 64]} />
+        <sphereGeometry args={[R * 1.03, 64, 64]} />
         <shaderMaterial vertexShader={RIM_VERT} fragmentShader={RIM_FRAG} uniforms={rimUniforms}
           transparent depthWrite={false} blending={THREE.AdditiveBlending} side={THREE.FrontSide} />
+      </mesh>
+      {/* rings — flat in the equatorial plane, so they tilt with the planet */}
+      <mesh geometry={ringGeo} rotation={[-Math.PI / 2, 0, 0]}>
+        <meshBasicMaterial map={ringTex} transparent side={THREE.DoubleSide} depthWrite={false} opacity={0.95} />
       </mesh>
     </group>
   );
@@ -114,11 +120,11 @@ export default function ScrollPlanet({ progress }: { progress?: MotionValue<numb
       gl={{ antialias: tier === "high", alpha: true }}
       style={{ width: "100%", height: "100%", background: "transparent" }}
     >
-      <ambientLight intensity={0.16} color="#1c1838" />
-      <directionalLight position={[-4, 2, 5]} intensity={2.6} color="#fff3da" />
+      <ambientLight intensity={0.18} color="#1c1838" />
+      <directionalLight position={[-4, 2, 5]} intensity={2.8} color="#fff3da" />
       <Suspense fallback={null}>
         <Starfield />
-        <Earth progress={progress} />
+        <Saturn progress={progress} />
       </Suspense>
     </Canvas>
   );

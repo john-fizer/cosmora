@@ -273,35 +273,36 @@ function JourneyMoon({ earthPos }: { earthPos: THREE.Vector3 }) {
 // Both POSITION and LOOK follow smooth Catmull-Rom curves and are lerped each
 // frame, so the camera never snaps rotation at a keyframe (no jumpy/skippy dive).
 
-function CameraRig({ progress, earthPos }: { progress: MotionValue<number>; earthPos: THREE.Vector3 }) {
+function CameraRig({ progress, earthPos, saturnPos }: { progress: MotionValue<number>; earthPos: THREE.Vector3; saturnPos: THREE.Vector3 }) {
   const { camera } = useThree();
   const drift = useRef(0);
   const lookRef = useRef<THREE.Vector3 | null>(null);
 
   const { posCurve, lookCurve } = useMemo(() => {
     const e = earthPos;
+    const S = saturnPos;
+    const perp = new THREE.Vector3(S.z, 0, -S.x).normalize();  // sideways, to push Saturn off-centre
+    // OPEN on Saturn's LIT (sun-facing) side, pulled back so it's framed, then
+    // fly inward through the system to Earth.
     const positions = [
-      new THREE.Vector3(0, 34, 110),                  // 0.00 hero — wide cosmos
-      new THREE.Vector3(46, 14, 64),                  // entering the system
-      new THREE.Vector3(24, 5, 30),                   // inner system flythrough
-      new THREE.Vector3(e.x + 6.0, 2.4, e.z + 6.0),   // Earth approach
-      new THREE.Vector3(e.x + 3.4, 1.2, e.z + 3.6),   // closing
-      new THREE.Vector3(e.x + 2.3, 0.8, e.z + 2.6),   // 1.00 settle — clean, always closer
+      S.clone().multiplyScalar(0.86).add(perp.clone().multiplyScalar(4)).add(new THREE.Vector3(0, 3.5, 0)), // 0.00 — sun side of Saturn, framed
+      S.clone().multiplyScalar(0.55).add(new THREE.Vector3(0, 6, 8)),                                         // leaving Saturn, into the system
+      new THREE.Vector3(e.x * 1.3 + 8, 4, e.z * 1.3 + 12),                                                    // inner system, nearing Earth
+      new THREE.Vector3(e.x + 6.0, 2.4, e.z + 6.0),                                                           // Earth approach
+      new THREE.Vector3(e.x + 3.4, 1.2, e.z + 3.6),                                                           // closing
+      new THREE.Vector3(e.x + 2.3, 0.8, e.z + 2.6),                                                           // 1.00 settle
     ];
-    // Look path is also a smooth curve, and it eases onto Earth well before the end
     const looks = [
-      new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(e.x * 0.25, 0, e.z * 0.25),
-      new THREE.Vector3(e.x * 0.7, 0, e.z * 0.7),
-      e.clone(),
-      e.clone(),
-      e.clone(),
+      S.clone().add(perp.clone().multiplyScalar(-2)),    // at Saturn (offset so it sits right-of-frame)
+      S.clone().multiplyScalar(0.4),                     // swinging toward the inner system
+      e.clone(),                                          // Earth
+      e.clone(), e.clone(), e.clone(),
     ];
     return {
       posCurve: new THREE.CatmullRomCurve3(positions, false, "centripetal", 0.5),
       lookCurve: new THREE.CatmullRomCurve3(looks, false, "centripetal", 0.5),
     };
-  }, [earthPos]);
+  }, [earthPos, saturnPos]);
 
   useFrame((_, dt) => {
     drift.current += dt;
@@ -330,6 +331,7 @@ function CameraRig({ progress, earthPos }: { progress: MotionValue<number>; eart
 function JourneyScene({ progress }: { progress: MotionValue<number> }) {
   const date = useMemo(() => new Date(), []);
   const earthPos = useMemo(() => onOrbit(helioLon(Astronomy.Body.Earth, date), EARTH_ORBIT_R), [date]);
+  const saturnPos = useMemo(() => onOrbit(helioLon(Astronomy.Body.Saturn, date), 52), [date]);
   const sunDir = useMemo(() => earthPos.clone().negate().normalize(), [earthPos]);
 
   return (
@@ -345,7 +347,7 @@ function JourneyScene({ progress }: { progress: MotionValue<number> }) {
         <ringGeometry args={[EARTH_ORBIT_R - 0.025, EARTH_ORBIT_R + 0.025, 256]} />
         <meshBasicMaterial color="#C8A55B" transparent opacity={0.08} side={THREE.DoubleSide} depthWrite={false} />
       </mesh>
-      <CameraRig progress={progress} earthPos={earthPos} />
+      <CameraRig progress={progress} earthPos={earthPos} saturnPos={saturnPos} />
     </>
   );
 }

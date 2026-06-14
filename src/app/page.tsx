@@ -8,13 +8,12 @@
  */
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { COLOR, FONT, SOLAR, GLOW } from "@/lib/design/tokens";
 import { GlowButton, Panel, SectionHeading, Em, DataReadout } from "@/components/ui/primitives";
 
-const ScrollPlanet = dynamic(() => import("@/components/landing/ScrollPlanet"), { ssr: false });
+import VideoPlanet from "@/components/landing/VideoPlanet";
 
 const FEATURES = [
   { glyph: "◉", title: "Natal Chart Engine", desc: "Every planet, dignity, decan, and Arabic lot computed instantly across 8 house systems." },
@@ -68,9 +67,9 @@ export default function LandingPage() {
   return (
     <div style={{ background: COLOR.void, color: COLOR.text1, fontFamily: FONT.body }}>
 
-      {/* The spinning planet — fixed backdrop, glides + resizes on scroll */}
-      <div className="fixed inset-0" style={{ zIndex: 0, pointerEvents: "none" }}>
-        <ScrollPlanet progress={progress} />
+      {/* The spinning planet — photoreal pre-rendered, glides + resizes on scroll */}
+      <div className="fixed inset-0 overflow-hidden" style={{ zIndex: 0, pointerEvents: "none" }}>
+        <VideoPlanet progress={progress} />
       </div>
       {/* Soft readability scrim, strongest at the bottom where copy sits */}
       <div className="fixed inset-0" style={{ zIndex: 1, pointerEvents: "none",

@@ -9,6 +9,8 @@
  */
 
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import { EffectComposer, Bloom, ToneMapping } from "@react-three/postprocessing";
+import { ToneMappingMode } from "postprocessing";
 import { useMemo, useRef, Suspense } from "react";
 import * as THREE from "three";
 import type { MotionValue } from "framer-motion";
@@ -45,9 +47,12 @@ function sample(p: number): { x: number; y: number; s: number } {
 }
 
 function Saturn({ progress }: { progress?: MotionValue<number> }) {
-  const bodyTex = useLoader(THREE.TextureLoader, "/textures/planets/2k_saturn.jpg");
-  const ringTex = useLoader(THREE.TextureLoader, "/textures/planets/2k_saturn_ring_alpha.png");
-  useMemo(() => { bodyTex.colorSpace = THREE.SRGBColorSpace; ringTex.colorSpace = THREE.SRGBColorSpace; }, [bodyTex, ringTex]);
+  const bodyTex = useLoader(THREE.TextureLoader, "/textures/planets/8k_saturn.jpg");
+  const ringTex = useLoader(THREE.TextureLoader, "/textures/planets/8k_saturn_ring_alpha.png");
+  useMemo(() => {
+    bodyTex.colorSpace = THREE.SRGBColorSpace; bodyTex.anisotropy = 16;
+    ringTex.colorSpace = THREE.SRGBColorSpace; ringTex.anisotropy = 16;
+  }, [bodyTex, ringTex]);
 
   const group = useRef<THREE.Group>(null);
   const body = useRef<THREE.Mesh>(null);
@@ -81,8 +86,8 @@ function Saturn({ progress }: { progress?: MotionValue<number> }) {
   return (
     <group ref={group} position={[2.5, 0.1, 0]} scale={1.1} rotation={[0.32, 0, 0.42]}>
       <mesh ref={body}>
-        <sphereGeometry args={[R, 96, 96]} />
-        <meshStandardMaterial map={bodyTex} roughness={0.92} metalness={0} />
+        <sphereGeometry args={[R, 160, 160]} />
+        <meshStandardMaterial map={bodyTex} roughness={0.82} metalness={0.02} />
       </mesh>
       {/* gold atmosphere rim */}
       <mesh>
@@ -117,14 +122,23 @@ export default function ScrollPlanet({ progress }: { progress?: MotionValue<numb
     <Canvas
       camera={{ position: [0, 0, 6], fov: 42, near: 0.1, far: 80 }}
       dpr={tier === "high" ? [1, 2] : [1, 1.25]}
-      gl={{ antialias: tier === "high", alpha: true }}
-      style={{ width: "100%", height: "100%", background: "transparent" }}
+      gl={{ antialias: tier === "high", alpha: false, powerPreference: "high-performance" }}
+      style={{ width: "100%", height: "100%" }}
     >
-      <ambientLight intensity={0.18} color="#1c1838" />
-      <directionalLight position={[-4, 2, 5]} intensity={2.8} color="#fff3da" />
+      <color attach="background" args={["#08080F"]} />
+      <ambientLight intensity={0.1} color="#1a1730" />
+      {/* Warm key from the left, cool gold rim from behind-right for a lit edge */}
+      <directionalLight position={[-5, 2.5, 4]} intensity={3.2} color="#fff1d6" />
+      <directionalLight position={[6, 1, -3]} intensity={1.1} color="#C8A55B" />
       <Suspense fallback={null}>
         <Starfield />
         <Saturn progress={progress} />
+        {tier === "high" && (
+          <EffectComposer multisampling={0}>
+            <Bloom intensity={1.25} luminanceThreshold={0.15} luminanceSmoothing={0.85} mipmapBlur radius={0.8} />
+            <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+          </EffectComposer>
+        )}
       </Suspense>
     </Canvas>
   );

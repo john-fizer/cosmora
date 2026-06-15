@@ -52,3 +52,9 @@ cosmora.db-wal
 
 # brainstorm mockups
 .superpowers/
+
+# local screenshot/scratch artifacts
+j*.png
+ss-*.png
+shot.mjs
+*-loop.mp4

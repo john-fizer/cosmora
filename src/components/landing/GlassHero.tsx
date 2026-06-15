@@ -1,27 +1,22 @@
 "use client";
 
 /**
- * GlassHero — the home's first screen. A live 3D cosmos (photoreal Saturn) that
- * reacts to the cursor (the "inspired" take on Mainframe's video-scrubbing — the
- * scene parallaxes to your mouse instead of scrubbing a video, so it stays sharp
- * and never has loop/drift issues). Liquid-glass UI floats over it: a glass pill
- * navbar, a typewriter headline, glass feature pills, and a glass CTA. Scrolling
- * past it hands off into the cosmos dive (CosmosToYou).
+ * GlassHero — the home's first screen. A PRE-RENDERED photoreal Saturn
+ * (Higgsfield, 16k-grade) carries the fidelity that real-time WebGL can't — no
+ * "80s NASA" flat-sphere look. It stays alive via cursor parallax + a slow
+ * ambient drift (the "seeing realtime" feel without a low-fi live sphere or a
+ * looping/​drifting video). Liquid-glass UI floats over it: a glass pill navbar,
+ * a typewriter headline, and a glass CTA. Scrolling hands off into the dive.
  *
- * Inspired (only) by: Mainframe (typewriter + cursor-reactive bg), the dark
- * portfolio (floating glass pill nav, blur-in entrances), Bloom (liquid glass).
- * Built in Cosmora's brand — Void + Solar gold + Oracle violet, Cormorant/Outfit.
+ * Inspired (only) by Mainframe (typewriter + cursor-reactive bg), the dark
+ * portfolio (floating glass pill nav, blur-in), Bloom (liquid glass) — built in
+ * Cosmora's brand (Void + Solar gold, Cormorant/Outfit/Fragment Mono).
  */
 
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
-import { useRef, useState, useEffect, useMemo, Suspense } from "react";
-import * as THREE from "three";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import PhotorealSaturn from "@/components/three/PhotorealSaturn";
-import { CinematicFX } from "@/components/three/postfx/CinematicFX";
 import { COLOR, FONT, SOLAR } from "@/lib/design/tokens";
-import { detectGpuTier } from "@/lib/design/gpuTier";
 
 // ── Typewriter ────────────────────────────────────────────────────────────────
 function useTypewriter(text: string, speed = 42, startDelay = 500) {
@@ -42,79 +37,43 @@ function useTypewriter(text: string, speed = 42, startDelay = 500) {
   return { displayed, done };
 }
 
-// ── Live cosmos background ──────────────────────────────────────────────────────
-function HeroSky() {
-  const [stars, nebula] = useLoader(THREE.TextureLoader, [
-    "/textures/space/8k_stars_milky_way.jpg",
-    "/textures/space/nebula_brand.png",
-  ]);
-  stars.colorSpace = THREE.SRGBColorSpace;
-  nebula.colorSpace = THREE.SRGBColorSpace;
-  return (
-    <>
-      <mesh scale={[-1, 1, 1]}>
-        <sphereGeometry args={[120, 48, 48]} />
-        <meshBasicMaterial map={stars} side={THREE.BackSide} color="#8983ab" />
-      </mesh>
-      <mesh scale={[-1, 1, 1]} rotation={[0.2, 1.7, 0.1]}>
-        <sphereGeometry args={[118, 32, 32]} />
-        <meshBasicMaterial map={nebula} side={THREE.BackSide} transparent opacity={0.55}
-          blending={THREE.AdditiveBlending} depthWrite={false} />
-      </mesh>
-    </>
-  );
-}
-
-function MouseRig({ mouse }: { mouse: React.MutableRefObject<{ x: number; y: number }> }) {
-  const { camera } = useThree();
-  const base = useMemo(() => new THREE.Vector3(0, 0, 8.5), []);
-  useFrame(() => {
-    const tx = base.x + mouse.current.x * 0.9;
-    const ty = base.y + mouse.current.y * 0.55;
-    camera.position.x += (tx - camera.position.x) * 0.05;
-    camera.position.y += (ty - camera.position.y) * 0.05;
-    camera.position.z = base.z;
-    camera.lookAt(0.6, 0, 0);
-  });
-  return null;
-}
-
-function HeroScene({ mouse, quality }: { mouse: React.MutableRefObject<{ x: number; y: number }>; quality: "high" | "low" }) {
-  return (
-    <>
-      <Suspense fallback={null}>
-        <HeroSky />
-        {/* Saturn lower-right, back-rim lit (sun behind-right) for a cinematic
-            crescent + glowing limb + lit rings — dramatic, not a flat full disc */}
-        <PhotorealSaturn size={2.5} position={[3.1, -0.5, -0.5]} sunPos={[7, 4.5, -7]} spin={0.035} />
-        <MouseRig mouse={mouse} />
-        <CinematicFX quality={quality} bloom={1.2} />
-      </Suspense>
-    </>
-  );
-}
-
-function HeroCanvas() {
-  const mouse = useRef({ x: 0, y: 0 });
-  const tier = useMemo(() => (typeof window !== "undefined" ? detectGpuTier() : "high"), []);
+// ── Photoreal background with cursor parallax + slow ambient drift ──────────────
+function ParallaxBg() {
+  const planet = useRef<HTMLDivElement>(null);
+  const haze = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    let raf = 0; let t = 0;
+    const target = { x: 0, y: 0 };
+    const cur = { x: 0, y: 0 };
     const onMove = (e: PointerEvent) => {
-      mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      mouse.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
+      target.x = e.clientX / window.innerWidth - 0.5;
+      target.y = e.clientY / window.innerHeight - 0.5;
+    };
+    const tick = () => {
+      t += 0.006;
+      cur.x += (target.x - cur.x) * 0.05;
+      cur.y += (target.y - cur.y) * 0.05;
+      const driftX = Math.sin(t) * 0.32;
+      const driftY = Math.cos(t * 0.8) * 0.22;
+      const px = (cur.x + driftX) * -2.4;
+      const py = (cur.y + driftY) * -1.8;
+      if (planet.current) planet.current.style.transform = `scale(1.1) translate(${px}%, ${py}%)`;
+      // Foreground haze parallaxes further for depth
+      if (haze.current) haze.current.style.transform = `scale(1.15) translate(${px * 1.8}%, ${py * 1.8}%)`;
+      raf = requestAnimationFrame(tick);
     };
     window.addEventListener("pointermove", onMove);
-    return () => window.removeEventListener("pointermove", onMove);
+    raf = requestAnimationFrame(tick);
+    return () => { window.removeEventListener("pointermove", onMove); cancelAnimationFrame(raf); };
   }, []);
   return (
-    <Canvas
-      camera={{ position: [0, 0, 8.5], fov: 40, near: 0.1, far: 200 }}
-      dpr={tier === "high" ? [1, 2] : [1, 1.25]}
-      gl={{ antialias: tier === "high", alpha: false, powerPreference: "high-performance" }}
-      style={{ position: "absolute", inset: 0, background: "#08080F" }}
-    >
-      <color attach="background" args={["#08080F"]} />
-      <HeroScene mouse={mouse} quality={tier === "high" ? "high" : "low"} />
-    </Canvas>
+    <div className="absolute inset-0 overflow-hidden">
+      <div ref={planet} className="absolute inset-0 will-change-transform"
+        style={{ backgroundImage: "url(/images/hero-saturn.jpg)", backgroundSize: "cover", backgroundPosition: "center right" }} />
+      {/* faint nebula haze layer for parallax depth */}
+      <div ref={haze} className="absolute inset-0 will-change-transform opacity-40 mix-blend-screen"
+        style={{ backgroundImage: "url(/textures/space/nebula_brand.png)", backgroundSize: "cover", backgroundPosition: "center" }} />
+    </div>
   );
 }
 
@@ -131,7 +90,6 @@ function GlassNav() {
       initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       className="fixed top-0 inset-x-0 z-50 flex justify-center pt-4 md:pt-6 px-4 pointer-events-none">
       <div className="liquid-glass-strong rounded-full pointer-events-auto flex items-center gap-2 sm:gap-4 px-3 sm:px-4 py-2">
-        {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 no-underline pl-1">
           <span className="grid place-items-center rounded-full" style={{ width: 24, height: 24, background: "linear-gradient(135deg,#C8A55B,#A8852B)" }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="#08080F" strokeWidth="1.8" className="w-3.5 h-3.5">
@@ -141,19 +99,17 @@ function GlassNav() {
           <span style={{ fontFamily: FONT.data, fontSize: 12, letterSpacing: "0.26em", color: COLOR.text1 }}>COSMORA</span>
         </Link>
         <span className="hidden sm:block w-px h-5" style={{ background: "rgba(255,255,255,0.12)" }} />
-        {/* Links */}
         <nav className="hidden md:flex items-center gap-1">
           {NAV.map(n => (
-            <Link key={n.label} href={n.href} className="no-underline rounded-full px-3 py-1.5 transition-colors"
+            <Link key={n.label} href={n.href} className="no-underline rounded-full px-3 py-1.5 transition-colors hover:opacity-60"
               style={{ fontFamily: FONT.body, fontSize: 13, color: COLOR.text2 }}>
               {n.label}
             </Link>
           ))}
         </nav>
         <span className="hidden sm:block w-px h-5" style={{ background: "rgba(255,255,255,0.12)" }} />
-        {/* CTA */}
         <Link href="/dashboard" className="no-underline">
-          <span className="liquid-glass rounded-full inline-flex items-center gap-1.5 px-4 py-1.5"
+          <span className="liquid-glass rounded-full inline-flex items-center gap-1.5 px-4 py-1.5 transition-transform hover:scale-[1.04]"
             style={{ fontFamily: FONT.body, fontSize: 13, color: COLOR.text1 }}>
             Enter <span style={{ color: SOLAR(0.9) }}>↗</span>
           </span>
@@ -172,14 +128,14 @@ export default function GlassHero() {
 
   return (
     <section className="relative w-full h-screen overflow-hidden" style={{ background: COLOR.void }}>
-      {/* Live cosmos */}
-      <div className="absolute inset-0 z-0"><HeroCanvas /></div>
+      <ParallaxBg />
+
       {/* Left-side readability gradient so copy holds over the planet */}
       <div className="absolute inset-0 z-[1] pointer-events-none"
-        style={{ background: "linear-gradient(90deg, rgba(8,8,15,0.9) 0%, rgba(8,8,15,0.55) 40%, transparent 72%)" }} />
-      {/* Cinematic vignette — darkens the corners, focuses the eye */}
+        style={{ background: "linear-gradient(90deg, rgba(8,8,15,0.92) 0%, rgba(8,8,15,0.55) 42%, transparent 74%)" }} />
+      {/* Cinematic vignette */}
       <div className="absolute inset-0 z-[1] pointer-events-none"
-        style={{ boxShadow: "inset 0 0 220px 60px rgba(8,8,15,0.85)" }} />
+        style={{ boxShadow: "inset 0 0 240px 70px rgba(8,8,15,0.8)" }} />
 
       <GlassNav />
 
@@ -212,7 +168,7 @@ export default function GlassHero() {
               Enter Cosmora <span style={{ color: SOLAR(0.95) }}>↗</span>
             </span>
           </Link>
-          <a href="#descent" className="no-underline group inline-flex items-center gap-2"
+          <a href="#descent" className="no-underline inline-flex items-center gap-2"
             style={{ fontFamily: FONT.body, fontSize: 14, color: COLOR.text2 }}>
             <span style={{ borderBottom: `1px solid ${COLOR.border}`, paddingBottom: 2 }}>See the descent</span>
             <span style={{ color: SOLAR(0.7) }}>↓</span>

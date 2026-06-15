@@ -7,9 +7,11 @@
  */
 
 import { useRef } from "react";
+import Link from "next/link";
 import dynamic from "next/dynamic";
 import { motion, useScroll, useTransform, useSpring, MotionValue } from "framer-motion";
 import { COLOR, FONT, SOLAR } from "@/lib/design/tokens";
+import { GlowButton } from "@/components/ui/primitives";
 
 const CosmicJourney = dynamic(() => import("./CosmicJourney"), { ssr: false });
 
@@ -41,6 +43,9 @@ export default function CosmosToYou() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const p = useSpring(scrollYProgress, { stiffness: 55, damping: 22, restDelta: 0.0005 });
   const barW = useTransform(p, v => `${Math.min(100, Math.max(0, v * 100))}%`);
+  // The "Enter Cosmora" CTA blooms in only at the climax (the universe ends at you).
+  const ctaOpacity = useTransform(p, [0.9, 0.97], [0, 1]);
+  const ctaY = useTransform(p, [0.9, 0.97], [24, 0]);
 
   return (
     <div ref={ref} style={{ height: "560vh", position: "relative", background: COLOR.void, zIndex: 20 }}>
@@ -51,6 +56,10 @@ export default function CosmosToYou() {
         <div className="absolute inset-0" style={{ zIndex: 2 }}>
           {STATIONS.map((s, i) => <Station key={i} s={s} progress={p} />)}
         </div>
+        {/* Enter Cosmora — appears at the descent's end, under "ends at you" */}
+        <motion.div style={{ opacity: ctaOpacity, y: ctaY, position: "absolute", left: 0, right: 0, bottom: "18%", zIndex: 3 }} className="flex justify-center px-7">
+          <Link href="/dashboard"><GlowButton size="lg">Enter Cosmora</GlowButton></Link>
+        </motion.div>
         {/* Minimal progress filament — not HUD chrome */}
         <div className="absolute bottom-7 left-7 right-7" style={{ zIndex: 3 }}>
           <div className="h-px w-full" style={{ background: SOLAR(0.12) }}>

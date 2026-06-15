@@ -9,11 +9,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { COLOR, FONT, SOLAR, GLOW } from "@/lib/design/tokens";
 import { GlowButton, Panel, SectionHeading, Em, DataReadout } from "@/components/ui/primitives";
 
-import HomeCosmos from "@/components/landing/HomeCosmos";
+import CosmosToYou from "@/components/landing/CosmosToYou";
 
 const FEATURES = [
   { glyph: "◉", title: "Natal Chart Engine", desc: "Every planet, dignity, decan, and Arabic lot computed instantly across 8 house systems." },
@@ -61,19 +61,8 @@ function Section({ children, align = "left" }: { children: React.ReactNode; alig
 }
 
 export default function LandingPage() {
-  const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 60, damping: 24, restDelta: 0.0004 });
-
   return (
     <div style={{ background: COLOR.void, color: COLOR.text1, fontFamily: FONT.body }}>
-
-      {/* Real-3D scroll journey — camera flies Saturn → inward through the system */}
-      <div className="fixed inset-0 overflow-hidden" style={{ zIndex: 0, pointerEvents: "none" }}>
-        <HomeCosmos progress={progress} />
-      </div>
-      {/* Soft readability scrim, strongest at the bottom where copy sits */}
-      <div className="fixed inset-0" style={{ zIndex: 1, pointerEvents: "none",
-        background: "radial-gradient(ellipse 70% 50% at 50% 50%, transparent 40%, rgba(8,8,15,0.5)), linear-gradient(180deg, rgba(8,8,15,0.4), transparent 30%, transparent 70%, rgba(8,8,15,0.6))" }} />
 
       {/* Nav */}
       <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-7 lg:px-16 py-5"
@@ -93,23 +82,9 @@ export default function LandingPage() {
         </Link>
       </nav>
 
-      {/* ── Hero — planet on the right, copy on the left ── */}
-      <Section align="left">
-        <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }} className="max-w-2xl">
-          <p style={{ fontFamily: FONT.data, fontSize: 10, letterSpacing: "0.34em", color: SOLAR(0.75), marginBottom: 22 }}>COSMORA · COSMIC INTELLIGENCE</p>
-          <h1 style={{ fontFamily: FONT.body, fontWeight: 300, letterSpacing: "-0.03em", lineHeight: 1.02, fontSize: "clamp(2.8rem, 6.5vw, 5.2rem)", color: COLOR.text1 }}>
-            Decoding the <Em>architecture</Em> of time
-          </h1>
-          <p style={{ fontFamily: FONT.body, fontSize: 16, lineHeight: 1.75, color: COLOR.text2, marginTop: 26, maxWidth: 440 }}>
-            A precision astrology instrument from 2070 — the sky computed to the arcsecond, two thousand years of timing technique stacked, read back in plain truth, anchored to the one chart that is yours.
-          </p>
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <Link href="/dashboard"><GlowButton size="lg">Enter Cosmora</GlowButton></Link>
-            <a href="#instrument" className="no-underline"><GlowButton variant="ghost">See the instrument</GlowButton></a>
-          </div>
-          <div className="mt-10"><DataReadout items={["8 HOUSE SYSTEMS", "TROPICAL + SIDEREAL", "AI ORACLE"]} color="muted" size={9} /></div>
-        </motion.div>
-      </Section>
+      {/* ── The signature dive — Cosmos → You, opens on photoreal Saturn,
+             ends on the blue Earth: "The universe ends at you" ── */}
+      <CosmosToYou />
 
       {/* ── The Instrument — features, planet drifts left ── */}
       <Section align="right">

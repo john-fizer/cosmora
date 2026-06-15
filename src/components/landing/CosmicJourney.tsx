@@ -13,6 +13,7 @@ import { useMemo, useRef, Suspense } from "react";
 import * as THREE from "three";
 import * as Astronomy from "astronomy-engine";
 import type { MotionValue } from "framer-motion";
+import PhotorealSaturn from "@/components/three/PhotorealSaturn";
 
 // ─── Scene scale ──────────────────────────────────────────────────────────────
 
@@ -339,7 +340,13 @@ function JourneyScene({ progress }: { progress: MotionValue<number> }) {
       <ambientLight intensity={0.07} color="#1a1535" />
       <Sky />
       <JourneySun />
-      {PLANET_DEFS.map(def => <PlanetProp key={def.name} def={def} date={date} />)}
+      {PLANET_DEFS.filter(d => d.name !== "Saturn").map(def => <PlanetProp key={def.name} def={def} date={date} />)}
+      {/* Saturn — photoreal shader (the camera opens on it) */}
+      <PhotorealSaturn size={2.2} position={[saturnPos.x, saturnPos.y, saturnPos.z]} sunPos={[0, 0, 0]} spin={0.05} />
+      <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[52 - 0.02, 52 + 0.02, 256]} />
+        <meshBasicMaterial color="#C8A55B" transparent opacity={0.05} side={THREE.DoubleSide} depthWrite={false} />
+      </mesh>
       <JourneyEarth position={earthPos} sunDir={sunDir} />
       <JourneyMoon earthPos={earthPos} />
       {/* Earth orbit ring */}

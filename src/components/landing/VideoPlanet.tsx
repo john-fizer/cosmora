@@ -3,8 +3,12 @@
 /**
  * VideoPlanet — the home hero: a pre-rendered PHOTOREAL spinning planet,
  * kept ZOOMED IN and bleeding off every edge so the video's frame is never
- * visible. On scroll it zooms further IN, never shrinks. The video's first and
- * last frames match, so a single native loop is genuinely seamless (no fade).
+ * visible. On scroll it zooms further IN, never shrinks.
+ *
+ * The source Grok clip drifts (camera pan + a moving terminator) and its first
+ * and last frames don't match, so a native loop popped. saturn-loop.mp4 is that
+ * clip baked as a BOOMERANG (forward + reversed), so frame 0 === final frame:
+ * the planet eases out and glides back, looping forever with no seam, no pop.
  */
 
 import { motion, useTransform, MotionValue } from "framer-motion";
@@ -25,7 +29,7 @@ export default function VideoPlanet({ progress }: { progress: MotionValue<number
   return (
     <motion.div style={{ position: "absolute", inset: 0, x, y, scale, mixBlendMode: "screen", pointerEvents: "none" }}>
       <video
-        src="/videos/saturn-spin.mp4"
+        src="/videos/saturn-loop.mp4"
         autoPlay muted loop playsInline preload="auto"
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
       />

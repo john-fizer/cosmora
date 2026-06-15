@@ -37,12 +37,16 @@ function useTypewriter(text: string, speed = 42, startDelay = 500) {
   return { displayed, done };
 }
 
-// ── Photoreal background with cursor parallax + slow ambient drift ──────────────
-function ParallaxBg() {
-  const planet = useRef<HTMLDivElement>(null);
-  const haze = useRef<HTMLDivElement>(null);
+// ── Full-screen photoreal video background (Bloom structure) ────────────────────
+// A seamless loop: the clip was generated with the SAME photoreal Saturn as its
+// first AND last frame, so the planet spins / the sky drifts and it returns
+// exactly to the start — native loop, no pop, no boomerang, no fade. A poster
+// (the still) avoids any first-frame flash. A subtle cursor parallax keeps the
+// glass UI feeling layered over a live scene.
+function VideoBg() {
+  const wrap = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    let raf = 0; let t = 0;
+    let raf = 0;
     const target = { x: 0, y: 0 };
     const cur = { x: 0, y: 0 };
     const onMove = (e: PointerEvent) => {
@@ -50,16 +54,9 @@ function ParallaxBg() {
       target.y = e.clientY / window.innerHeight - 0.5;
     };
     const tick = () => {
-      t += 0.006;
       cur.x += (target.x - cur.x) * 0.05;
       cur.y += (target.y - cur.y) * 0.05;
-      const driftX = Math.sin(t) * 0.32;
-      const driftY = Math.cos(t * 0.8) * 0.22;
-      const px = (cur.x + driftX) * -2.4;
-      const py = (cur.y + driftY) * -1.8;
-      if (planet.current) planet.current.style.transform = `scale(1.1) translate(${px}%, ${py}%)`;
-      // Foreground haze parallaxes further for depth
-      if (haze.current) haze.current.style.transform = `scale(1.15) translate(${px * 1.8}%, ${py * 1.8}%)`;
+      if (wrap.current) wrap.current.style.transform = `scale(1.06) translate(${cur.x * -1.4}%, ${cur.y * -1.1}%)`;
       raf = requestAnimationFrame(tick);
     };
     window.addEventListener("pointermove", onMove);
@@ -68,11 +65,14 @@ function ParallaxBg() {
   }, []);
   return (
     <div className="absolute inset-0 overflow-hidden">
-      <div ref={planet} className="absolute inset-0 will-change-transform"
-        style={{ backgroundImage: "url(/images/hero-saturn.jpg)", backgroundSize: "cover", backgroundPosition: "center right" }} />
-      {/* faint nebula haze layer for parallax depth */}
-      <div ref={haze} className="absolute inset-0 will-change-transform opacity-40 mix-blend-screen"
-        style={{ backgroundImage: "url(/textures/space/nebula_brand.png)", backgroundSize: "cover", backgroundPosition: "center" }} />
+      <div ref={wrap} className="absolute inset-0 will-change-transform">
+        <video
+          src="/videos/saturn-hero.mp4"
+          poster="/images/hero-saturn.jpg"
+          autoPlay loop muted playsInline preload="auto"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
     </div>
   );
 }
@@ -128,7 +128,7 @@ export default function GlassHero() {
 
   return (
     <section className="relative w-full h-screen overflow-hidden" style={{ background: COLOR.void }}>
-      <ParallaxBg />
+      <VideoBg />
 
       {/* Left-side readability gradient so copy holds over the planet */}
       <div className="absolute inset-0 z-[1] pointer-events-none"

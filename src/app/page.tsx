@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { COLOR, FONT, SOLAR, GLOW } from "@/lib/design/tokens";
 import { GlowButton, Panel, SectionHeading, Em, DataReadout } from "@/components/ui/primitives";
 
+import GlassHero from "@/components/landing/GlassHero";
 import CosmosToYou from "@/components/landing/CosmosToYou";
 
 const FEATURES = [
@@ -64,27 +65,12 @@ export default function LandingPage() {
   return (
     <div style={{ background: COLOR.void, color: COLOR.text1, fontFamily: FONT.body }}>
 
-      {/* Nav */}
-      <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-7 lg:px-16 py-5"
-        style={{ background: "linear-gradient(180deg, rgba(8,8,15,0.85), transparent)" }}>
-        <Link href="/" className="flex items-center gap-3 no-underline">
-          <svg viewBox="0 0 24 24" fill="none" stroke={COLOR.solar} strokeWidth="1.4" className="w-5 h-5">
-            <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" />
-            <line x1="12" y1="3" x2="12" y2="7" /><line x1="12" y1="17" x2="12" y2="21" />
-            <line x1="3" y1="12" x2="7" y2="12" /><line x1="17" y1="12" x2="21" y2="12" />
-          </svg>
-          <span style={{ fontFamily: FONT.data, fontSize: 13, letterSpacing: "0.3em", color: COLOR.solar }}>COSMORA</span>
-        </Link>
-        <Link href="/dashboard" className="no-underline">
-          <span style={{ fontFamily: FONT.data, fontSize: 10, letterSpacing: "0.22em", color: COLOR.text2, border: `1px solid ${COLOR.border}`, borderRadius: 999, padding: "8px 18px" }}>
-            ENTER →
-          </span>
-        </Link>
-      </nav>
+      {/* ── First screen — live mouse-reactive cosmos + liquid-glass UI ── */}
+      <GlassHero />
 
       {/* ── The signature dive — Cosmos → You, opens on photoreal Saturn,
              ends on the blue Earth: "The universe ends at you" ── */}
-      <CosmosToYou />
+      <div id="descent"><CosmosToYou /></div>
 
       {/* ── The Instrument — features, planet drifts left ── */}
       <Section align="right">

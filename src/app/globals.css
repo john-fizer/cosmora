@@ -803,3 +803,7 @@ h1 em, h2 em, h3 em, h1 i, h2 i, h3 i { font-family: 'Cormorant Garamond', Georg
   border-color: rgba(200, 165, 91, 0.38);
   color: rgba(255, 215, 130, 0.95);
 }
+
+/* ─── Typewriter cursor (glass hero) ────────────────────────────────────────── */
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.animate-blink { animation: blink 1s step-end infinite; }

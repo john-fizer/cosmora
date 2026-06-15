@@ -20,13 +20,17 @@ const ORBITAL_RADII: Record<string, number> = {
 };
 
 // Artistic scale — true-to-scale planets are invisible dots at orbital distance;
-// bumped for visual presence while keeping relative ordering recognizable.
+// bumped hard for cinematic presence while keeping relative ordering recognizable.
 const PLANET_SIZES: Record<string, number> = {
-  Sun: 1.35, Moon: 0.34, Mercury: 0.30, Venus: 0.42,
-  Mars: 0.36, Jupiter: 0.78, Saturn: 0.66,
-  Uranus: 0.48, Neptune: 0.48, Pluto: 0.26,
-  NorthNode: 0.18, Chiron: 0.18,
+  Sun: 2.1, Moon: 0.54, Mercury: 0.5, Venus: 0.72,
+  Mars: 0.6, Jupiter: 1.3, Saturn: 1.08,
+  Uranus: 0.82, Neptune: 0.8, Pluto: 0.42,
+  NorthNode: 0.3, Chiron: 0.3,
 };
+
+// Astro glyph font (loaded in globals.css) so zodiac/planet symbols render —
+// not the missing-glyph tofu boxes.
+const GLYPH_FONT = "'Noto Sans Symbols 2', 'Fragment Mono', sans-serif";
 
 const ROTATION_SPEEDS: Record<string, number> = {
   Sun: 0.04, Moon: 0.02, Mercury: 0.035, Venus: -0.015, Mars: 0.045,
@@ -258,6 +262,7 @@ function Sun({ onCore }: { onCore?: (m: THREE.Mesh | null) => void }) {
   const coreRef = useRef<THREE.Mesh>(null);
   const rotRef = useRef<THREE.Group>(null);
   const sunTex = useMemo(() => loadPlanetFile("2k_sun.jpg"), []);
+  const coronaUniforms = useMemo(() => ({ u_scale: { value: 1.0 } }), []);
 
   useFrame((_, dt) => {
     if (rotRef.current) rotRef.current.rotation.y += dt * 0.05;
@@ -266,15 +271,22 @@ function Sun({ onCore }: { onCore?: (m: THREE.Mesh | null) => void }) {
   return (
     <group>
       {/* The sun is the ONLY light source — gives every planet a real day/night terminator */}
-      <pointLight color="#fff4dc" intensity={4.5} distance={420} decay={0.55} />
-      <ambientLight color="#13112a" intensity={0.14} />
-      {/* Single bright textured star — bloom does the glow, no nested corona shells */}
+      <pointLight color="#fff4dc" intensity={6.0} distance={500} decay={0.5} />
+      <ambientLight color="#13112a" intensity={0.16} />
+      {/* Bright textured star core (bloom does the glow) */}
       <group ref={rotRef}>
         <mesh ref={(m) => { coreRef.current = m as THREE.Mesh; onCore?.(m as THREE.Mesh | null); }}>
-          <sphereGeometry args={[1.35, 64, 64]} />
-          <meshBasicMaterial map={sunTex} color="#ffdca0" toneMapped={false} />
+          <sphereGeometry args={[1.55, 64, 64]} />
+          <meshBasicMaterial map={sunTex} color="#ffd89a" toneMapped={false} />
         </mesh>
       </group>
+      {/* Corona glow shell — additive Fresnel halo (the sun is allowed a corona;
+          this is NOT the nested-planet-shell problem) */}
+      <mesh>
+        <sphereGeometry args={[2.15, 48, 48]} />
+        <shaderMaterial vertexShader={CORONA_VERT} fragmentShader={CORONA_FRAG} uniforms={coronaUniforms}
+          transparent depthWrite={false} blending={THREE.AdditiveBlending} side={THREE.BackSide} toneMapped={false} />
+      </mesh>
     </group>
   );
 }
@@ -283,10 +295,18 @@ function Sun({ onCore }: { onCore?: (m: THREE.Mesh | null) => void }) {
 
 function OrbitRing({ radius, color }: { radius: number; color: string }) {
   return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]}>
-      <ringGeometry args={[radius - 0.01, radius + 0.01, 220]} />
-      <meshBasicMaterial color={color} transparent opacity={0.22} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
-    </mesh>
+    <group rotation={[-Math.PI / 2, 0, 0]}>
+      {/* crisp bright orbit line */}
+      <mesh>
+        <ringGeometry args={[radius - 0.018, radius + 0.018, 240]} />
+        <meshBasicMaterial color={color} transparent opacity={0.5} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
+      </mesh>
+      {/* soft glow band around it */}
+      <mesh>
+        <ringGeometry args={[radius - 0.12, radius + 0.12, 240]} />
+        <meshBasicMaterial color={color} transparent opacity={0.07} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
+      </mesh>
+    </group>
   );
 }
 
@@ -336,7 +356,7 @@ function SaturnRings({ pos }: { pos: THREE.Vector3 }) {
   }, []);
   return (
     <group position={pos.toArray()} rotation={[0.45, 0, 0.28]}>
-      <mesh geometry={geo} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh geometry={geo} rotation={[-Math.PI / 2, 0, 0]} scale={2.3}>
         <meshBasicMaterial map={tex} transparent side={THREE.DoubleSide} depthWrite={false} opacity={0.95} />
       </mesh>
     </group>
@@ -411,6 +431,7 @@ function Planet({
             whiteSpace: "nowrap",
             backdropFilter: "blur(16px)",
             boxShadow: `0 0 20px ${color}30`,
+            fontFamily: GLYPH_FONT,
           }}>
             {PLANET_SYMBOLS[name as PlanetName] ?? "✦"} {name}
           </div>
@@ -497,7 +518,8 @@ function ZodiacBelt() {
         const z = -ZODIAC_R * Math.sin(midRad);
         return (
           <Html key={i} position={[x, 0.2, z]} center distanceFactor={30} style={{ pointerEvents: "none" }}>
-            <div style={{ color: ELEMENT_COLORS[i], fontSize: 14, opacity: 0.75, userSelect: "none" }}>
+            <div style={{ color: ELEMENT_COLORS[i], fontSize: 22, opacity: 0.85, userSelect: "none",
+              fontFamily: GLYPH_FONT, textShadow: `0 0 10px ${ELEMENT_COLORS[i]}80` }}>
               {sym}
             </div>
           </Html>
@@ -669,7 +691,7 @@ function OrreryScene({
 
       <OrreryCamera flyRef={flyRef} onArrived={(name) => onNavigate?.(name)} autoRotate={autoRotate} />
 
-      <CinematicFX quality={tier} sun={sunMesh} dof={tier === "high"} bokeh={1.4} bloom={1.5} />
+      <CinematicFX quality={tier} sun={sunMesh} dof={tier === "high"} bokeh={1.4} bloom={2.0} />
     </>
   );
 }
@@ -696,7 +718,7 @@ export function SolarSystemOrrery({
   return (
     <div className={className} style={{ width: "100%", height: "100%", ...style }}>
       <Canvas
-        camera={{ position: [0, 22, 30], fov: 52, near: 0.1, far: 500 }}
+        camera={{ position: [0, 13, 21], fov: 47, near: 0.1, far: 500 }}
         gl={{ antialias: quality.antialias, alpha: false, powerPreference: "high-performance" }}
         dpr={quality.dpr}
         style={{ width: "100%", height: "100%" }}

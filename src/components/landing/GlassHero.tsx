@@ -136,11 +136,16 @@ export default function GlassHero() {
       {/* Cinematic vignette */}
       <div className="absolute inset-0 z-[1] pointer-events-none"
         style={{ boxShadow: "inset 0 0 240px 70px rgba(8,8,15,0.8)" }} />
+      {/* Bottom fade — melt the hero into the void so it flows into the dive below
+          with no hard seam (the dive opens on the same near-black starfield) */}
+      <div className="absolute inset-x-0 bottom-0 z-[2] h-48 pointer-events-none"
+        style={{ background: "linear-gradient(to top, #08080F 0%, rgba(8,8,15,0.65) 45%, transparent 100%)" }} />
 
       <GlassNav />
 
-      {/* Content — restrained: eyebrow, one confident headline, one line, one CTA */}
-      <div className="relative z-10 h-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col justify-center">
+      {/* Content — restrained: eyebrow, one confident headline, one line, one CTA.
+          py-32 keeps it clear of the fixed nav and the bottom fade at any height. */}
+      <div className="relative z-10 h-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col justify-center py-32">
         <motion.div initial={{ opacity: 0, filter: "blur(8px)", y: 14 }} animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
           transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }} className="flex items-center gap-3 mb-7">
           <span className="block h-px w-10" style={{ background: SOLAR(0.5) }} />
@@ -148,8 +153,8 @@ export default function GlassHero() {
         </motion.div>
 
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontFamily: FONT.display, fontWeight: 400, letterSpacing: "-0.025em", lineHeight: 1.02,
-            fontSize: "clamp(3rem, 8vw, 6.4rem)", color: COLOR.text1, whiteSpace: "pre-wrap", maxWidth: "14ch", textWrap: "balance" }}>
+          style={{ fontFamily: FONT.display, fontWeight: 400, letterSpacing: "-0.025em", lineHeight: 1.03,
+            fontSize: "clamp(2.6rem, 6.4vw, 5.4rem)", color: COLOR.text1, whiteSpace: "pre-wrap", maxWidth: "14ch", textWrap: "balance" }}>
           {line1}
           <span style={{ fontStyle: "italic", color: SOLAR(0.95) }}>{line2}</span>
           {!done && <span className="inline-block align-middle animate-blink" style={{ width: 2, height: "0.86em", marginLeft: 4, background: SOLAR(0.9) }} />}

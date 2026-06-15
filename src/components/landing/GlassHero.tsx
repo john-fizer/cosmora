@@ -84,10 +84,11 @@ function HeroScene({ mouse, quality }: { mouse: React.MutableRefObject<{ x: numb
     <>
       <Suspense fallback={null}>
         <HeroSky />
-        {/* Saturn on the right, lit from upper-right for a dramatic gibbous */}
-        <PhotorealSaturn size={2.2} position={[2.7, 0.2, 0]} sunPos={[14, 9, 7]} spin={0.04} />
+        {/* Saturn lower-right, back-rim lit (sun behind-right) for a cinematic
+            crescent + glowing limb + lit rings — dramatic, not a flat full disc */}
+        <PhotorealSaturn size={2.5} position={[3.1, -0.5, -0.5]} sunPos={[7, 4.5, -7]} spin={0.035} />
         <MouseRig mouse={mouse} />
-        <CinematicFX quality={quality} bloom={1.0} />
+        <CinematicFX quality={quality} bloom={1.2} />
       </Suspense>
     </>
   );
@@ -123,7 +124,6 @@ const NAV = [
   { label: "Oracle", href: "/dashboard/oracle" },
   { label: "Access", href: "#access" },
 ];
-const PILLS = ["Natal Chart Engine", "AI Oracle", "Tropical + Sidereal", "Zodiacal Releasing"];
 
 function GlassNav() {
   return (
@@ -176,51 +176,46 @@ export default function GlassHero() {
       <div className="absolute inset-0 z-0"><HeroCanvas /></div>
       {/* Left-side readability gradient so copy holds over the planet */}
       <div className="absolute inset-0 z-[1] pointer-events-none"
-        style={{ background: "linear-gradient(90deg, rgba(8,8,15,0.82) 0%, rgba(8,8,15,0.5) 38%, transparent 68%)" }} />
+        style={{ background: "linear-gradient(90deg, rgba(8,8,15,0.9) 0%, rgba(8,8,15,0.55) 40%, transparent 72%)" }} />
+      {/* Cinematic vignette — darkens the corners, focuses the eye */}
+      <div className="absolute inset-0 z-[1] pointer-events-none"
+        style={{ boxShadow: "inset 0 0 220px 60px rgba(8,8,15,0.85)" }} />
 
       <GlassNav />
 
-      {/* Content */}
+      {/* Content — restrained: eyebrow, one confident headline, one line, one CTA */}
       <div className="relative z-10 h-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col justify-center">
-        <motion.p initial={{ opacity: 0, filter: "blur(8px)", y: 14 }} animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          style={{ fontFamily: FONT.data, fontSize: 10, letterSpacing: "0.34em", color: SOLAR(0.75), marginBottom: 22 }}>
-          COSMORA · THE LIVING INSTRUMENT
-        </motion.p>
-
-        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-          style={{ fontFamily: FONT.display, fontWeight: 400, letterSpacing: "-0.02em", lineHeight: 1.04,
-            fontSize: "clamp(2.8rem, 7vw, 5.6rem)", color: COLOR.text1, whiteSpace: "pre-wrap", maxWidth: 760 }}>
-          {line1}
-          <span style={{ fontStyle: "italic", color: SOLAR(0.95) }}>{line2}</span>
-          {!done && <span className="inline-block align-middle animate-blink" style={{ width: 2, height: "0.9em", marginLeft: 3, background: SOLAR(0.9) }} />}
-        </motion.h1>
-
-        <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.5 }}
-          style={{ fontFamily: FONT.body, fontSize: 16, lineHeight: 1.75, color: COLOR.text2, marginTop: 26, maxWidth: 440 }}>
-          A precision instrument from 2070 — the sky computed to the arcsecond, two thousand years of timing technique stacked, read back in plain truth.
-        </motion.p>
-
-        {/* Glass feature pills */}
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.65 }}
-          className="flex flex-wrap gap-2.5 mt-9">
-          {PILLS.map(p => (
-            <span key={p} className="liquid-glass rounded-full px-4 py-2"
-              style={{ fontFamily: FONT.body, fontSize: 12.5, color: COLOR.text1 }}>{p}</span>
-          ))}
+        <motion.div initial={{ opacity: 0, filter: "blur(8px)", y: 14 }} animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+          transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }} className="flex items-center gap-3 mb-7">
+          <span className="block h-px w-10" style={{ background: SOLAR(0.5) }} />
+          <span style={{ fontFamily: FONT.data, fontSize: 10, letterSpacing: "0.36em", color: SOLAR(0.8) }}>THE LIVING INSTRUMENT</span>
         </motion.div>
 
-        {/* CTA */}
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.8 }}
-          className="flex flex-wrap items-center gap-4 mt-11">
+        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          style={{ fontFamily: FONT.display, fontWeight: 400, letterSpacing: "-0.025em", lineHeight: 1.02,
+            fontSize: "clamp(3rem, 8vw, 6.4rem)", color: COLOR.text1, whiteSpace: "pre-wrap", maxWidth: "14ch", textWrap: "balance" }}>
+          {line1}
+          <span style={{ fontStyle: "italic", color: SOLAR(0.95) }}>{line2}</span>
+          {!done && <span className="inline-block align-middle animate-blink" style={{ width: 2, height: "0.86em", marginLeft: 4, background: SOLAR(0.9) }} />}
+        </motion.h1>
+
+        <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.55 }}
+          style={{ fontFamily: FONT.body, fontWeight: 300, fontSize: 17, lineHeight: 1.72, letterSpacing: "0.01em", color: COLOR.text2, marginTop: 30, maxWidth: "42ch" }}>
+          A precision instrument from 2070 — your sky computed to the arcsecond, two thousand years of technique read back in plain truth.
+        </motion.p>
+
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.75 }}
+          className="flex items-center gap-7 mt-12">
           <Link href="/dashboard" className="no-underline">
-            <span className="liquid-glass-strong rounded-full inline-flex items-center gap-2 px-7 py-3.5 transition-transform hover:scale-[1.03]"
+            <span className="liquid-glass-strong rounded-full inline-flex items-center gap-2.5 px-8 py-4 transition-transform duration-200 hover:scale-[1.03]"
               style={{ fontFamily: FONT.body, fontSize: 15, color: COLOR.text1 }}>
               Enter Cosmora <span style={{ color: SOLAR(0.95) }}>↗</span>
             </span>
           </Link>
-          <a href="#descent" className="no-underline" style={{ fontFamily: FONT.body, fontSize: 14, color: COLOR.text2, textDecoration: "underline", textUnderlineOffset: 3 }}>
-            See the descent
+          <a href="#descent" className="no-underline group inline-flex items-center gap-2"
+            style={{ fontFamily: FONT.body, fontSize: 14, color: COLOR.text2 }}>
+            <span style={{ borderBottom: `1px solid ${COLOR.border}`, paddingBottom: 2 }}>See the descent</span>
+            <span style={{ color: SOLAR(0.7) }}>↓</span>
           </a>
         </motion.div>
       </div>

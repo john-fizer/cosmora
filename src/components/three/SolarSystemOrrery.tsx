@@ -262,7 +262,7 @@ function Sun({ onCore }: { onCore?: (m: THREE.Mesh | null) => void }) {
   const coreRef = useRef<THREE.Mesh>(null);
   const rotRef = useRef<THREE.Group>(null);
   const sunTex = useMemo(() => loadPlanetFile("2k_sun.jpg"), []);
-  const coronaUniforms = useMemo(() => ({ u_scale: { value: 1.0 } }), []);
+  const coronaUniforms = useMemo(() => ({ u_scale: { value: 1.6 } }), []);
 
   useFrame((_, dt) => {
     if (rotRef.current) rotRef.current.rotation.y += dt * 0.05;
@@ -276,14 +276,19 @@ function Sun({ onCore }: { onCore?: (m: THREE.Mesh | null) => void }) {
       {/* Bright textured star core (bloom does the glow) */}
       <group ref={rotRef}>
         <mesh ref={(m) => { coreRef.current = m as THREE.Mesh; onCore?.(m as THREE.Mesh | null); }}>
-          <sphereGeometry args={[1.55, 64, 64]} />
-          <meshBasicMaterial map={sunTex} color="#ffd89a" toneMapped={false} />
+          <sphereGeometry args={[1.75, 64, 64]} />
+          <meshBasicMaterial map={sunTex} color="#ffe2a8" toneMapped={false} />
         </mesh>
       </group>
+      {/* Inner bright halo so the sun reads as a glowing star, not a dim dot */}
+      <mesh>
+        <sphereGeometry args={[1.95, 48, 48]} />
+        <meshBasicMaterial color="#ffcf7a" transparent opacity={0.5} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
+      </mesh>
       {/* Corona glow shell — additive Fresnel halo (the sun is allowed a corona;
           this is NOT the nested-planet-shell problem) */}
       <mesh>
-        <sphereGeometry args={[2.15, 48, 48]} />
+        <sphereGeometry args={[2.3, 48, 48]} />
         <shaderMaterial vertexShader={CORONA_VERT} fragmentShader={CORONA_FRAG} uniforms={coronaUniforms}
           transparent depthWrite={false} blending={THREE.AdditiveBlending} side={THREE.BackSide} toneMapped={false} />
       </mesh>

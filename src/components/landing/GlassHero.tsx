@@ -132,7 +132,7 @@ export default function GlassHero() {
 
       {/* Left-side readability gradient so copy holds over the planet */}
       <div className="absolute inset-0 z-[1] pointer-events-none"
-        style={{ background: "linear-gradient(90deg, rgba(8,8,15,0.92) 0%, rgba(8,8,15,0.55) 42%, transparent 74%)" }} />
+        style={{ background: "linear-gradient(90deg, rgba(8,8,15,0.95) 0%, rgba(8,8,15,0.78) 28%, rgba(8,8,15,0.4) 52%, transparent 78%)" }} />
       {/* Cinematic vignette */}
       <div className="absolute inset-0 z-[1] pointer-events-none"
         style={{ boxShadow: "inset 0 0 240px 70px rgba(8,8,15,0.8)" }} />

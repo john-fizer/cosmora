@@ -13,7 +13,7 @@ import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { COLOR, FONT, SOLAR, GLOW } from "@/lib/design/tokens";
 import { GlowButton, Panel, SectionHeading, Em, DataReadout } from "@/components/ui/primitives";
 
-import VideoPlanet from "@/components/landing/VideoPlanet";
+import HomeCosmos from "@/components/landing/HomeCosmos";
 
 const FEATURES = [
   { glyph: "◉", title: "Natal Chart Engine", desc: "Every planet, dignity, decan, and Arabic lot computed instantly across 8 house systems." },
@@ -67,9 +67,9 @@ export default function LandingPage() {
   return (
     <div style={{ background: COLOR.void, color: COLOR.text1, fontFamily: FONT.body }}>
 
-      {/* The spinning planet — photoreal pre-rendered, glides + resizes on scroll */}
+      {/* Real-3D scroll journey — camera flies Saturn → inward through the system */}
       <div className="fixed inset-0 overflow-hidden" style={{ zIndex: 0, pointerEvents: "none" }}>
-        <VideoPlanet progress={progress} />
+        <HomeCosmos progress={progress} />
       </div>
       {/* Soft readability scrim, strongest at the bottom where copy sits */}
       <div className="fixed inset-0" style={{ zIndex: 1, pointerEvents: "none",

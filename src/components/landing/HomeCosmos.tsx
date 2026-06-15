@@ -19,16 +19,61 @@ import type { MotionValue } from "framer-motion";
 import PhotorealSaturn from "@/components/three/PhotorealSaturn";
 import { CinematicFX } from "@/components/three/postfx/CinematicFX";
 
-const SUN_POS: [number, number, number] = [-22, 12, -120];
+// Up-and-right of the planet field so everything is lit from the side — bodies
+// read as gibbous/crescent (curving into shadow) instead of flat full-phase.
+const SUN_POS: [number, number, number] = [44, 28, -52];
 
 // Planet props laid out in depth (-z) so the camera flies through them.
-const PROPS: { name: string; tex: string; pos: [number, number, number]; size: number; spin: number }[] = [
-  { name: "Jupiter", tex: "8k_jupiter.jpg", pos: [-9, -1.5, -40], size: 3.4, spin: 0.05 },
-  { name: "Mars",    tex: "8k_mars.jpg",    pos: [5, 1.5, -62],   size: 0.8, spin: 0.06 },
-  { name: "Earth",   tex: "8k_earth_daymap.jpg", pos: [-4, 0, -74], size: 1.0, spin: 0.04 },
-  { name: "Venus",   tex: "2k_venus_atmosphere.jpg", pos: [3, -1, -86], size: 0.8, spin: 0.03 },
-  { name: "Mercury", tex: "8k_mars.jpg",    pos: [-2, 0.5, -96],  size: 0.5, spin: 0.04 },
+// `atmo` = the colour of the thin lit limb (atmospheric forward-scatter).
+const PROPS: { name: string; tex: string; pos: [number, number, number]; size: number; spin: number; atmo: string }[] = [
+  { name: "Jupiter", tex: "8k_jupiter.jpg", pos: [-9, -1.5, -40], size: 3.4, spin: 0.05, atmo: "#E8C08A" },
+  { name: "Mars",    tex: "8k_mars.jpg",    pos: [5, 1.5, -62],   size: 0.8, spin: 0.06, atmo: "#D98A5A" },
+  { name: "Earth",   tex: "8k_earth_daymap.jpg", pos: [-4, 0, -74], size: 1.0, spin: 0.04, atmo: "#6FA8FF" },
+  { name: "Venus",   tex: "2k_venus_atmosphere.jpg", pos: [3, -1, -86], size: 0.8, spin: 0.03, atmo: "#E8D2A0" },
+  { name: "Mercury", tex: "8k_mars.jpg",    pos: [-2, 0.5, -96],  size: 0.5, spin: 0.04, atmo: "#9a8c7a" },
 ];
+
+// ── Dimensional planet shader: terminator + limb darkening + atmospheric rim ──
+// The flat look came from plain meshStandard: evenly lit, no light→dark curve.
+// This gives every planet a real terminator and a colored forward-scatter limb,
+// lit by the scene's sun so it matches Saturn.
+const PLANET_VERT = /* glsl */ `
+  varying vec2 vUv; varying vec3 vWPos; varying vec3 vWN;
+  void main(){
+    vUv = uv;
+    vec4 wp = modelMatrix * vec4(position, 1.0);
+    vWPos = wp.xyz; vWN = normalize(mat3(modelMatrix) * normal);
+    gl_Position = projectionMatrix * viewMatrix * wp;
+  }
+`;
+const PLANET_FRAG = /* glsl */ `
+  uniform sampler2D uMap;
+  uniform vec3 uSunPos;
+  uniform vec3 uRim;
+  varying vec2 vUv; varying vec3 vWPos; varying vec3 vWN;
+  void main(){
+    vec3 albedo = pow(texture2D(uMap, vUv).rgb, vec3(2.2));
+    vec3 N = normalize(vWN);
+    vec3 L = normalize(uSunPos - vWPos);
+    vec3 V = normalize(cameraPosition - vWPos);
+
+    float ndl = dot(N, L);
+    float lambert = clamp((ndl + 0.05) / 1.05, 0.0, 1.0);      // soft terminator
+    float limb = pow(clamp(dot(N, V), 0.0, 1.0), 0.45);         // edge falloff
+
+    // Atmospheric limb: glows where the surface turns away from view, strongest
+    // along the lit edge (forward scatter) — sells roundness + atmosphere.
+    float fres = pow(1.0 - clamp(dot(N, V), 0.0, 1.0), 3.0);
+    float rim = fres * smoothstep(-0.25, 0.5, ndl);
+
+    vec3 sunCol = vec3(1.0, 0.95, 0.85) * 1.7;
+    vec3 ambient = vec3(0.03, 0.034, 0.06);
+    vec3 col = albedo * (sunCol * lambert + ambient);
+    col *= mix(0.6, 1.0, limb);
+    col += uRim * rim * 0.9;
+    gl_FragColor = vec4(col, 1.0);
+  }
+`;
 
 const SATURN_POS: [number, number, number] = [7, 0.5, -12];
 
@@ -73,13 +118,18 @@ function Sun() {
 
 function PlanetProp({ def }: { def: typeof PROPS[number] }) {
   const tex = useLoader(THREE.TextureLoader, `/textures/planets/${def.tex}`);
-  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  useMemo(() => { tex.colorSpace = THREE.NoColorSpace; tex.anisotropy = 8; }, [tex]); // de-gamma in shader
   const ref = useRef<THREE.Mesh>(null);
+  const uniforms = useMemo(() => ({
+    uMap: { value: tex },
+    uSunPos: { value: new THREE.Vector3(...SUN_POS) },
+    uRim: { value: new THREE.Color(def.atmo) },
+  }), [tex, def.atmo]);
   useFrame((_, dt) => { if (ref.current) ref.current.rotation.y += dt * def.spin; });
   return (
     <mesh ref={ref} position={def.pos}>
       <sphereGeometry args={[def.size, 96, 96]} />
-      <meshStandardMaterial map={tex} roughness={0.92} metalness={0} />
+      <shaderMaterial vertexShader={PLANET_VERT} fragmentShader={PLANET_FRAG} uniforms={uniforms} />
     </mesh>
   );
 }
@@ -102,8 +152,8 @@ function CameraRig({ progress }: { progress: MotionValue<number> }) {
       new THREE.Vector3(7, 0.5, -12),    // Saturn (right of frame)
       new THREE.Vector3(-9, -1.5, -40),  // toward Jupiter / inward
       new THREE.Vector3(0, 0, -64),
-      new THREE.Vector3(-2, 0, -86),
-      new THREE.Vector3(-10, 4, -120),   // toward the distant sun
+      new THREE.Vector3(8, 6, -60),      // swinging toward the sun glow
+      new THREE.Vector3(40, 24, -52),    // sun blazing up-right (backdrop payoff)
     ];
     return {
       posCurve: new THREE.CatmullRomCurve3(positions, false, "centripetal", 0.5),

@@ -449,30 +449,35 @@ function Planet({
 // ─── Aspect line (pulsing) ────────────────────────────────────────────────────
 
 function AspectLine({
-  p1, p2, type, phase,
+  p1, p2, type, phase, hi, dim,
 }: {
   p1: THREE.Vector3;
   p2: THREE.Vector3;
   type: string;
   phase: number;
+  hi: boolean;   // involves the hovered planet → light it up
+  dim: boolean;  // a planet is hovered but this aspect isn't part of it → fade back
 }) {
   const color = ASPECT_COLORS[type] ?? "#64748b";
   const matRef = useRef<THREE.MeshBasicMaterial>(null);
 
+  // Thicker tube when highlighted so it reads as a clear connection
   const geometry = useMemo(() => {
     const curve = new THREE.LineCurve3(p1, p2);
-    return new THREE.TubeGeometry(curve, 1, 0.013, 6, false);
-  }, [p1, p2]);
+    return new THREE.TubeGeometry(curve, 1, hi ? 0.028 : 0.012, 6, false);
+  }, [p1, p2, hi]);
 
   useFrame(({ clock }) => {
-    if (matRef.current) {
-      matRef.current.opacity = 0.25 + Math.sin(clock.elapsedTime * 1.8 + phase) * 0.15;
-    }
+    if (!matRef.current) return;
+    // Faint web by default; the hovered planet's aspects bloom, the rest recede.
+    const base = hi ? 0.7 : dim ? 0.03 : 0.14;
+    const pulse = hi ? Math.sin(clock.elapsedTime * 2.2 + phase) * 0.12 : 0;
+    matRef.current.opacity = base + pulse;
   });
 
   return (
     <mesh geometry={geometry}>
-      <meshBasicMaterial ref={matRef} color={color} transparent opacity={0.35} depthWrite={false} />
+      <meshBasicMaterial ref={matRef} color={color} transparent opacity={0.14} depthWrite={false} blending={THREE.AdditiveBlending} />
     </mesh>
   );
 }
@@ -672,7 +677,9 @@ function OrreryScene({
         const p1 = posMap[asp.planet1];
         const p2 = posMap[asp.planet2];
         if (!p1 || !p2) return null;
-        return <AspectLine key={i} p1={p1} p2={p2} type={asp.type} phase={i * 0.9} />;
+        const involved = hovered === asp.planet1 || hovered === asp.planet2;
+        return <AspectLine key={i} p1={p1} p2={p2} type={asp.type} phase={i * 0.9}
+          hi={involved} dim={hovered !== null && !involved} />;
       })}
 
       {planets.map(p => (

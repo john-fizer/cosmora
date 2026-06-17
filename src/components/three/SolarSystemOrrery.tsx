@@ -6,7 +6,7 @@ import { Stars, OrbitControls, Html } from "@react-three/drei";
 import { CinematicFX } from "./postfx/CinematicFX";
 import * as THREE from "three";
 import type { ChartData, PlanetName, Aspect } from "@/lib/astrology/types";
-import { PLANET_SYMBOLS } from "@/lib/astrology/types";
+import { PLANET_SYMBOLS, ZODIAC_SIGNS } from "@/lib/astrology/types";
 import { getPlanetMeta } from "@/lib/astrology/planetMeta";
 import { QUALITY, detectGpuTier } from "@/lib/design/gpuTier";
 
@@ -61,6 +61,11 @@ const ASPECT_COLORS: Record<string, string> = {
 };
 
 const ZODIAC_SYMBOLS = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
+
+// Designed holographic glyph art (sliced from IMG_8835) — replaces font symbols.
+const ZODIAC_GLYPHS = ["aries","taurus","gemini","cancer","leo","virgo","libra","scorpio","sagittarius","capricorn","aquarius","pisces"];
+const signGlyphSrc = (sign: string) => `/glyphs/zodiac/${sign.toLowerCase()}.png`;
+const signFromLon = (lon: number) => ZODIAC_SIGNS[Math.floor((((lon % 360) + 360) % 360) / 30)];
 
 const ELEMENT_COLORS = [
   "#ef4444","#86efac","#06b6d4","#818cf8",
@@ -298,20 +303,14 @@ function Sun({ onCore }: { onCore?: (m: THREE.Mesh | null) => void }) {
 
 // ─── Orbit ring + motion trail ────────────────────────────────────────────────
 
+// Orbits are secondary — a single faint guide ring (no glow band, no additive
+// stacking) so the eye reads the planets + aspects, not a tangle of bright lines.
 function OrbitRing({ radius, color }: { radius: number; color: string }) {
   return (
-    <group rotation={[-Math.PI / 2, 0, 0]}>
-      {/* crisp bright orbit line */}
-      <mesh>
-        <ringGeometry args={[radius - 0.018, radius + 0.018, 240]} />
-        <meshBasicMaterial color={color} transparent opacity={0.5} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
-      </mesh>
-      {/* soft glow band around it */}
-      <mesh>
-        <ringGeometry args={[radius - 0.12, radius + 0.12, 240]} />
-        <meshBasicMaterial color={color} transparent opacity={0.07} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
-      </mesh>
-    </group>
+    <mesh rotation={[-Math.PI / 2, 0, 0]}>
+      <ringGeometry args={[radius - 0.012, radius + 0.012, 200]} />
+      <meshBasicMaterial color={color} transparent opacity={0.1} side={THREE.DoubleSide} depthWrite={false} />
+    </mesh>
   );
 }
 
@@ -371,12 +370,15 @@ function SaturnRings({ pos }: { pos: THREE.Vector3 }) {
 // ─── Planet ───────────────────────────────────────────────────────────────────
 
 function Planet({
-  name, longitude, isHovered,
+  name, longitude, isHovered, sign, house, signDegree,
   onClick, onPointerEnter, onPointerLeave,
 }: {
   name: string;
   longitude: number;
   isHovered: boolean;
+  sign?: string;
+  house?: number;
+  signDegree?: number;
   onClick: () => void;
   onPointerEnter: () => void;
   onPointerLeave: () => void;
@@ -420,25 +422,32 @@ function Planet({
         </mesh>
       </group>
 
-      {/* Hover label */}
+      {/* Hover card — what it is + where it sits (sign glyph · degree · house) */}
       {isHovered && (
-        <Html center distanceFactor={18} style={{ pointerEvents: "none" }}>
+        <Html center distanceFactor={16} style={{ pointerEvents: "none" }}>
           <div style={{
-            marginTop: -52,
-            background: "rgba(3,3,22,0.92)",
+            marginTop: -68,
+            display: "flex", alignItems: "center", gap: 11,
+            background: "rgba(3,3,22,0.9)",
             border: `1px solid ${color}55`,
-            borderRadius: 12,
-            padding: "5px 14px",
-            color,
-            fontSize: 12,
-            fontWeight: 700,
-            letterSpacing: "0.1em",
+            borderRadius: 14,
+            padding: "8px 14px",
             whiteSpace: "nowrap",
             backdropFilter: "blur(16px)",
-            boxShadow: `0 0 20px ${color}30`,
-            fontFamily: GLYPH_FONT,
+            boxShadow: `0 0 26px ${color}33`,
           }}>
-            {PLANET_SYMBOLS[name as PlanetName] ?? "✦"} {name}
+            {sign && (
+              <img src={signGlyphSrc(sign)} alt={sign} width={34} height={38}
+                style={{ display: "block", filter: "drop-shadow(0 0 4px rgba(140,160,255,0.45))" }} draggable={false} />
+            )}
+            <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.3 }}>
+              <span style={{ color, fontSize: 13, fontWeight: 700, letterSpacing: "0.06em", fontFamily: GLYPH_FONT }}>
+                {PLANET_SYMBOLS[name as PlanetName] ?? "✦"} {name}
+              </span>
+              <span style={{ color: "#9aa0c8", fontSize: 11, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.04em" }}>
+                {signDegree != null ? `${signDegree.toFixed(0)}° ` : ""}{sign ?? ""}{house != null ? `  ·  House ${house}` : ""}
+              </span>
+            </div>
           </div>
         </Html>
       )}
@@ -522,16 +531,16 @@ function ZodiacBelt() {
         );
       })}
 
-      {ZODIAC_SYMBOLS.map((sym, i) => {
+      {ZODIAC_GLYPHS.map((name, i) => {
         const midRad = ((i * 30 + 15) * Math.PI) / 180;
         const x = ZODIAC_R * Math.cos(midRad);
         const z = -ZODIAC_R * Math.sin(midRad);
         return (
-          <Html key={i} position={[x, 0.2, z]} center distanceFactor={30} style={{ pointerEvents: "none" }}>
-            <div style={{ color: ELEMENT_COLORS[i], fontSize: 22, opacity: 0.85, userSelect: "none",
-              fontFamily: GLYPH_FONT, textShadow: `0 0 10px ${ELEMENT_COLORS[i]}80` }}>
-              {sym}
-            </div>
+          <Html key={i} position={[x, 0.2, z]} center distanceFactor={24} style={{ pointerEvents: "none" }}>
+            {/* transparent glyph art (background keyed out) */}
+            <img src={signGlyphSrc(name)} alt={name} width={74} height={83}
+              style={{ opacity: 0.95, userSelect: "none", display: "block",
+                filter: "drop-shadow(0 0 5px rgba(140,160,255,0.4))" }} draggable={false} />
           </Html>
         );
       })}
@@ -619,7 +628,6 @@ function OrreryScene({
   autoRotate: boolean;
 }) {
   const [hovered, setHovered] = useState<string | null>(null);
-  const [sunMesh, setSunMesh] = useState<THREE.Mesh | null>(null);
   const tier = useMemo(() => detectGpuTier(), []);
   const flyRef = useRef<FlyState>({ active: false, target: null, planetName: null, arrived: false });
 
@@ -627,9 +635,12 @@ function OrreryScene({
     if (chart?.planets) {
       return chart.planets
         .filter(p => ORBITAL_RADII[p.name] !== undefined)
-        .map(p => ({ name: p.name, longitude: p.longitude }));
+        .map(p => ({ name: p.name, longitude: p.longitude, sign: p.sign as string | undefined, house: p.house as number | undefined, signDegree: p.signDegree as number | undefined }));
     }
-    return Object.entries(DEMO_LONGITUDES).map(([name, lon]) => ({ name, longitude: lon }));
+    return Object.entries(DEMO_LONGITUDES).map(([name, lon]) => ({
+      name, longitude: lon, sign: signFromLon(lon), house: undefined as number | undefined,
+      signDegree: (((lon % 360) + 360) % 360) % 30,
+    }));
   }, [chart]);
 
   const posMap = useMemo(() => {
@@ -655,20 +666,15 @@ function OrreryScene({
       <color attach="background" args={["#05050E"]} />
 
       <Skybox />
-      <Stars radius={170} depth={50} count={3500} factor={2.8} saturation={0.1} fade speed={0.25} />
+      <Stars radius={170} depth={50} count={3500} factor={2.8} saturation={0.1} fade speed={0.06} />
 
-      <Sun onCore={setSunMesh} />
+      <Sun />
 
       {planets.map(p => {
         const r = ORBITAL_RADII[p.name];
         if (!r) return null;
         const meta = getPlanetMeta(p.name as PlanetName);
-        return (
-          <group key={p.name}>
-            <OrbitRing radius={r} color={meta.color} />
-            <OrbitTrail radius={r} longitude={p.longitude} color={meta.color} />
-          </group>
-        );
+        return <OrbitRing key={p.name} radius={r} color={meta.color} />;
       })}
 
       {saturnPos && <SaturnRings pos={saturnPos} />}
@@ -688,6 +694,9 @@ function OrreryScene({
           name={p.name}
           longitude={p.longitude}
           isHovered={hovered === p.name}
+          sign={p.sign}
+          house={p.house}
+          signDegree={p.signDegree}
           onClick={() => handlePlanetClick(p.name)}
           onPointerEnter={() => setHovered(p.name)}
           onPointerLeave={() => setHovered(null)}
@@ -703,7 +712,9 @@ function OrreryScene({
 
       <OrreryCamera flyRef={flyRef} onArrived={(name) => onNavigate?.(name)} autoRotate={autoRotate} />
 
-      <CinematicFX quality={tier} sun={sunMesh} dof={tier === "high"} bokeh={1.4} bloom={2.0} />
+      {/* No god-rays (they flicker when a backlit planet crosses the sun) and no
+          DOF (bokeh shimmers on tiny bright points). Bloom carries the glow. */}
+      <CinematicFX quality={tier} sun={null} dof={false} bloom={1.8} />
     </>
   );
 }

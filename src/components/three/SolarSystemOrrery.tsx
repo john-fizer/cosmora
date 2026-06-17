@@ -86,8 +86,15 @@ function lonToVec3(lon: number, radius: number): THREE.Vector3 {
 
 const TEXTURE_FILES: Record<string, string> = {
   Sun: "2k_sun.jpg", Moon: "2k_moon.jpg", Mercury: "2k_mercury.jpg",
-  Venus: "2k_venus_atmosphere.jpg", Mars: "2k_mars.jpg", Jupiter: "2k_jupiter.jpg",
-  Saturn: "2k_saturn.jpg", Uranus: "2k_uranus.jpg", Neptune: "2k_neptune.jpg",
+  Venus: "2k_venus_atmosphere.jpg", Mars: "8k_mars.jpg", Jupiter: "8k_jupiter.jpg",
+  Saturn: "8k_saturn.jpg", Uranus: "2k_uranus.jpg", Neptune: "2k_neptune.jpg",
+};
+
+// Per-planet atmosphere rim tint (the lit-limb halo that sells a real sphere).
+const ATMO_COLORS: Record<string, string> = {
+  Mercury: "#b9a88f", Venus: "#e8c98a", Mars: "#e0784a", Jupiter: "#e8c08a",
+  Saturn: "#e8d2a0", Uranus: "#9fe6f0", Neptune: "#5a8cff", Pluto: "#9a8c7a",
+  Moon: "#9aa3c0", NorthNode: "#8aa0ff", Chiron: "#b39ddb",
 };
 
 function loadPlanetFile(file: string): THREE.Texture {
@@ -261,13 +268,60 @@ const ATMO_FRAG = `
   }
 `;
 
+// ─── Dimensional planet shader (terminator + limb darkening + atmosphere rim) ──
+// Lit by the sun at the origin. This is what stops the planets looking like flat
+// cartoons: a real day/night curve, edge falloff, and a colored atmospheric limb.
+const PLANET_VERT = /* glsl */ `
+  varying vec2 vUv; varying vec3 vWPos; varying vec3 vWN;
+  void main(){
+    vUv = uv;
+    vec4 wp = modelMatrix * vec4(position, 1.0);
+    vWPos = wp.xyz; vWN = normalize(mat3(modelMatrix) * normal);
+    gl_Position = projectionMatrix * viewMatrix * wp;
+  }
+`;
+const PLANET_FRAG = /* glsl */ `
+  uniform sampler2D uMap; uniform vec3 uSunPos; uniform vec3 uAtmo;
+  varying vec2 vUv; varying vec3 vWPos; varying vec3 vWN;
+  void main(){
+    vec3 albedo = pow(texture2D(uMap, vUv).rgb, vec3(2.2));
+    vec3 N = normalize(vWN);
+    vec3 L = normalize(uSunPos - vWPos);
+    vec3 V = normalize(cameraPosition - vWPos);
+    float ndl = dot(N, L);
+    float lambert = clamp((ndl + 0.06) / 1.06, 0.0, 1.0);
+    float limb = pow(clamp(dot(N, V), 0.0, 1.0), 0.45);
+    float fres = pow(1.0 - clamp(dot(N, V), 0.0, 1.0), 3.0);
+    float rim = fres * smoothstep(-0.2, 0.6, ndl);
+    vec3 sunCol = vec3(1.0, 0.96, 0.88) * 1.85;
+    vec3 ambient = vec3(0.035, 0.04, 0.07);
+    vec3 col = albedo * (sunCol * lambert + ambient);
+    col *= mix(0.5, 1.0, limb);
+    col += uAtmo * rim * 0.85;
+    gl_FragColor = vec4(col, 1.0);
+  }
+`;
+
+// Center-bright radial glow for the sun (robust — never an eclipse "black sun").
+function makeGlowTexture(): THREE.CanvasTexture {
+  const s = 256;
+  const c = document.createElement("canvas"); c.width = c.height = s;
+  const ctx = c.getContext("2d")!;
+  const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+  g.addColorStop(0.0, "rgba(255,242,210,1)");
+  g.addColorStop(0.22, "rgba(255,206,128,0.72)");
+  g.addColorStop(0.5, "rgba(255,150,70,0.22)");
+  g.addColorStop(1.0, "rgba(255,120,40,0)");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, s, s);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+
 // ─── Sun ──────────────────────────────────────────────────────────────────────
 
-function Sun({ onCore }: { onCore?: (m: THREE.Mesh | null) => void }) {
-  const coreRef = useRef<THREE.Mesh>(null);
+function Sun() {
   const rotRef = useRef<THREE.Group>(null);
   const sunTex = useMemo(() => loadPlanetFile("2k_sun.jpg"), []);
-  const coronaUniforms = useMemo(() => ({ u_scale: { value: 1.6 } }), []);
+  const glowTex = useMemo(() => makeGlowTexture(), []);
 
   useFrame((_, dt) => {
     if (rotRef.current) rotRef.current.rotation.y += dt * 0.05;
@@ -275,28 +329,21 @@ function Sun({ onCore }: { onCore?: (m: THREE.Mesh | null) => void }) {
 
   return (
     <group>
-      {/* The sun is the ONLY light source — gives every planet a real day/night terminator */}
+      {/* The sun is the ONLY light source — gives every planet a real terminator */}
       <pointLight color="#fff4dc" intensity={6.0} distance={500} decay={0.5} />
       <ambientLight color="#13112a" intensity={0.16} />
-      {/* Bright textured star core (bloom does the glow) */}
+      {/* Bright textured star core */}
       <group ref={rotRef}>
-        <mesh ref={(m) => { coreRef.current = m as THREE.Mesh; onCore?.(m as THREE.Mesh | null); }}>
-          <sphereGeometry args={[1.75, 64, 64]} />
-          <meshBasicMaterial map={sunTex} color="#ffe2a8" toneMapped={false} />
+        <mesh>
+          <sphereGeometry args={[1.5, 64, 64]} />
+          <meshBasicMaterial map={sunTex} color="#ffd88c" toneMapped={false} />
         </mesh>
       </group>
-      {/* Inner bright halo so the sun reads as a glowing star, not a dim dot */}
-      <mesh>
-        <sphereGeometry args={[1.95, 48, 48]} />
-        <meshBasicMaterial color="#ffcf7a" transparent opacity={0.5} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
-      </mesh>
-      {/* Corona glow shell — additive Fresnel halo (the sun is allowed a corona;
-          this is NOT the nested-planet-shell problem) */}
-      <mesh>
-        <sphereGeometry args={[2.3, 48, 48]} />
-        <shaderMaterial vertexShader={CORONA_VERT} fragmentShader={CORONA_FRAG} uniforms={coronaUniforms}
-          transparent depthWrite={false} blending={THREE.AdditiveBlending} side={THREE.BackSide} toneMapped={false} />
-      </mesh>
+      {/* Camera-facing center-bright glow — guarantees a glowing star, not a ring */}
+      <sprite scale={[8, 8, 1]}>
+        <spriteMaterial map={glowTex} transparent opacity={0.95} depthWrite={false}
+          blending={THREE.AdditiveBlending} toneMapped={false} />
+      </sprite>
     </group>
   );
 }
@@ -392,11 +439,20 @@ function Planet({
   const selfRotRef = useRef<THREE.Group>(null);
   const rotSpeed   = ROTATION_SPEEDS[name] ?? 0.03;
 
-  // NASA map when available; procedural fallback otherwise
+  // NASA map when available; procedural fallback otherwise. NoColorSpace because
+  // the shader de-gammas manually (pow 2.2) and outputs linear for ACES.
   const surfaceTex = useMemo(() => {
     const file = TEXTURE_FILES[name];
-    return file ? loadPlanetFile(file) : makePlanetTexture(name, color);
+    const t = file ? loadPlanetFile(file) : makePlanetTexture(name, color);
+    t.colorSpace = THREE.NoColorSpace; t.anisotropy = 8;
+    return t;
   }, [name, color]);
+
+  const planetUniforms = useMemo(() => ({
+    uMap: { value: surfaceTex },
+    uSunPos: { value: new THREE.Vector3(0, 0, 0) },
+    uAtmo: { value: new THREE.Color(ATMO_COLORS[name] ?? color) },
+  }), [surfaceTex, name, color]);
 
   useFrame((_, dt) => {
     if (selfRotRef.current) selfRotRef.current.rotation.y += rotSpeed * dt;
@@ -417,8 +473,8 @@ function Planet({
           onPointerEnter={(e) => { e.stopPropagation(); onPointerEnter(); }}
           onPointerLeave={() => onPointerLeave()}
         >
-          <sphereGeometry args={[size, 64, 64]} />
-          <meshStandardMaterial map={surfaceTex} roughness={0.95} metalness={0.0} />
+          <sphereGeometry args={[size, 96, 96]} />
+          <shaderMaterial vertexShader={PLANET_VERT} fragmentShader={PLANET_FRAG} uniforms={planetUniforms} />
         </mesh>
       </group>
 
@@ -688,7 +744,7 @@ function OrreryScene({
           hi={involved} dim={hovered !== null && !involved} />;
       })}
 
-      {planets.map(p => (
+      {planets.filter(p => p.name !== "Sun").map(p => (
         <Planet
           key={p.name}
           name={p.name}

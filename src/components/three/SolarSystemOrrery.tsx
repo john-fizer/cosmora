@@ -302,15 +302,16 @@ const PLANET_FRAG = /* glsl */ `
   }
 `;
 
-// Center-bright radial glow for the sun (robust — never an eclipse "black sun").
+// Tight bloom bleed for the sun — a real camera blooms a little on something
+// this bright, but there's no big soft halo in vacuum. Falls off fast.
 function makeGlowTexture(): THREE.CanvasTexture {
   const s = 256;
   const c = document.createElement("canvas"); c.width = c.height = s;
   const ctx = c.getContext("2d")!;
   const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
-  g.addColorStop(0.0, "rgba(255,242,210,1)");
-  g.addColorStop(0.22, "rgba(255,206,128,0.72)");
-  g.addColorStop(0.5, "rgba(255,150,70,0.22)");
+  g.addColorStop(0.0, "rgba(255,247,224,0.95)");
+  g.addColorStop(0.30, "rgba(255,214,140,0.45)");
+  g.addColorStop(0.55, "rgba(255,150,70,0.10)");
   g.addColorStop(1.0, "rgba(255,120,40,0)");
   ctx.fillStyle = g; ctx.fillRect(0, 0, s, s);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;

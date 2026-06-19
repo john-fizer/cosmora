@@ -9,6 +9,10 @@ import {
   PLANET_COLORS, PLANET_SYMBOLS, ASTRO_PLANETS,
   LINE_THEMES, scoreLocation,
 } from "@/lib/astrology/astrocartography";
+import { CITIES } from "@/lib/astrology/cities";
+import {
+  activeCities, ENERGY_CATEGORIES, ENERGY_COLORS, type EnergyCategory,
+} from "@/lib/astrology/crossings";
 import type { VortexNodePublic, CitySpot } from "./GlobeCanvas";
 
 const GlobeCanvas     = dynamic(() => import("./GlobeCanvas"),     { ssr: false });
@@ -17,110 +21,10 @@ import type { GlobeMode } from "./GlobeCanvas";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 type ViewMode = "globe" | "flat" | "heatmap";
-type EnergyCategory = "Career" | "Love" | "Creativity" | "Wealth" | "Spirituality" | "Transformation";
 
-const ENERGY_COLORS: Record<EnergyCategory, string> = {
-  Career: "#4488FF", Love: "#FF71D1", Creativity: "#B06AFF",
-  Wealth: "#FFD700", Spirituality: "#2DFFB3", Transformation: "#FF4040",
+const CATEGORY_GLYPH: Record<EnergyCategory, string> = {
+  Career: "♕", Love: "♥", Wealth: "✦", Creativity: "✧", Spirituality: "☽", Transformation: "⚡",
 };
-
-const PLANET_ENERGY_WEIGHTS: Record<AstroLinePlanet, Partial<Record<EnergyCategory, number>>> = {
-  Sun:     { Career: 1.0, Creativity: 0.7, Transformation: 0.5 },
-  Moon:    { Love: 1.0, Spirituality: 0.7 },
-  Mercury: { Career: 0.7, Creativity: 0.6 },
-  Venus:   { Love: 1.0, Creativity: 0.9, Wealth: 0.6 },
-  Mars:    { Career: 0.8, Transformation: 0.9 },
-  Jupiter: { Wealth: 1.0, Career: 0.8, Spirituality: 0.5 },
-  Saturn:  { Career: 0.7, Transformation: 0.8 },
-  Uranus:  { Creativity: 0.9, Transformation: 1.0 },
-  Neptune: { Spirituality: 1.0, Creativity: 0.8 },
-};
-
-const PLANET_TO_CATEGORY: Record<AstroLinePlanet, EnergyCategory> = {
-  Sun: "Career", Mercury: "Career", Saturn: "Career", Mars: "Career",
-  Moon: "Love",  Venus: "Love",
-  Jupiter: "Wealth",
-  Uranus: "Creativity",
-  Neptune: "Spirituality",
-};
-
-function angularDist(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const φ1 = lat1 * Math.PI / 180, φ2 = lat2 * Math.PI / 180;
-  const Δλ = (lon2 - lon1) * Math.PI / 180;
-  const c = Math.sin(φ1) * Math.sin(φ2) + Math.cos(φ1) * Math.cos(φ2) * Math.cos(Δλ);
-  return Math.acos(Math.min(1, Math.max(-1, c))) * 180 / Math.PI;
-}
-
-function deriveEnergyScores(): Record<EnergyCategory, number> {
-  const cats: EnergyCategory[] = ["Career","Love","Creativity","Wealth","Spirituality","Transformation"];
-  return Object.fromEntries(cats.map(c => [c, Math.floor(55 + Math.random() * 40)])) as Record<EnergyCategory, number>;
-}
-
-const SAMPLE_SPOTS = [
-  // Americas
-  { city: "Los Angeles",       lat:  34.05, lon: -118.24 },
-  { city: "San Francisco",     lat:  37.77, lon: -122.42 },
-  { city: "Seattle",           lat:  47.61, lon: -122.33 },
-  { city: "Las Vegas",         lat:  36.17, lon: -115.14 },
-  { city: "Denver",            lat:  39.74, lon: -104.98 },
-  { city: "Chicago",           lat:  41.88, lon:  -87.63 },
-  { city: "New York",          lat:  40.71, lon:  -74.01 },
-  { city: "Miami",             lat:  25.76, lon:  -80.19 },
-  { city: "Atlanta",           lat:  33.75, lon:  -84.39 },
-  { city: "Nashville",         lat:  36.17, lon:  -86.78 },
-  { city: "Vancouver",         lat:  49.28, lon: -123.12 },
-  { city: "Toronto",           lat:  43.65, lon:  -79.38 },
-  { city: "Mexico City",       lat:  19.43, lon:  -99.13 },
-  { city: "Havana",            lat:  23.14, lon:  -82.36 },
-  { city: "Bogotá",            lat:   4.71, lon:  -74.07 },
-  { city: "Lima",              lat: -12.05, lon:  -77.04 },
-  { city: "Rio de Janeiro",    lat: -22.90, lon:  -43.17 },
-  { city: "Buenos Aires",      lat: -34.60, lon:  -58.38 },
-  { city: "Santiago",          lat: -33.45, lon:  -70.67 },
-  // Europe
-  { city: "London",            lat:  51.51, lon:   -0.13 },
-  { city: "Paris",             lat:  48.85, lon:    2.35 },
-  { city: "Madrid",            lat:  40.42, lon:   -3.70 },
-  { city: "Barcelona",         lat:  41.38, lon:    2.17 },
-  { city: "Lisbon",            lat:  38.72, lon:   -9.14 },
-  { city: "Amsterdam",         lat:  52.37, lon:    4.90 },
-  { city: "Berlin",            lat:  52.52, lon:   13.41 },
-  { city: "Rome",              lat:  41.90, lon:   12.49 },
-  { city: "Athens",            lat:  37.98, lon:   23.73 },
-  { city: "Vienna",            lat:  48.21, lon:   16.37 },
-  { city: "Prague",            lat:  50.08, lon:   14.44 },
-  { city: "Stockholm",         lat:  59.33, lon:   18.07 },
-  { city: "Oslo",              lat:  59.91, lon:   10.75 },
-  { city: "Reykjavik",         lat:  64.13, lon:  -21.94 },
-  // Africa & Middle East
-  { city: "Istanbul",          lat:  41.01, lon:   28.98 },
-  { city: "Cairo",             lat:  30.04, lon:   31.24 },
-  { city: "Casablanca",        lat:  33.59, lon:   -7.62 },
-  { city: "Lagos",             lat:   6.52, lon:    3.38 },
-  { city: "Nairobi",           lat:  -1.29, lon:   36.82 },
-  { city: "Cape Town",         lat: -33.92, lon:   18.42 },
-  { city: "Johannesburg",      lat: -26.20, lon:   28.04 },
-  { city: "Dubai",             lat:  25.20, lon:   55.27 },
-  { city: "Tel Aviv",          lat:  32.08, lon:   34.78 },
-  { city: "Riyadh",            lat:  24.69, lon:   46.72 },
-  // Asia & Pacific
-  { city: "Moscow",            lat:  55.75, lon:   37.62 },
-  { city: "Mumbai",            lat:  19.08, lon:   72.88 },
-  { city: "Delhi",             lat:  28.66, lon:   77.22 },
-  { city: "Bangkok",           lat:  13.76, lon:  100.50 },
-  { city: "Singapore",         lat:   1.35, lon:  103.82 },
-  { city: "Bali",              lat:  -8.34, lon:  115.09 },
-  { city: "Jakarta",           lat:  -6.21, lon:  106.85 },
-  { city: "Hong Kong",         lat:  22.32, lon:  114.17 },
-  { city: "Shanghai",          lat:  31.23, lon:  121.47 },
-  { city: "Beijing",           lat:  39.90, lon:  116.41 },
-  { city: "Tokyo",             lat:  35.68, lon:  139.69 },
-  { city: "Osaka",             lat:  34.69, lon:  135.50 },
-  { city: "Seoul",             lat:  37.57, lon:  126.98 },
-  { city: "Sydney",            lat: -33.87, lon:  151.21 },
-  { city: "Melbourne",         lat: -37.81, lon:  144.96 },
-  { city: "Auckland",          lat: -36.85, lon:  174.76 },
-];
 
 // ─── Eye icon ─────────────────────────────────────────────────────────────────
 function EyeIcon({ visible }: { visible: boolean }) {
@@ -489,9 +393,9 @@ export default function AstrocartographyPage() {
   const [activeVortex,    setActiveVortex]    = useState<VortexNodePublic | null>(null);
   const [showOracle,      setShowOracle]      = useState(false);
 
-  const [topSpots, setTopSpots] = useState<{ city: string; lat: number; lon: number; scores: LocationScore[]; power: number }[]>([]);
-  const [activeCategories] = useState<Set<EnergyCategory>>(
-    new Set<EnergyCategory>(["Career", "Love", "Creativity", "Wealth", "Spirituality"])
+  const [topSpots, setTopSpots] = useState<CitySpot[]>([]);
+  const [activeCategories, setActiveCategories] = useState<Set<EnergyCategory>>(
+    new Set<EnergyCategory>(ENERGY_CATEGORIES)
   );
 
   // ── Load profile ─────────────────────────────────────────────────────────────
@@ -525,24 +429,18 @@ export default function AstrocartographyPage() {
       .catch(() => setLoading(false));
   }, [birthDatetime]);
 
-  // ── Compute top power spots ───────────────────────────────────────────────────
+  // ── Compute active cities: only where a planetary line crosses close by ───────
   useEffect(() => {
-    if (lines.length === 0) return;
-    const CLOSE_LINE_DEG = 2; // ~200 km — must have a line passing this close to show skyline
-    const scored = SAMPLE_SPOTS.map(s => {
-      const scores = scoreLocation(lines, s.lat, s.lon);
-      const power  = scores.reduce((acc, sc) => acc + sc.influence * 100, 0);
-      const hasCloseLine = scores.some(sc => sc.distanceDeg <= CLOSE_LINE_DEG);
-      return { city: s.city, lat: s.lat, lon: s.lon, scores, power: Math.min(99, Math.round(power)), hasCloseLine };
-    });
-    // Only include cities with an actual line passing close by
-    const sorted = scored.filter(s => s.hasCloseLine).sort((a, b) => b.power - a.power);
-    const deduped: typeof sorted = [];
-    for (const spot of sorted) {
-      if (!deduped.some(k => angularDist(spot.lat, spot.lon, k.lat, k.lon) < 5)) deduped.push(spot);
-    }
-    setTopSpots(deduped.slice(0, 8));
-  }, [lines]);
+    if (lines.length === 0) { setTopSpots([]); return; }
+    setTopSpots(activeCities(CITIES, lines, {
+      thresholdDeg: 1.6,                 // ~175 km — line must cross close to activate
+      categories: activeCategories,
+      planets: activePlanets,
+      angles: activeAngles,
+      minSepDeg: 7,                      // de-clutter so cities don't drown each other
+      cap: 14,
+    }));
+  }, [lines, activeCategories, activePlanets, activeAngles]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
   const handleLocationClick = useCallback((lat: number, lon: number) => {
@@ -559,10 +457,10 @@ export default function AstrocartographyPage() {
     return next;
   });
 
-  const visibleTopSpots = topSpots.filter(s => {
-    const top = s.scores[0]?.planet;
-    const cat = top ? (PLANET_TO_CATEGORY[top] ?? "Career") : "Career";
-    return activeCategories.has(cat);
+  const toggleCategory = (c: EnergyCategory) => setActiveCategories(prev => {
+    const next = new Set(prev);
+    next.has(c) ? next.delete(c) : next.add(c);
+    return next;
   });
 
   const globeMode: GlobeMode = viewMode === "heatmap" ? "energy" : "globe";
@@ -621,7 +519,7 @@ export default function AstrocartographyPage() {
               lines={lines}
               activePlanets={activePlanets}
               activeAngles={activeAngles}
-              topSpots={visibleTopSpots as CitySpot[]}
+              topSpots={topSpots}
               birthLat={birthLat}
               birthLon={birthLon}
               showCities={layers.citySkylines}
@@ -636,7 +534,7 @@ export default function AstrocartographyPage() {
               activePlanets={activePlanets}
               activeAngles={activeAngles}
               globeMode={globeMode}
-              topSpots={visibleTopSpots as CitySpot[]}
+              topSpots={topSpots}
               onLocationClick={handleLocationClick}
               onVortexClick={() => {}}
               birthLat={birthLat}
@@ -701,6 +599,56 @@ export default function AstrocartographyPage() {
           }}
         >
           {activePlanets.size === ASTRO_PLANETS.length ? "NONE" : "ALL"}
+        </button>
+      </motion.div>
+
+      {/* ── Category toggle bar — thins the active-city field by energy ── */}
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.15 }}
+        style={{
+          position: "absolute", top: 52, left: "50%", transform: "translateX(-50%)",
+          display: "flex", alignItems: "center", gap: 5,
+          background: "rgba(5,8,22,0.82)",
+          border: "1px solid rgba(30,60,120,0.35)",
+          borderRadius: 40, padding: "5px 8px",
+          backdropFilter: "blur(20px)", zIndex: 12,
+        }}
+      >
+        <span style={{ color: "#445577", fontSize: 7, letterSpacing: "0.18em", fontFamily: "'Fragment Mono', monospace", paddingLeft: 4 }}>
+          ENERGY
+        </span>
+        {ENERGY_CATEGORIES.map(cat => {
+          const on  = activeCategories.has(cat);
+          const col = ENERGY_COLORS[cat];
+          return (
+            <button key={cat} onClick={() => toggleCategory(cat)} title={cat} style={{
+              display: "flex", alignItems: "center", gap: 4, padding: "3px 9px",
+              background: on ? `${col}1A` : "transparent",
+              border: `1px solid ${on ? col + "55" : "rgba(40,60,110,0.3)"}`,
+              borderRadius: 20, color: on ? col : "#3A4A66",
+              fontSize: 8, letterSpacing: "0.08em",
+              fontFamily: "'Fragment Mono', monospace",
+              cursor: "pointer", transition: "all 0.15s",
+            }}>
+              <span style={{ fontSize: 10 }}>{CATEGORY_GLYPH[cat]}</span>
+              <span>{cat.toUpperCase()}</span>
+            </button>
+          );
+        })}
+        <button
+          onClick={() => setActiveCategories(
+            activeCategories.size === ENERGY_CATEGORIES.length ? new Set() : new Set(ENERGY_CATEGORIES)
+          )}
+          style={{
+            padding: "3px 9px", marginLeft: 2,
+            background: "rgba(50,213,255,0.06)", border: "1px solid rgba(50,213,255,0.2)",
+            borderRadius: 20, color: "#C8A55B", fontSize: 7.5,
+            letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
+          }}
+        >
+          {activeCategories.size === ENERGY_CATEGORIES.length ? "NONE" : "ALL"}
         </button>
       </motion.div>
 

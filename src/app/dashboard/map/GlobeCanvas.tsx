@@ -6,16 +6,15 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import { useRef, useMemo, useCallback, useState, useEffect } from "react";
 import * as THREE from "three";
-import type { AstroLine, AstroLinePlanet, AstroLineAngle, LocationScore } from "@/lib/astrology/astrocartography";
+import type { AstroLine, AstroLinePlanet, AstroLineAngle } from "@/lib/astrology/astrocartography";
 import { PLANET_COLORS, PLANET_SYMBOLS, scoreLocation } from "@/lib/astrology/astrocartography";
+import { LANDMARKS, proceduralSkyline, type Prim } from "@/lib/astrology/skylines";
+import type { CitySpot } from "@/lib/astrology/crossings";
 import { QUALITY, detectGpuTier } from "@/lib/design/gpuTier";
 
 export type GlobeMode = "globe" | "cities" | "lines" | "planets" | "energy";
 
-export type CitySpot = {
-  city: string; lat: number; lon: number;
-  scores: LocationScore[]; power: number;
-};
+export type { CitySpot } from "@/lib/astrology/crossings";
 
 const GLOBE_R = 2.0;
 const ATMO_R  = 2.12;
@@ -346,12 +345,71 @@ function EnergyHeatmap({ lines }: { lines: AstroLine[] }) {
 }
 
 // ─── Holographic city skyline ─────────────────────────────────────────────────
-function CityBuilding({ x, z, w, d, h, color }: { x: number; z: number; w: number; d: number; h: number; color: THREE.Color }) {
-  const edges = useMemo(() => new THREE.EdgesGeometry(new THREE.BoxGeometry(w, h, d)), [w, h, d]);
+// Abstract skyline-unit → globe scale. Footprint stays within the platform.
+const FOOT   = 0.030; // x/z/width abstract unit → world units
+const HSCALE = 0.048; // height abstract unit → world units
+
+const edgesOf = (g: THREE.BufferGeometry, angle = 18) => new THREE.EdgesGeometry(g, angle);
+
+/** Convert one abstract primitive into positioned wireframe edge geometries. */
+function buildPrim(prim: Prim): { geo: THREE.BufferGeometry; pos: [number, number, number] }[] {
+  const x = (prim.x ?? 0) * FOOT;
+  const z = ((prim as { z?: number }).z ?? 0) * FOOT;
+  switch (prim.k) {
+    case "box": {
+      const w = prim.w * FOOT, d = (prim.d ?? prim.w) * FOOT, h = prim.h * HSCALE;
+      return [{ geo: edgesOf(new THREE.BoxGeometry(w, h, d)), pos: [x, h / 2, z] }];
+    }
+    case "taper": {
+      const w = prim.w * FOOT, h = prim.h * HSCALE, top = prim.top ?? 0.25;
+      const g = new THREE.CylinderGeometry((w / 2) * top, w / 2, h, 4); g.rotateY(Math.PI / 4);
+      return [{ geo: edgesOf(g), pos: [x, h / 2, z] }];
+    }
+    case "spire": {
+      const w = prim.w * FOOT, h = prim.h * HSCALE;
+      const g = new THREE.ConeGeometry(w / 2, h, 4); g.rotateY(Math.PI / 4);
+      return [{ geo: edgesOf(g), pos: [x, h / 2, z] }];
+    }
+    case "pyramid": {
+      const w = prim.w * FOOT, h = prim.h * HSCALE;
+      const g = new THREE.ConeGeometry(w * 0.72, h, 4); g.rotateY(Math.PI / 4);
+      return [{ geo: edgesOf(g), pos: [x, h / 2, z] }];
+    }
+    case "setback": {
+      const steps = prim.steps ?? 3, h = prim.h * HSCALE;
+      const w0 = prim.w * FOOT, d0 = (prim.d ?? prim.w) * FOOT, sh = h / steps;
+      const out: { geo: THREE.BufferGeometry; pos: [number, number, number] }[] = [];
+      let y = 0;
+      for (let s = 0; s < steps; s++) {
+        const f = 1 - (s / steps) * 0.6;
+        out.push({ geo: edgesOf(new THREE.BoxGeometry(w0 * f, sh, d0 * f)), pos: [x, y + sh / 2, z] });
+        y += sh;
+      }
+      out.push({ geo: edgesOf(new THREE.ConeGeometry(w0 * 0.07, h * 0.22, 4)), pos: [x, y + h * 0.11, z] });
+      return out;
+    }
+    case "dome": {
+      const r = prim.r * FOOT, drumH = prim.h * HSCALE * 0.45;
+      const drum = new THREE.CylinderGeometry(r, r, drumH, 10);
+      const dome = new THREE.SphereGeometry(r, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2);
+      return [
+        { geo: edgesOf(drum), pos: [x, drumH / 2, z] },
+        { geo: edgesOf(dome), pos: [x, drumH, z] },
+      ];
+    }
+  }
+}
+
+function PrimMesh({ prim, color }: { prim: Prim; color: THREE.Color }) {
+  const parts = useMemo(() => buildPrim(prim), [prim]);
   return (
-    <lineSegments geometry={edges} position={[x, h / 2, z]}>
-      <lineBasicMaterial color={color} transparent opacity={0.75} />
-    </lineSegments>
+    <>
+      {parts.map((p, i) => (
+        <lineSegments key={i} geometry={p.geo} position={p.pos}>
+          <lineBasicMaterial color={color} transparent opacity={0.8} />
+        </lineSegments>
+      ))}
+    </>
   );
 }
 
@@ -373,30 +431,22 @@ function CityProjection({ spot, index }: { spot: CitySpot; index: number }) {
     return new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal);
   }, [spot.lat, spot.lon]);
 
-  const buildings = useMemo(() => {
-    const rand = seededRand(index * 997 + Math.round(spot.lat * 10) + Math.round(spot.lon * 10));
-    // Minimum scale 0.55 so even zero-power cities render visible buildings
-    const scale = 0.55 + (spot.power / 99) * 0.45;
-    // Grid layout: 4 rows × 4 cols, skip extreme corners
-    const layout: { x: number; z: number }[] = [];
-    for (let i = -2; i <= 1; i++)
-      for (let j = -2; j <= 1; j++) {
-        if (Math.abs(i) + Math.abs(j) >= 4) continue;
-        layout.push({ x: i * 0.038 + (rand() - 0.5) * 0.01, z: j * 0.038 + (rand() - 0.5) * 0.01 });
-      }
-    return layout.map(({ x, z }) => ({
-      x, z,
-      w: 0.018 + rand() * 0.022,
-      d: 0.018 + rand() * 0.022,
-      h: 0.032 + Math.pow(rand(), 1.2) * 0.30 * scale,
-    }));
-  }, [index, spot.power, spot.lat, spot.lon]);
+  // Authored landmark silhouette when available, else deterministic procedural.
+  const prims = useMemo<Prim[]>(() => {
+    const sk = spot.skyline;
+    if (sk?.tier === "landmark" && sk.landmark && LANDMARKS[sk.landmark]) return LANDMARKS[sk.landmark];
+    const seed = (index * 997 + Math.round(spot.lat * 13) + Math.round(spot.lon * 7)) | 0;
+    return proceduralSkyline(sk?.height ?? 1, sk?.density ?? 1, seed);
+  }, [spot.skyline, spot.lat, spot.lon, index]);
 
-  const maxH = useMemo(() => Math.max(...buildings.map(b => b.h)), [buildings]);
+  const maxH = useMemo(() => Math.max(0.12, ...prims.map(p => p.h * HSCALE)), [prims]);
+  const halfSpan = useMemo(() =>
+    Math.max(0.11, ...prims.map(p => Math.abs((p.x ?? 0) * FOOT) + (("w" in p ? p.w : ("r" in p ? p.r : 0)) * FOOT))) + 0.02,
+    [prims]);
 
-  // Base platform
+  // Base platform sized to the skyline footprint
   const platformEdges = useMemo(() =>
-    new THREE.EdgesGeometry(new THREE.BoxGeometry(0.22, 0.004, 0.22)), []);
+    new THREE.EdgesGeometry(new THREE.BoxGeometry(halfSpan * 2, 0.004, halfSpan * 2)), [halfSpan]);
 
   // Rise animation
   useFrame((_, dt) => {
@@ -410,9 +460,9 @@ function CityProjection({ spot, index }: { spot: CitySpot; index: number }) {
       <lineSegments geometry={platformEdges} position={[0, 0.002, 0]}>
         <lineBasicMaterial color={col} transparent opacity={0.3} />
       </lineSegments>
-      {/* Buildings */}
-      {buildings.map((b, i) => (
-        <CityBuilding key={i} {...b} color={col} />
+      {/* Skyline */}
+      {prims.map((p, i) => (
+        <PrimMesh key={i} prim={p} color={col} />
       ))}
       {/* Data readout label — floats above tallest building */}
       <Html position={[0, maxH + 0.16, 0]} center distanceFactor={8} zIndexRange={[10, 0]}>
@@ -684,7 +734,7 @@ function Scene({
 
       <GlobeClickHandler onGlobeClick={onLocationClick} globeGroupRef={globeGroupRef} />
 
-      <OrbitControls enablePan={false} minDistance={3.5} maxDistance={9}
+      <OrbitControls enablePan={false} minDistance={2.6} maxDistance={9}
         rotateSpeed={0.4} autoRotate={false} enableDamping dampingFactor={0.05} />
 
       <EffectComposer>

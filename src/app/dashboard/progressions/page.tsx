@@ -56,7 +56,7 @@ function DirectedRow({ p }: { p: DirectedPlacement }) {
       <span style={{ color: col, fontSize: 10, fontFamily: "'Fragment Mono', monospace", width: 70 }}>
         {p.name.replace("NorthNode", "N.Node")}
       </span>
-      <span style={{ color: "#445577", fontSize: 9, fontFamily: "'Fragment Mono', monospace", width: 90 }}>
+      <span style={{ color: "#8899BB", fontSize: 9, fontFamily: "'Fragment Mono', monospace", width: 90 }}>
         {SIGN_SYMBOLS[p.sign] ?? ""} {degStr(p.signDegree)} {p.sign}
       </span>
       <span style={{ color: "#334466", fontSize: 9, fontFamily: "'Fragment Mono', monospace", marginLeft: "auto" }}>
@@ -70,6 +70,7 @@ export default function ProgressionsPage() {
   const [result, setResult]       = useState<ProgressionResult | null>(null);
   const [loading, setLoading]     = useState(true);
   const [noProfile, setNoProfile] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
   const [tab, setTab]             = useState<"prog" | "arcs">("prog");
 
   useEffect(() => {
@@ -87,7 +88,7 @@ export default function ProgressionsPage() {
     })
       .then(r => r.json())
       .then(d => { setResult(d.result ?? null); setLoading(false); })
-      .catch(() => setLoading(false));
+      .catch(() => { setFetchError(true); setLoading(false); });
   }, []);
 
   if (noProfile) {
@@ -96,6 +97,17 @@ export default function ProgressionsPage() {
         <div className="text-center ml-16">
           <p style={{ color: "#C8A55B", fontSize: 13, fontFamily: "'Fragment Mono', monospace" }}>BIRTH DATA REQUIRED</p>
           <p style={{ color: "#445577", fontSize: 11, marginTop: 6 }}>Complete your profile in Settings.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center" style={{ background: "#010810" }}>
+        <div className="text-center ml-16">
+          <p style={{ color: "#C8A55B", fontSize: 13, fontFamily: "'Fragment Mono', monospace" }}>CALCULATION ERROR</p>
+          <p style={{ color: "#445577", fontSize: 11, marginTop: 6 }}>Could not load progressions. Try refreshing.</p>
         </div>
       </div>
     );

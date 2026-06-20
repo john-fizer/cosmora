@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
 import {
-  buildFirdariaData, FIRDARIA_YEARS,
+  buildFirdariaData,
 } from "@/lib/astrology/firdaria";
 import type { FirdariaData, FirdariaPeriod, FirdariaRuler } from "@/lib/astrology/firdaria";
 
@@ -283,7 +283,7 @@ export default function FirdariaPage() {
             </motion.div>
           )}
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 32 }}>
+          <div style={{ display: "grid", gridTemplateColumns: currentMajor ? "1fr 1fr" : "1fr", gap: 20, marginBottom: 32 }}>
             {/* Sub-periods */}
             {currentMajor && (
               <div>

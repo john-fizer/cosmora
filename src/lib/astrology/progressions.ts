@@ -52,9 +52,11 @@ export function buildProgressionResult(
   ageYears: number,
   progDateISO: string,
 ): ProgressionResult {
-  const natalSun  = natal.planets.find(p => p.name === "Sun")!;
-  const progSun   = progressed.planets.find(p => p.name === "Sun")!;
-  const progMoon  = progressed.planets.find(p => p.name === "Moon")!;
+  const natalSun  = natal.planets.find(p => p.name === "Sun");
+  const progSun   = progressed.planets.find(p => p.name === "Sun");
+  const progMoon  = progressed.planets.find(p => p.name === "Moon");
+  if (!natalSun || !progSun || !progMoon)
+    throw new Error("buildProgressionResult: Sun or Moon missing from chart data");
 
   const solarArc = norm360(progSun.longitude - natalSun.longitude);
 

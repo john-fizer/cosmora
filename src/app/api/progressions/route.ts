@@ -11,8 +11,12 @@ export async function POST(req: NextRequest) {
     }
 
     const birth = new Date(birthDatetime);
+    if (isNaN(birth.getTime()))
+      return NextResponse.json({ error: "Invalid birthDatetime" }, { status: 400 });
     const today = new Date();
     const ageYears = (today.getTime() - birth.getTime()) / (365.25 * 86400000);
+    if (ageYears <= 0)
+      return NextResponse.json({ error: "birthDatetime must be in the past" }, { status: 400 });
 
     // Secondary progressions: 1 day after birth = 1 year of life
     const progDate = new Date(birth.getTime() + ageYears * 86400000);

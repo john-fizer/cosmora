@@ -209,3 +209,101 @@ export function buildDegreeContext(chart: ChartData): string {
   return `WESTERN DEGREE-LEVEL TESTIMONY (tropical):
 ${lines.join("\n")}`;
 }
+
+// ─── Vimshottari Dasha ────────────────────────────────────────────────────────
+// 120-year nakshatra-based planetary period system.
+
+export type DashaRuler =
+  | "Ketu" | "Venus" | "Sun" | "Moon" | "Mars"
+  | "Rahu" | "Jupiter" | "Saturn" | "Mercury";
+
+export const DASHA_YEARS: Record<DashaRuler, number> = {
+  Ketu: 7, Venus: 20, Sun: 6, Moon: 10, Mars: 7,
+  Rahu: 18, Jupiter: 16, Saturn: 19, Mercury: 17,
+};
+export const DASHA_TOTAL_YEARS = 120;
+
+export const DASHA_ORDER: DashaRuler[] = [
+  "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury",
+];
+
+// Each nakshatra's Vimshottari lord (index 0–26 maps to Ashwini–Revati)
+const NAK_LORDS: DashaRuler[] = [
+  "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury", // 0–8
+  "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury", // 9–17
+  "Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury", // 18–26
+];
+
+export interface DashaPeriod {
+  ruler: DashaRuler;
+  antardasha?: DashaRuler;
+  years: number;
+  start: Date;
+  end: Date;
+  isCurrent: boolean;
+  isPast: boolean;
+  level: 1 | 2;
+}
+
+export interface VimshottariData {
+  major: DashaPeriod[];
+  currentMajor?: DashaPeriod;
+  antardasha: DashaPeriod[];
+  currentAntar?: DashaPeriod;
+}
+
+function addYearsDasha(d: Date, years: number): Date {
+  return new Date(d.getTime() + years * 365.25 * 86400000);
+}
+
+export function buildVimshottariDasha(moonSiderealLon: number, birthDatetime: string): VimshottariData {
+  const birth = new Date(birthDatetime);
+  const today = new Date();
+  const moonLon = norm360(moonSiderealLon);
+
+  const nakIdx = Math.floor(moonLon / NAK_SPAN) % 27;
+  const startRuler = NAK_LORDS[nakIdx];
+  const startIdx = DASHA_ORDER.indexOf(startRuler);
+
+  // How far through the current nakshatra is the Moon?
+  const degInNak = moonLon - nakIdx * NAK_SPAN;  // 0–13.33°
+  const fractionElapsed = degInNak / NAK_SPAN;
+  const startingBalance = DASHA_YEARS[startRuler] * (1 - fractionElapsed);
+
+  const major: DashaPeriod[] = [];
+  let cursor = new Date(birth);
+  const maxDate = new Date(birth.getTime() + 140 * 365.25 * 86400000);
+
+  for (let cycle = 0; cycle < 2; cycle++) {
+    for (let i = 0; i < DASHA_ORDER.length; i++) {
+      const pos = (startIdx + (cycle * DASHA_ORDER.length) + i) % DASHA_ORDER.length;
+      const ruler = DASHA_ORDER[pos];
+      const years = (cycle === 0 && i === 0) ? startingBalance : DASHA_YEARS[ruler];
+      if (years <= 0) { cursor = addYearsDasha(cursor, DASHA_YEARS[ruler]); continue; }
+      const end = addYearsDasha(cursor, years);
+      major.push({ ruler, years, start: new Date(cursor), end, isCurrent: today >= cursor && today < end, isPast: today >= end, level: 1 });
+      cursor = end;
+      if (cursor > maxDate) break;
+    }
+    if (cursor > maxDate) break;
+  }
+
+  const currentMajor = major.find(p => p.isCurrent);
+  const antardasha: DashaPeriod[] = [];
+  if (currentMajor) {
+    const mStartIdx = DASHA_ORDER.indexOf(currentMajor.ruler);
+    const majorMs = currentMajor.end.getTime() - currentMajor.start.getTime();
+    let aCursor = new Date(currentMajor.start);
+    for (let i = 0; i < DASHA_ORDER.length; i++) {
+      const aRuler = DASHA_ORDER[(mStartIdx + i) % DASHA_ORDER.length];
+      const aMs = (DASHA_YEARS[aRuler] / DASHA_TOTAL_YEARS) * majorMs;
+      const rawEnd = new Date(aCursor.getTime() + aMs);
+      const end = rawEnd <= currentMajor.end ? rawEnd : new Date(currentMajor.end);
+      antardasha.push({ ruler: currentMajor.ruler, antardasha: aRuler, years: aMs / (365.25 * 86400000), start: new Date(aCursor), end, isCurrent: today >= aCursor && today < end, isPast: today >= end, level: 2 });
+      aCursor = end;
+      if (aCursor >= currentMajor.end) break;
+    }
+  }
+
+  return { major, currentMajor, antardasha, currentAntar: antardasha.find(p => p.isCurrent) };
+}

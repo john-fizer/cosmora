@@ -1,10 +1,10 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Html } from "@react-three/drei";
+import { OrbitControls, Html, useTexture } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
-import { useRef, useMemo, useCallback, useState, useEffect } from "react";
+import { useRef, useMemo, useCallback, useState, useEffect, Suspense } from "react";
 import * as THREE from "three";
 import type { AstroLine, AstroLinePlanet, AstroLineAngle } from "@/lib/astrology/astrocartography";
 import { PLANET_COLORS, PLANET_SYMBOLS, scoreLocation } from "@/lib/astrology/astrocartography";
@@ -17,15 +17,13 @@ export type GlobeMode = "globe" | "cities" | "lines" | "planets" | "energy";
 export type { CitySpot } from "@/lib/astrology/crossings";
 
 const GLOBE_R    = 2.0;
-const FOOT       = 0.070;  // building footprint scale
-const HSCALE     = 0.105;  // building height scale
-const PLATFORM_H = 0.22;   // holographic platform height above surface
+const PLATFORM_H = 0.04;   // holographic platform height above surface
 
 const ANGLE_DASH: Record<AstroLineAngle, boolean> = { MC: false, IC: true, ASC: false, DSC: true };
 
 const ENERGY_MAP: Record<AstroLinePlanet, { label: string; color: string }> = {
   Sun:     { label: "VITALITY",      color: "#fbbf24" },
-  Mercury: { label: "MERCURY",       color: "#a78bfa" },
+  Mercury: { label: "COMMUNICATION", color: "#a78bfa" },
   Venus:   { label: "LOVE",          color: "#f472b6" },
   Moon:    { label: "EMOTIONS",      color: "#94a3b8" },
   Mars:    { label: "DRIVE",         color: "#ef4444" },
@@ -78,40 +76,14 @@ const ATMO_FRAG = /* glsl */`
   }
 `;
 
-// ─── Earth sphere — standard material + sun light ────────────────────────────
-function EarthSphere() {
-  const gpuTier = useMemo(() => (typeof window !== "undefined" ? detectGpuTier() : "high"), []);
-  const texSet  = useMemo(() => earthTextureSet(gpuTier), [gpuTier]);
-  const matRef  = useRef<THREE.MeshStandardMaterial>(null);
-
-  const [dayTex,   setDayTex]   = useState<THREE.Texture | null>(null);
-  const [nightTex, setNightTex] = useState<THREE.Texture | null>(null);
-  const [cloudTex, setCloudTex] = useState<THREE.Texture | null>(null);
-  const [specTex,  setSpecTex]  = useState<THREE.Texture | null>(null);
-
-  useEffect(() => {
-    const loader = new THREE.TextureLoader();
-    let alive = true;
-    loader.loadAsync(texSet.day).then(t => {
-      if (!alive) return;
-      t.colorSpace = THREE.SRGBColorSpace;
-      setDayTex(t);
-    }).catch(() => {});
-    loader.loadAsync(texSet.night).then(t => {
-      if (!alive) return;
-      t.colorSpace = THREE.SRGBColorSpace;
-      setNightTex(t);
-    }).catch(() => {});
-    loader.loadAsync(texSet.clouds).then(t => {
-      if (!alive) return;
-      setCloudTex(t);
-    }).catch(() => {});
-    loader.loadAsync(texSet.specular).then(t => {
-      if (!alive) return;
-      setSpecTex(t);
-    }).catch(() => {});
-    return () => { alive = false; };
-  }, [texSet.day, texSet.night, texSet.clouds, texSet.specular]);
+// ─── Earth sphere — useTexture guarantees textures exist before render ────────
+function EarthSphereInner({ texSet }: { texSet: ReturnType<typeof earthTextureSet> }) {
+  const [dayTex, nightTex, cloudTex] = useTexture(
+    [texSet.day, texSet.night, texSet.clouds]
+  );
+  dayTex.colorSpace   = THREE.SRGBColorSpace;
+  nightTex.colorSpace = THREE.SRGBColorSpace;
+  cloudTex.colorSpace = THREE.SRGBColorSpace;
 
   return (
     <>
@@ -119,31 +91,35 @@ function EarthSphere() {
       <mesh>
         <sphereGeometry args={[GLOBE_R, 128, 128]} />
         <meshStandardMaterial
-          ref={matRef}
-          map={dayTex ?? undefined}
-          color={new THREE.Color(0.72, 0.88, 1.0)}
-          emissiveMap={nightTex ?? undefined}
-          emissive={new THREE.Color(0.18, 0.28, 0.55)}
-          emissiveIntensity={nightTex ? 0.28 : 0.05}
-          roughnessMap={specTex ?? undefined}
-          roughness={0.75}
-          metalness={0.06}
+          map={dayTex}
+          emissiveMap={nightTex}
+          emissive={new THREE.Color(0.82, 0.62, 0.28)}
+          emissiveIntensity={0.18}
+          roughness={0.68}
         />
       </mesh>
 
-      {/* Cloud layer — separate sphere just above the surface */}
-      {cloudTex && (
-        <mesh>
-          <sphereGeometry args={[GLOBE_R * 1.003, 64, 64]} />
-          <meshStandardMaterial
-            map={cloudTex}
-            transparent opacity={0.55}
-            depthWrite={false}
-            roughness={0.9}
-          />
-        </mesh>
-      )}
+      {/* Thin cloud veil */}
+      <mesh>
+        <sphereGeometry args={[GLOBE_R * 1.0025, 64, 64]} />
+        <meshStandardMaterial
+          map={cloudTex}
+          transparent opacity={0.13}
+          depthWrite={false}
+          roughness={0.85}
+        />
+      </mesh>
     </>
+  );
+}
+
+function EarthSphere() {
+  const gpuTier = useMemo(() => (typeof window !== "undefined" ? detectGpuTier() : "high"), []);
+  const texSet  = useMemo(() => earthTextureSet(gpuTier), [gpuTier]);
+  return (
+    <Suspense fallback={null}>
+      <EarthSphereInner texSet={texSet} />
+    </Suspense>
   );
 }
 
@@ -308,91 +284,116 @@ function EnergyHeatmap({ lines }: { lines: AstroLine[] }) {
   );
 }
 
-// ─── Building primitives ──────────────────────────────────────────────────────
-const edgesOf = (g: THREE.BufferGeometry, angle = 18) => new THREE.EdgesGeometry(g, angle);
+// ─── Build 2D skyline geometry (XY plane, Y = surface normal, Z = toward camera) ───
+export const SKYW = 0.085;
+export const SKYH = 0.120;
 
-function buildPrim(prim: Prim): { geo: THREE.BufferGeometry; pos: [number, number, number] }[] {
-  const x = (prim.x ?? 0) * FOOT;
-  const z = ((prim as { z?: number }).z ?? 0) * FOOT;
-  switch (prim.k) {
-    case "box": {
-      const w = prim.w * FOOT, d = (prim.d ?? prim.w) * FOOT, h = prim.h * HSCALE;
-      return [{ geo: edgesOf(new THREE.BoxGeometry(w, h, d)), pos: [x, h / 2, z] }];
+export function buildSkylineGeo(prims: Prim[]): { geo: THREE.BufferGeometry; totalW: number; totalH: number } {
+  const GAP = 0.014;
+  type BEntry = { cx: number; w: number; h: number; k: string; top?: number; steps?: number };
+  const buildings: BEntry[] = [];
+  let cursor = 0;
+
+  for (const p of prims) {
+    let w: number, h: number, top: number | undefined, steps: number | undefined;
+    switch (p.k) {
+      case "box":     w = p.w * SKYW; h = p.h * SKYH; break;
+      case "taper":   w = p.w * SKYW; h = p.h * SKYH; top = p.top ?? 0.3; break;
+      case "spire":   w = p.w * SKYW; h = p.h * SKYH; break;
+      case "pyramid": w = p.w * SKYW; h = p.h * SKYH; break;
+      case "setback": w = p.w * SKYW; h = p.h * SKYH; steps = p.steps ?? 3; break;
+      case "dome":    w = p.r * 2.2 * SKYW; h = p.h * SKYH; break;
+      default:        w = 0.06; h = 0.10;
     }
-    case "taper": {
-      const w = prim.w * FOOT, h = prim.h * HSCALE, top = prim.top ?? 0.25;
-      const g = new THREE.CylinderGeometry((w / 2) * top, w / 2, h, 4); g.rotateY(Math.PI / 4);
-      return [{ geo: edgesOf(g), pos: [x, h / 2, z] }];
-    }
-    case "spire": {
-      const w = prim.w * FOOT, h = prim.h * HSCALE;
-      const g = new THREE.ConeGeometry(w / 2, h, 4); g.rotateY(Math.PI / 4);
-      return [{ geo: edgesOf(g), pos: [x, h / 2, z] }];
-    }
-    case "pyramid": {
-      const w = prim.w * FOOT, h = prim.h * HSCALE;
-      const g = new THREE.ConeGeometry(w * 0.72, h, 4); g.rotateY(Math.PI / 4);
-      return [{ geo: edgesOf(g), pos: [x, h / 2, z] }];
-    }
-    case "setback": {
-      const steps = prim.steps ?? 3, h = prim.h * HSCALE;
-      const w0 = prim.w * FOOT, d0 = (prim.d ?? prim.w) * FOOT, sh = h / steps;
-      const out: { geo: THREE.BufferGeometry; pos: [number, number, number] }[] = [];
+    const cx = p.x != null ? p.x * SKYW : cursor + w / 2;
+    buildings.push({ cx, w, h, k: p.k, top, steps });
+    cursor = Math.max(cursor, cx + w / 2 + GAP);
+  }
+
+  // Center based on actual content bounds (handles landmarks with negative x values)
+  const xMin = Math.min(...buildings.map(b => b.cx - b.w / 2));
+  const xMax = Math.max(...buildings.map(b => b.cx + b.w / 2));
+  const totalW = Math.max(xMax - xMin, 0.01);
+  const offsetX = -(xMin + xMax) / 2;
+  const pts: THREE.Vector3[] = [];
+
+  for (const b of buildings) {
+    const x = b.cx + offsetX;
+    const { w, h } = b;
+
+    if (b.k === "setback" && b.steps) {
+      const sh = h / b.steps;
       let y = 0;
-      for (let s = 0; s < steps; s++) {
-        const f = 1 - (s / steps) * 0.6;
-        out.push({ geo: edgesOf(new THREE.BoxGeometry(w0 * f, sh, d0 * f)), pos: [x, y + sh / 2, z] });
+      for (let s = 0; s < b.steps; s++) {
+        const f = 1 - (s / b.steps) * 0.55;
+        const sw = w * f;
+        pts.push(
+          new THREE.Vector3(x - sw/2, y,    0), new THREE.Vector3(x - sw/2, y+sh, 0),
+          new THREE.Vector3(x - sw/2, y+sh, 0), new THREE.Vector3(x + sw/2, y+sh, 0),
+          new THREE.Vector3(x + sw/2, y+sh, 0), new THREE.Vector3(x + sw/2, y,    0),
+        );
         y += sh;
       }
-      out.push({ geo: edgesOf(new THREE.ConeGeometry(w0 * 0.07, h * 0.22, 4)), pos: [x, y + h * 0.11, z] });
-      return out;
-    }
-    case "dome": {
-      const r = prim.r * FOOT, drumH = prim.h * HSCALE * 0.45;
-      const drum = new THREE.CylinderGeometry(r, r, drumH, 10);
-      const dome = new THREE.SphereGeometry(r, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2);
-      return [
-        { geo: edgesOf(drum), pos: [x, drumH / 2, z] },
-        { geo: edgesOf(dome), pos: [x, drumH, z] },
-      ];
+      pts.push(new THREE.Vector3(x, y, 0), new THREE.Vector3(x, y + h * 0.25, 0));
+    } else if (b.k === "spire" || b.k === "pyramid") {
+      pts.push(
+        new THREE.Vector3(x - w/2,    0,       0), new THREE.Vector3(x - w/2, h * 0.55, 0),
+        new THREE.Vector3(x - w/2,    h * 0.55, 0), new THREE.Vector3(x,      h,        0),
+        new THREE.Vector3(x,          h,        0), new THREE.Vector3(x + w/2, h * 0.55, 0),
+        new THREE.Vector3(x + w/2,    h * 0.55, 0), new THREE.Vector3(x + w/2, 0,       0),
+      );
+    } else if (b.k === "dome") {
+      const drumH = h * 0.45, r = w / 2;
+      pts.push(
+        new THREE.Vector3(x - w/2, 0,     0), new THREE.Vector3(x - w/2, drumH, 0),
+        new THREE.Vector3(x + w/2, 0,     0), new THREE.Vector3(x + w/2, drumH, 0),
+        new THREE.Vector3(x - w/2, drumH, 0), new THREE.Vector3(x + w/2, drumH, 0),
+      );
+      const arcSteps = 12;
+      for (let i = 0; i < arcSteps; i++) {
+        const a1 = Math.PI + (i / arcSteps) * Math.PI;
+        const a2 = Math.PI + ((i + 1) / arcSteps) * Math.PI;
+        pts.push(
+          new THREE.Vector3(x + r * Math.cos(a1), drumH - r * Math.sin(a1), 0),
+          new THREE.Vector3(x + r * Math.cos(a2), drumH - r * Math.sin(a2), 0),
+        );
+      }
+    } else {
+      const topW = b.top ? w * b.top : w;
+      pts.push(
+        new THREE.Vector3(x - w/2,    0, 0), new THREE.Vector3(x - topW/2, h, 0),
+        new THREE.Vector3(x - topW/2, h, 0), new THREE.Vector3(x + topW/2, h, 0),
+        new THREE.Vector3(x + topW/2, h, 0), new THREE.Vector3(x + w/2,    0, 0),
+      );
     }
   }
+
+  if (buildings.length > 0) {
+    pts.push(new THREE.Vector3(-totalW / 2, 0, 0), new THREE.Vector3(totalW / 2, 0, 0));
+  }
+
+  const geo = new THREE.BufferGeometry().setFromPoints(pts);
+  const totalH = Math.max(...buildings.map(b => b.h), 0.01);
+  return { geo, totalW, totalH };
 }
 
-function PrimMesh({ prim, color }: { prim: Prim; color: THREE.Color }) {
-  const parts = useMemo(() => buildPrim(prim), [prim]);
-  return (
-    <>
-      {parts.map((p, i) => (
-        <lineSegments key={i} geometry={p.geo} position={p.pos}>
-          <lineBasicMaterial color={color} />
-        </lineSegments>
-      ))}
-    </>
-  );
-}
-
-// ─── Holographic city projection ─────────────────────────────────────────────
+// ─── Holographic city — 2D skyline billboard + surface ring ──────────────────
 function HoloCity({ spot, index }: { spot: CitySpot; index: number }) {
-  const buildingsRef = useRef<THREE.Group>(null);
-  const scanRef      = useRef<THREE.Mesh>(null);
-  const beamRef      = useRef<THREE.Mesh>(null);
-  const riseT        = useRef(1);   // start at full height — no delay
-  const pulseT       = useRef(index * 1.17);
+  const outerRef  = useRef<THREE.Group>(null);
+  const scanRef   = useRef<THREE.Mesh>(null);
+  const scanRef2  = useRef<THREE.Mesh>(null);
+  const pulseT    = useRef(index * 1.17);
 
   const energy = useMemo(() => {
     const top = spot.scores?.[0]?.planet;
     return top ? (ENERGY_MAP[top] ?? { label: "COSMIC", color: "#4488FF" }) : { label: "COSMIC", color: "#4488FF" };
   }, [spot.scores]);
 
-  const col = useMemo(() => new THREE.Color(energy.color), [energy.color]);
+  const col      = useMemo(() => new THREE.Color(energy.color), [energy.color]);
+  // HDR color — boosts all channels so even dark hues hit bloom threshold
+  const brightCol = useMemo(() => col.clone().multiplyScalar(3.0), [col]);
 
-  const surfacePos = useMemo(() => ll2xyz(spot.lat, spot.lon, GLOBE_R), [spot.lat, spot.lon]);
-  const quaternion = useMemo(() => {
-    const n = ll2xyz(spot.lat, spot.lon, 1).normalize();
-    return new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), n);
-  }, [spot.lat, spot.lon]);
-
+  const surfacePos = useMemo(() => ll2xyz(spot.lat, spot.lon, GLOBE_R * 1.004), [spot.lat, spot.lon]);
   const prims = useMemo<Prim[]>(() => {
     const sk = spot.skyline;
     if (sk?.tier === "landmark" && sk.landmark && LANDMARKS[sk.landmark]) return LANDMARKS[sk.landmark];
@@ -400,99 +401,135 @@ function HoloCity({ spot, index }: { spot: CitySpot; index: number }) {
     return proceduralSkyline(sk?.height ?? 1, sk?.density ?? 1, seed);
   }, [spot.skyline, spot.lat, spot.lon, index]);
 
-  const maxH = useMemo(() => Math.max(0.10, ...prims.map(p => p.h * HSCALE)), [prims]);
+  const { geo: skylineGeo, totalH } = useMemo(() => buildSkylineGeo(prims), [prims]);
 
-  const halfSpan = useMemo(() =>
-    Math.max(0.08, ...prims.map(p =>
-      Math.abs((p.x ?? 0) * FOOT) +
-      (("w" in p ? p.w : ("r" in p ? p.r : 0)) * FOOT)
-    )) + 0.016,
-    [prims]);
+  const scanRingGeo  = useMemo(() => new THREE.RingGeometry(0.030, 0.055, 56), []);
+  const groundRingGeo = useMemo(() => new THREE.RingGeometry(0.064, 0.070, 56), []);
+  const dotGeo       = useMemo(() => new THREE.CircleGeometry(0.018, 16), []);
+  const stemGeo      = useMemo(() => new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, PLATFORM_H, 0),
+  ]), []);
 
-  // Geometries — stable refs via useMemo
-  const beamGeo        = useMemo(() => new THREE.ConeGeometry(halfSpan * 0.88, PLATFORM_H, 24, 1, true), [halfSpan]);
-  const scanRingGeo    = useMemo(() => new THREE.RingGeometry(halfSpan * 0.3, halfSpan * 0.52, 56), [halfSpan]);
-  const platformRingGeo = useMemo(() => new THREE.RingGeometry(halfSpan - 0.004, halfSpan + 0.004, 64), [halfSpan]);
-  const platformFillGeo = useMemo(() => new THREE.CircleGeometry(halfSpan, 64), [halfSpan]);
-  const platformEdgesGeo = useMemo(() =>
-    new THREE.EdgesGeometry(new THREE.BoxGeometry(halfSpan * 2, 0.003, halfSpan * 2)), [halfSpan]);
+  const scoreVal = spot.scores?.[0]?.influence ?? 0;
+  const latStr   = `${Math.abs(spot.lat).toFixed(1)}°${spot.lat >= 0 ? "N" : "S"}`;
+  const lonStr   = `${Math.abs(spot.lon).toFixed(1)}°${spot.lon >= 0 ? "E" : "W"}`;
 
-  useFrame((_, dt) => {
-    riseT.current  = Math.min(riseT.current + dt * 0.85, 1.0);
-    pulseT.current += dt;
+  useFrame(({ camera }, dt) => {
+    if (!outerRef.current) return;
 
-    if (buildingsRef.current) buildingsRef.current.scale.y = riseT.current;
+    // World position of this city
+    const worldPos = new THREE.Vector3();
+    outerRef.current.getWorldPosition(worldPos);
 
-    if (beamRef.current) {
-      const m = beamRef.current.material as THREE.MeshBasicMaterial;
-      m.opacity = 0.32 + Math.sin(pulseT.current * 1.6) * 0.12;
+    // World-space surface normal (outward from globe centre through city)
+    const worldNormal = worldPos.clone().normalize();
+
+    // Visibility — hide if on far hemisphere
+    const toCam = camera.position.clone().sub(worldPos);
+    if (worldNormal.dot(toCam.clone().normalize()) <= 0.08) {
+      outerRef.current.visible = false;
+      return;
     }
+    outerRef.current.visible = true;
 
-    if (scanRef.current) {
-      const phase = (pulseT.current * 0.55) % 1.0;
-      const m = scanRef.current.material as THREE.MeshBasicMaterial;
-      m.opacity = Math.max(0, (1 - phase) * 0.85);
-      scanRef.current.scale.setScalar(1 + phase * 1.8);
+    // Orient so Y = worldNormal, Z = toward camera (tangent-plane component)
+    const camDir = toCam.normalize();
+    // Remove the component along worldNormal so Z stays tangential
+    const zProj = camDir.clone().addScaledVector(worldNormal, -camDir.dot(worldNormal));
+    // Guard: camera directly overhead → pick arbitrary tangent
+    const zAxis = zProj.lengthSq() > 0.0001 ? zProj.normalize() : new THREE.Vector3(1, 0, 0);
+    // X = Y × Z (right-hand rule) — NOT Z × Y which would mirror the skyline
+    const xAxis = worldNormal.clone().cross(zAxis).normalize();
+
+    // World-space rotation → local quaternion
+    const worldQuat = new THREE.Quaternion().setFromRotationMatrix(
+      new THREE.Matrix4().makeBasis(xAxis, worldNormal, zAxis)
+    );
+    const parentQuat = new THREE.Quaternion();
+    outerRef.current.parent?.getWorldQuaternion(parentQuat);
+    outerRef.current.quaternion.copy(parentQuat.clone().invert().multiply(worldQuat));
+
+    pulseT.current += dt;
+    for (const [ref, tOff] of [[scanRef, 0], [scanRef2, 0.5]] as [React.RefObject<THREE.Mesh | null>, number][]) {
+      if (ref.current) {
+        const phase = ((pulseT.current * 0.50 + tOff) % 1.0);
+        const m = ref.current.material as THREE.MeshBasicMaterial;
+        m.opacity = Math.max(0, (1 - phase) * 0.85);
+        ref.current.scale.setScalar(1 + phase * 2.8);
+      }
     }
   });
 
   return (
-    <group position={surfacePos} quaternion={quaternion}>
-      {/* Surface scan ring — pulses outward */}
+    <group ref={outerRef} position={surfacePos}>
+      {/* Static outer ground ring — tactical indicator */}
+      <mesh geometry={groundRingGeo} rotation={[-Math.PI / 2, 0, 0]}>
+        <meshBasicMaterial color={col} transparent opacity={0.30} depthWrite={false}
+          side={THREE.DoubleSide} />
+      </mesh>
+
+      {/* Two phase-offset pulsing scan rings */}
       <mesh ref={scanRef} geometry={scanRingGeo} rotation={[-Math.PI / 2, 0, 0]}>
-        <meshBasicMaterial color={col} transparent opacity={0.5} depthWrite={false}
+        <meshBasicMaterial color={brightCol} transparent opacity={0.85} depthWrite={false}
+          side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
+      </mesh>
+      <mesh ref={scanRef2} geometry={scanRingGeo} rotation={[-Math.PI / 2, 0, 0]}>
+        <meshBasicMaterial color={brightCol} transparent opacity={0.85} depthWrite={false}
           side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
       </mesh>
 
-      {/* Projector beam — narrow at surface, wide at platform */}
-      <mesh ref={beamRef} geometry={beamGeo}
-        position={[0, PLATFORM_H / 2, 0]} rotation={[Math.PI, 0, 0]}>
-        <meshBasicMaterial color={col} transparent opacity={0.32} depthWrite={false}
-          side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
+      {/* Surface anchor dot */}
+      <mesh geometry={dotGeo} rotation={[-Math.PI / 2, 0, 0]}>
+        <meshBasicMaterial color={brightCol} depthWrite={false} blending={THREE.AdditiveBlending} />
       </mesh>
 
-      {/* Floating holographic platform */}
+      {/* Vertical stem — additive so it glows */}
+      <lineSegments geometry={stemGeo}>
+        <lineBasicMaterial color={brightCol} transparent opacity={0.55}
+          blending={THREE.AdditiveBlending} depthWrite={false} />
+      </lineSegments>
+
+      {/* Holographic skyline — XY plane, Y = surface normal, Z = camera */}
       <group position={[0, PLATFORM_H, 0]}>
-        {/* Platform fill — ultra-dim inner glow */}
-        <mesh geometry={platformFillGeo} rotation={[-Math.PI / 2, 0, 0]}>
-          <meshBasicMaterial color={col} transparent opacity={0.03} depthWrite={false}
-            side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
-        </mesh>
-        {/* Platform ring — bright glowing edge */}
-        <mesh geometry={platformRingGeo} rotation={[-Math.PI / 2, 0, 0]}>
-          <meshBasicMaterial color={col} transparent opacity={0.90} depthWrite={false}
-            side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
-        </mesh>
-        {/* Corner bracket wireframe */}
-        <lineSegments geometry={platformEdgesGeo} position={[0, 0.002, 0]}>
-          <lineBasicMaterial color={col} transparent opacity={0.22} />
-        </lineSegments>
-
-        {/* Buildings — scale.y rises from 0 → 1 */}
-        <group ref={buildingsRef}>
-          {prims.map((p, i) => <PrimMesh key={i} prim={p} color={col} />)}
+        {/* Scale buildings down so they sit proportionally on the globe (not moon-sized) */}
+        <group scale={[0.14, 0.14, 1]}>
+          <lineSegments geometry={skylineGeo}>
+            <lineBasicMaterial color={brightCol} blending={THREE.AdditiveBlending} depthWrite={false} />
+          </lineSegments>
         </group>
 
-        {/* Label — compact, stays above max building height */}
-        <Html position={[0, maxH + 0.10, 0]} center distanceFactor={7} zIndexRange={[10, 0]}>
+        <Html position={[0, totalH * 0.14 + 0.04, 0]} center distanceFactor={7} zIndexRange={[10, 0]}>
           <div style={{ pointerEvents: "none", textAlign: "center", lineHeight: 1.25 }}>
             <div style={{
-              color: energy.color, fontSize: 8,
+              color: energy.color, fontSize: 10,
               fontFamily: "'Fragment Mono', monospace",
-              letterSpacing: "0.14em", fontWeight: 700,
-              textShadow: `0 0 10px ${energy.color}BB`,
-              background: `${energy.color}12`,
-              border: `1px solid ${energy.color}3A`,
-              padding: "1px 5px", borderRadius: 2, whiteSpace: "nowrap",
+              letterSpacing: "0.18em", fontWeight: 700,
+              textShadow: `0 0 16px ${energy.color}EE`,
+              background: `${energy.color}18`,
+              border: `1px solid ${energy.color}66`,
+              borderBottom: "none",
+              padding: "3px 8px 1px", whiteSpace: "nowrap",
             }}>
               {spot.city.split(",")[0].toUpperCase()}
             </div>
             <div style={{
               color: energy.color, fontSize: 7,
               fontFamily: "'Fragment Mono', monospace",
-              opacity: 0.70, letterSpacing: "0.08em",
+              opacity: 0.85, letterSpacing: "0.10em",
+              background: `${energy.color}10`,
+              border: `1px solid ${energy.color}44`,
+              borderTop: "none",
+              padding: "1px 8px 2px", whiteSpace: "nowrap",
             }}>
-              {PLANET_SYMBOLS[spot.scores[0]?.planet as AstroLinePlanet] ?? "·"} {energy.label}
+              {PLANET_SYMBOLS[spot.scores[0]?.planet as AstroLinePlanet] ?? "·"}&nbsp;
+              {Math.round(scoreVal * 100)}%&nbsp;{energy.label}
+            </div>
+            <div style={{
+              color: energy.color, fontSize: 6,
+              fontFamily: "'Fragment Mono', monospace",
+              opacity: 0.45, letterSpacing: "0.08em", marginTop: 2,
+            }}>
+              {latStr} {lonStr}
             </div>
           </div>
         </Html>
@@ -670,14 +707,15 @@ function Scene({
   }, [lines, activePlanets, activeAngles, globeMode]);
 
   const lineOpacity    = showCities ? 0.62 : 0.90;
-  const bloomIntensity = globeMode === "energy" ? 2.8 : globeMode === "lines" ? 2.2 : globeMode === "cities" ? 2.0 : 1.75;
+  const bloomIntensity = globeMode === "energy" ? 3.2 : globeMode === "lines" ? 2.8 : globeMode === "cities" ? 2.5 : 2.0;
 
   return (
     <>
-      <ambientLight intensity={0.12} />
-      {/* Sun — fixed world position so the camera-facing hemisphere stays lit */}
-      <directionalLight position={[4.8, 3.2, 3.2]} intensity={3.0} color="#FFF5E0" />
-      <pointLight position={[-5, -3, -5]} intensity={0.18} color="#1A3A6A" />
+      <ambientLight intensity={0.05} />
+      {/* Sun — angled so the terminator line is clearly visible on the rotating globe */}
+      <directionalLight position={[5.5, 2.8, 3.0]} intensity={1.15} color="#FFF8F0" />
+      {/* Subtle fill from opposite side — just enough to show dark-side geography */}
+      <pointLight position={[-4, -2.5, -4]} intensity={0.28} color="#1A3A6A" />
 
       {/* Milky Way background — does not rotate with Earth */}
       <MilkyWaySky />

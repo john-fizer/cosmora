@@ -87,7 +87,10 @@ export default function ProgressionsPage() {
       body: JSON.stringify({ birthDatetime, latitude: profile.latitude, longitude: profile.longitude, timezone: profile.timezone, houseSystem: chart.houseSystem }),
     })
       .then(r => r.json())
-      .then(d => { setResult(d.result ?? null); setLoading(false); })
+      .then(d => {
+        if (!d.result) { setFetchError(true); setLoading(false); return; }
+        setResult(d.result); setLoading(false);
+      })
       .catch(() => { setFetchError(true); setLoading(false); });
   }, []);
 

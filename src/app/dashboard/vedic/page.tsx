@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
-import { toSiderealChart, buildVimshottariDasha, lahiriAyanamsa, NAKSHATRAS } from "@/lib/astrology/sidereal";
+import { toSiderealChart, buildVimshottariDasha } from "@/lib/astrology/sidereal";
 import type { SiderealChart, VimshottariData, DashaPeriod, DashaRuler } from "@/lib/astrology/sidereal";
 
 const DASHA_COLORS: Record<DashaRuler, string> = {

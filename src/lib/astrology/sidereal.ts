@@ -279,7 +279,7 @@ export function buildVimshottariDasha(moonSiderealLon: number, birthDatetime: st
       const pos = (startIdx + (cycle * DASHA_ORDER.length) + i) % DASHA_ORDER.length;
       const ruler = DASHA_ORDER[pos];
       const years = (cycle === 0 && i === 0) ? startingBalance : DASHA_YEARS[ruler];
-      if (years <= 0) { cursor = addYearsDasha(cursor, DASHA_YEARS[ruler]); continue; }
+      if (years <= 0) continue;
       const end = addYearsDasha(cursor, years);
       major.push({ ruler, years, start: new Date(cursor), end, isCurrent: today >= cursor && today < end, isPast: today >= end, level: 1 });
       cursor = end;

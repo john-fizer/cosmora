@@ -138,6 +138,44 @@ const NAV_ITEMS = [
     ),
   },
   {
+    label: "Firdaria",
+    hint: "persian periods",
+    href: "/dashboard/firdaria",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5" />
+        <circle cx="12" cy="12" r="2" fill="currentColor" opacity="0.7" />
+        <path d="M8 9.5C9 8 11 7.5 12 7.5" strokeOpacity="0.5" />
+        <path d="M16 9.5C15 8 13 7.5 12 7.5" strokeOpacity="0.5" />
+        <path d="M7 14h10" strokeOpacity="0.4" />
+      </svg>
+    ),
+  },
+  {
+    label: "Progressions",
+    hint: "secondary prog",
+    href: "/dashboard/progressions",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+        <circle cx="12" cy="12" r="9" />
+        <circle cx="12" cy="12" r="5" strokeOpacity="0.4" />
+        <path d="M12 3 L12 7M12 17 L12 21" strokeOpacity="0.6" />
+        <path d="M7 12 L12 12 L16 9" />
+      </svg>
+    ),
+  },
+  {
+    label: "Vedic",
+    hint: "jyotish / nakshatra",
+    href: "/dashboard/vedic",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+        <path d="M12 3 L14.5 9 L21 9 L16 13.5 L18 20 L12 16 L6 20 L8 13.5 L3 9 L9.5 9 Z" />
+      </svg>
+    ),
+  },
+  {
     label: "Releasing",
     hint: "zodiacal releasing",
     href: "/dashboard/releasing",

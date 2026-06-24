@@ -307,3 +307,136 @@ export function buildVimshottariDasha(moonSiderealLon: number, birthDatetime: st
 
   return { major, currentMajor, antardasha, currentAntar: antardasha.find(p => p.isCurrent) };
 }
+
+// ─── Divisional Charts (Varga) ────────────────────────────────────────────────
+
+export const DIVISIONAL_NAMES: Record<number, string> = {
+  1: "Rashi", 2: "Hora", 3: "Drekkana", 4: "Chaturthamsha", 5: "Panchamsha",
+  6: "Shashthamsha", 7: "Saptamsha", 8: "Ashtamsha", 9: "Navamsha", 10: "Dashamsha",
+  11: "Ekashamsha", 12: "Dwadashamsha", 16: "Shodashamsha", 20: "Vimshamsha",
+  24: "Siddhamsha", 27: "Nakshatramsha", 30: "Trimshamsha", 40: "Khavedamsha",
+  45: "Akshavedamsha", 60: "Shashtiamsha",
+};
+
+export interface VargaPlacement {
+  name: string;
+  sign: ZodiacSign;
+  signDegree: number;
+  signIndex: number;
+}
+
+export interface DivisionalChart {
+  n: number;
+  label: string;
+  planets: VargaPlacement[];
+  lagna: VargaPlacement;
+}
+
+// D30 sign tables (Trimshamsha)
+const D30_ODD: Array<[number, number]> = [
+  [5, 0], [10, 10], [18, 8], [25, 2], [30, 6],
+];
+const D30_EVEN: Array<[number, number]> = [
+  [5, 1], [12, 5], [20, 11], [25, 9], [30, 7],
+];
+
+export function getDivisionalSign(siderealLon: number, n: number): number {
+  const lon = norm360(siderealLon);
+  const signIdx = Math.floor(lon / 30);
+  const posInSign = lon % 30;
+
+  if (n === 2) {
+    const isOdd = signIdx % 2 === 0; // Aries(0) is odd in Jyotish
+    return posInSign < 15 ? (isOdd ? 4 : 3) : (isOdd ? 3 : 4);
+  }
+  if (n === 3) {
+    if (posInSign < 10) return signIdx;
+    if (posInSign < 20) return (signIdx + 4) % 12;
+    return (signIdx + 8) % 12;
+  }
+  if (n === 9) {
+    // Trikonastha: Fire→Aries(0), Earth→Capricorn(9), Air→Libra(6), Water→Cancer(3)
+    const elementStart = [0, 9, 6, 3][signIdx % 4];
+    const division = Math.floor(posInSign * 9 / 30);
+    return (elementStart + division) % 12;
+  }
+  if (n === 30) {
+    const table = signIdx % 2 === 0 ? D30_ODD : D30_EVEN;
+    for (const [cut, sign] of table) {
+      if (posInSign <= cut) return sign;
+    }
+    return table[table.length - 1][1];
+  }
+  // General Parashari formula
+  const division = Math.floor(posInSign * n / 30);
+  return (signIdx * n + division) % 12;
+}
+
+function lonToVarga(lon: number, name: string, n: number): VargaPlacement {
+  const sLon = norm360(lon);
+  const signIndex = getDivisionalSign(sLon, n);
+  const signDegree = (sLon * n) % 30;
+  return { name, sign: ZODIAC_SIGNS[signIndex], signDegree, signIndex };
+}
+
+export function buildDivisionalChart(chart: ChartData, ayanamsa: number, n: number): DivisionalChart {
+  const planets: VargaPlacement[] = chart.planets.map(p =>
+    lonToVarga(norm360(p.longitude - ayanamsa), p.name, n)
+  );
+  const lagna = lonToVarga(norm360(chart.ascendant - ayanamsa), "Lagna", n);
+  return { n, label: DIVISIONAL_NAMES[n] ?? `D${n}`, planets, lagna };
+}
+
+// ─── Chara Karakas (Jaimini) ─────────────────────────────────────────────────
+
+export type CharaKarakaRole = "AK" | "AmK" | "BK" | "MK" | "PK" | "GK" | "DK";
+
+export interface CharaKaraka {
+  planet: string;
+  role: CharaKarakaRole;
+  roleLabel: string;
+  degInSign: number;
+}
+
+export interface CharaKarakas {
+  ak: CharaKaraka;
+  amk: CharaKaraka;
+  bk: CharaKaraka;
+  mk: CharaKaraka;
+  pk: CharaKaraka;
+  gk: CharaKaraka;
+  dk: CharaKaraka;
+  all: CharaKaraka[];
+}
+
+const CK_ROLES: CharaKarakaRole[] = ["AK", "AmK", "BK", "MK", "PK", "GK", "DK"];
+const CK_LABELS: Record<CharaKarakaRole, string> = {
+  AK: "Atmakaraka", AmK: "Amatyakaraka", BK: "Bhratrikaraka",
+  MK: "Matrikaraka", PK: "Pitrikaraka", GK: "Gnatikaraka", DK: "Darakaraka",
+};
+const CK_PLANETS = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "NorthNode"];
+
+export function buildCharaKarakas(chart: ChartData, ayanamsa: number): CharaKarakas {
+  const eligible = chart.planets
+    .filter(p => CK_PLANETS.includes(p.name))
+    .map(p => {
+      const sLon = norm360(p.longitude - ayanamsa);
+      const raw = sLon % 30;
+      const degInSign = p.name === "NorthNode" ? 30 - raw : raw;
+      return { planet: p.name, degInSign };
+    })
+    .sort((a, b) => b.degInSign - a.degInSign)
+    .slice(0, 7);
+
+  const all: CharaKaraka[] = eligible.map((e, i) => ({
+    planet: e.planet,
+    role: CK_ROLES[i],
+    roleLabel: CK_LABELS[CK_ROLES[i]],
+    degInSign: e.degInSign,
+  }));
+
+  return {
+    ak: all[0], amk: all[1], bk: all[2], mk: all[3],
+    pk: all[4], gk: all[5], dk: all[6], all,
+  };
+}

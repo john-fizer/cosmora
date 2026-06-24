@@ -1,38 +1,47 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
-import { toSiderealChart, buildVimshottariDasha } from "@/lib/astrology/sidereal";
-import type { SiderealChart, VimshottariData, DashaPeriod, DashaRuler } from "@/lib/astrology/sidereal";
+import {
+  toSiderealChart, buildVimshottariDasha, buildDivisionalChart, buildCharaKarakas,
+  lahiriAyanamsa, DIVISIONAL_NAMES,
+} from "@/lib/astrology/sidereal";
+import type {
+  SiderealChart, VimshottariData, DashaPeriod, DashaRuler,
+  DivisionalChart, VargaPlacement, CharaKarakas, CharaKaraka,
+} from "@/lib/astrology/sidereal";
+import type { ChartData } from "@/lib/astrology/types";
+
+const KEY_DIVISIONALS = [1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60];
 
 const DASHA_COLORS: Record<DashaRuler, string> = {
   Ketu: "#7B6FD4", Venus: "#f472b6", Sun: "#fbbf24", Moon: "#BFB6E8",
   Mars: "#ef4444", Rahu: "#06b6d4", Jupiter: "#f59e0b", Saturn: "#94a3b8", Mercury: "#a78bfa",
 };
-
 const DASHA_SYMBOLS: Record<DashaRuler, string> = {
   Ketu: "☋", Venus: "♀", Sun: "☉", Moon: "☽", Mars: "♂",
   Rahu: "☊", Jupiter: "♃", Saturn: "♄", Mercury: "☿",
 };
-
 const SIGN_SYMBOLS: Record<string, string> = {
   Aries: "♈", Taurus: "♉", Gemini: "♊", Cancer: "♋", Leo: "♌", Virgo: "♍",
   Libra: "♎", Scorpio: "♏", Sagittarius: "♐", Capricorn: "♑", Aquarius: "♒", Pisces: "♓",
 };
-
 const PLANET_SYMBOLS: Record<string, string> = {
   Sun: "☉", Moon: "☽", Mercury: "☿", Venus: "♀", Mars: "♂",
   Jupiter: "♃", Saturn: "♄", Uranus: "⛢", Neptune: "♆", Pluto: "♇",
-  NorthNode: "☊", Chiron: "⚷",
+  NorthNode: "☊", SouthNode: "☋", Chiron: "⚷",
 };
-
 const PLANET_COLORS: Record<string, string> = {
   Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",
   Mars: "#ef4444", Jupiter: "#f59e0b", Saturn: "#94a3b8",
   Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
-  NorthNode: "#06b6d4", Chiron: "#a78bfa",
+  NorthNode: "#06b6d4", SouthNode: "#7B6FD4", Chiron: "#a78bfa",
+};
+const CK_ROLE_COLORS: Record<string, string> = {
+  AK: "#fbbf24", AmK: "#f59e0b", BK: "#a78bfa", MK: "#BFB6E8",
+  PK: "#f472b6", GK: "#94a3b8", DK: "#06b6d4",
 };
 
 function fmtDate(d: Date) {
@@ -42,6 +51,24 @@ function fmtYears(y: number) {
   const yy = Math.floor(y), m = Math.round((y - yy) * 12);
   return m === 0 ? `${yy}y` : `${yy}y ${m}m`;
 }
+function degStr(d: number) {
+  return `${Math.floor(d)}°${Math.round((d % 1) * 60).toString().padStart(2, "0")}′`;
+}
+
+function VargaRow({ p, accent }: { p: VargaPlacement; accent?: string }) {
+  const col = accent ?? PLANET_COLORS[p.name] ?? "#8899BB";
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "28px 100px 1fr", alignItems: "center", gap: 10, padding: "7px 12px", borderRadius: 8, background: "rgba(10,15,35,0.5)" }}>
+      <span style={{ color: col, fontSize: 14, textAlign: "center" }}>{PLANET_SYMBOLS[p.name] ?? "✦"}</span>
+      <span style={{ color: col, fontSize: 10, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.06em" }}>
+        {p.name.replace("NorthNode", "N.Node").replace("SouthNode", "S.Node")}
+      </span>
+      <span style={{ color: "#C0D4FF", fontSize: 11, fontFamily: "'Fragment Mono', monospace" }}>
+        {SIGN_SYMBOLS[p.sign] ?? ""} {degStr(p.signDegree)} {p.sign}
+      </span>
+    </div>
+  );
+}
 
 function DashaRow({ p, isAntar = false }: { p: DashaPeriod; isAntar?: boolean }) {
   const ruler = (isAntar ? p.antardasha : p.ruler) as DashaRuler;
@@ -50,26 +77,14 @@ function DashaRow({ p, isAntar = false }: { p: DashaPeriod; isAntar?: boolean })
   const totalMs = p.end.getTime() - p.start.getTime();
   const elapsedMs = Math.max(0, Math.min(now.getTime() - p.start.getTime(), totalMs));
   const pct = totalMs > 0 ? (elapsedMs / totalMs) * 100 : 0;
-
   return (
-    <div style={{
-      position: "relative", overflow: "hidden",
-      background: p.isCurrent ? `${col}10` : "rgba(10,15,35,0.4)",
-      border: `1px solid ${p.isCurrent ? col + "45" : "rgba(40,60,100,0.25)"}`,
-      borderRadius: 9, padding: "8px 12px",
-    }}>
-      {p.isCurrent && (
-        <div style={{ position: "absolute", top: 0, left: 0, bottom: 0, width: `${pct}%`, background: `${col}08`, pointerEvents: "none" }} />
-      )}
+    <div style={{ position: "relative", overflow: "hidden", background: p.isCurrent ? `${col}10` : "rgba(10,15,35,0.4)", border: `1px solid ${p.isCurrent ? col + "45" : "rgba(40,60,100,0.25)"}`, borderRadius: 9, padding: "8px 12px" }}>
+      {p.isCurrent && <div style={{ position: "absolute", top: 0, left: 0, bottom: 0, width: `${pct}%`, background: `${col}08`, pointerEvents: "none" }} />}
       <div style={{ display: "flex", alignItems: "center", gap: 8, position: "relative" }}>
         <span style={{ color: col, fontSize: isAntar ? 12 : 16, width: 22, textAlign: "center" }}>{DASHA_SYMBOLS[ruler]}</span>
         <div style={{ flex: 1 }}>
-          <span style={{ color: p.isCurrent ? col : "#C0D4FF", fontSize: isAntar ? 10 : 12, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            {ruler}
-          </span>
-          <div style={{ color: "#445577", fontSize: 9, fontFamily: "'Fragment Mono', monospace" }}>
-            {fmtDate(p.start)} — {fmtDate(p.end)} · {fmtYears(p.years)}
-          </div>
+          <span style={{ color: p.isCurrent ? col : "#C0D4FF", fontSize: isAntar ? 10 : 12, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.08em", textTransform: "uppercase" }}>{ruler}</span>
+          <div style={{ color: "#445577", fontSize: 9, fontFamily: "'Fragment Mono', monospace" }}>{fmtDate(p.start)} — {fmtDate(p.end)} · {fmtYears(p.years)}</div>
         </div>
         {p.isCurrent && <span style={{ color: col, fontSize: 8, fontFamily: "'Fragment Mono', monospace" }}>{Math.round(pct)}%</span>}
       </div>
@@ -77,11 +92,17 @@ function DashaRow({ p, isAntar = false }: { p: DashaPeriod; isAntar?: boolean })
   );
 }
 
+type TabKey = "placements" | "navamsha" | "varga" | "karakas" | "dasha";
+
 export default function VedicPage() {
-  const [sidereal, setSidereal]     = useState<SiderealChart | null>(null);
-  const [dasha, setDasha]           = useState<VimshottariData | null>(null);
-  const [noProfile, setNoProfile]   = useState(false);
-  const [tab, setTab]               = useState<"placements" | "dasha">("placements");
+  const [sidereal, setSidereal]   = useState<SiderealChart | null>(null);
+  const [rawChart, setRawChart]   = useState<ChartData | null>(null);
+  const [ayanamsa, setAyanamsa]   = useState(0);
+  const [dasha, setDasha]         = useState<VimshottariData | null>(null);
+  const [karakas, setKarakas]     = useState<CharaKarakas | null>(null);
+  const [noProfile, setNoProfile] = useState(false);
+  const [tab, setTab]             = useState<TabKey>("placements");
+  const [selectedD, setSelectedD] = useState(9);
 
   useEffect(() => {
     const id = getActiveProfileId();
@@ -91,13 +112,29 @@ export default function VedicPage() {
     if (!profile || !chart) { setNoProfile(true); return; }
     const birthDatetime = `${profile.birthDate}T${profile.birthTime}Z`;
     const sc = toSiderealChart(chart, birthDatetime);
+    const ay = lahiriAyanamsa(new Date(birthDatetime));
     setSidereal(sc);
+    setRawChart(chart);
+    setAyanamsa(ay);
     const moonP = chart.planets.find(p => p.name === "Moon");
     if (moonP) {
       const moonSidereal = ((moonP.longitude - sc.ayanamsa) % 360 + 360) % 360;
       setDasha(buildVimshottariDasha(moonSidereal, birthDatetime));
     }
+    setKarakas(buildCharaKarakas(chart, ay));
   }, []);
+
+  const divisionals = useMemo<Record<number, DivisionalChart>>(() => {
+    if (!rawChart) return {};
+    const out: Record<number, DivisionalChart> = {};
+    for (const n of KEY_DIVISIONALS) {
+      out[n] = buildDivisionalChart(rawChart, ayanamsa, n);
+    }
+    return out;
+  }, [rawChart, ayanamsa]);
+
+  const d9 = divisionals[9];
+  const selectedChart = divisionals[selectedD];
 
   if (noProfile) {
     return (
@@ -109,7 +146,6 @@ export default function VedicPage() {
       </div>
     );
   }
-
   if (!sidereal) {
     return (
       <div className="fixed inset-0 flex items-center justify-center" style={{ background: "#010810" }}>
@@ -120,98 +156,186 @@ export default function VedicPage() {
   }
 
   const moonPlacement = sidereal.placements.find(p => p.name === "Moon");
-  const moonNak = moonPlacement?.nakshatra;
-  const currentMajorColor = dasha?.currentMajor ? DASHA_COLORS[dasha.currentMajor.ruler] : "#C8A55B";
+  const dashaMajorCol = dasha?.currentMajor ? DASHA_COLORS[dasha.currentMajor.ruler] : "#C8A55B";
+
+  const TABS: Array<{ key: TabKey; label: string }> = [
+    { key: "placements", label: "PLACEMENTS" },
+    { key: "navamsha",   label: "NAVAMSHA D9" },
+    { key: "varga",      label: "VARGA" },
+    { key: "karakas",    label: "KARAKAS" },
+    { key: "dasha",      label: "DASHA" },
+  ];
 
   return (
     <div className="fixed inset-0 overflow-hidden" style={{ background: "#010810" }}>
       <DashboardBg />
       <div className="absolute inset-0 overflow-y-auto" style={{ left: 64, scrollbarWidth: "none" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", padding: "28px 24px 48px" }}>
+        <div style={{ maxWidth: 960, margin: "0 auto", padding: "28px 24px 48px" }}>
 
           {/* Header */}
           <div style={{ marginBottom: 24 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
               <div style={{ width: 6, height: 28, background: "#a78bfa", borderRadius: 3, boxShadow: "0 0 10px #a78bfa" }} />
-              <h1 style={{ color: "#C0D4FF", fontSize: 22, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.15em", textTransform: "uppercase" }}>
-                Vedic Chart
-              </h1>
+              <h1 style={{ color: "#C0D4FF", fontSize: 22, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.15em", textTransform: "uppercase" }}>Vedic Chart</h1>
               <span style={{ background: "rgba(167,139,250,0.12)", border: "1px solid rgba(167,139,250,0.35)", borderRadius: 20, padding: "3px 12px", color: "#a78bfa", fontSize: 9, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.15em" }}>
-                LAHIRI · SIDEREAL
+                LAHIRI · {sidereal.ayanamsa.toFixed(2)}°
               </span>
             </div>
             <p style={{ color: "#445577", fontSize: 12, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", paddingLeft: 18 }}>
-              Sidereal (Jyotish) chart · Lahiri ayanamsa {sidereal.ayanamsa.toFixed(2)}° · 27 Nakshatras
+              Jyotish · Sidereal · 27 Nakshatras · {KEY_DIVISIONALS.length} Divisional Charts · Jaimini Karakas
             </p>
           </div>
 
-          {/* Lagna + Moon nakshatra spotlight */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 24 }}>
-            <div style={{ background: "linear-gradient(135deg, rgba(167,139,250,0.12), rgba(5,8,22,0.8))", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 14, padding: "16px 18px" }}>
-              <div style={{ color: "#a78bfa", fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>LAGNA (SIDEREAL ASCENDANT)</div>
-              <div style={{ color: "#C0D4FF", fontSize: 18, fontFamily: "'Fragment Mono', monospace" }}>
+          {/* Lagna + Moon spotlight */}
+          <div style={{ display: "grid", gridTemplateColumns: moonPlacement ? "1fr 1fr" : "1fr", gap: 14, marginBottom: 22 }}>
+            <div style={{ background: "linear-gradient(135deg, rgba(167,139,250,0.12), rgba(5,8,22,0.8))", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 14, padding: "14px 18px" }}>
+              <div style={{ color: "#a78bfa", fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 8 }}>LAGNA</div>
+              <div style={{ color: "#C0D4FF", fontSize: 17, fontFamily: "'Fragment Mono', monospace" }}>
                 {SIGN_SYMBOLS[sidereal.ascendant.sign]} {sidereal.ascendant.signDegree.toFixed(1)}° {sidereal.ascendant.sign}
               </div>
-              <div style={{ color: "#8899BB", fontSize: 11, fontFamily: "'Fragment Mono', monospace", marginTop: 4 }}>
-                {sidereal.ascendant.nakshatra.nakshatra.name} · Pada {sidereal.ascendant.nakshatra.pada}
+              <div style={{ color: "#8899BB", fontSize: 10, fontFamily: "'Fragment Mono', monospace", marginTop: 4 }}>
+                {sidereal.ascendant.nakshatra.nakshatra.name} · P{sidereal.ascendant.nakshatra.pada} · {sidereal.ascendant.nakshatra.nakshatra.lord}
               </div>
             </div>
-
-            {moonNak && (
-              <div style={{ background: `linear-gradient(135deg, ${currentMajorColor}12, rgba(5,8,22,0.8))`, border: `1px solid ${currentMajorColor}30`, borderRadius: 14, padding: "16px 18px" }}>
-                <div style={{ color: currentMajorColor, fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>MOON NAKSHATRA · DASHA LORD</div>
-                <div style={{ color: "#C0D4FF", fontSize: 16, fontFamily: "'Fragment Mono', monospace" }}>
-                  {moonNak.nakshatra.name}
+            {moonPlacement && (
+              <div style={{ background: `linear-gradient(135deg, ${dashaMajorCol}12, rgba(5,8,22,0.8))`, border: `1px solid ${dashaMajorCol}30`, borderRadius: 14, padding: "14px 18px" }}>
+                <div style={{ color: dashaMajorCol, fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 8 }}>MOON · JANMA NAKSHATRA</div>
+                <div style={{ color: "#C0D4FF", fontSize: 17, fontFamily: "'Fragment Mono', monospace" }}>
+                  {moonPlacement.nakshatra.nakshatra.name}
                 </div>
-                <div style={{ color: "#8899BB", fontSize: 11, fontFamily: "'Fragment Mono', monospace", marginTop: 4 }}>
-                  Lord: {moonNak.nakshatra.lord} · Pada {moonNak.pada} · {moonNak.nakshatra.deity}
+                <div style={{ color: "#8899BB", fontSize: 10, fontFamily: "'Fragment Mono', monospace", marginTop: 4 }}>
+                  P{moonPlacement.nakshatra.pada} · Lord: {moonPlacement.nakshatra.nakshatra.lord} · {moonPlacement.nakshatra.nakshatra.deity}
                 </div>
-                <div style={{ color: "#556688", fontSize: 11, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", marginTop: 4 }}>
-                  "{moonNak.nakshatra.nature}"
+                <div style={{ color: "#556688", fontSize: 11, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", marginTop: 3 }}>
+                  &ldquo;{moonPlacement.nakshatra.nakshatra.nature}&rdquo;
                 </div>
               </div>
             )}
           </div>
 
           {/* Tabs */}
-          <div style={{ display: "flex", gap: 6, marginBottom: 16 }}>
-            {(["placements", "dasha"] as const).map(t => (
-              <button key={t} onClick={() => setTab(t)} style={{
-                padding: "5px 16px",
-                background: tab === t ? "rgba(167,139,250,0.12)" : "transparent",
-                border: `1px solid ${tab === t ? "rgba(167,139,250,0.3)" : "rgba(40,60,100,0.3)"}`,
-                borderRadius: 20, color: tab === t ? "#C8A55B" : "#445577",
+          <div style={{ display: "flex", gap: 6, marginBottom: 18, flexWrap: "wrap" }}>
+            {TABS.map(t => (
+              <button key={t.key} onClick={() => setTab(t.key)} style={{
+                padding: "5px 14px",
+                background: tab === t.key ? "rgba(167,139,250,0.12)" : "transparent",
+                border: `1px solid ${tab === t.key ? "rgba(167,139,250,0.3)" : "rgba(40,60,100,0.3)"}`,
+                borderRadius: 20, color: tab === t.key ? "#C8A55B" : "#445577",
                 fontSize: 9, letterSpacing: "0.12em",
                 fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
               }}>
-                {t === "placements" ? "SIDEREAL PLACEMENTS" : "VIMSHOTTARI DASHA"}
+                {t.label}
               </button>
             ))}
           </div>
 
+          {/* PLACEMENTS */}
           {tab === "placements" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
               {sidereal.placements.map((p, i) => {
                 const col = PLANET_COLORS[p.name] ?? "#8899BB";
                 return (
-                  <div key={i} style={{ display: "grid", gridTemplateColumns: "28px 100px 1fr 1fr auto", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 9, background: "rgba(10,15,35,0.5)" }}>
+                  <div key={i} style={{ display: "grid", gridTemplateColumns: "28px 90px 130px 1fr 60px 30px", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 9, background: "rgba(10,15,35,0.5)" }}>
                     <span style={{ color: col, fontSize: 14, textAlign: "center" }}>{PLANET_SYMBOLS[p.name] ?? "·"}</span>
-                    <span style={{ color: col, fontSize: 10, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.06em" }}>{p.name}</span>
+                    <span style={{ color: col, fontSize: 10, fontFamily: "'Fragment Mono', monospace" }}>{p.name.replace("NorthNode", "N.Node")}</span>
                     <span style={{ color: "#C0D4FF", fontSize: 11, fontFamily: "'Fragment Mono', monospace" }}>
                       {SIGN_SYMBOLS[p.sign] ?? ""} {p.signDegree.toFixed(1)}° {p.sign}
                     </span>
                     <span style={{ color: "#8899BB", fontSize: 10, fontFamily: "'Fragment Mono', monospace" }}>
-                      {p.nakshatra.nakshatra.name} · P{p.nakshatra.pada} · {p.nakshatra.nakshatra.lord}
+                      {p.nakshatra.nakshatra.name} · <span style={{ color: "#a78bfa" }}>P{p.nakshatra.pada}</span> · {p.nakshatra.nakshatra.lord}
                     </span>
-                    <span style={{ color: "#445577", fontSize: 9, fontFamily: "'Fragment Mono', monospace" }}>
-                      H{p.house}{p.retrograde ? " Rx" : ""}
-                    </span>
+                    <span style={{ color: "#556688", fontSize: 9, fontFamily: "'Fragment Mono', monospace" }}>H{p.house}</span>
+                    <span style={{ color: "#334466", fontSize: 9, fontFamily: "'Fragment Mono', monospace" }}>{p.retrograde ? "Rx" : ""}</span>
                   </div>
                 );
               })}
             </div>
           )}
 
+          {/* NAVAMSHA D9 */}
+          {tab === "navamsha" && d9 && (
+            <div>
+              <div style={{ marginBottom: 14 }}>
+                <p style={{ color: "#a78bfa", fontSize: 9, letterSpacing: "0.18em", fontFamily: "'Fragment Mono', monospace", marginBottom: 4 }}>
+                  D9 — NAVAMSHA · Soul chart · spouse chart · dharma
+                </p>
+                <p style={{ color: "#445577", fontSize: 11, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>
+                  Lagna: {SIGN_SYMBOLS[d9.lagna.sign]} {d9.lagna.sign} · reveals deeper nature beyond the D1
+                </p>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                <VargaRow p={{ ...d9.lagna }} accent="#a78bfa" />
+                {d9.planets.map((p, i) => <VargaRow key={i} p={p} />)}
+              </div>
+            </div>
+          )}
+
+          {/* VARGA BROWSER */}
+          {tab === "varga" && (
+            <div>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
+                {KEY_DIVISIONALS.map(n => (
+                  <button key={n} onClick={() => setSelectedD(n)} style={{
+                    padding: "4px 10px",
+                    background: selectedD === n ? "rgba(167,139,250,0.18)" : "rgba(10,15,35,0.6)",
+                    border: `1px solid ${selectedD === n ? "rgba(167,139,250,0.4)" : "rgba(40,60,100,0.3)"}`,
+                    borderRadius: 8, color: selectedD === n ? "#C8A55B" : "#445577",
+                    fontSize: 9, letterSpacing: "0.1em",
+                    fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
+                  }}>
+                    D{n}
+                  </button>
+                ))}
+              </div>
+              {selectedChart && (
+                <div>
+                  <p style={{ color: "#a78bfa", fontSize: 9, letterSpacing: "0.18em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>
+                    D{selectedD} — {DIVISIONAL_NAMES[selectedD] ?? `D${selectedD}`} · Lagna: {SIGN_SYMBOLS[selectedChart.lagna.sign]} {selectedChart.lagna.sign}
+                  </p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                    <VargaRow p={{ ...selectedChart.lagna }} accent="#a78bfa" />
+                    {selectedChart.planets.map((p, i) => <VargaRow key={i} p={p} />)}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* KARAKAS */}
+          {tab === "karakas" && karakas && (
+            <div>
+              <p style={{ color: "#445577", fontSize: 9, letterSpacing: "0.18em", fontFamily: "'Fragment Mono', monospace", marginBottom: 14 }}>
+                JAIMINI CHARA KARAKAS — ranked by sidereal degree within sign (descending)
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                {karakas.all.map((ck: CharaKaraka, i: number) => {
+                  const col = CK_ROLE_COLORS[ck.role] ?? "#8899BB";
+                  const pCol = PLANET_COLORS[ck.planet] ?? "#8899BB";
+                  return (
+                    <motion.div key={i} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                      style={{ background: i === 0 ? `${col}15` : "rgba(10,15,35,0.6)", border: `1px solid ${i === 0 ? col + "40" : "rgba(40,60,100,0.3)"}`, borderRadius: 12, padding: "14px 16px", boxShadow: i === 0 ? `0 0 20px ${col}12` : "none" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                        <span style={{ color: pCol, fontSize: 20 }}>{PLANET_SYMBOLS[ck.planet] ?? "·"}</span>
+                        <div>
+                          <div style={{ color: col, fontSize: 10, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em" }}>
+                            {ck.role} — {ck.roleLabel}
+                          </div>
+                          <div style={{ color: pCol, fontSize: 13, fontFamily: "'Fragment Mono', monospace" }}>
+                            {ck.planet.replace("NorthNode", "Rahu")}
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ color: "#445577", fontSize: 9, fontFamily: "'Fragment Mono', monospace" }}>
+                        {ck.degInSign.toFixed(2)}° in sign
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* DASHA */}
           {tab === "dasha" && dasha && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
               <div>
@@ -222,7 +346,7 @@ export default function VedicPage() {
               </div>
               <div>
                 <p style={{ color: "#445577", fontSize: 8, letterSpacing: "0.18em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>
-                  ANTARDASHA OF {dasha.currentMajor?.ruler?.toUpperCase() ?? "—"}
+                  ANTARDASHA — {dasha.currentMajor?.ruler?.toUpperCase() ?? "—"}
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
                   {dasha.antardasha.map((p, i) => <DashaRow key={i} p={p} isAntar />)}

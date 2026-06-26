@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
 import {
@@ -43,6 +43,23 @@ const CK_ROLE_COLORS: Record<string, string> = {
   AK: "#fbbf24", AmK: "#f59e0b", BK: "#a78bfa", MK: "#BFB6E8",
   PK: "#f472b6", GK: "#94a3b8", DK: "#06b6d4",
 };
+
+const VEDIC_PROMPTS = [
+  "What does my Atmakaraka (AK) reveal about my soul's purpose?",
+  "How does my Janma nakshatra shape my personality and path?",
+  "Explain my current dasha and what life themes it activates.",
+  "What does my Navamsha lagna reveal about my inner nature?",
+  "How do my 1st and 9th house placements shape my dharma?",
+  "What does my Moon nakshatra say about my emotional patterns?",
+  "Tell me about the relationship between my Lagna lord and chart.",
+  "What divisional chart should I focus on for career (D10)?",
+];
+
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  id: number;
+}
 
 function fmtDate(d: Date) {
   return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
@@ -92,7 +109,7 @@ function DashaRow({ p, isAntar = false }: { p: DashaPeriod; isAntar?: boolean })
   );
 }
 
-type TabKey = "placements" | "navamsha" | "varga" | "karakas" | "dasha";
+type TabKey = "placements" | "navamsha" | "varga" | "karakas" | "dasha" | "oracle";
 
 export default function VedicPage() {
   const [sidereal, setSidereal]   = useState<SiderealChart | null>(null);
@@ -103,10 +120,17 @@ export default function VedicPage() {
   const [noProfile, setNoProfile] = useState(false);
   const [tab, setTab]             = useState<TabKey>("placements");
   const [selectedD, setSelectedD] = useState(9);
-  const [reading, setReading]     = useState("");
-  const [streaming, setStreaming] = useState(false);
+
+  // Chat oracle state
+  const [messages, setMessages]       = useState<ChatMessage[]>([]);
+  const [chatInput, setChatInput]     = useState("");
+  const [chatStreaming, setChatStreaming] = useState(false);
+  const [streamText, setStreamText]   = useState("");
+  const [msgId, setMsgId]             = useState(0);
+  const [vedicCtx, setVedicCtx]       = useState("");
   const [profileName, setProfileName] = useState("Native");
-  const [vedicContext, setVedicContext] = useState("");
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef  = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const id = getActiveProfileId();
@@ -121,7 +145,7 @@ export default function VedicPage() {
     setRawChart(chart);
     setAyanamsa(ay);
     setProfileName(profile.name ?? "Native");
-    setVedicContext(buildVedicContext(chart, birthDatetime));
+    setVedicCtx(buildVedicContext(chart, birthDatetime));
     const moonP = chart.planets.find(p => p.name === "Moon");
     if (moonP) {
       const moonSidereal = ((moonP.longitude - sc.ayanamsa) % 360 + 360) % 360;
@@ -130,31 +154,49 @@ export default function VedicPage() {
     setKarakas(buildCharaKarakas(chart, ay));
   }, []);
 
+  useEffect(() => {
+    if (tab === "oracle") bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, streamText, tab]);
+
   const divisionals = useMemo<Record<number, DivisionalChart>>(() => {
     if (!rawChart) return {};
     const out: Record<number, DivisionalChart> = {};
-    for (const n of KEY_DIVISIONALS) {
-      out[n] = buildDivisionalChart(rawChart, ayanamsa, n);
-    }
+    for (const n of KEY_DIVISIONALS) out[n] = buildDivisionalChart(rawChart, ayanamsa, n);
     return out;
   }, [rawChart, ayanamsa]);
 
-  const d9 = divisionals[9];
-  const selectedChart = divisionals[selectedD];
+  const sendMessage = async (text?: string) => {
+    const content = (text ?? chatInput).trim();
+    if (!content || chatStreaming) return;
+    setChatInput("");
 
-  const streamReading = async () => {
-    if (streaming || !dasha?.currentMajor) return;
-    const major = dasha.currentMajor.ruler;
-    const antar = dasha.currentAntar?.antardasha ?? "—";
-    const prompt = `[VEDIC CHART for ${profileName}]\n${vedicContext}\n\nCurrent Vimshottari dasha: ${major} major / ${antar} antardasha. Give a 3–4 sentence Jyotish reading — what life themes are being activated by this dasha combination, how the janma nakshatra colors the experience, and what the native should be mindful of during this period.`;
-    setStreaming(true); setReading("");
+    const userMsg: ChatMessage = { role: "user", content, id: msgId };
+    setMsgId(n => n + 1);
+    setMessages(prev => [...prev, userMsg]);
+    setChatStreaming(true);
+    setStreamText("");
+
+    // Inject Vedic context on first message only
+    const isFirst = messages.length === 0;
+    const dashaLine = dasha?.currentMajor
+      ? `Current Vimshottari dasha: ${dasha.currentMajor.ruler} major / ${dasha.currentAntar?.antardasha ?? "—"} antardasha.`
+      : "";
+    const karakaLine = karakas
+      ? `Atmakaraka (AK): ${karakas.ak.planet} · Darakaraka (DK): ${karakas.dk.planet}.`
+      : "";
+    const enriched = isFirst
+      ? `[JYOTISH CONTEXT for ${profileName}]\n${vedicCtx}\n${dashaLine}\n${karakaLine}\n---\n${content}`
+      : content;
+
+    const history = messages.map(m => ({ role: m.role, content: m.content }));
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: prompt, history: [], persona: getOraclePersona() }),
+        body: JSON.stringify({ message: enriched, history, persona: getOraclePersona() }),
       });
-      if (!res.ok || !res.body) { setStreaming(false); return; }
+      if (!res.ok || !res.body) { setChatStreaming(false); return; }
       const reader = res.body.getReader();
       const dec = new TextDecoder();
       let buf = "", acc = "";
@@ -167,11 +209,15 @@ export default function VedicPage() {
           if (!line.startsWith("data:")) continue;
           const payload = line.slice(5).trim();
           if (payload === "[DONE]") break;
-          try { const p = JSON.parse(payload); if (p.text) { acc += p.text; setReading(acc); } } catch { /* skip */ }
+          try { const p = JSON.parse(payload); if (p.text) { acc += p.text; setStreamText(acc); } } catch { /* skip */ }
         }
       }
+      const assistantMsg: ChatMessage = { role: "assistant", content: acc, id: msgId + 1 };
+      setMsgId(n => n + 2);
+      setMessages(prev => [...prev, assistantMsg]);
     } catch { /* silent */ }
-    setStreaming(false);
+    setStreamText("");
+    setChatStreaming(false);
   };
 
   if (noProfile) {
@@ -195,6 +241,12 @@ export default function VedicPage() {
 
   const moonPlacement = sidereal.placements.find(p => p.name === "Moon");
   const dashaMajorCol = dasha?.currentMajor ? DASHA_COLORS[dasha.currentMajor.ruler] : "#C8A55B";
+  const d9 = divisionals[9];
+  const selectedChart = divisionals[selectedD];
+
+  const allChatMessages: ChatMessage[] = chatStreaming
+    ? [...messages, { role: "assistant", content: streamText, id: -1 }]
+    : messages;
 
   const TABS: Array<{ key: TabKey; label: string }> = [
     { key: "placements", label: "PLACEMENTS" },
@@ -202,6 +254,7 @@ export default function VedicPage() {
     { key: "varga",      label: "VARGA" },
     { key: "karakas",    label: "KARAKAS" },
     { key: "dasha",      label: "DASHA" },
+    { key: "oracle",     label: "✦ ORACLE" },
   ];
 
   return (
@@ -251,44 +304,14 @@ export default function VedicPage() {
             )}
           </div>
 
-          {/* Oracle */}
-          {dasha?.currentMajor && (
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-              style={{ background: `linear-gradient(135deg, ${dashaMajorCol}10, rgba(5,8,22,0.9))`, border: `1px solid ${dashaMajorCol}35`, borderRadius: 14, padding: "16px 20px", marginBottom: 22 }}>
-              <p style={{ color: dashaMajorCol, fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>
-                ORACLE · {dasha.currentMajor.ruler.toUpperCase()} / {(dasha.currentAntar?.antardasha ?? "—").toUpperCase()} DASHA
-              </p>
-              {reading ? (
-                <div style={{ color: "#A0B0D0", fontSize: 13, fontFamily: "'Cormorant Garamond', serif", lineHeight: 1.75, whiteSpace: "pre-wrap" }}>
-                  {reading}
-                  {streaming && (
-                    <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.7, repeat: Infinity }}
-                      style={{ display: "inline-block", width: 6, height: 12, background: dashaMajorCol, borderRadius: 1, marginLeft: 3, verticalAlign: "middle" }} />
-                  )}
-                </div>
-              ) : (
-                <button onClick={streamReading} disabled={streaming} style={{
-                  padding: "7px 18px",
-                  background: `${dashaMajorCol}12`,
-                  border: `1px solid ${dashaMajorCol}35`,
-                  borderRadius: 8, color: dashaMajorCol,
-                  fontSize: 9, letterSpacing: "0.15em",
-                  fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
-                }}>
-                  ✦ ORACLE READING
-                </button>
-              )}
-            </motion.div>
-          )}
-
           {/* Tabs */}
           <div style={{ display: "flex", gap: 6, marginBottom: 18, flexWrap: "wrap" }}>
             {TABS.map(t => (
-              <button key={t.key} onClick={() => setTab(t.key)} style={{
+              <button key={t.key} onClick={() => { setTab(t.key); if (t.key === "oracle") setTimeout(() => inputRef.current?.focus(), 100); }} style={{
                 padding: "5px 14px",
                 background: tab === t.key ? "rgba(167,139,250,0.12)" : "transparent",
                 border: `1px solid ${tab === t.key ? "rgba(167,139,250,0.3)" : "rgba(40,60,100,0.3)"}`,
-                borderRadius: 20, color: tab === t.key ? "#C8A55B" : "#445577",
+                borderRadius: 20, color: tab === t.key ? "#C8A55B" : (t.key === "oracle" ? "#a78bfa" : "#445577"),
                 fontSize: 9, letterSpacing: "0.12em",
                 fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
               }}>
@@ -419,6 +442,100 @@ export default function VedicPage() {
                 <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
                   {dasha.antardasha.map((p, i) => <DashaRow key={i} p={p} isAntar />)}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ORACLE CHAT */}
+          {tab === "oracle" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+
+              {/* Messages */}
+              <div style={{ minHeight: 320, display: "flex", flexDirection: "column", gap: 12, marginBottom: 16 }}>
+                <AnimatePresence initial={false}>
+                  {allChatMessages.length === 0 ? (
+                    <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ paddingTop: 8 }}>
+                      <p style={{ color: "#445577", fontSize: 9, letterSpacing: "0.18em", fontFamily: "'Fragment Mono', monospace", marginBottom: 14 }}>
+                        JYOTISH ORACLE — your full sidereal chart is in context
+                      </p>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                        {VEDIC_PROMPTS.map((prompt, i) => (
+                          <motion.button key={i} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
+                            onClick={() => sendMessage(prompt)}
+                            style={{
+                              textAlign: "left", padding: "9px 14px",
+                              background: "rgba(10,15,35,0.6)",
+                              border: "1px solid rgba(40,60,100,0.3)",
+                              borderRadius: 10, color: "#8899BB",
+                              fontSize: 12, fontFamily: "'Cormorant Garamond', serif",
+                              fontStyle: "italic", cursor: "pointer", lineHeight: 1.4,
+                            }}>
+                            {prompt}
+                          </motion.button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  ) : (
+                    allChatMessages.map((m) => (
+                      <motion.div key={m.id}
+                        initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                        style={{ display: "flex", flexDirection: "column", alignItems: m.role === "user" ? "flex-end" : "flex-start", gap: 0 }}>
+                        {m.role === "user" ? (
+                          <div style={{ maxWidth: "80%", padding: "10px 14px", borderRadius: 14, borderBottomRightRadius: 4, background: "rgba(167,139,250,0.15)", border: "1px solid rgba(167,139,250,0.3)", color: "#e2d9f3", fontSize: 13, lineHeight: 1.6 }}>
+                            {m.content}
+                          </div>
+                        ) : (
+                          <div style={{ display: "flex", gap: 10, alignItems: "flex-start", maxWidth: "88%" }}>
+                            <div style={{ width: 26, height: 26, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, background: "linear-gradient(135deg, #7B6FD4, #06b6d4)", marginTop: 2 }}>✦</div>
+                            <div style={{ position: "relative", padding: "10px 14px", borderRadius: 14, borderTopLeftRadius: 4, background: "rgba(4,4,28,0.9)", border: "1px solid rgba(123,111,212,0.2)", color: "#C0D4FF", fontSize: 13, lineHeight: 1.75, whiteSpace: "pre-wrap" }}>
+                              {m.content}
+                              {m.id === -1 && chatStreaming && (
+                                <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.7, repeat: Infinity }}
+                                  style={{ display: "inline-block", width: 6, height: 12, background: "#a78bfa", borderRadius: 1, marginLeft: 3, verticalAlign: "middle" }} />
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </motion.div>
+                    ))
+                  )}
+                </AnimatePresence>
+                <div ref={bottomRef} />
+              </div>
+
+              {/* Input */}
+              <div style={{ position: "sticky", bottom: 0, paddingTop: 8 }}>
+                <div style={{ display: "flex", gap: 10, alignItems: "center", padding: "12px 16px", borderRadius: 14, background: "rgba(4,4,28,0.92)", border: "1px solid rgba(167,139,250,0.2)", backdropFilter: "blur(20px)" }}>
+                  <motion.div animate={{ opacity: chatStreaming ? [0.5, 1, 0.5] : 1 }} transition={{ duration: 1.2, repeat: chatStreaming ? Infinity : 0 }}
+                    style={{ width: 26, height: 26, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, background: "linear-gradient(135deg, #7B6FD4, #06b6d4)" }}>✦</motion.div>
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={chatInput}
+                    onChange={e => setChatInput(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && sendMessage()}
+                    placeholder="Ask about your nakshatras, dashas, divisional charts, karakas…"
+                    disabled={chatStreaming}
+                    style={{ flex: 1, background: "transparent", border: "none", outline: "none", color: "#e2e8f0", fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}
+                  />
+                  {chatStreaming ? (
+                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      style={{ width: 18, height: 18, borderRadius: "50%", border: "2px solid #a78bfa", borderTopColor: "transparent", flexShrink: 0 }} />
+                  ) : (
+                    <button onClick={() => sendMessage()} disabled={!chatInput.trim()}
+                      style={{ background: "none", border: "none", cursor: "pointer", color: "#7B6FD4", opacity: chatInput.trim() ? 1 : 0.3, padding: 0, flexShrink: 0 }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 20, height: 20 }}>
+                        <path d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+                {messages.length > 0 && !chatStreaming && (
+                  <button onClick={() => { setMessages([]); setMsgId(0); }}
+                    style={{ marginTop: 8, fontSize: 9, letterSpacing: "0.12em", fontFamily: "'Fragment Mono', monospace", color: "#334466", background: "none", border: "none", cursor: "pointer" }}>
+                    CLEAR CONVERSATION
+                  </button>
+                )}
               </div>
             </div>
           )}

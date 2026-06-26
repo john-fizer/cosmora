@@ -3,10 +3,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { DashboardBg } from "@/components/ui/DashboardBg";
-import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
+import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
 import {
   toSiderealChart, buildVimshottariDasha, buildDivisionalChart, buildCharaKarakas,
-  lahiriAyanamsa, DIVISIONAL_NAMES,
+  lahiriAyanamsa, DIVISIONAL_NAMES, buildVedicContext,
 } from "@/lib/astrology/sidereal";
 import type {
   SiderealChart, VimshottariData, DashaPeriod, DashaRuler,
@@ -103,6 +103,10 @@ export default function VedicPage() {
   const [noProfile, setNoProfile] = useState(false);
   const [tab, setTab]             = useState<TabKey>("placements");
   const [selectedD, setSelectedD] = useState(9);
+  const [reading, setReading]     = useState("");
+  const [streaming, setStreaming] = useState(false);
+  const [profileName, setProfileName] = useState("Native");
+  const [vedicContext, setVedicContext] = useState("");
 
   useEffect(() => {
     const id = getActiveProfileId();
@@ -116,6 +120,8 @@ export default function VedicPage() {
     setSidereal(sc);
     setRawChart(chart);
     setAyanamsa(ay);
+    setProfileName(profile.name ?? "Native");
+    setVedicContext(buildVedicContext(chart, birthDatetime));
     const moonP = chart.planets.find(p => p.name === "Moon");
     if (moonP) {
       const moonSidereal = ((moonP.longitude - sc.ayanamsa) % 360 + 360) % 360;
@@ -135,6 +141,38 @@ export default function VedicPage() {
 
   const d9 = divisionals[9];
   const selectedChart = divisionals[selectedD];
+
+  const streamReading = async () => {
+    if (streaming || !dasha?.currentMajor) return;
+    const major = dasha.currentMajor.ruler;
+    const antar = dasha.currentAntar?.antardasha ?? "—";
+    const prompt = `[VEDIC CHART for ${profileName}]\n${vedicContext}\n\nCurrent Vimshottari dasha: ${major} major / ${antar} antardasha. Give a 3–4 sentence Jyotish reading — what life themes are being activated by this dasha combination, how the janma nakshatra colors the experience, and what the native should be mindful of during this period.`;
+    setStreaming(true); setReading("");
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: prompt, history: [], persona: getOraclePersona() }),
+      });
+      if (!res.ok || !res.body) { setStreaming(false); return; }
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = "", acc = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const lines = buf.split("\n"); buf = lines.pop() ?? "";
+        for (const line of lines) {
+          if (!line.startsWith("data:")) continue;
+          const payload = line.slice(5).trim();
+          if (payload === "[DONE]") break;
+          try { const p = JSON.parse(payload); if (p.text) { acc += p.text; setReading(acc); } } catch { /* skip */ }
+        }
+      }
+    } catch { /* silent */ }
+    setStreaming(false);
+  };
 
   if (noProfile) {
     return (
@@ -212,6 +250,36 @@ export default function VedicPage() {
               </div>
             )}
           </div>
+
+          {/* Oracle */}
+          {dasha?.currentMajor && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              style={{ background: `linear-gradient(135deg, ${dashaMajorCol}10, rgba(5,8,22,0.9))`, border: `1px solid ${dashaMajorCol}35`, borderRadius: 14, padding: "16px 20px", marginBottom: 22 }}>
+              <p style={{ color: dashaMajorCol, fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>
+                ORACLE · {dasha.currentMajor.ruler.toUpperCase()} / {(dasha.currentAntar?.antardasha ?? "—").toUpperCase()} DASHA
+              </p>
+              {reading ? (
+                <div style={{ color: "#A0B0D0", fontSize: 13, fontFamily: "'Cormorant Garamond', serif", lineHeight: 1.75, whiteSpace: "pre-wrap" }}>
+                  {reading}
+                  {streaming && (
+                    <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.7, repeat: Infinity }}
+                      style={{ display: "inline-block", width: 6, height: 12, background: dashaMajorCol, borderRadius: 1, marginLeft: 3, verticalAlign: "middle" }} />
+                  )}
+                </div>
+              ) : (
+                <button onClick={streamReading} disabled={streaming} style={{
+                  padding: "7px 18px",
+                  background: `${dashaMajorCol}12`,
+                  border: `1px solid ${dashaMajorCol}35`,
+                  borderRadius: 8, color: dashaMajorCol,
+                  fontSize: 9, letterSpacing: "0.15em",
+                  fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
+                }}>
+                  ✦ ORACLE READING
+                </button>
+              )}
+            </motion.div>
+          )}
 
           {/* Tabs */}
           <div style={{ display: "flex", gap: 6, marginBottom: 18, flexWrap: "wrap" }}>

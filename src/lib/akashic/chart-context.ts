@@ -42,7 +42,7 @@ export function getEntryChartContext(
         for (const p of inHouse) {
           placements.push({
             label: `Your ${p.name.replace("NorthNode", "North Node")}`,
-            detail: `in ${p.sign} · ${key.number}${ordinal(key.number)} House`,
+            detail: `in ${p.sign} · ${ordinal(key.number)} House`,
             extra: p.retrograde ? "Rx" : undefined,
           });
         }
@@ -59,17 +59,16 @@ export function getEntryChartContext(
           detail: `${dasha.currentMajor.ruler} major${dasha.currentAntar ? ` / ${dasha.currentAntar.antardasha} antardasha` : ""}`,
         });
       }
+      if (key.key === "currentFirdaria") {
+        // Firdaria computation is not passed into this function yet — deferred to a future task
+        placements.push({ label: "Firdaria", detail: "See Firdaria page for current period" });
+      }
       if (key.key === "ak" && karakas?.ak) {
         placements.push({ label: "Your Atmakaraka (AK)", detail: `${karakas.ak.planet.replace("NorthNode", "Rahu")} · ${karakas.ak.degInSign.toFixed(2)}° in sign` });
       }
       if (key.key === "sect") {
-        const sun = chart.planets.find(p => p.name === "Sun");
-        if (sun) {
-          // Daytime if Sun is in houses 7–12 (above the horizon)
-          const sunHouse = chart.houses.findIndex(h => sun.longitude >= h.longitude) + 1;
-          const isDay = sunHouse >= 7 && sunHouse <= 12;
-          placements.push({ label: "Your Chart Sect", detail: isDay ? "Day Chart" : "Night Chart" });
-        }
+        const isDay = chart.sect === "day";
+        placements.push({ label: "Your Chart Sect", detail: isDay ? "Day Chart" : "Night Chart" });
       }
     }
   }

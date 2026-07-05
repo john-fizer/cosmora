@@ -42,6 +42,7 @@ export default function AkashicArticlePage() {
   const [context, setContext]     = useState<EntryChartContext | null>(null);
   const [body, setBody]           = useState("");
   const [generating, setGenerating] = useState(false);
+  const [reloadNonce, setReloadNonce] = useState(0);
 
   // Load chart
   useEffect(() => {
@@ -105,7 +106,7 @@ export default function AkashicArticlePage() {
       setGenerating(false);
     };
     generate();
-  }, [entry, slug]);
+  }, [entry, slug, reloadNonce]);
 
   if (!entry) {
     return (
@@ -204,6 +205,7 @@ export default function AkashicArticlePage() {
               onClick={() => {
                 if (typeof window !== "undefined") localStorage.removeItem(cacheKey(slug));
                 setBody("");
+                setReloadNonce(n => n + 1);
               }}
               style={{ color: "#334466", fontSize: 8, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em", background: "none", border: "none", cursor: "pointer", marginBottom: 24, padding: 0 }}>
               ↻ REGENERATE

@@ -63,6 +63,12 @@ export function getEntryChartContext(
         // Firdaria computation is not passed into this function yet — deferred to a future task
         placements.push({ label: "Firdaria", detail: "See Firdaria page for current period" });
       }
+      if (key.key === "progressions") {
+        placements.push({ label: "Progressions", detail: "See Progressions page for your current progressed chart" });
+      }
+      if (key.key === "solarReturn") {
+        placements.push({ label: "Solar Return", detail: "See Solar Rtn page for your year-ahead chart" });
+      }
       if (key.key === "ak" && karakas?.ak) {
         placements.push({ label: "Your Atmakaraka (AK)", detail: `${karakas.ak.planet.replace("NorthNode", "Rahu")} · ${karakas.ak.degInSign.toFixed(2)}° in sign` });
       }

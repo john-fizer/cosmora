@@ -14,7 +14,6 @@ export function DashboardBg() {
     if (!ctx) return;
 
     let raf: number;
-    let t = 0;
     let stars: Star[] = [];
 
     const init = () => {
@@ -33,14 +32,13 @@ export function DashboardBg() {
 
     // Brand palette only — Solar gold + Oracle violet
     const orbs = [
-      { bx: 0.12, by: 0.22, r: 0.30, color: [123, 111, 212], speed: 0.00016, phase: 0   },
-      { bx: 0.80, by: 0.68, r: 0.26, color: [200, 165, 91],  speed: 0.00013, phase: 2.1 },
-      { bx: 0.50, by: 0.88, r: 0.22, color: [123, 111, 212], speed: 0.00022, phase: 4.3 },
-      { bx: 0.88, by: 0.15, r: 0.20, color: [200, 165, 91],  speed: 0.00018, phase: 1.5 },
+      { bx: 0.12, by: 0.22, r: 0.30, color: [123, 111, 212] },
+      { bx: 0.80, by: 0.68, r: 0.26, color: [200, 165, 91]  },
+      { bx: 0.50, by: 0.88, r: 0.22, color: [123, 111, 212] },
+      { bx: 0.88, by: 0.15, r: 0.20, color: [200, 165, 91]  },
     ];
 
     const draw = () => {
-      t++;
       const w = canvas.width;
       const h = canvas.height;
 
@@ -92,10 +90,9 @@ export function DashboardBg() {
       ctx.restore();
 
       for (const o of orbs) {
-        const drift = Math.sin(t * o.speed * 6283 + o.phase);
-        const cx = (o.bx + Math.sin(t * o.speed * 3141 + o.phase) * 0.05) * w;
-        const cy = (o.by + Math.cos(t * o.speed * 2718 + o.phase + 1) * 0.04) * h;
-        const radius = o.r * Math.min(w, h) * (1 + drift * 0.012);
+        const cx = o.bx * w;
+        const cy = o.by * h;
+        const radius = o.r * Math.min(w, h);
 
         const [r, g, b] = o.color;
         const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);

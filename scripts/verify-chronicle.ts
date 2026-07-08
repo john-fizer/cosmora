@@ -75,5 +75,42 @@ assert("re-import all conflicts, none added", r1.added === 0 && r1.conflicts ===
 const r2 = importChronicle(PID, { ...exported, events: [makeEvent("e9")], people: [] }, "keep_local");
 assert("new event imported", r2.added === 1 && getChronicle(PID).events.some(e => e.id === "e9"));
 
+// ─── Encoder ───
+import { computeSkyState, topTokens } from "../src/lib/chronicle/sky-state";
+import { calculateChart } from "../src/lib/astrology/calculator";
+
+const chart = calculateChart({
+  birthDate: "1990-06-15", birthTime: "08:30:00",
+  latitude: 34.05, longitude: -118.24,
+  timezone: "America/Los_Angeles", houseSystem: "whole_sign",
+});
+
+// Dec 16 2020: two days after the Dec 14 total solar eclipse, five days before the Great Conjunction
+const state = computeSkyState(chart, profile, "2020-12-16", "exact");
+assert("encoder version 1", state.encoderVersion === 1);
+assert("exact not approximate", state.approximate === false);
+assert("transit hits found", state.transitHits.length > 0);
+assert("hits sorted by orb", state.transitHits.every((h, i, a) => i === 0 || a[i - 1].orb <= h.orb));
+assert("dasha major valid", ["Ketu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury"].includes(state.dasha.major));
+assert("dasha antar valid", ["Ketu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury"].includes(state.dasha.antar));
+assert("firdaria major defined", state.firdaria.major !== "—");
+assert("zr L1 defined", state.zrFortune.l1Sign !== "—");
+assert("profection house 1-12", state.profection.house >= 1 && state.profection.house <= 12);
+assert("profection age ~30", state.profection.year === 30);
+assert("eclipse detected near 2020-12-14", state.eclipseProximity?.kind === "solar" && Math.abs(state.eclipseProximity.daysAway + 2) <= 2);
+assert("signature deduped", new Set(state.signature).size === state.signature.length);
+assert("signature has T tokens", state.signature.some(t => /^T\.\w+\.(conj|sextile|square|trine|opp)\.\w+\.H\d+$/.test(t)));
+assert("signature has dasha token", state.signature.some(t => t.startsWith("L.dasha.")));
+assert("signature has prof token", state.signature.some(t => /^L\.prof\.H\d+\.lord\w+$/.test(t)));
+assert("topTokens returns n", topTokens(state, 3).length === 3);
+
+// precision rules
+const monthState = computeSkyState(chart, profile, "2020-12-01", "month");
+assert("month precision approximate", monthState.approximate === true);
+const yearState = computeSkyState(chart, profile, "2020-01-01", "year");
+assert("year precision: no transit hits", yearState.transitHits.length === 0);
+assert("year precision: no eclipse", yearState.eclipseProximity === undefined);
+assert("year precision: lords still present", yearState.dasha.major !== "—" && yearState.zrFortune.l1Sign !== "—");
+
 console.log(`\n${failures === 0 ? "ALL PASS" : failures + " FAILURE(S)"}`);
 process.exit(failures === 0 ? 0 : 1);

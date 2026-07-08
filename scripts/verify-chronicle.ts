@@ -94,6 +94,7 @@ assert("hits sorted by orb", state.transitHits.every((h, i, a) => i === 0 || a[i
 assert("dasha major valid", ["Ketu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury"].includes(state.dasha.major));
 assert("dasha antar valid", ["Ketu","Venus","Sun","Moon","Mars","Rahu","Jupiter","Saturn","Mercury"].includes(state.dasha.antar));
 assert("firdaria major defined", state.firdaria.major !== "—");
+assert("firdaria sub defined", state.firdaria.sub !== "—");
 assert("zr L1 defined", state.zrFortune.l1Sign !== "—");
 assert("profection house 1-12", state.profection.house >= 1 && state.profection.house <= 12);
 assert("profection age ~30", state.profection.year === 30);

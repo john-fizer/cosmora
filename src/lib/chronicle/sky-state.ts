@@ -1,5 +1,5 @@
 import { calculateChart, calculateFirdaria } from "@/lib/astrology/calculator";
-import { buildVimshottariDasha, lahiriAyanamsa } from "@/lib/astrology/sidereal";
+import { buildVimshottariDasha, lahiriAyanamsa, DASHA_ORDER, DASHA_YEARS } from "@/lib/astrology/sidereal";
 import { buildL1Periods, buildSubPeriods } from "@/lib/astrology/zodiacalReleasing";
 import { ZODIAC_SIGNS, TRADITIONAL_RULERS } from "@/lib/astrology/types";
 import type { ChartData, PlanetName, ZodiacSign } from "@/lib/astrology/types";
@@ -40,9 +40,6 @@ const ASPECTS: { name: AspectName; angle: number; abbrev: string }[] = [
 const FAST_BODIES: PlanetName[] = ["Sun", "Moon", "Mercury", "Venus", "Mars"];
 const SLOW_BODIES: PlanetName[] = ["Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
 const TRANSIT_BODIES: PlanetName[] = [...FAST_BODIES, ...SLOW_BODIES];
-
-const DASHA_SEQ = ["Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"];
-const DASHA_YEARS: Record<string, number> = { Ketu: 7, Venus: 20, Sun: 6, Moon: 10, Mars: 7, Rahu: 18, Jupiter: 16, Saturn: 19, Mercury: 17 };
 
 function sep(a: number, b: number): number {
   const d = Math.abs(((a - b) % 360 + 360) % 360);
@@ -96,15 +93,15 @@ function computeTransitHits(natal: ChartData, profile: StoredProfile, date: stri
 /** Antardasha ruler within a major period at `date` — proportional sub-periods starting from the major ruler. */
 function antarAtDate(majorRuler: string, majorStart: Date, majorYears: number, date: Date): string {
   const YEAR_MS = 365.25 * 86400000;
-  const startIdx = DASHA_SEQ.indexOf(majorRuler);
+  const startIdx = DASHA_ORDER.indexOf(majorRuler as never);
   let cursor = majorStart.getTime();
   for (let i = 0; i < 9; i++) {
-    const sub = DASHA_SEQ[(startIdx + i) % 9];
+    const sub = DASHA_ORDER[(startIdx + i) % 9];
     const end = cursor + (DASHA_YEARS[sub] / 120) * majorYears * YEAR_MS;
     if (date.getTime() < end) return sub;
     cursor = end;
   }
-  return DASHA_SEQ[startIdx]; // date at exact end boundary — return first
+  return DASHA_ORDER[startIdx]; // date at exact end boundary — return first
 }
 
 /** Nearest eclipse within ±14 days: daily lunation scan + mean-node distance check (approximation, encoder v1). */
@@ -184,9 +181,9 @@ export function computeSkyState(
   const eclipseProximity = skipTransits ? undefined : findNearbyEclipse(sampleDate, profile);
 
   // ── Signature tokens ──
-  const ABBREV: Record<AspectName, string> = { conjunction: "conj", sextile: "sextile", square: "square", trine: "trine", opposition: "opp" };
+  const abbrevOf = (n: AspectName) => ASPECTS.find(a => a.name === n)!.abbrev;
   const tokens: string[] = [
-    ...transitHits.map(h => `T.${h.transitingBody}.${ABBREV[h.aspect]}.${h.natalPoint}.H${h.natalHouse}`),
+    ...transitHits.map(h => `T.${h.transitingBody}.${abbrevOf(h.aspect)}.${h.natalPoint}.H${h.natalHouse}`),
     `L.dasha.${dashaMajor}${dashaAntar !== "—" ? "." + dashaAntar : ""}`,
     `L.firdaria.${firdaria.major}`,
     `L.zr.${zrFortune.l1Sign}${zrFortune.l2Sign !== "—" ? ".L2." + zrFortune.l2Sign : ""}`,

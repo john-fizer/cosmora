@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useDeferredValue } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { DashboardBg } from "@/components/ui/DashboardBg";
@@ -227,6 +227,7 @@ export default function ChroniclePage() {
   const [pending, setPending] = useState<{ events: Record<string, unknown>[]; people: Record<string, unknown>[] } | null>(null);
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [sigQuery, setSigQuery] = useState("");
+  const deferredSigQuery = useDeferredValue(sigQuery);
   const [linkingFrom, setLinkingFrom] = useState<string | null>(null);
   const [reflectingOn, setReflectingOn] = useState<string | null>(null);
   const [reflectionText, setReflectionText] = useState("");
@@ -251,24 +252,24 @@ export default function ChroniclePage() {
   const skyStates = useMemo(() => {
     if (!chart || !profile) return new Map<string, SkyState>();
     const map = new Map<string, SkyState>();
-    const need = sigQuery ? events : events.filter(e => e.id === expandedId);
+    const need = deferredSigQuery ? events : events.filter(e => e.id === expandedId);
     for (const e of need) map.set(e.id, computeSkyState(chart, profile, e.startsAt, e.datePrecision));
     return map;
-  }, [chart, profile, events, expandedId, sigQuery]);
+  }, [chart, profile, events, expandedId, deferredSigQuery]);
 
   const filtered = useMemo(() => {
     return events.filter(e => {
       if (typeFilter !== "all" && e.eventType !== typeFilter) return false;
-      if (sigQuery) {
+      if (deferredSigQuery) {
         const state = skyStates.get(e.id);
         if (!state) return false;
-        const terms = sigQuery.toLowerCase().split(/\s+/).filter(Boolean);
+        const terms = deferredSigQuery.toLowerCase().split(/\s+/).filter(Boolean);
         const sig = state.signature.join(" ").toLowerCase();
         if (!terms.every(t => sig.includes(t))) return false;
       }
       return true;
     });
-  }, [events, typeFilter, sigQuery, skyStates]);
+  }, [events, typeFilter, deferredSigQuery, skyStates]);
 
   const byYear = useMemo(() => {
     const groups = new Map<string, LifeEvent[]>();
@@ -326,9 +327,11 @@ export default function ChroniclePage() {
     // resolve people names → ids (create if new)
     const names = (raw.peopleNames as string[] | undefined) ?? [];
     const ids: string[] = [];
+    const known = [...people];
     for (const name of names) {
-      const existing = people.find(p => p.name.toLowerCase() === name.toLowerCase());
-      ids.push(existing ? existing.id : createPerson(name).id);
+      const existing = known.find(p => p.name.toLowerCase() === name.toLowerCase());
+      if (existing) { if (!ids.includes(existing.id)) ids.push(existing.id); }
+      else { const created = createPerson(name); known.push(created); ids.push(created.id); }
     }
     const precision = (raw.datePrecision as DatePrecision) ?? "year";
     const ev: LifeEvent = {

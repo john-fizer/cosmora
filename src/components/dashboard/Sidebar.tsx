@@ -255,6 +255,20 @@ const NAV_ITEMS = [
     ),
   },
   {
+    label: "Chronicle",
+    hint: "life events",
+    href: "/dashboard/chronicle",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+        <path d="M12 2v20" strokeOpacity="0.4" />
+        <circle cx="12" cy="6" r="2" />
+        <circle cx="12" cy="12" r="2" fill="currentColor" opacity="0.7" />
+        <circle cx="12" cy="18" r="2" />
+        <path d="M14 6h5M14 12h5M14 18h5" strokeOpacity="0.5" />
+      </svg>
+    ),
+  },
+  {
     label: "Reports",
     hint: "intelligence",
     href: "/dashboard/reports",

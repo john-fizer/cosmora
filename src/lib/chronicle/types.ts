@@ -108,6 +108,8 @@ export function confidenceForPrecision(p: DatePrecision): number {
 
 export function validateEvent(e: LifeEvent, allEventIds: Set<string>): string[] {
   const errors: string[] = [];
+  if (!(e.eventType in EVENT_TYPE_META)) errors.push(`unknown eventType ${e.eventType}`);
+  if (!["exact", "month", "year", "period"].includes(e.datePrecision)) errors.push(`unknown datePrecision ${e.datePrecision}`);
   if (!e.title.trim()) errors.push("title empty");
   if (!/^\d{4}-\d{2}-\d{2}$/.test(e.startsAt)) errors.push("startsAt not ISO date");
   if (e.endsAt && e.endsAt < e.startsAt) errors.push("endsAt before startsAt");

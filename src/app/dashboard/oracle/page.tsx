@@ -661,7 +661,7 @@ export default function OraclePage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const autoQ = params.get("q");
-    if (autoQ) setPendingAutoSeed(decodeURIComponent(autoQ));
+    if (autoQ) setPendingAutoSeed(autoQ);
   }, []);
 
   // Fire auto-seed once chart + pending are ready

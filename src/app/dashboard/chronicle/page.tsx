@@ -345,6 +345,12 @@ export default function ChroniclePage() {
       provenance: { source: "ai_extracted", confidence: Number(raw.confidence ?? confidenceForPrecision(precision)) },
       createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
     };
+    // clamp model output into valid ranges; fall back rather than reject
+    if (!(ev.eventType in EVENT_TYPE_META)) ev.eventType = "other";
+    if (!["exact", "month", "year", "period"].includes(ev.datePrecision)) ev.datePrecision = "year";
+    ev.emotionalValence = Math.max(-1, Math.min(1, Number.isFinite(ev.emotionalValence) ? ev.emotionalValence : 0));
+    ev.emotionalIntensity = Math.max(0, Math.min(1, Number.isFinite(ev.emotionalIntensity) ? ev.emotionalIntensity : 0.5));
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(ev.startsAt)) { alert(`"${ev.title}" has an unusable date (${ev.startsAt || "none"}) — edit it manually.`); return; }
     upsertEvent(pid, ev); reload(pid);
     setPending(prev => prev ? { ...prev, events: prev.events.filter((_, i) => i !== idx) } : null);
   };
@@ -379,9 +385,9 @@ export default function ChroniclePage() {
       try {
         const parsed = JSON.parse(String(reader.result)) as ChronicleExport;
         // strategy fixed to keep_local for this slice; conflict-resolution UI comes later
-        const { added, conflicts } = importChronicle(pid, parsed, "keep_local");
+        const { added, conflicts, rejected } = importChronicle(pid, parsed, "keep_local");
         reload(pid);
-        alert(`Imported ${added} new item(s). ${conflicts} conflict(s) kept local versions.`);
+        alert(`Imported ${added} new item(s). ${conflicts} conflict(s) kept local versions.${rejected > 0 ? ` ${rejected} invalid event(s) rejected.` : ""}`);
       } catch { alert("Import failed: not a valid Chronicle export."); }
     };
     reader.readAsText(file);
@@ -542,7 +548,7 @@ export default function ChroniclePage() {
               {/* Events */}
               <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8, paddingBottom: 14 }}>
                 {list.map(e => {
-                  const meta = EVENT_TYPE_META[e.eventType];
+                  const meta = EVENT_TYPE_META[e.eventType] ?? EVENT_TYPE_META.other;
                   const expanded = expandedId === e.id;
                   const state = skyStates.get(e.id);
                   return (

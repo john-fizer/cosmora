@@ -1,4 +1,5 @@
 import type { ChronicleData, LifeEvent, Person } from "./types";
+import { validateEvent } from "./types";
 import type { StoredProfile } from "@/lib/storage";
 
 const KEY = (profileId: string) => `cosmora_chronicle_${profileId}`;
@@ -68,7 +69,8 @@ export function importChronicle(
   profileId: string,
   imported: ChronicleExport,
   strategy: "keep_local" | "take_imported",
-): { added: number; conflicts: number } {
+): { added: number; conflicts: number; rejected: number } {
+  if (imported.schemaVersion !== 1 || !Array.isArray(imported.events) || !Array.isArray(imported.people)) throw new Error("not a Chronicle export");
   const data = getChronicle(profileId);
   let added = 0, conflicts = 0;
   const mergeById = <T extends { id: string }>(local: T[], incoming: T[]): T[] => {
@@ -80,8 +82,11 @@ export function importChronicle(
     }
     return out;
   };
-  data.events = mergeById(data.events, imported.events);
+  const allIds = new Set([...data.events, ...imported.events].map(e => e.id));
+  const validIncoming = imported.events.filter(e => validateEvent(e, allIds).length === 0);
+  const rejected = imported.events.length - validIncoming.length;
+  data.events = mergeById(data.events, validIncoming);
   data.people = mergeById(data.people, imported.people);
   saveChronicle(profileId, data);
-  return { added, conflicts };
+  return { added, conflicts, rejected };
 }

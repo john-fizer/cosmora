@@ -113,5 +113,13 @@ assert("year precision: no transit hits", yearState.transitHits.length === 0);
 assert("year precision: no eclipse", yearState.eclipseProximity === undefined);
 assert("year precision: lords still present", yearState.dasha.major !== "—" && yearState.zrFortune.l1Sign !== "—");
 
+// validateEvent enum checks (final review B1)
+assert("unknown eventType caught", validateEvent(makeEvent("e1", { eventType: "alien_abduction" as never }), ids).length === 1);
+assert("unknown datePrecision caught", validateEvent(makeEvent("e1", { datePrecision: "sometime" as never }), ids).length === 1);
+// import rejects invalid events
+const badExport = { ...exportChronicle(PID, profile), events: [makeEvent("bad1", { eventType: "junk" as never })] };
+const r3 = importChronicle(PID, badExport, "keep_local");
+assert("import rejects invalid event", r3.rejected === 1 && !getChronicle(PID).events.some(e => e.id === "bad1"));
+
 console.log(`\n${failures === 0 ? "ALL PASS" : failures + " FAILURE(S)"}`);
 process.exit(failures === 0 ? 0 : 1);

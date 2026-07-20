@@ -117,7 +117,7 @@ export interface ActiveCityOpts {
 export function activeCities(cities: City[], lines: AstroLine[], opts: ActiveCityOpts = {}): CitySpot[] {
   const {
     thresholdDeg = 1.6, categories = null, planets = null, angles = null,
-    minSepDeg = 7, cap = 14,
+    minSepDeg = 10, cap = 12,
   } = opts;
   if (!lines.length) return [];
 

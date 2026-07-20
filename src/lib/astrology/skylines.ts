@@ -16,7 +16,9 @@ export type LandmarkId =
   | "tokyo" | "shanghai" | "hongkong" | "toronto" | "seattle" | "sanfrancisco"
   | "chicago" | "sydney" | "moscow" | "rome" | "cairo" | "berlin"
   | "barcelona" | "istanbul" | "lasvegas" | "losangeles" | "doha" | "riyadh"
-  | "abudhabi" | "athens" | "beijing" | "frankfurt";
+  | "abudhabi" | "athens" | "beijing" | "frankfurt"
+  | "dallas" | "monterrey" | "buenos_aires" | "wellington" | "bogota"
+  | "lima" | "mumbai" | "johannesburg" | "lagos" | "nairobi";
 
 // b() box, t() taper, s() spire, st() setback, dm() dome, py() pyramid
 const b  = (x: number, w: number, h: number, d = w): Prim => ({ k: "box", x, w, h, d });
@@ -83,6 +85,26 @@ export const LANDMARKS: Record<LandmarkId, Prim[]> = {
   beijing: [ b(-0.3, 0.6, 6.0), b(0.3, 0.55, 5.2), s(0.85, 0.3, 6.4), b(-0.95, 0.42, 3.0), b(1.15, 0.4, 2.8) ],
   // Commerzbank/Messeturm towers + spire
   frankfurt: [ s(-0.2, 0.4, 8.4), t(0.4, 0.48, 6.6, 0.2), b(0.85, 0.42, 4.0), b(-0.85, 0.4, 3.2), b(1.15, 0.4, 3.0) ],
+  // Reunion Tower globe + Bank of America taper + Fountain Place pyramid + office blocks
+  dallas: [ dm(0, 0.22, 4.8), t(0.80, 0.35, 7.5, 0.08), py(-0.80, 0.28, 5.5), b(1.30, 0.28, 4.5), b(-1.30, 0.24, 3.8), b(0.40, 0.22, 3.2) ],
+  // Obelisco (thin needle) + Puerto Madero twin tapers + dense midrise
+  buenos_aires: [ t(0, 0.10, 9.2, 0.04), t(-0.70, 0.32, 5.0, 0.12), t(0.70, 0.30, 4.6, 0.12), b(-1.15, 0.28, 3.2), b(1.15, 0.26, 2.8), b(-0.35, 0.24, 2.6), b(0.35, 0.22, 2.4) ],
+  // Torre KOI (slender giant) + Obispado taper + dense financial cluster
+  monterrey: [ t(0, 0.30, 7.8, 0.10), t(-0.65, 0.32, 5.8, 0.18), t(0.65, 0.28, 5.2, 0.20), b(-1.10, 0.26, 3.6), b(1.10, 0.24, 3.2), b(-0.30, 0.22, 2.8) ],
+  // Bowen Tower + Grand Arcade + mid-rise with Cook Strait as backdrop
+  wellington: [ t(0, 0.42, 5.4, 0.25), b(-0.65, 0.38, 3.8), b(0.65, 0.36, 3.4), b(-1.0, 0.30, 2.6), b(1.0, 0.28, 2.8) ],
+  // Torre Colpatria + BD Bacatá twin (tallest in Colombia)
+  bogota: [ t(0, 0.40, 6.8, 0.20), t(0.55, 0.34, 7.2, 0.22), b(-0.65, 0.38, 4.0), b(-1.05, 0.30, 3.0), b(1.05, 0.30, 3.2) ],
+  // Gran Torre Santiago (needle) + Costanera dense cluster
+  lima: [ t(-0.20, 0.38, 5.6, 0.18), b(0.40, 0.36, 4.2), b(0.85, 0.32, 3.6), b(-0.80, 0.34, 3.8), b(1.15, 0.28, 2.6) ],
+  // Bandra-Kurla towers + Imperial twin + Nariman cluster
+  mumbai: [ t(0.25, 0.5, 7.0, 0.15), t(-0.30, 0.46, 6.4, 0.18), b(0.85, 0.40, 4.2), b(-0.90, 0.38, 3.8), b(1.20, 0.34, 3.2), b(-1.20, 0.32, 2.8) ],
+  // Ponte City cylinder + Carlton Centre setback + residential slabs
+  johannesburg: [ dm(-0.30, 0.36, 5.8), st(0.40, 0.50, 6.6, 3), b(0.95, 0.38, 3.4), b(-0.90, 0.36, 3.0), b(1.25, 0.32, 2.6) ],
+  // Eko Atlantic towers (emerging skyline) + Trade Fair spire + dense low
+  lagos: [ t(0.10, 0.44, 6.0, 0.20), b(-0.60, 0.40, 3.8), b(0.65, 0.38, 4.2), b(-1.05, 0.32, 2.8), b(1.10, 0.30, 2.6) ],
+  // KICC cylinder + UAP Old Mutual Tower + CBD cluster
+  nairobi: [ dm(0, 0.36, 4.8), t(0.60, 0.40, 5.8, 0.20), b(-0.60, 0.38, 4.0), b(-1.05, 0.30, 3.0), b(1.10, 0.28, 2.8) ],
 };
 
 // ─── Deterministic procedural skyline ─────────────────────────────────────────

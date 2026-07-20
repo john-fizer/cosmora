@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Html, useTexture } from "@react-three/drei";
+import { OrbitControls, Html, useTexture, Billboard } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import { useRef, useMemo, useCallback, useState, useEffect, Suspense } from "react";
@@ -221,36 +221,6 @@ function GeoLines() {
   );
 }
 
-// ─── Orbital decorative rings ─────────────────────────────────────────────────
-const RING_DEFS = [
-  { tilt: [0.22, 0, 0.4],   speed:  0.055, r: GLOBE_R * 1.38, color: "#1A3A5A", nodes: 3 },
-  { tilt: [0.55, 0.6, 0],   speed: -0.040, r: GLOBE_R * 1.52, color: "#0A2A44", nodes: 2 },
-  { tilt: [1.1,  0.2, 0.9], speed:  0.085, r: GLOBE_R * 1.28, color: "#FF6A2C", nodes: 4 },
-] as const;
-
-function OrbitalRing({ tilt, speed, r, color, nodes }: typeof RING_DEFS[number]) {
-  const ref = useRef<THREE.Group>(null);
-  useFrame((_, dt) => { if (ref.current) ref.current.rotation.y += dt * speed; });
-  const angles = useMemo(() =>
-    Array.from({ length: nodes }, (_, i) => (i * Math.PI * 2) / nodes), [nodes]);
-  return (
-    <group ref={ref} rotation={tilt as [number, number, number]}>
-      <mesh>
-        <torusGeometry args={[r, 0.003, 4, 128]} />
-        <meshBasicMaterial color={color} transparent opacity={0.18} />
-      </mesh>
-      {angles.map((a, i) => (
-        <mesh key={i} position={[r * Math.cos(a), 0, r * Math.sin(a)]}>
-          <sphereGeometry args={[0.018, 6, 6]} />
-          <meshBasicMaterial color={color} transparent opacity={0.75} />
-        </mesh>
-      ))}
-    </group>
-  );
-}
-function OrbitalRings() {
-  return <>{RING_DEFS.map((d, i) => <OrbitalRing key={i} {...d} />)}</>;
-}
 
 // ─── Energy heatmap ───────────────────────────────────────────────────────────
 function EnergyHeatmap({ lines }: { lines: AstroLine[] }) {
@@ -382,6 +352,7 @@ function HoloCity({ spot, index }: { spot: CitySpot; index: number }) {
   const outerRef  = useRef<THREE.Group>(null);
   const scanRef   = useRef<THREE.Mesh>(null);
   const scanRef2  = useRef<THREE.Mesh>(null);
+  const htmlRef   = useRef<HTMLDivElement>(null);
   const pulseT    = useRef(index * 1.17);
 
   const energy = useMemo(() => {
@@ -393,7 +364,14 @@ function HoloCity({ spot, index }: { spot: CitySpot; index: number }) {
   // HDR color — boosts all channels so even dark hues hit bloom threshold
   const brightCol = useMemo(() => col.clone().multiplyScalar(3.0), [col]);
 
-  const surfacePos = useMemo(() => ll2xyz(spot.lat, spot.lon, GLOBE_R * 1.004), [spot.lat, spot.lon]);
+  // Surface position just above sphere to avoid z-fighting with the mesh
+  const surfacePos  = useMemo(() => ll2xyz(spot.lat, spot.lon, GLOBE_R * 1.004), [spot.lat, spot.lon]);
+  // Static quaternion: aligns local Y with the outward surface normal — planted on the globe
+  const surfaceQuat = useMemo(() => {
+    const n = ll2xyz(spot.lat, spot.lon, 1).normalize();
+    return new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), n);
+  }, [spot.lat, spot.lon]);
+
   const prims = useMemo<Prim[]>(() => {
     const sk = spot.skyline;
     if (sk?.tier === "landmark" && sk.landmark && LANDMARKS[sk.landmark]) return LANDMARKS[sk.landmark];
@@ -403,10 +381,10 @@ function HoloCity({ spot, index }: { spot: CitySpot; index: number }) {
 
   const { geo: skylineGeo, totalH } = useMemo(() => buildSkylineGeo(prims), [prims]);
 
-  const scanRingGeo  = useMemo(() => new THREE.RingGeometry(0.030, 0.055, 56), []);
+  const scanRingGeo   = useMemo(() => new THREE.RingGeometry(0.030, 0.055, 56), []);
   const groundRingGeo = useMemo(() => new THREE.RingGeometry(0.064, 0.070, 56), []);
-  const dotGeo       = useMemo(() => new THREE.CircleGeometry(0.018, 16), []);
-  const stemGeo      = useMemo(() => new THREE.BufferGeometry().setFromPoints([
+  const dotGeo        = useMemo(() => new THREE.CircleGeometry(0.018, 16), []);
+  const stemGeo       = useMemo(() => new THREE.BufferGeometry().setFromPoints([
     new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, PLATFORM_H, 0),
   ]), []);
 
@@ -416,38 +394,17 @@ function HoloCity({ spot, index }: { spot: CitySpot; index: number }) {
 
   useFrame(({ camera }, dt) => {
     if (!outerRef.current) return;
-
-    // World position of this city
+    // Hide cities facing away from camera (on far hemisphere)
     const worldPos = new THREE.Vector3();
     outerRef.current.getWorldPosition(worldPos);
-
-    // World-space surface normal (outward from globe centre through city)
-    const worldNormal = worldPos.clone().normalize();
-
-    // Visibility — hide if on far hemisphere
-    const toCam = camera.position.clone().sub(worldPos);
-    if (worldNormal.dot(toCam.clone().normalize()) <= 0.08) {
-      outerRef.current.visible = false;
-      return;
+    const toCam = camera.position.clone().sub(worldPos).normalize();
+    outerRef.current.visible = worldPos.clone().normalize().dot(toCam) > 0.05;
+    // drei Html renders DOM outside the scene graph — it ignores three.js visibility,
+    // so far-side labels bleed through the globe unless hidden explicitly
+    if (htmlRef.current) {
+      htmlRef.current.style.visibility = outerRef.current.visible ? "visible" : "hidden";
     }
-    outerRef.current.visible = true;
-
-    // Orient so Y = worldNormal, Z = toward camera (tangent-plane component)
-    const camDir = toCam.normalize();
-    // Remove the component along worldNormal so Z stays tangential
-    const zProj = camDir.clone().addScaledVector(worldNormal, -camDir.dot(worldNormal));
-    // Guard: camera directly overhead → pick arbitrary tangent
-    const zAxis = zProj.lengthSq() > 0.0001 ? zProj.normalize() : new THREE.Vector3(1, 0, 0);
-    // X = Y × Z (right-hand rule) — NOT Z × Y which would mirror the skyline
-    const xAxis = worldNormal.clone().cross(zAxis).normalize();
-
-    // World-space rotation → local quaternion
-    const worldQuat = new THREE.Quaternion().setFromRotationMatrix(
-      new THREE.Matrix4().makeBasis(xAxis, worldNormal, zAxis)
-    );
-    const parentQuat = new THREE.Quaternion();
-    outerRef.current.parent?.getWorldQuaternion(parentQuat);
-    outerRef.current.quaternion.copy(parentQuat.clone().invert().multiply(worldQuat));
+    if (!outerRef.current.visible) return;
 
     pulseT.current += dt;
     for (const [ref, tOff] of [[scanRef, 0], [scanRef2, 0.5]] as [React.RefObject<THREE.Mesh | null>, number][]) {
@@ -461,14 +418,15 @@ function HoloCity({ spot, index }: { spot: CitySpot; index: number }) {
   });
 
   return (
-    <group ref={outerRef} position={surfacePos}>
-      {/* Static outer ground ring — tactical indicator */}
+    // surfaceQuat permanently aligns local Y with outward normal — city is planted on the globe
+    <group ref={outerRef} position={surfacePos} quaternion={surfaceQuat}>
+      {/* Ground ring — lies flat in XZ tangent plane */}
       <mesh geometry={groundRingGeo} rotation={[-Math.PI / 2, 0, 0]}>
         <meshBasicMaterial color={col} transparent opacity={0.30} depthWrite={false}
           side={THREE.DoubleSide} />
       </mesh>
 
-      {/* Two phase-offset pulsing scan rings */}
+      {/* Pulsing scan rings */}
       <mesh ref={scanRef} geometry={scanRingGeo} rotation={[-Math.PI / 2, 0, 0]}>
         <meshBasicMaterial color={brightCol} transparent opacity={0.85} depthWrite={false}
           side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
@@ -483,23 +441,22 @@ function HoloCity({ spot, index }: { spot: CitySpot; index: number }) {
         <meshBasicMaterial color={brightCol} depthWrite={false} blending={THREE.AdditiveBlending} />
       </mesh>
 
-      {/* Vertical stem — additive so it glows */}
+      {/* Stem — grows along local Y (= outward surface normal) */}
       <lineSegments geometry={stemGeo}>
         <lineBasicMaterial color={brightCol} transparent opacity={0.55}
           blending={THREE.AdditiveBlending} depthWrite={false} />
       </lineSegments>
 
-      {/* Holographic skyline — XY plane, Y = surface normal, Z = camera */}
-      <group position={[0, PLATFORM_H, 0]}>
-        {/* Scale buildings down so they sit proportionally on the globe (not moon-sized) */}
+      {/* Skyline + label — Billboard faces camera while the base stays planted */}
+      <Billboard position={[0, PLATFORM_H, 0]}>
         <group scale={[0.14, 0.14, 1]}>
           <lineSegments geometry={skylineGeo}>
             <lineBasicMaterial color={brightCol} blending={THREE.AdditiveBlending} depthWrite={false} />
           </lineSegments>
         </group>
-
-        <Html position={[0, totalH * 0.14 + 0.04, 0]} center distanceFactor={7} zIndexRange={[10, 0]}>
-          <div style={{ pointerEvents: "none", textAlign: "center", lineHeight: 1.25 }}>
+        {/* distanceFactor tuned for the tighter camera (fov 36 @ ~4.6 units) */}
+        <Html position={[0, totalH * 0.14 + 0.04, 0]} center distanceFactor={4.2} zIndexRange={[10, 0]}>
+          <div ref={htmlRef} style={{ pointerEvents: "none", textAlign: "center", lineHeight: 1.25 }}>
             <div style={{
               color: energy.color, fontSize: 10,
               fontFamily: "'Fragment Mono', monospace",
@@ -533,7 +490,7 @@ function HoloCity({ spot, index }: { spot: CitySpot; index: number }) {
             </div>
           </div>
         </Html>
-      </group>
+      </Billboard>
     </group>
   );
 }
@@ -720,9 +677,6 @@ function Scene({
       {/* Milky Way background — does not rotate with Earth */}
       <MilkyWaySky />
 
-      {/* Orbital rings — own independent rotation */}
-      <OrbitalRings />
-
       {/* ── Everything geo: rotates together ── */}
       <group ref={globeGroupRef}>
         <EarthSphere />
@@ -787,7 +741,7 @@ export default function GlobeCanvas({
   const quality = QUALITY[typeof window !== "undefined" ? detectGpuTier() : "high"];
   return (
     <Canvas
-      camera={{ position: [0, 2.8, 5.2], fov: 46 }}
+      camera={{ position: [0, 1.8, 4.2], fov: 36 }}
       dpr={quality.dpr}
       gl={{ antialias: quality.antialias, alpha: false }}
       style={{ background: "#010810" }}

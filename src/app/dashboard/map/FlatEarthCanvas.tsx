@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Html } from "@react-three/drei";
+import { OrbitControls, Html, Billboard } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import { useRef, useMemo, useEffect, useState, useCallback } from "react";
@@ -10,27 +10,26 @@ import * as THREE from "three";
 import type { AstroLine, AstroLinePlanet, AstroLineAngle } from "@/lib/astrology/astrocartography";
 import { PLANET_COLORS, PLANET_SYMBOLS } from "@/lib/astrology/astrocartography";
 import type { CitySpot } from "./GlobeCanvas";
+import { buildSkylineGeo } from "./GlobeCanvas";
+import type { Prim } from "@/lib/astrology/skylines";
+import { LANDMARKS, proceduralSkyline } from "@/lib/astrology/skylines";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const DISC_R = 2.2;
 const Y0     = 0.006; // elevation above disc face
 
-const PLANET_KEYWORDS: Record<AstroLinePlanet, string> = {
-  Sun: "VITALITY", Moon: "EMOTIONS", Mercury: "COMMUNICATION",
-  Venus: "LOVE", Mars: "DRIVE", Jupiter: "EXPANSION",
-  Saturn: "DISCIPLINE", Uranus: "INNOVATION", Neptune: "SPIRITUALITY",
-};
 
 // ─── Projection helpers ───────────────────────────────────────────────────────
+// Azimuthal equidistant: north pole at centre, south pole at the rim (full 180° span)
 function project(lon: number, lat: number, y = Y0): THREE.Vector3 {
-  const r = Math.max(0, 90 - lat) / 90 * DISC_R;
+  const r = Math.max(0, 90 - lat) / 180 * DISC_R;
   const θ = lon * Math.PI / 180;
   return new THREE.Vector3(r * Math.sin(θ), y, -r * Math.cos(θ));
 }
 
 function unproject(x: number, z: number): { lat: number; lon: number } {
   const r   = Math.sqrt(x * x + z * z);
-  const lat = 90 - (r / DISC_R) * 90;
+  const lat = 90 - (r / DISC_R) * 180;
   const lon = Math.atan2(x, -z) * 180 / Math.PI;
   return { lat: Math.max(-90, Math.min(90, lat)), lon };
 }
@@ -122,11 +121,10 @@ function MapFace() {
         const cx = W / 2, cy = W / 2;
         const Rpx = W / 2 - 8;
 
-        // Map lat/lon → canvas px (matches project(): x = r·sinθ, z = -r·cosθ)
         const toPx = (lon: number, lat: number): [number, number] => {
-          const r = Math.max(0, 90 - lat) / 90 * Rpx;
+          const r = Math.max(0, 90 - lat) / 180 * Rpx;
           const θ = (lon * Math.PI) / 180;
-          return [cx + r * Math.sin(θ), cy - r * Math.cos(θ)];
+          return [cx + r * Math.sin(θ), cy + r * Math.cos(θ)];
         };
 
         // ── Ocean ──
@@ -142,7 +140,7 @@ function MapFace() {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         for (let lat = 75; lat >= -60; lat -= 15) {
-          const r = (90 - lat) / 90 * Rpx;
+          const r = (90 - lat) / 180 * Rpx;
           const isEquator = lat === 0;
           ctx.beginPath();
           ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -154,7 +152,7 @@ function MapFace() {
           // Latitude label down the prime meridian
           if (lat !== 75) {
             ctx.fillStyle = "rgba(80,140,255,0.5)";
-            ctx.fillText(`${Math.abs(lat)}°${lat > 0 ? "N" : lat < 0 ? "S" : ""}`, cx + 28, cy - r + 16);
+            ctx.fillText(`${Math.abs(lat)}°${lat > 0 ? "N" : lat < 0 ? "S" : ""}`, cx + 28, cy + r - 16);
           }
         }
 
@@ -163,7 +161,7 @@ function MapFace() {
           const θ = (lon * Math.PI) / 180;
           ctx.beginPath();
           ctx.moveTo(cx, cy);
-          ctx.lineTo(cx + Rpx * Math.sin(θ), cy - Rpx * Math.cos(θ));
+          ctx.lineTo(cx + Rpx * Math.sin(θ), cy + Rpx * Math.cos(θ));
           ctx.strokeStyle = "rgba(28,52,130,0.28)";
           ctx.lineWidth = 1;
           ctx.stroke();
@@ -172,7 +170,7 @@ function MapFace() {
           const display = lon <= 180 ? lon : 360 - lon;
           const suffix = lon === 0 || lon === 180 ? "" : lon < 180 ? "E" : "W";
           ctx.fillStyle = "rgba(80,140,255,0.55)";
-          ctx.fillText(`${display}°${suffix}`, cx + lr * Math.sin(θ), cy - lr * Math.cos(θ));
+          ctx.fillText(`${display}°${suffix}`, cx + lr * Math.sin(θ), cy + lr * Math.cos(θ));
         }
 
         // ── Land — filled polygons ──
@@ -217,7 +215,7 @@ function MapFace() {
         ctx.shadowBlur = 0;
 
         // ── Antarctic ice ring at the rim ──
-        const iceInner = (90 - -60) / 90 * Rpx;
+        const iceInner = (90 - -60) / 180 * Rpx;
         const ice = ctx.createRadialGradient(cx, cy, iceInner, cx, cy, Rpx);
         ice.addColorStop(0, "rgba(140,180,255,0)");
         ice.addColorStop(0.55, "rgba(150,190,255,0.10)");
@@ -286,75 +284,106 @@ function PlanetLineLayer({
   );
 }
 
-// ─── City tower ───────────────────────────────────────────────────────────────
-function CityTower({ spot }: { spot: CitySpot }) {
-  const pos      = useMemo(() => project(spot.lon, spot.lat, 0), [spot.lat, spot.lon]);
-  const top      = spot.scores[0]?.planet;
-  const color    = top ? PLANET_COLORS[top] : "#4488FF";
-  const sym      = top ? PLANET_SYMBOLS[top] : "✦";
-  const keyword  = top ? PLANET_KEYWORDS[top] : "";
-  const towerH   = 0.13 + (spot.power / 99) * 0.24;
-  const threeCol = useMemo(() => new THREE.Color(color), [color]);
+const FLAT_H = 0.22; // hologram height above disc surface
 
-  const beamRef = useRef<THREE.Mesh>(null);
-  const rimRef  = useRef<THREE.Mesh>(null);
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime();
-    if (beamRef.current) {
-      (beamRef.current.material as THREE.MeshBasicMaterial).opacity =
-        0.55 + 0.3 * Math.sin(t * 1.8 + spot.lat * 0.3);
-    }
-    if (rimRef.current) {
-      (rimRef.current.material as THREE.MeshBasicMaterial).opacity =
-        0.35 + 0.2 * Math.sin(t * 2.2 + spot.lon * 0.1);
+// ─── City hologram (flat-earth view) — skyline silhouette instead of beacon ───
+function CityTower({ spot, spotIndex }: { spot: CitySpot; spotIndex: number }) {
+  const pos       = useMemo(() => project(spot.lon, spot.lat, 0), [spot.lat, spot.lon]);
+  const top       = spot.scores[0]?.planet;
+  const color     = top ? PLANET_COLORS[top] : "#4488FF";
+  const threeCol  = useMemo(() => new THREE.Color(color), [color]);
+  const brightCol = useMemo(() => threeCol.clone().multiplyScalar(3.0), [threeCol]);
+
+  const prims = useMemo<Prim[]>(() => {
+    const sk = spot.skyline;
+    if (sk?.tier === "landmark" && sk.landmark && LANDMARKS[sk.landmark]) return LANDMARKS[sk.landmark];
+    const seed = (spotIndex * 997 + Math.round(spot.lat * 13) + Math.round(spot.lon * 7)) | 0;
+    return proceduralSkyline(sk?.height ?? 1, sk?.density ?? 1, seed);
+  }, [spot.skyline, spot.lat, spot.lon, spotIndex]);
+
+  const { geo: skylineGeo, totalH } = useMemo(() => buildSkylineGeo(prims), [prims]);
+
+  const groundRingGeo = useMemo(() => new THREE.RingGeometry(0.058, 0.064, 48), []);
+  const scanRingGeo   = useMemo(() => new THREE.RingGeometry(0.028, 0.050, 48), []);
+  const dotGeo        = useMemo(() => new THREE.CircleGeometry(0.015, 12), []);
+  const stemGeo       = useMemo(() => new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, FLAT_H, 0),
+  ]), []);
+
+  const scanRef = useRef<THREE.Mesh>(null);
+  const pulseT  = useRef(spotIndex * 1.17);
+  const scoreVal = spot.scores?.[0]?.influence ?? 0;
+
+  useFrame((_, dt) => {
+    pulseT.current += dt;
+    if (scanRef.current) {
+      const phase = (pulseT.current * 0.5) % 1.0;
+      const m = scanRef.current.material as THREE.MeshBasicMaterial;
+      m.opacity = Math.max(0, (1 - phase) * 0.85);
+      scanRef.current.scale.setScalar(1 + phase * 2.6);
     }
   });
 
   return (
     <group position={[pos.x, 0, pos.z]}>
-      {/* Base ring */}
-      <mesh ref={rimRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, Y0, 0]}>
-        <ringGeometry args={[0.055, 0.085, 36]} />
-        <meshBasicMaterial color={threeCol} transparent opacity={0.45} side={THREE.DoubleSide} depthWrite={false} />
+      {/* Static ground ring */}
+      <mesh geometry={groundRingGeo} rotation={[-Math.PI / 2, 0, 0]} position={[0, Y0, 0]}>
+        <meshBasicMaterial color={threeCol} transparent opacity={0.30}
+          side={THREE.DoubleSide} depthWrite={false} />
       </mesh>
 
-      {/* Inner base dot */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, Y0 * 1.2, 0]}>
-        <circleGeometry args={[0.022, 16]} />
-        <meshBasicMaterial color={threeCol} transparent opacity={0.7} />
+      {/* Pulsing scan ring */}
+      <mesh ref={scanRef} geometry={scanRingGeo} rotation={[-Math.PI / 2, 0, 0]} position={[0, Y0, 0]}>
+        <meshBasicMaterial color={brightCol} transparent opacity={0.85}
+          side={THREE.DoubleSide} blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
 
-      {/* Tower beam */}
-      <mesh ref={beamRef} position={[0, towerH / 2, 0]}>
-        <cylinderGeometry args={[0.005, 0.012, towerH, 6]} />
-        <meshBasicMaterial color={threeCol} transparent opacity={0.7} />
+      {/* Anchor dot */}
+      <mesh geometry={dotGeo} rotation={[-Math.PI / 2, 0, 0]} position={[0, Y0 * 1.4, 0]}>
+        <meshBasicMaterial color={brightCol} blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
 
-      {/* Tip glow sphere */}
-      <mesh position={[0, towerH + 0.008, 0]}>
-        <sphereGeometry args={[0.016, 8, 8]} />
-        <meshBasicMaterial color="#ffffff" />
-      </mesh>
+      {/* Vertical stem */}
+      <lineSegments geometry={stemGeo}>
+        <lineBasicMaterial color={brightCol} transparent opacity={0.55}
+          blending={THREE.AdditiveBlending} depthWrite={false} />
+      </lineSegments>
 
-      {/* HTML label above tip */}
-      <Html position={[0, towerH + 0.1, 0]} center distanceFactor={5.5} style={{ pointerEvents: "none" }}>
-        <div style={{
-          display: "flex", flexDirection: "column", alignItems: "center", gap: 1,
-          fontFamily: "'Fragment Mono', monospace",
-          filter: `drop-shadow(0 0 5px ${color})`,
-        }}>
-          <span style={{ fontSize: 13, color, lineHeight: 1 }}>{sym}</span>
-          <span style={{ fontSize: 7, color: "#E8F0FF", letterSpacing: "0.08em", whiteSpace: "nowrap", fontWeight: 700 }}>
-            {spot.city.split(",")[0].toUpperCase()}
-          </span>
-          <span style={{ fontSize: 6, color, letterSpacing: "0.06em", opacity: 0.8 }}>
-            {(top ?? "").toUpperCase()}
-          </span>
-          <span style={{ fontSize: 6, color, letterSpacing: "0.06em", opacity: 0.5 }}>
-            {keyword}
-          </span>
-        </div>
-      </Html>
+      {/* Skyline panel — Billboard always faces camera in the flat view */}
+      <Billboard position={[0, FLAT_H, 0]}>
+        {/* buildSkylineGeo already applies SKYW/SKYH; scale down further for flat-disc scene */}
+        <group scale={[0.28, 0.28, 1]}>
+          <lineSegments geometry={skylineGeo}>
+            <lineBasicMaterial color={brightCol} blending={THREE.AdditiveBlending} depthWrite={false} />
+          </lineSegments>
+        </group>
+        <Html position={[0, totalH * 0.28 + 0.06, 0]} center distanceFactor={5.5} zIndexRange={[10, 0]}
+          style={{ pointerEvents: "none" }}>
+          <div style={{ textAlign: "center", lineHeight: 1.25 }}>
+            <div style={{
+              color, fontSize: 9, fontFamily: "'Fragment Mono', monospace",
+              letterSpacing: "0.16em", fontWeight: 700,
+              textShadow: `0 0 14px ${color}EE`,
+              background: `${color}18`,
+              border: `1px solid ${color}66`,
+              borderBottom: "none",
+              padding: "2px 7px 1px", whiteSpace: "nowrap",
+            }}>
+              {spot.city.split(",")[0].toUpperCase()}
+            </div>
+            <div style={{
+              color, fontSize: 6.5, fontFamily: "'Fragment Mono', monospace",
+              opacity: 0.85, letterSpacing: "0.10em",
+              background: `${color}10`,
+              border: `1px solid ${color}44`,
+              borderTop: "none",
+              padding: "1px 7px 2px", whiteSpace: "nowrap",
+            }}>
+              {top ? PLANET_SYMBOLS[top] : "·"}&nbsp;{Math.round(scoreVal * 100)}%&nbsp;{top?.toUpperCase() ?? "COSMIC"}
+            </div>
+          </div>
+        </Html>
+      </Billboard>
     </group>
   );
 }
@@ -478,8 +507,8 @@ function FlatEarthScene({
         />
       )}
 
-      {showCities && topSpots.map(spot => (
-        <CityTower key={spot.city} spot={spot} />
+      {showCities && topSpots.map((spot, i) => (
+        <CityTower key={spot.city} spot={spot} spotIndex={i} />
       ))}
 
       <BirthPulseDisc lat={birthLat} lon={birthLon} />

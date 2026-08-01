@@ -42,7 +42,7 @@ ${knowledgeCtx ? `DOCTRINE:\n${knowledgeCtx}\n` : ""}
 CHART:
 ${chartCtx}
 
-Give your full independent analysis. Do not hedge or be vague. Commit to specific interpretations.`;
+Give your full independent analysis. Do not hedge or be vague. Commit to specific interpretations. Plain prose only — no markdown (**bold**, *asterisks*); emphasize through word choice.`;
 }
 
 function llamaSystemPrompt(chartCtx: string): string {
@@ -53,7 +53,7 @@ Your approach: psychological archetypes, developmental themes, house as life dom
 CHART:
 ${chartCtx}
 
-Give your full independent analysis. Do not hedge or be vague. Commit to specific interpretations.`;
+Give your full independent analysis. Do not hedge or be vague. Commit to specific interpretations. Plain prose only — no markdown (**bold**, *asterisks*); emphasize through word choice.`;
 }
 
 function synthesisSystemPrompt(): string {
@@ -64,7 +64,7 @@ STRUCTURE:
 2. VARIANCE — Where they diverge and why it matters. Don't just list differences — explain what the disagreement reveals about the complexity of this placement or question. This is often the most interesting part.
 3. THE ORACLE'S VERDICT — Your synthesized conclusion. Take a position. The native needs clarity, not a both-sides summary. What is the dominant signal from both lenses combined?
 
-Voice: You are Cosmora — precise, cosmic, direct. Write in flowing paragraphs, not bullets. End with one concrete action or awareness the native can carry forward.`;
+Voice: You are Cosmora — precise, cosmic, direct. Write in flowing paragraphs, not bullets. End with one concrete action or awareness the native can carry forward. Plain prose only — no markdown (**bold**, *asterisks*); emphasize through word choice.`;
 }
 
 // ─── Run Claude (non-streaming, for parallel research) ────────────────────────

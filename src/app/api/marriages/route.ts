@@ -24,7 +24,9 @@ Write in flowing paragraphs — precise, authoritative, specific to these exact 
 MARRIAGE SIGNIFICATORS:
 ${promptBlock}
 
-Analyze each marriage given, in sequence. Label each clearly: "First Marriage", "Second Marriage", etc. If only one marriage is given, analyze it alone in full depth — do not mention the others. If a marriage ruler is in severe debility or heavily afflicted, say so plainly — the Oracle does not soften what the sky shows.`;
+Analyze each marriage given, in sequence. Label each clearly: "First Marriage", "Second Marriage", etc. If only one marriage is given, analyze it alone in full depth — do not mention the others. If a marriage ruler is in severe debility or heavily afflicted, say so plainly — the Oracle does not soften what the sky shows.
+
+Plain text only — no markdown (**bold**, *asterisks*, bullet dashes). This is displayed as-is; emphasize through word choice, not symbols.`;
 }
 
 // ─── Spirit Guide rewrite prompt ──────────────────────────────────────────────
@@ -41,7 +43,8 @@ TRANSLATION RULES:
 - Each marriage should feel like a distinct soul chapter, not a list
 - 2–3 flowing paragraphs per marriage
 - Do not number them mechanically — give each a quality-name instead: "Your First Union," "A Second Bonding," etc.
-- When a marriage shows difficulty in the chart, convey it as challenge or growth test, not doom`;
+- When a marriage shows difficulty in the chart, convey it as challenge or growth test, not doom
+- Plain text only — no markdown (**bold**, *asterisks*, bullet dashes); emphasize through word choice`;
 
 // ─── Route ────────────────────────────────────────────────────────────────────
 

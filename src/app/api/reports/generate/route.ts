@@ -52,7 +52,7 @@ function getTechniques(
   birthYear: number,
   dual?: { vedicContext: string; degreeContext: string },
 ): Technique[] {
-  const base = `You are Cosmora, the world's most advanced astrological intelligence. You analyze charts with precision, referencing specific placements. Write in flowing paragraphs — authoritative, specific, never generic. No bullet points. Reference exact degrees and placements.\n\nNATIVE'S CHART:\n${chartContext}`;
+  const base = `You are Cosmora, the world's most advanced astrological intelligence. You analyze charts with precision, referencing specific placements. Write in flowing paragraphs — authoritative, specific, never generic. No bullet points. Reference exact degrees and placements. Plain prose only — no markdown (**bold**, *asterisks*); emphasize through word choice, not symbols.\n\nNATIVE'S CHART:\n${chartContext}`;
 
   const currentYear = new Date().getFullYear();
   const age = currentYear - birthYear;

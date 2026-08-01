@@ -186,9 +186,16 @@ function MorningReport({ chart, transitsData, profile }: {
   const [streaming, setStreaming] = useState(false);
   const [started, setStarted] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  // Synchronous re-entrancy lock. `streaming`/`text` state alone can't gate
+  // generate() against React Strict Mode's dev-only double-invoke of mount
+  // effects: both invocations read the same pre-render state closure before
+  // either state update flushes, so a state-only guard lets both through and
+  // fires two concurrent /api/chat streams that interleave into `text`.
+  const inFlightRef = useRef(false);
 
   const generate = useCallback(() => {
-    if (streaming || text) return;
+    if (inFlightRef.current || streaming || text) return;
+    inFlightRef.current = true;
     setStarted(true);
     setStreaming(true);
 
@@ -227,21 +234,30 @@ Write a personal morning cosmic briefing for ${profile.name}. 3 tight paragraphs
 2. Most significant transit(s) affecting ${profile.name} personally and what they mean for today
 3. One concrete recommendation for how to work with today's cosmic weather
 
-Be specific, poetic but grounded. Max 200 words total. Avoid generic phrases.`;
+Be specific, poetic but grounded. Max 200 words total. Avoid generic phrases. Plain prose only — no markdown (no **bold**, no *asterisks*); this text is displayed as-is, so emphasize through word choice, not symbols.`;
 
-    abortRef.current = new AbortController();
+    // Own this call's controller by local reference, not just via abortRef:
+    // if this stream gets cancelled (Strict Mode's phantom double-invoke
+    // aborts the first of two calls), its rejection still fires async,
+    // *after* the second call has already overwritten abortRef.current. The
+    // aborted call must recognize its own cancellation and bail silently
+    // instead of touching state that the surviving stream now owns.
+    const controller = new AbortController();
+    abortRef.current = controller;
     fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: prompt }),
-      signal: abortRef.current.signal,
+      signal: controller.signal,
     }).then(async (res) => {
-      if (!res.ok || !res.body) { setStreaming(false); return; }
+      if (controller.signal.aborted) return;
+      if (!res.ok || !res.body) { setStreaming(false); inFlightRef.current = false; return; }
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
       while (true) {
         const { done, value } = await reader.read();
+        if (controller.signal.aborted) return;
         if (done) break;
         buffer += decoder.decode(value, { stream: true });
         const parts = buffer.split("\n\n");
@@ -257,11 +273,26 @@ Be specific, poetic but grounded. Max 200 words total. Avoid generic phrases.`;
         }
       }
       setStreaming(false);
-    }).catch(() => setStreaming(false));
+      inFlightRef.current = false;
+    }).catch(() => {
+      if (controller.signal.aborted) return;
+      setStreaming(false);
+      inFlightRef.current = false;
+    });
   }, [chart, transitsData, profile, streaming, text]);
 
-  // Auto-generate on mount
-  useEffect(() => { generate(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // Auto-generate on mount. Cleanup aborts the in-flight stream AND resets
+  // inFlightRef so the effect is properly idempotent: React Strict Mode's
+  // dev-only double-invoke (mount → cleanup → mount) cancels the phantom
+  // first request and cleanly restarts a single real one, while a genuine
+  // unmount (navigating away mid-stream) just cancels for good.
+  useEffect(() => {
+    generate();
+    return () => {
+      abortRef.current?.abort();
+      inFlightRef.current = false;
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div

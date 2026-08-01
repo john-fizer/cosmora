@@ -10,6 +10,7 @@ import {
   getActiveProfileId, setActiveProfileId, getCachedChart, setCachedChart,
 } from "@/lib/storage";
 import type { StoredProfile } from "@/lib/storage";
+import { CosmicAccount } from "@/components/dashboard/CosmicAccount";
 import { PLANET_SYMBOLS, SIGN_SYMBOLS } from "@/lib/astrology/types";
 import type { ChartData, PlanetName } from "@/lib/astrology/types";
 
@@ -616,6 +617,8 @@ export default function SettingsPage() {
         {/* Content */}
         <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
           <div className="px-4 md:px-6 py-5 max-w-2xl mx-auto space-y-8">
+
+            <CosmicAccount />
 
             {/* Profiles section */}
             <div>

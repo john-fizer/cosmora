@@ -17,6 +17,8 @@ import {
 import type { ChronicleExport } from "@/lib/chronicle/storage";
 import { computeSkyState, topTokens } from "@/lib/chronicle/sky-state";
 import type { SkyState } from "@/lib/chronicle/sky-state";
+import { scheduleSync, pullAll } from "@/lib/sync/engine";
+import { contributeSignals } from "@/lib/sync/research";
 
 const MONO = "'Fragment Mono', monospace";
 const SERIF = "'Cormorant Garamond', serif";
@@ -246,6 +248,7 @@ export default function ChroniclePage() {
     const c = getCachedChart(id);
     if (!p || !c) return;
     setProfile(p); setChart(c); reload(id);
+    void pullAll(id).then(changed => { if (changed) reload(id); });
   }, []);
 
   // Sky states for expanded card + signature search (computed on view, never stored)
@@ -285,7 +288,7 @@ export default function ChroniclePage() {
 
   const createPerson = (name: string): Person => {
     const p: Person = { id: generateId(), name, relationshipType: "other" };
-    upsertPerson(pid, p); reload(pid); return p;
+    upsertPerson(pid, p); reload(pid); scheduleSync(pid); return p;
   };
 
   const saveForm = (f: FormState) => {
@@ -306,7 +309,8 @@ export default function ChroniclePage() {
       createdAt: f.id ? (events.find(e => e.id === f.id)?.createdAt ?? new Date().toISOString()) : new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    upsertEvent(pid, ev); reload(pid); setPanel("none"); setEditForm(null);
+    upsertEvent(pid, ev); reload(pid); scheduleSync(pid); setPanel("none"); setEditForm(null);
+    if (chart && profile) void contributeSignals([ev], chart, profile);
   };
 
   const runExtraction = async () => {
@@ -351,7 +355,8 @@ export default function ChroniclePage() {
     ev.emotionalValence = Math.max(-1, Math.min(1, Number.isFinite(ev.emotionalValence) ? ev.emotionalValence : 0));
     ev.emotionalIntensity = Math.max(0, Math.min(1, Number.isFinite(ev.emotionalIntensity) ? ev.emotionalIntensity : 0.5));
     if (!/^\d{4}-\d{2}-\d{2}$/.test(ev.startsAt)) { alert(`"${ev.title}" has an unusable date (${ev.startsAt || "none"}) — edit it manually.`); return; }
-    upsertEvent(pid, ev); reload(pid);
+    upsertEvent(pid, ev); reload(pid); scheduleSync(pid);
+    if (chart && profile) void contributeSignals([ev], chart, profile);
     setPending(prev => prev ? { ...prev, events: prev.events.filter((_, i) => i !== idx) } : null);
   };
 
@@ -360,14 +365,15 @@ export default function ChroniclePage() {
     const updated: LifeEvent = {
       ...e, reflections: [...e.reflections, { id: generateId(), date: new Date().toISOString().slice(0, 10), text: reflectionText.trim(), outcomeConfirmation: outcome }],
     };
-    upsertEvent(pid, updated); reload(pid); setReflectingOn(null); setReflectionText("");
+    upsertEvent(pid, updated); reload(pid); scheduleSync(pid); setReflectingOn(null); setReflectionText("");
+    if (chart && profile) void contributeSignals([updated], chart, profile);
   };
 
   const linkEvents = (fromId: string, toId: string, type: EdgeType) => {
     const e = events.find(x => x.id === fromId); if (!e || fromId === toId) return;
     if (e.links.some(l => l.eventId === toId)) return;
     upsertEvent(pid, { ...e, links: [...e.links, { eventId: toId, type }] });
-    reload(pid); setLinkingFrom(null);
+    reload(pid); scheduleSync(pid); setLinkingFrom(null);
   };
 
   const doExport = () => {
@@ -622,7 +628,7 @@ export default function ChroniclePage() {
                                   intensityDots: Math.max(1, Math.round(e.emotionalIntensity * 5)), narrative: e.narrative, people: e.people,
                                 }); setPanel("edit"); window.scrollTo({ top: 0 });
                               }} style={{ padding: "5px 12px", borderRadius: 7, cursor: "pointer", background: "transparent", border: BORDER, color: "#445577", fontSize: 9, fontFamily: MONO }}>EDIT</button>
-                              <button onClick={() => { if (confirm(`Delete "${e.title}"?`)) { deleteEvent(pid, e.id); reload(pid); } }} style={{ padding: "5px 12px", borderRadius: 7, cursor: "pointer", background: "transparent", border: "1px solid rgba(239,68,68,0.3)", color: "#f87171", fontSize: 9, fontFamily: MONO }}>DELETE</button>
+                              <button onClick={() => { if (confirm(`Delete "${e.title}"?`)) { deleteEvent(pid, e.id); reload(pid); scheduleSync(pid); } }} style={{ padding: "5px 12px", borderRadius: 7, cursor: "pointer", background: "transparent", border: "1px solid rgba(239,68,68,0.3)", color: "#f87171", fontSize: 9, fontFamily: MONO }}>DELETE</button>
                             </div>
 
                             {/* Reflection input */}

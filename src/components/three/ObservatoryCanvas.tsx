@@ -7,7 +7,7 @@ import { BlendFunction } from "postprocessing";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 
-import type { ChartData, PlanetName } from "@/lib/astrology/types";
+import type { ChartData } from "@/lib/astrology/types";
 import { PLANET_COLORS, PLANET_SYMBOLS, type AstroLinePlanet } from "@/lib/astrology/astrocartography";
 import type { LifeEvent } from "@/lib/chronicle/types";
 import type { SkyState } from "@/lib/chronicle/sky-state";
@@ -44,7 +44,7 @@ function StarField() {
 // ─── Fixed natal anchor — the zero point ────────────────────────────────────────
 function Anchor({ id, x, z }: { id: string; x: number; z: number }) {
   const color = (PLANET_COLORS as Record<string, string>)[id] ?? NEUTRAL_COLOR;
-  const symbol = (PLANET_SYMBOLS as Record<string, string>)[id] ?? (id === "Ascendant" ? "ASC" : "MC");
+  const symbol = (PLANET_SYMBOLS as Record<string, string>)[id] ?? (id === "Ascendant" ? "ASC" : id === "Midheaven" ? "MC" : id);
   const pos = useMemo(() => new THREE.Vector3(x * ANCHOR_R, 0, z * ANCHOR_R), [x, z]);
   return (
     <group position={pos}>

@@ -12,21 +12,29 @@ import { QUALITY, detectGpuTier } from "@/lib/design/gpuTier";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
+// Geocentric — Earth sits at the origin, so these are wheel-distance rings,
+// not real orbital radii. Ordering follows the traditional (Chaldean) sphere
+// sequence as seen from Earth: Moon, Mercury, Venus, Sun, Mars, Jupiter,
+// Saturn — the same order this app's Hellenistic sect/dignity logic assumes.
 const ORBITAL_RADII: Record<string, number> = {
-  Sun: 0, Moon: 2.4, Mercury: 4.0, Venus: 5.6,
-  Mars: 7.6, Jupiter: 11.2, Saturn: 15.0,
-  Uranus: 18.8, Neptune: 22.4, Pluto: 25.8,
-  NorthNode: 6.6, Chiron: 9.4,
+  Moon: 2.4, NorthNode: 3.6, Mercury: 5.0, Venus: 7.0,
+  Sun: 9.2, Mars: 11.4, Jupiter: 13.8, Saturn: 16.4,
+  Chiron: 19.0, Uranus: 21.4, Neptune: 23.8, Pluto: 26.2,
 };
 
 // Artistic scale — true-to-scale planets are invisible dots at orbital distance;
 // bumped hard for cinematic presence while keeping relative ordering recognizable.
+// The Sun is still the largest body in the scene (as in reality, and as the
+// astrologically primary "planet"); Earth reads as a clear, medium-large
+// focal point without out-sizing the gas giants.
 const PLANET_SIZES: Record<string, number> = {
-  Sun: 2.1, Moon: 0.54, Mercury: 0.5, Venus: 0.72,
+  Sun: 1.75, Moon: 0.54, Mercury: 0.5, Venus: 0.72,
   Mars: 0.6, Jupiter: 1.3, Saturn: 1.08,
   Uranus: 0.82, Neptune: 0.8, Pluto: 0.42,
   NorthNode: 0.3, Chiron: 0.3,
 };
+
+const EARTH_SIZE = 1.0;
 
 // Astro glyph font (loaded in globals.css) so zodiac/planet symbols render —
 // not the missing-glyph tofu boxes.
@@ -94,7 +102,7 @@ const TEXTURE_FILES: Record<string, string> = {
 const ATMO_COLORS: Record<string, string> = {
   Mercury: "#b9a88f", Venus: "#e8c98a", Mars: "#e0784a", Jupiter: "#e8c08a",
   Saturn: "#e8d2a0", Uranus: "#9fe6f0", Neptune: "#5a8cff", Pluto: "#9a8c7a",
-  Moon: "#9aa3c0", NorthNode: "#8aa0ff", Chiron: "#b39ddb",
+  Moon: "#9aa3c0", NorthNode: "#8aa0ff", Chiron: "#b39ddb", Earth: "#5fa8ff",
 };
 
 function loadPlanetFile(file: string): THREE.Texture {
@@ -113,11 +121,17 @@ function Skybox() {
     <>
       <mesh scale={[-1, 1, 1]}>
         <sphereGeometry args={[260, 48, 48]} />
-        <meshBasicMaterial map={stars} side={THREE.BackSide} color="#7d7799" />
+        <meshBasicMaterial map={stars} side={THREE.BackSide} color="#efe9ff" />
       </mesh>
       <mesh scale={[-1, 1, 1]} rotation={[0.2, 1.6, 0.1]}>
         <sphereGeometry args={[255, 32, 32]} />
-        <meshBasicMaterial map={nebula} side={THREE.BackSide} transparent opacity={0.5} blending={THREE.AdditiveBlending} depthWrite={false} />
+        <meshBasicMaterial map={nebula} side={THREE.BackSide} transparent opacity={1.0} blending={THREE.AdditiveBlending} depthWrite={false} />
+      </mesh>
+      {/* Second nebula layer, offset rotation/scale — additive stacking for a
+          denser, brighter cosmic haze without a second texture asset. */}
+      <mesh scale={[-1, 1.05, 1.05]} rotation={[-0.35, 4.1, 0.6]}>
+        <sphereGeometry args={[250, 32, 32]} />
+        <meshBasicMaterial map={nebula} side={THREE.BackSide} transparent opacity={0.6} blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
     </>
   );
@@ -317,35 +331,52 @@ function makeGlowTexture(): THREE.CanvasTexture {
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
 
-// ─── Sun ──────────────────────────────────────────────────────────────────────
+// ─── Earth ────────────────────────────────────────────────────────────────────
+// The wheel's center — this is a geocentric chart, so the observer's planet
+// sits where the Sun used to. Lit by the real Sun's current wheel position
+// (sunPos), same day/night + atmosphere shader every other planet uses.
 
-function Sun() {
+function Earth({ sunPos }: { sunPos: THREE.Vector3 }) {
   const rotRef = useRef<THREE.Group>(null);
-  const sunTex = useMemo(() => loadPlanetFile("2k_sun.jpg"), []);
-  const glowTex = useMemo(() => makeGlowTexture(), []);
+  const surfaceTex = useMemo(() => {
+    const t = loadPlanetFile("2k_earth_daymap.jpg");
+    t.colorSpace = THREE.NoColorSpace; t.anisotropy = 8;
+    return t;
+  }, []);
+
+  const uniforms = useMemo(() => ({
+    uMap: { value: surfaceTex },
+    uSunPos: { value: sunPos.clone() },
+    uAtmo: { value: new THREE.Color(ATMO_COLORS.Earth) },
+  }), [surfaceTex]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useFrame((_, dt) => {
-    if (rotRef.current) rotRef.current.rotation.y += dt * 0.05;
+    if (rotRef.current) rotRef.current.rotation.y += dt * 0.025;
+    uniforms.uSunPos.value.copy(sunPos);
   });
 
   return (
     <group>
-      {/* The sun is the ONLY light source — gives every planet a real terminator */}
-      <pointLight color="#fff4dc" intensity={6.0} distance={500} decay={0.5} />
       <ambientLight color="#13112a" intensity={0.16} />
-      {/* Bright textured star core */}
-      <group ref={rotRef}>
+      <group ref={rotRef} rotation={[0, 0, 0.41]}>
         <mesh>
-          <sphereGeometry args={[1.5, 64, 64]} />
-          <meshBasicMaterial map={sunTex} color="#ffd88c" toneMapped={false} />
+          <sphereGeometry args={[EARTH_SIZE, 96, 96]} />
+          <shaderMaterial vertexShader={PLANET_VERT} fragmentShader={PLANET_FRAG} uniforms={uniforms} />
         </mesh>
       </group>
-      {/* Camera-facing center-bright glow — guarantees a glowing star, not a ring */}
-      <sprite scale={[8, 8, 1]}>
-        <spriteMaterial map={glowTex} transparent opacity={0.95} depthWrite={false}
-          blending={THREE.AdditiveBlending} toneMapped={false} />
-      </sprite>
     </group>
+  );
+}
+
+// ─── Sun glow sprite — kept small and specific to the Sun's own planet token ──
+
+function SunGlow() {
+  const glowTex = useMemo(() => makeGlowTexture(), []);
+  return (
+    <sprite scale={[6.5, 6.5, 1]}>
+      <spriteMaterial map={glowTex} transparent opacity={0.95} depthWrite={false}
+        blending={THREE.AdditiveBlending} toneMapped={false} />
+    </sprite>
   );
 }
 
@@ -418,7 +449,7 @@ function SaturnRings({ pos }: { pos: THREE.Vector3 }) {
 // ─── Planet ───────────────────────────────────────────────────────────────────
 
 function Planet({
-  name, longitude, isHovered, sign, house, signDegree,
+  name, longitude, isHovered, sign, house, signDegree, sunPos,
   onClick, onPointerEnter, onPointerLeave,
 }: {
   name: string;
@@ -427,10 +458,12 @@ function Planet({
   sign?: string;
   house?: number;
   signDegree?: number;
+  sunPos: THREE.Vector3;
   onClick: () => void;
   onPointerEnter: () => void;
   onPointerLeave: () => void;
 }) {
+  const isSun  = name === "Sun";
   const radius = ORBITAL_RADII[name] ?? 8;
   const size   = PLANET_SIZES[name]  ?? 0.16;
   const meta   = getPlanetMeta(name as PlanetName);
@@ -451,9 +484,9 @@ function Planet({
 
   const planetUniforms = useMemo(() => ({
     uMap: { value: surfaceTex },
-    uSunPos: { value: new THREE.Vector3(0, 0, 0) },
+    uSunPos: { value: sunPos.clone() },
     uAtmo: { value: new THREE.Color(ATMO_COLORS[name] ?? color) },
-  }), [surfaceTex, name, color]);
+  }), [surfaceTex, name, color]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useFrame((_, dt) => {
     if (selfRotRef.current) selfRotRef.current.rotation.y += rotSpeed * dt;
@@ -462,11 +495,15 @@ function Planet({
       const cur = meshRef.current.scale.x;
       meshRef.current.scale.setScalar(cur + (target - cur) * Math.min(dt * 10, 1));
     }
+    if (!isSun) planetUniforms.uSunPos.value.copy(sunPos);
   });
 
   return (
     <group position={pos.toArray()}>
-      {/* ONE solid sphere, lit by the sun (real day/night terminator). No glow shells. */}
+      {/* Every other planet: one solid sphere, lit by the sun's real wheel
+          position (real day/night terminator). The Sun itself is
+          self-luminous, so it gets a plain bright core + glow sprite instead
+          of being "lit" by itself. */}
       <group ref={selfRotRef} rotation={[0, 0, 0.41]}>
         <mesh
           ref={meshRef}
@@ -475,8 +512,11 @@ function Planet({
           onPointerLeave={() => onPointerLeave()}
         >
           <sphereGeometry args={[size, 96, 96]} />
-          <shaderMaterial vertexShader={PLANET_VERT} fragmentShader={PLANET_FRAG} uniforms={planetUniforms} />
+          {isSun
+            ? <meshBasicMaterial map={surfaceTex} color="#ffd88c" toneMapped={false} />
+            : <shaderMaterial vertexShader={PLANET_VERT} fragmentShader={PLANET_FRAG} uniforms={planetUniforms} />}
         </mesh>
+        {isSun && <SunGlow />}
       </group>
 
       {/* Hover card — what it is + where it sits (sign glyph · degree · house) */}
@@ -717,15 +757,20 @@ function OrreryScene({
   };
 
   const saturnPos = posMap["Saturn"];
+  const sunPos = posMap["Sun"] ?? lonToVec3(0, ORBITAL_RADII.Sun);
 
   return (
     <>
-      <color attach="background" args={["#05050E"]} />
+      <color attach="background" args={["#1d1d40"]} />
 
       <Skybox />
-      <Stars radius={170} depth={50} count={3500} factor={2.8} saturation={0.1} fade speed={0.06} />
+      <Stars radius={170} depth={50} count={9000} factor={5.0} saturation={0.25} fade speed={0.06} />
 
-      <Sun />
+      <Earth sunPos={sunPos} />
+      {/* The Sun is the light source for every other planet's terminator —
+          positioned wherever it actually sits on the wheel now, not at the
+          scene origin. */}
+      <pointLight position={sunPos.toArray()} color="#fff4dc" intensity={6.0} distance={500} decay={0.5} />
 
       {planets.map(p => {
         const r = ORBITAL_RADII[p.name];
@@ -745,7 +790,7 @@ function OrreryScene({
           hi={involved} dim={hovered !== null && !involved} />;
       })}
 
-      {planets.filter(p => p.name !== "Sun").map(p => (
+      {planets.map(p => (
         <Planet
           key={p.name}
           name={p.name}
@@ -754,6 +799,7 @@ function OrreryScene({
           sign={p.sign}
           house={p.house}
           signDegree={p.signDegree}
+          sunPos={sunPos}
           onClick={() => handlePlanetClick(p.name)}
           onPointerEnter={() => setHovered(p.name)}
           onPointerLeave={() => setHovered(null)}
@@ -778,6 +824,20 @@ function OrreryScene({
 
 // ─── Public export ────────────────────────────────────────────────────────────
 
+// The default view used to be a fixed vantage point that only looked "right"
+// because the Sun was hardcoded at the origin (always lit, always facing
+// camera). Now the Sun sits at its own true longitude, so the starting
+// camera angle has to track it — otherwise Earth and the other planets show
+// their unlit side by default on charts where the fixed angle doesn't line
+// up. Offset 32° off the Sun's exact azimuth (not dead-on) so the lit
+// hemispheres show a real terminator instead of a flat, fully-lit disc.
+function initialCameraPos(chart?: ChartData): [number, number, number] {
+  const sunLon = chart?.planets.find(p => p.name === "Sun")?.longitude ?? DEMO_LONGITUDES.Sun;
+  const rad = ((sunLon - 32) * Math.PI) / 180;
+  const D = 21, H = 13;
+  return [D * Math.cos(rad), H, -D * Math.sin(rad)];
+}
+
 export function SolarSystemOrrery({
   chart,
   onPlanetNavigate,
@@ -794,11 +854,12 @@ export function SolarSystemOrrery({
   const navigateRef = useRef(onPlanetNavigate);
   useEffect(() => { navigateRef.current = onPlanetNavigate; }, [onPlanetNavigate]);
   const quality = useMemo(() => QUALITY[detectGpuTier()], []);
+  const camPos = useMemo(() => initialCameraPos(chart), [chart]);
 
   return (
     <div className={className} style={{ width: "100%", height: "100%", ...style }}>
       <Canvas
-        camera={{ position: [0, 13, 21], fov: 47, near: 0.1, far: 500 }}
+        camera={{ position: camPos, fov: 47, near: 0.1, far: 500 }}
         gl={{ antialias: quality.antialias, alpha: false, powerPreference: "high-performance" }}
         dpr={quality.dpr}
         style={{ width: "100%", height: "100%" }}

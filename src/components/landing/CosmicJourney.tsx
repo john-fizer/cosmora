@@ -126,24 +126,12 @@ function JourneySun() {
   const ref = useRef<THREE.Mesh>(null);
   useFrame((_, dt) => { if (ref.current) ref.current.rotation.y += dt * 0.02; });
 
-  const coronaUniforms = useMemo(() => ({
-    uColor: { value: new THREE.Color("#E8C572") },
-    uPower: { value: 2.2 },
-    uIntensity: { value: 1.0 },
-  }), []);
-
   return (
     <group>
       <pointLight color="#fff5e0" intensity={5.5} distance={400} decay={0.6} />
       <mesh ref={ref}>
         <sphereGeometry args={[3.2, 48, 48]} />
         <meshBasicMaterial map={tex} color="#ffe9b8" />
-      </mesh>
-      <mesh>
-        <sphereGeometry args={[4.6, 32, 32]} />
-        <shaderMaterial vertexShader={FRESNEL_VERT} fragmentShader={FRESNEL_FRAG}
-          uniforms={coronaUniforms} transparent depthWrite={false}
-          blending={THREE.AdditiveBlending} side={THREE.BackSide} />
       </mesh>
     </group>
   );

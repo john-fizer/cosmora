@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 from livekit.agents import (
@@ -14,7 +15,12 @@ from livekit.agents import (
 )
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
-load_dotenv()
+# load_dotenv() with no argument only looks for a literal ".env" file. This
+# project keeps its credentials in the Next.js convention ".env.local" at the
+# repo root (one level up from agent/), so point at that explicitly — without
+# this, LIVEKIT_*, DEEPGRAM_API_KEY, CARTESIA_API_KEY etc. never reach
+# os.environ and every session fails to authenticate.
+load_dotenv(Path(__file__).resolve().parent.parent / ".env.local")
 logger = logging.getLogger("cosmora-agent")
 
 # Planet archetype system prompts — mirrors voice.ts PlanetVoiceProfile

@@ -62,6 +62,7 @@ export default function PressurePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [ready, setReady] = useState(false);
+  const [started, setStarted] = useState(false);
 
   useEffect(() => {
     const id = getActiveProfileId();
@@ -79,7 +80,9 @@ export default function PressurePage() {
   }, []);
 
   useEffect(() => {
-    if (!chart || !birthDt) return;
+    // Reads the sky and calls the AI briefing endpoint — must be an explicit
+    // action, not something that fires just because the user landed here.
+    if (!chart || !birthDt || !started) return;
     let cancelled = false;
     setLoading(true); setError(false); setResult(null);
     fetch("/api/pressure", {
@@ -92,7 +95,7 @@ export default function PressurePage() {
       .catch(() => { if (!cancelled) setError(true); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [chart, birthDt, mode]);
+  }, [chart, birthDt, mode, started]);
 
   const meta = result ? LEVEL_META[result.level] : null;
 
@@ -123,6 +126,15 @@ export default function PressurePage() {
               No chart in the instrument.
             </p>
             <Link href="/dashboard/chart"><GlowButton variant="ghost">Open chart →</GlowButton></Link>
+          </Panel>
+        )}
+
+        {ready && profileId && chart && birthDt && !started && (
+          <Panel pad={40} className="text-center">
+            <p style={{ fontFamily: FONT.display, fontStyle: "italic", fontSize: 20, color: COLOR.text2 }} className="mb-5">
+              Cross-check transits, profections, and releasing for convergence.
+            </p>
+            <GlowButton onClick={() => setStarted(true)}>Read the windows →</GlowButton>
           </Panel>
         )}
 

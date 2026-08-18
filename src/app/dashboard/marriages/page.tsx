@@ -131,16 +131,17 @@ function MarriageCard({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [started, setStarted] = useState(false);
 
   const indicators = detectDivorceIndicators(chart, sig);
 
-  const fetchReading = useCallback(async () => {
-    // Reuse the latest archived reading for this marriage + mode
-    const cached = getMarriageReadings(profileId).find(
-      r => r.guideMode === mode && r.significators.length === 1 && r.significators[0].marriage === sig.marriage
-    );
-    if (cached) { setReading(cached.finalText); return; }
+  // Reuse the latest archived reading for this marriage + mode, if one exists —
+  // showing a cached reading costs nothing, so it doesn't need the gate below.
+  const cachedReading = getMarriageReadings(profileId).find(
+    r => r.guideMode === mode && r.significators.length === 1 && r.significators[0].marriage === sig.marriage
+  )?.finalText ?? null;
 
+  const fetchReading = useCallback(async () => {
     setLoading(true);
     setError(false);
     try {
@@ -174,7 +175,14 @@ function MarriageCard({
     }
   }, [chart, profileId, mode, sig.marriage]);
 
-  useEffect(() => { setReading(null); fetchReading(); }, [fetchReading]);
+  // A cached reading can be shown for free; generating a new one calls the AI
+  // endpoint and must wait for the user to explicitly ask for it (see the
+  // "Reveal reading" gate below) rather than firing on page load.
+  useEffect(() => {
+    setReading(cachedReading);
+    if (cachedReading || !started) return;
+    fetchReading();
+  }, [cachedReading, started, fetchReading]);
 
   return (
     <motion.section
@@ -197,6 +205,14 @@ function MarriageCard({
 
       {/* Reading body */}
       <AnimatePresence mode="wait">
+        {!started && !cachedReading && !loading && (
+          <motion.div key="gate" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="py-8">
+            <button onClick={() => setStarted(true)} className="cursor-pointer"
+              style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.16em", color: "#C8A55B" }}>
+              REVEAL READING →
+            </button>
+          </motion.div>
+        )}
         {loading && (
           <motion.p key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             style={{ fontFamily: SERIF, fontStyle: "italic", color: "rgba(234,230,244,0.4)" }} className="text-lg py-8">

@@ -97,7 +97,7 @@ function PlanetOrb({ color, glyph, glowColor }: { color: string; glyph: string; 
 
 // ─── Oracle Panel ─────────────────────────────────────────────────────────────
 
-function OraclePanel({ text, loading }: { text: string; loading: boolean }) {
+function OraclePanel({ text, loading, started, onStart }: { text: string; loading: boolean; started: boolean; onStart: () => void }) {
   return (
     <div
       className="rounded-2xl p-6 relative overflow-hidden"
@@ -140,6 +140,14 @@ function OraclePanel({ text, loading }: { text: string; loading: boolean }) {
         </p>
       ) : loading ? (
         <p className="text-[14px]" style={{ color: "#334155" }}>Reading the celestial spheres…</p>
+      ) : !started ? (
+        <button
+          onClick={onStart}
+          className="text-[13px] font-medium cursor-pointer"
+          style={{ color: "#7B6FD4" }}
+        >
+          Read the Oracle →
+        </button>
       ) : null}
     </div>
   );
@@ -160,6 +168,7 @@ export default function PlanetDetailPage({
   const [liveTransits, setLiveTransits] = useState<TransitAspect[]>([]);
   const [oracleText, setOracleText] = useState("");
   const [oracleLoading, setOracleLoading] = useState(false);
+  const [oracleWanted, setOracleWanted] = useState(false);
   const oracleStarted = useRef(false);
   const warpTo = useWarpTo();
 
@@ -191,7 +200,10 @@ export default function PlanetDetailPage({
   }, [chart, planetName]);
 
   useEffect(() => {
-    if (!chart || oracleStarted.current) return;
+    // Calls the AI Oracle — must wait for the user to press "Read the
+    // Oracle" (oracleWanted) rather than firing just because this page
+    // loaded, since every visit here would otherwise be a billed call.
+    if (!chart || oracleStarted.current || !oracleWanted) return;
     const pd = chart.planets.find(p => p.name === planetName);
     if (!pd) return;
     oracleStarted.current = true;
@@ -236,7 +248,7 @@ export default function PlanetDetailPage({
         }
       })
       .catch(() => setOracleLoading(false));
-  }, [chart, planetName]);
+  }, [chart, planetName, oracleWanted]);
 
   const planetData = chart?.planets.find(p => p.name === planetName);
   const myAspects = chart?.aspects.filter(
@@ -542,7 +554,7 @@ export default function PlanetDetailPage({
           <p className="text-[13px] font-bold tracking-widest mb-4" style={{ color: "#334155" }}>
             ORACLE READING
           </p>
-          <OraclePanel text={oracleText} loading={oracleLoading} />
+          <OraclePanel text={oracleText} loading={oracleLoading} started={oracleWanted} onStart={() => setOracleWanted(true)} />
           {oracleText && !oracleLoading && (
             <motion.div
               initial={{ opacity: 0 }}

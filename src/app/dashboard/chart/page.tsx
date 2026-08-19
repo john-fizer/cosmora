@@ -1983,8 +1983,8 @@ export default function ChartPage() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.5 }}
-                    className="absolute bottom-5 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-[14px] font-bold tracking-widest"
-                    style={{ background: "rgba(4,4,28,0.75)", border: "1px solid rgba(123,111,212,0.2)", color: "#475569", backdropFilter: "blur(12px)", pointerEvents: "none", whiteSpace: "nowrap" }}
+                    className="absolute bottom-5 left-0 right-0 mx-auto w-fit max-w-[92vw] px-4 py-2 rounded-full text-[11px] sm:text-[14px] font-bold tracking-widest text-center"
+                    style={{ background: "rgba(4,4,28,0.75)", border: "1px solid rgba(123,111,212,0.2)", color: "#475569", backdropFilter: "blur(12px)", pointerEvents: "none" }}
                   >
                     DRAG TO ORBIT · SCROLL TO ZOOM · CLICK PLANET TO EXPLORE
                   </motion.div>

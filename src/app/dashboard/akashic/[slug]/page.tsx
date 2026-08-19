@@ -43,6 +43,7 @@ export default function AkashicArticlePage() {
   const [body, setBody]           = useState("");
   const [generating, setGenerating] = useState(false);
   const [reloadNonce, setReloadNonce] = useState(0);
+  const [wanted, setWanted] = useState(false);
 
   // Load chart
   useEffect(() => {
@@ -70,11 +71,15 @@ export default function AkashicArticlePage() {
     setContext(getEntryChartContext(entry, chart, sidereal, dasha, karakas));
   }, [entry, chart, sidereal, dasha, karakas]);
 
-  // Generate or load cached body
+  // Load a cached body for free; generating a new one calls the AI and must
+  // wait for the user to press "Read this entry" (see the gate below) rather
+  // than firing just because this page loaded — every one of the 61 entries
+  // would otherwise be a billed call on first visit.
   useEffect(() => {
     if (!entry) return;
     const cached = typeof window !== "undefined" ? localStorage.getItem(cacheKey(slug)) : null;
     if (cached) { setBody(cached); return; }
+    if (!wanted) return;
 
     const generate = async () => {
       setGenerating(true);
@@ -106,7 +111,7 @@ export default function AkashicArticlePage() {
       setGenerating(false);
     };
     generate();
-  }, [entry, slug, reloadNonce]);
+  }, [entry, slug, reloadNonce, wanted]);
 
   if (!entry) {
     return (
@@ -196,7 +201,14 @@ export default function AkashicArticlePage() {
                   READING THE AKASHIC FIELD…
                 </span>
               </div>
-            ) : null}
+            ) : (
+              <button
+                onClick={() => setWanted(true)}
+                style={{ color: accentColor, fontSize: 13, fontWeight: 600, cursor: "pointer", background: "none", border: "none", padding: 0 }}
+              >
+                Read this entry →
+              </button>
+            )}
           </div>
 
           {/* Regenerate button */}

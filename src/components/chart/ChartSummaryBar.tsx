@@ -79,6 +79,10 @@ export function ChartSummaryBar({ chart, profileName, onHouseSystemChange, recal
         borderBottom: "1px solid rgba(123,111,212,0.12)",
         backdropFilter: "blur(20px)",
         scrollbarWidth: "none",
+        // Hints there's more to scroll to on narrow screens, where this row
+        // (8 stat pills + house-system switcher) doesn't fit at once.
+        maskImage: "linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%)",
+        WebkitMaskImage: "linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%)",
       }}
     >
       {/* Summary pills */}

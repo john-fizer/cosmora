@@ -78,8 +78,10 @@ function LocationPanel({ lat, lon, scores, onClose }: {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
       style={{
-        position: "absolute", bottom: 90, left: "50%", transform: "translateX(-50%)",
-        width: 400, maxHeight: "50vh",
+        // motion's animate={{y}} owns `transform`, so a plain translateX
+        // here gets silently dropped — center with left/right + auto margin.
+        position: "absolute", bottom: 90, left: 0, right: 0, margin: "0 auto",
+        width: "min(400px, 92vw)", maxHeight: "50vh",
         background: "rgba(5,8,22,0.94)",
         border: "1px solid rgba(100,130,255,0.25)",
         borderRadius: 16, backdropFilter: "blur(24px)",
@@ -159,20 +161,21 @@ function LocationPanel({ lat, lon, scores, onClose }: {
 function VortexPanel({ node, onClose }: { node: VortexNodePublic; onClose: () => void }) {
   const primaryColor = PLANET_COLORS[node.lines[0].planet];
   return (
+    // A flex-centered wrapper avoids `transform: translate(-50%,-50%)`,
+    // which motion's animate={{scale}} on the inner element would drop.
+    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, pointerEvents: "none" }}>
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       style={{
-        position: "absolute", top: "50%", left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: 290,
+        width: "min(290px, 90vw)",
         background: "rgba(5,8,22,0.96)",
         border: `1px solid ${primaryColor}40`,
         borderRadius: 20, padding: 22,
         backdropFilter: "blur(32px)",
         boxShadow: `0 0 60px ${primaryColor}20`,
-        zIndex: 50,
+        pointerEvents: "auto",
       }}
     >
       <div className="flex items-center justify-between mb-4">
@@ -209,6 +212,7 @@ function VortexPanel({ node, onClose }: { node: VortexNodePublic; onClose: () =>
         ))}
       </div>
     </motion.div>
+    </div>
   );
 }
 
@@ -551,8 +555,9 @@ export default function AstrocartographyPage() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
+        className="left-0 md:left-16"
         style={{
-          position: "absolute", top: 0, left: 64, right: 0, height: 44,
+          position: "absolute", top: 0, right: 0, height: 44,
           display: "flex", alignItems: "center",
           background: "rgba(5,8,22,0.88)",
           borderBottom: "1px solid rgba(30,60,120,0.3)",
@@ -608,8 +613,11 @@ export default function AstrocartographyPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.15 }}
         style={{
-          position: "absolute", top: 52, left: "50%", transform: "translateX(-50%)",
+          // motion's animate={{y}} owns `transform`, so translateX(-50%)
+          // gets dropped — center via left/right + auto margin instead.
+          position: "absolute", top: 52, left: 0, right: 0, margin: "0 auto",
           display: "flex", alignItems: "center", gap: 5,
+          width: "fit-content", maxWidth: "94vw",
           background: "rgba(5,8,22,0.82)",
           border: "1px solid rgba(30,60,120,0.35)",
           borderRadius: 40, padding: "5px 8px",
@@ -658,7 +666,10 @@ export default function AstrocartographyPage() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
         style={{
-          position: "absolute", top: 54, left: 80, width: 174,
+          // Below the energy-category bar (which spans near-full-width on
+          // narrow screens) instead of beside it — top:54 put all three top
+          // panels on the same row, guaranteeing overlap under ~600px.
+          position: "absolute", top: 96, left: 12, width: "min(174px, 44vw)",
           background: "rgba(5,8,22,0.82)",
           border: "1px solid rgba(30,60,120,0.35)",
           borderRadius: 12, padding: "12px 14px",
@@ -690,7 +701,7 @@ export default function AstrocartographyPage() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
         style={{
-          position: "absolute", top: 54, right: 16, width: 192,
+          position: "absolute", top: 96, right: 16, width: "min(192px, 46vw)",
           background: "rgba(5,8,22,0.82)",
           border: "1px solid rgba(30,60,120,0.35)",
           borderRadius: 12, padding: "12px 14px",
@@ -741,7 +752,7 @@ export default function AstrocartographyPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
         style={{
-          position: "absolute", bottom: 84, left: 80, width: 140,
+          position: "absolute", bottom: 84, left: 12, width: "min(140px, 38vw)",
           background: "rgba(5,8,22,0.82)",
           border: "1px solid rgba(30,60,120,0.35)",
           borderRadius: 12, padding: "10px 14px",
@@ -781,7 +792,7 @@ export default function AstrocartographyPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
         style={{
-          position: "absolute", bottom: 84, right: 16, width: 180,
+          position: "absolute", bottom: 84, right: 12, width: "min(180px, 46vw)",
           background: "rgba(5,8,22,0.82)",
           border: "1px solid rgba(30,60,120,0.35)",
           borderRadius: 12, padding: "10px 14px",
@@ -823,8 +834,9 @@ export default function AstrocartographyPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
+        className="left-0 md:left-16"
         style={{
-          position: "absolute", bottom: 0, left: 64, right: 0, height: 74,
+          position: "absolute", bottom: 0, right: 0, height: 74,
           background: "rgba(5,8,22,0.92)",
           borderTop: "1px solid rgba(30,60,120,0.3)",
           backdropFilter: "blur(24px)",
@@ -891,7 +903,8 @@ export default function AstrocartographyPage() {
         whileTap={{ scale: 0.95 }}
         onClick={() => setShowOracle(v => !v)}
         style={{
-          position: "absolute", bottom: 84, left: "50%", transform: "translateX(-50%)",
+          position: "absolute", bottom: 84, left: 0, right: 0, margin: "0 auto",
+          width: "fit-content",
           display: "flex", alignItems: "center", gap: 6,
           padding: "6px 18px",
           background: showOracle ? "rgba(123,97,255,0.18)" : "rgba(5,8,22,0.85)",
@@ -917,8 +930,10 @@ export default function AstrocartographyPage() {
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.22 }}
             style={{
-              position: "absolute", bottom: 134, left: "50%", transform: "translateX(-50%)",
-              width: 320, height: 380,
+              // motion's animate={{y,scale}} owns `transform` — center via
+              // left/right + auto margin instead of a dropped translateX.
+              position: "absolute", bottom: 134, left: 0, right: 0, margin: "0 auto",
+              width: "min(320px, 92vw)", height: 380,
               background: "rgba(5,8,22,0.94)",
               border: "1px solid rgba(80,100,255,0.25)",
               borderRadius: 16, backdropFilter: "blur(28px)",

@@ -657,53 +657,152 @@ function FocusSidebar({ pathname }: { pathname: string }) {
   );
 }
 
-function MobileNav({ pathname }: { pathname: string }) {
+// 24 sections don't fit in a thumb-width bottom bar — five daily-use items
+// stay pinned, everything else lives behind "More".
+const PRIMARY_MOBILE_HREFS = ["/dashboard", "/dashboard/chart", "/dashboard/oracle", "/dashboard/transits", "/dashboard/briefing"];
+
+function MoreIcon() {
   return (
-    <motion.nav
-      initial={{ y: 80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-      className="fixed bottom-0 left-0 right-0 flex items-center justify-around px-2 z-50 md:hidden liquid-glass-strong"
-      style={{
-        paddingBottom: "max(8px, env(safe-area-inset-bottom))",
-        paddingTop: 6,
-      }}
-    >
-      {NAV_ITEMS.map((item) => {
-        const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
-        return (
-          <Link key={item.href} href={item.href} className="flex-1">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+      <circle cx="5" cy="12" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="19" cy="12" r="1.5" />
+    </svg>
+  );
+}
+
+function MobileNavLink({ item, active }: { item: (typeof NAV_ITEMS)[number]; active: boolean }) {
+  return (
+    <Link href={item.href} className="flex-1">
+      <motion.div
+        whileTap={{ scale: 0.88 }}
+        className="flex flex-col items-center gap-0.5 py-1 rounded-xl cursor-pointer"
+        style={{ color: active ? "var(--solar)" : "var(--nav-inactive-text)" }}
+      >
+        <div
+          className="flex items-center justify-center w-8 h-8 rounded-xl"
+          style={{
+            background: active ? "rgba(200,165,91,0.10)" : "transparent",
+            border: active ? "1px solid rgba(200,165,91,0.22)" : "1px solid transparent",
+            transition: "all 0.18s",
+          }}
+        >
+          {item.icon}
+        </div>
+        <span
+          style={{
+            fontFamily: "'Fragment Mono', monospace",
+            fontSize: 10, letterSpacing: "0.06em",
+            overflow: "hidden", textOverflow: "ellipsis",
+            whiteSpace: "nowrap", maxWidth: 64,
+          }}
+          className="uppercase"
+        >
+          {item.label}
+        </span>
+      </motion.div>
+    </Link>
+  );
+}
+
+function MobileNav({ pathname }: { pathname: string }) {
+  const [moreOpen, setMoreOpen] = useState(false);
+  const isActive = (href: string) => pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+
+  const primaryItems = PRIMARY_MOBILE_HREFS.map(href => NAV_ITEMS.find(i => i.href === href)!);
+  const moreItems = NAV_ITEMS.filter(i => !PRIMARY_MOBILE_HREFS.includes(i.href));
+  const moreActive = moreItems.some(i => isActive(i.href));
+
+  return (
+    <>
+      <AnimatePresence>
+        {moreOpen && (
+          <>
             <motion.div
-              whileTap={{ scale: 0.88 }}
-              className="flex flex-col items-center gap-0.5 py-1 rounded-xl cursor-pointer"
-              style={{ color: active ? "var(--solar)" : "var(--nav-inactive-text)" }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 md:hidden"
+              style={{ background: "rgba(0,0,4,0.6)" }}
+              onClick={() => setMoreOpen(false)}
+            />
+            <motion.div
+              initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              className="fixed left-0 right-0 bottom-0 z-50 md:hidden liquid-glass-strong rounded-t-3xl"
+              style={{
+                maxHeight: "70vh", overflowY: "auto",
+                paddingBottom: "max(88px, calc(72px + env(safe-area-inset-bottom)))",
+                paddingTop: 18,
+              }}
             >
-              <div
-                className="flex items-center justify-center w-8 h-8 rounded-xl"
-                style={{
-                  background: active ? "rgba(200,165,91,0.10)" : "transparent",
-                  border: active ? "1px solid rgba(200,165,91,0.22)" : "1px solid transparent",
-                  transition: "all 0.18s",
-                }}
-              >
-                {item.icon}
+              <div className="grid grid-cols-4 gap-1 px-4">
+                {moreItems.map(item => {
+                  const active = isActive(item.href);
+                  return (
+                    <Link key={item.href} href={item.href} onClick={() => setMoreOpen(false)}>
+                      <motion.div
+                        whileTap={{ scale: 0.9 }}
+                        className="flex flex-col items-center gap-1.5 py-3 rounded-xl cursor-pointer"
+                        style={{ color: active ? "var(--solar)" : "var(--nav-inactive-text)" }}
+                      >
+                        <div
+                          className="flex items-center justify-center w-9 h-9 rounded-xl"
+                          style={{
+                            background: active ? "rgba(200,165,91,0.10)" : "rgba(255,255,255,0.03)",
+                            border: active ? "1px solid rgba(200,165,91,0.22)" : "1px solid transparent",
+                          }}
+                        >
+                          {item.icon}
+                        </div>
+                        <span
+                          style={{ fontFamily: "'Fragment Mono', monospace", fontSize: 10, letterSpacing: "0.04em", textAlign: "center" }}
+                          className="uppercase"
+                        >
+                          {item.label}
+                        </span>
+                      </motion.div>
+                    </Link>
+                  );
+                })}
               </div>
-              <span
-                style={{
-                  fontFamily: "'Fragment Mono', monospace",
-                  fontSize: 13, letterSpacing: "0.10em",
-                  overflow: "hidden", textOverflow: "ellipsis",
-                  whiteSpace: "nowrap", maxWidth: 52,
-                }}
-                className="uppercase"
-              >
-                {item.label}
-              </span>
             </motion.div>
-          </Link>
-        );
-      })}
-    </motion.nav>
+          </>
+        )}
+      </AnimatePresence>
+
+      <motion.nav
+        initial={{ y: 80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        className="fixed bottom-0 left-0 right-0 flex items-center justify-around px-2 z-50 md:hidden liquid-glass-strong"
+        style={{
+          paddingBottom: "max(8px, env(safe-area-inset-bottom))",
+          paddingTop: 6,
+        }}
+      >
+        {primaryItems.map(item => (
+          <MobileNavLink key={item.href} item={item} active={isActive(item.href)} />
+        ))}
+        <button onClick={() => setMoreOpen(v => !v)} className="flex-1 cursor-pointer">
+          <motion.div
+            whileTap={{ scale: 0.88 }}
+            className="flex flex-col items-center gap-0.5 py-1 rounded-xl"
+            style={{ color: moreOpen || moreActive ? "var(--solar)" : "var(--nav-inactive-text)" }}
+          >
+            <div
+              className="flex items-center justify-center w-8 h-8 rounded-xl"
+              style={{
+                background: moreOpen || moreActive ? "rgba(200,165,91,0.10)" : "transparent",
+                border: moreOpen || moreActive ? "1px solid rgba(200,165,91,0.22)" : "1px solid transparent",
+                transition: "all 0.18s",
+              }}
+            >
+              <MoreIcon />
+            </div>
+            <span style={{ fontFamily: "'Fragment Mono', monospace", fontSize: 10, letterSpacing: "0.06em" }} className="uppercase">
+              More
+            </span>
+          </motion.div>
+        </button>
+      </motion.nav>
+    </>
   );
 }
 

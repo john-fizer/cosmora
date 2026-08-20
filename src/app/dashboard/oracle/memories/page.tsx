@@ -218,16 +218,13 @@ export default function OracleMemoriesPage() {
           </div>
         </motion.div>
 
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden">
           {/* Left sidebar: filters */}
-          <motion.div
-            initial={{ opacity: 0, x: -16 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-            className="flex-shrink-0 flex flex-col gap-1 p-4"
-            style={{ width: 180, borderRight: "1px solid rgba(123,111,212,0.08)" }}
+          <div
+            className="flex-shrink-0 flex flex-row md:flex-col gap-1 p-4 overflow-x-auto md:overflow-x-visible md:w-[180px]"
+            style={{ borderRight: "1px solid rgba(123,111,212,0.08)", scrollbarWidth: "none" }}
           >
-            <p className="text-[13px] tracking-[0.2em] mb-3" style={{ color: "#334155", fontFamily: "'Fragment Mono', monospace" }}>
+            <p className="hidden md:block text-[13px] tracking-[0.2em] mb-3" style={{ color: "#334155", fontFamily: "'Fragment Mono', monospace" }}>
               FILTER
             </p>
             <button
@@ -237,8 +234,8 @@ export default function OracleMemoriesPage() {
                 background: activeFilter === "all" ? "rgba(123,111,212,0.12)" : "transparent",
                 border: `1px solid ${activeFilter === "all" ? "rgba(123,111,212,0.3)" : "transparent"}`,
                 color: activeFilter === "all" ? "#a78bfa" : "#475569",
-                fontSize: 14, cursor: "pointer", display: "flex", justifyContent: "space-between",
-                fontFamily: "'Fragment Mono', monospace",
+                fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
+                fontFamily: "'Fragment Mono', monospace", flexShrink: 0, whiteSpace: "nowrap",
               }}
             >
               <span>ALL</span>
@@ -253,18 +250,18 @@ export default function OracleMemoriesPage() {
                   background: activeFilter === id ? `${m.color}12` : "transparent",
                   border: `1px solid ${activeFilter === id ? m.color + "30" : "transparent"}`,
                   color: activeFilter === id ? m.color : "#475569",
-                  fontSize: 14, cursor: "pointer", display: "flex", justifyContent: "space-between",
-                  fontFamily: "'Fragment Mono', monospace",
+                  fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
+                  fontFamily: "'Fragment Mono', monospace", flexShrink: 0, whiteSpace: "nowrap",
                 }}
               >
                 <span>{m.icon} {m.label.toUpperCase()}</span>
                 <span style={{ opacity: 0.6 }}>{counts[id]}</span>
               </button>
             ))}
-          </motion.div>
+          </div>
 
           {/* Main content */}
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex flex-col md:flex-1 md:overflow-hidden">
             {/* Search */}
             <div className="flex-shrink-0 px-6 py-3" style={{ borderBottom: "1px solid rgba(123,111,212,0.06)" }}>
               <input
@@ -282,7 +279,7 @@ export default function OracleMemoriesPage() {
             </div>
 
             {/* Memory grid */}
-            <div className="flex-1 overflow-y-auto p-6" style={{ scrollbarWidth: "thin", scrollbarColor: "#1e293b transparent" }}>
+            <div className="md:flex-1 md:overflow-y-auto p-6" style={{ scrollbarWidth: "thin", scrollbarColor: "#1e293b transparent" }}>
               {filtered.length === 0 ? (
                 <motion.div
                   initial={{ opacity: 0 }}

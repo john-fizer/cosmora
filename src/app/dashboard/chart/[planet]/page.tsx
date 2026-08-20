@@ -334,7 +334,7 @@ export default function PlanetDetailPage({
         </div>
       </section>
 
-      <main style={{ marginLeft: 68, padding: "2rem 2.5rem", position: "relative", zIndex: 1 }}>
+      <main className="ml-0 md:ml-[68px] px-5 md:px-10" style={{ paddingTop: "2rem", paddingBottom: "2rem", position: "relative", zIndex: 1 }}>
 
         {planetData && (
           <motion.div

@@ -609,7 +609,7 @@ export default function ReportsPage() {
         )}
       </AnimatePresence>
 
-      <div style={{ marginLeft: 64, padding: "0 0 80px" }}>
+      <div className="ml-0 md:ml-16" style={{ padding: "0 0 80px" }}>
 
         {/* ── Header ── */}
         <div style={{

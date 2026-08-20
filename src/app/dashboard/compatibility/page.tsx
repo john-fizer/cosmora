@@ -203,11 +203,15 @@ function CompatibilityOracle({ profileA, profileB, score, aspects }: {
 }) {
   const [text, setText] = useState("");
   const [streaming, setStreaming] = useState(false);
+  const [wanted, setWanted] = useState(false);
   const hasFired = useRef(false);
   const pairKey = `${profileA.id}-${profileB.id}`;
 
   useEffect(() => {
-    if (hasFired.current) return;
+    // Calls the AI Oracle for a synastry reading — must wait for the user
+    // to press "Read the connection" rather than firing just because this
+    // pair was viewed, since every visit would otherwise be a billed call.
+    if (hasFired.current || !wanted) return;
     hasFired.current = true;
 
     const top5 = aspects.slice(0, 5).map(a =>
@@ -252,7 +256,7 @@ Write 3 paragraphs: (1) the overall nature and dynamic of this relationship base
       }
       setStreaming(false);
     }).catch(() => setStreaming(false));
-  }, [pairKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pairKey, wanted]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <motion.div
@@ -267,6 +271,15 @@ Write 3 paragraphs: (1) the overall nature and dynamic of this relationship base
         </p>
       </div>
       <div className="p-5">
+        {!wanted && !text && (
+          <button
+            onClick={() => setWanted(true)}
+            className="text-[13px] font-semibold cursor-pointer"
+            style={{ color: "#f472b6", background: "none", border: "none", padding: 0 }}
+          >
+            Read the connection →
+          </button>
+        )}
         {streaming && !text && (
           <div className="flex items-center gap-3">
             <motion.div

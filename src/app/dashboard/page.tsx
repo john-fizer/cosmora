@@ -547,7 +547,10 @@ Key transits: ${top3 || "No tight transits today"}
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="absolute pointer-events-auto z-20"
       style={{
-        top: 24, left: "50%", transform: "translateX(-50%)",
+        // Framer Motion owns `transform` for the y/scale animation above, so
+        // a plain translateX(-50%) here gets silently dropped — center with
+        // left/right + auto margins instead, which needs no transform.
+        top: 24, left: 0, right: 0, margin: "0 auto",
         width: "min(480px, 88vw)",
       }}
     >

@@ -77,88 +77,11 @@ interface ChartWheelProps {
   onHouseClick?: (houseIndex: number) => void;
 }
 
-// ─── Holographic ambient orb ─────────────────────────────────────────────────
-
-function HoloOrb({ x, y, scale = 1, hue = 250, delay = 0 }: {
-  x: number; y: number; scale?: number; hue?: number; delay?: number;
-}) {
-  const w = 120 * scale, h = 72 * scale;
-  return (
-    <motion.div
-      style={{ position: "absolute", left: x, top: y, width: w, height: h, pointerEvents: "none" }}
-      animate={{ y: [0, -10, 0], rotate: [0, 3, 0] }}
-      transition={{ duration: 7 + delay * 2, repeat: Infinity, ease: "easeInOut", delay }}
-    >
-      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ overflow: "visible" }}>
-        <defs>
-          <radialGradient id={`holoGrad${hue}`} cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor={`hsl(${hue},90%,70%)`} stopOpacity="0.7" />
-            <stop offset="40%" stopColor={`hsl(${hue + 30},80%,50%)`} stopOpacity="0.4" />
-            <stop offset="100%" stopColor={`hsl(${hue},60%,30%)`} stopOpacity="0" />
-          </radialGradient>
-          <filter id={`holoBlur${hue}`}>
-            <feGaussianBlur stdDeviation="4" />
-          </filter>
-        </defs>
-        {/* Spinning elliptical rings */}
-        {[0, 40, 80].map((rot, i) => (
-          <motion.ellipse
-            key={i}
-            cx={w / 2} cy={h / 2} rx={w * 0.45} ry={h * 0.22}
-            fill="none"
-            stroke={`hsl(${hue + i * 20}, 85%, 65%)`}
-            strokeWidth={0.8 - i * 0.2}
-            strokeOpacity={0.55 - i * 0.1}
-            transform={`rotate(${rot}, ${w / 2}, ${h / 2})`}
-            animate={{ rotate: [rot, rot + 360] }}
-            transition={{ duration: 14 + i * 4, repeat: Infinity, ease: "linear" }}
-            style={{ originX: `${w / 2}px`, originY: `${h / 2}px` }}
-          />
-        ))}
-        {/* Core fill */}
-        <motion.ellipse
-          cx={w / 2} cy={h / 2} rx={w * 0.28} ry={h * 0.14}
-          fill={`url(#holoGrad${hue})`}
-          filter={`url(#holoBlur${hue})`}
-          animate={{ opacity: [0.6, 1, 0.6], scaleX: [1, 1.08, 1], scaleY: [1, 1.12, 1] }}
-          transition={{ duration: 3 + delay, repeat: Infinity, ease: "easeInOut" }}
-          style={{ originX: `${w / 2}px`, originY: `${h / 2}px` }}
-        />
-        {/* Particle dots */}
-        {[0, 1, 2, 3, 4].map(j => {
-          const angle = (j / 5) * 360;
-          const px = w / 2 + Math.cos(toRad(angle)) * w * 0.38;
-          const py = h / 2 + Math.sin(toRad(angle)) * h * 0.18;
-          return (
-            <motion.circle
-              key={j} cx={px} cy={py} r={1.2}
-              fill={`hsl(${hue + j * 15}, 90%, 80%)`}
-              animate={{ opacity: [0, 1, 0], r: [0.8, 1.8, 0.8] }}
-              transition={{ duration: 2, repeat: Infinity, delay: j * 0.4, ease: "easeInOut" }}
-            />
-          );
-        })}
-      </svg>
-    </motion.div>
-  );
-}
-
 // ─── Main wheel ───────────────────────────────────────────────────────────────
 
 export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClick, showDecans: initShowDecans = false, derivedOffset = 0, onHouseClick }: ChartWheelProps) {
   const [hoveredPlanet, setHoveredPlanet] = useState<string | null>(null);
   const [showDecans, setShowDecans] = useState(initShowDecans);
-
-  // Holographic parallax tilt — the wheel responds to the viewer like a projection
-  const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
-  const handleTiltMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!interactive) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width - 0.5;
-    const py = (e.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ rx: -py * 10, ry: px * 10 });
-  };
-  const handleTiltLeave = () => setTilt({ rx: 0, ry: 0 });
 
   const cx = size / 2;
   const cy = size / 2;
@@ -200,36 +123,8 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
   ];
 
   return (
-    <div
-      className="relative"
-      style={{ width: size, height: size, perspective: 900 }}
-      onMouseMove={handleTiltMove}
-      onMouseLeave={handleTiltLeave}
-    >
-     <motion.div
-      className="relative w-full h-full"
-      initial={{ opacity: 0, scale: 0.92, rotateZ: -8 }}
-      animate={{ opacity: 1, scale: 1, rotateZ: 0, rotateX: tilt.rx, rotateY: tilt.ry }}
-      transition={{ rotateX: { type: "spring", stiffness: 120, damping: 18 }, rotateY: { type: "spring", stiffness: 120, damping: 18 }, default: { duration: 1.1, ease: [0.16, 1, 0.3, 1] } }}
-      style={{ transformStyle: "preserve-3d" }}
-     >
-
-      {/* ── Rotating holographic scan beam ── */}
-      <motion.div
-        className="absolute inset-0 rounded-full pointer-events-none z-10"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
-        style={{
-          background: "conic-gradient(from 0deg, transparent 0deg, transparent 330deg, rgba(123,111,212,0.10) 350deg, rgba(167,139,250,0.16) 358deg, transparent 360deg)",
-          mixBlendMode: "screen",
-        }}
-      />
-
-      {/* ── Holographic ambient orbs ── */}
-      <HoloOrb x={-88} y={size * 0.12} scale={1.0} hue={250} delay={0} />
-      <HoloOrb x={-72} y={size * 0.60} scale={0.78} hue={200} delay={1.2} />
-      <HoloOrb x={size - 48} y={size * 0.08} scale={0.90} hue={280} delay={0.6} />
-      <HoloOrb x={size - 36} y={size * 0.62} scale={0.82} hue={220} delay={1.8} />
+    <div className="relative" style={{ width: size, height: size }}>
+     <div className="relative w-full h-full">
 
       {/* ── Outer ambient glow ── */}
       <div className="absolute inset-0 rounded-full pointer-events-none" style={{
@@ -306,12 +201,8 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
         <circle cx={cx} cy={cy} r={zodOuter} fill="rgba(4,4,18,0.92)" />
         <circle cx={cx} cy={cy} r={zodOuter} fill="url(#cwStars)" />
 
-        {/* ── Outer decorative tick ring (slow clockwise) ── */}
-        <motion.g
-          animate={{ rotate: 360 }}
-          transition={{ duration: 180, repeat: Infinity, ease: "linear" }}
-          style={{ originX: `${cx}px`, originY: `${cy}px` }}
-        >
+        {/* ── Outer decorative tick ring ── */}
+        <g>
           <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="rgba(123,111,212,0.2)" strokeWidth="0.8" />
           {Array.from({ length: 72 }).map((_, i) => {
             const isMaj = i % 6 === 0; const isMed = i % 3 === 0;
@@ -324,7 +215,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
                 strokeWidth={isMaj ? "1.2" : "0.6"} />
             );
           })}
-        </motion.g>
+        </g>
 
         {/* ── Zodiac band ── */}
         {SIGNS.map((sign, i) => {
@@ -467,14 +358,11 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
           return (
             <g>
               {/* Glowing sector */}
-              <motion.path
+              <path
                 d={sectorPath}
                 fill="rgba(232,121,249,0.09)"
                 stroke="rgba(232,121,249,0.35)"
                 strokeWidth="0.8"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4 }}
                 style={{ filter: "drop-shadow(0 0 6px rgba(232,121,249,0.5))" }}
               />
               {/* Derived house numbers in middle ring */}
@@ -483,7 +371,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
                 const midLon = lon + ((houseLons[(i + 1) % 12] - lon + 360) % 360) / 2;
                 const pt = polarToXY(lonToAngle(midLon, ascLon), zodInner * 0.75, cx, cy);
                 return (
-                  <motion.text
+                  <text
                     key={i}
                     x={pt.x} y={pt.y}
                     textAnchor="middle" dominantBaseline="central"
@@ -491,16 +379,13 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
                     fill={derivedNum === 1 ? "#e879f9" : "rgba(232,121,249,0.45)"}
                     fontWeight={derivedNum === 1 ? "700" : "400"}
                     style={{ userSelect: "none", fontFamily: "'Fragment Mono', monospace" }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: i * 0.03, duration: 0.3 }}
                   >
                     {derivedNum}
-                  </motion.text>
+                  </text>
                 );
               })}
               {/* PRISM ASC badge */}
-              <motion.g initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4 }}>
+              <g>
                 <circle cx={badgePt.x} cy={badgePt.y} r="14"
                   fill="rgba(4,4,20,0.9)" stroke="#e879f9" strokeWidth="1.2"
                   style={{ filter: "drop-shadow(0 0 8px rgba(232,121,249,0.7))" }} />
@@ -511,7 +396,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
                 >
                   PRISM
                 </text>
-              </motion.g>
+              </g>
             </g>
           );
         })()}
@@ -550,15 +435,12 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
               const pt1 = polarToXY(p1.angle, aspectR, cx, cy);
               const pt2 = polarToXY(p2.angle, aspectR, cx, cy);
               return (
-                <motion.line key={i}
+                <line key={i}
                   x1={pt1.x} y1={pt1.y} x2={pt2.x} y2={pt2.y}
                   stroke={cfg.color} strokeWidth="0.85"
                   opacity={cfg.opacity}
                   strokeDasharray={cfg.dash === "none" ? undefined : cfg.dash}
                   filter="url(#cwGlow)"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: cfg.opacity }}
-                  transition={{ delay: i * 0.06 + 0.6, duration: 0.8 }}
                 />
               );
             })
@@ -573,13 +455,10 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
               const pt1 = polarToXY(asp.a1, aspectR, cx, cy);
               const pt2 = polarToXY(asp.a2, aspectR, cx, cy);
               return (
-                <motion.line key={i}
+                <line key={i}
                   x1={pt1.x} y1={pt1.y} x2={pt2.x} y2={pt2.y}
                   stroke={cfg.color} strokeWidth="0.85" opacity={cfg.opacity}
                   filter="url(#cwGlow)"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: cfg.opacity }}
-                  transition={{ delay: i * 0.1 + 0.5, duration: 0.9 }}
                 />
               );
             })
@@ -587,35 +466,19 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
         {/* ── Core nebula orb ── */}
         {/* Outer glow halo */}
-        <motion.circle cx={cx} cy={cy} r={coreR * 3.2}
-          fill="url(#cwCoreGrad)"
-          animate={{ scale: [1, 1.10, 1] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          style={{ originX: `${cx}px`, originY: `${cy}px` }}
-        />
+        <circle cx={cx} cy={cy} r={coreR * 3.2} fill="url(#cwCoreGrad)" />
         {/* Energy ring 1 */}
-        <motion.circle cx={cx} cy={cy} r={coreR * 2.0} fill="none"
-          stroke="rgba(123,111,212,0.4)" strokeWidth="0.8"
-          animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.8, 0.4] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-          style={{ originX: `${cx}px`, originY: `${cy}px` }}
-        />
+        <circle cx={cx} cy={cy} r={coreR * 2.0} fill="none"
+          stroke="rgba(123,111,212,0.4)" strokeWidth="0.8" opacity={0.6} />
         {/* Energy ring 2 */}
-        <motion.circle cx={cx} cy={cy} r={coreR * 1.5} fill="none"
-          stroke="rgba(6,182,212,0.5)" strokeWidth="0.6"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-          style={{ originX: `${cx}px`, originY: `${cy}px` }}
-        />
+        <circle cx={cx} cy={cy} r={coreR * 1.5} fill="none"
+          stroke="rgba(6,182,212,0.5)" strokeWidth="0.6" opacity={0.75} />
         {/* Core */}
         <circle cx={cx} cy={cy} r={coreR} fill="rgba(123,111,212,0.7)"
           style={{ filter: "drop-shadow(0 0 8px rgba(123,111,212,0.9))" }} />
-        <motion.circle cx={cx} cy={cy} r={coreR * 0.55}
-          fill="rgba(255,255,255,0.9)"
-          animate={{ scale: [1, 1.35, 1], opacity: [0.7, 1, 0.7] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          style={{ originX: `${cx}px`, originY: `${cy}px`,
-            filter: "drop-shadow(0 0 4px rgba(255,255,255,0.95))" }}
+        <circle cx={cx} cy={cy} r={coreR * 0.55}
+          fill="rgba(255,255,255,0.9)" opacity={0.85}
+          style={{ filter: "drop-shadow(0 0 4px rgba(255,255,255,0.95))" }}
         />
         {/* Radiating spokes */}
         {Array.from({ length: 12 }).map((_, i) => {
@@ -646,23 +509,18 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
           const degPt = polarToXY(planet.angle, zodInner - 20, cx, cy);
 
           return (
-            <motion.g
+            <g
               key={planet.name}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.06 + 0.35, type: "spring", stiffness: 220, damping: 18 }}
               style={{ cursor: (interactive || onPlanetClick) ? "pointer" : "default" }}
               onMouseEnter={() => (interactive || onPlanetClick) && setHoveredPlanet(planet.name)}
               onMouseLeave={() => setHoveredPlanet(null)}
               onClick={() => onPlanetClick?.(planet.name as PlanetName)}
             >
-              {/* Pulsing halo */}
-              <motion.circle cx={pt.x} cy={pt.y} r={isHovered ? 16 : 11}
+              {/* Halo */}
+              <circle cx={pt.x} cy={pt.y} r={isHovered ? 16 : 11}
                 fill={`${planet.color}22`}
                 stroke={`${planet.color}60`} strokeWidth="0.8"
                 filter="url(#cwPlanetGlow)"
-                animate={{ r: isHovered ? 16 : [11, 12.5, 11] }}
-                transition={{ duration: 2.5 + i * 0.2, repeat: Infinity, ease: "easeInOut" }}
               />
               {/* Planet dot */}
               <circle cx={pt.x} cy={pt.y} r="2.8" fill={planet.color}
@@ -688,17 +546,15 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
               )}
               {/* Degree near zodiac ring */}
               {isHovered && (
-                <motion.text x={degPt.x} y={degPt.y}
+                <text x={degPt.x} y={degPt.y}
                   textAnchor="middle" dominantBaseline="central"
                   fontSize="6.5" fill={planet.color} fontWeight="600"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
                   style={{ userSelect: "none", fontFamily: "'Fragment Mono', monospace" }}
                 >
                   {planet.signDeg?.toFixed(1)}°
-                </motion.text>
+                </text>
               )}
-            </motion.g>
+            </g>
           );
         })}
       </svg>
@@ -742,7 +598,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
           );
         })()}
       </AnimatePresence>
-     </motion.div>
+     </div>
     </div>
   );
 }

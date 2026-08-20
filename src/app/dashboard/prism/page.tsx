@@ -271,17 +271,21 @@ export default function PrismPage() {
       </motion.div>
 
       {/* ── Main layout ── */}
-      <div style={{ position: "absolute", top: 48, left: 64, right: 0, bottom: 0, display: "flex" }}>
+      <div
+        className="left-0 md:left-16 flex-col md:flex-row overflow-y-auto md:overflow-hidden"
+        style={{ position: "absolute", top: 48, right: 0, bottom: 0, display: "flex" }}
+      >
 
         {/* ── Left: House lens selector ── */}
         <motion.div
           initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
+          className="w-full md:w-40 md:overflow-y-auto"
           style={{
-            width: 160, flexShrink: 0,
+            flexShrink: 0,
             borderRight: "1px solid rgba(232,121,249,0.1)",
-            overflowY: "auto", scrollbarWidth: "none",
+            scrollbarWidth: "none",
             padding: "12px 8px",
             display: "flex", flexDirection: "column", gap: 3,
           }}
@@ -353,7 +357,15 @@ export default function PrismPage() {
             transition={{ duration: 0.35 }}
           >
             <ChartWheel
-              size={Math.min(520, window?.innerWidth ? window.innerWidth - 500 : 480)}
+              size={(() => {
+                // Reserves room for the left lens-list + right reading panel,
+                // which sit beside the wheel on desktop but stack above/below
+                // it on mobile — window.innerWidth - 500 goes negative under
+                // ~500px wide, so the reserve itself needs to shrink there.
+                const w = typeof window !== "undefined" ? window.innerWidth : 960;
+                const reserve = w < 768 ? 80 : 500;
+                return Math.min(520, Math.max(240, w - reserve));
+              })()}
               chart={chart ?? undefined}
               interactive
               derivedOffset={lens.offset}
@@ -368,10 +380,11 @@ export default function PrismPage() {
           initial={{ opacity: 0, x: 12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.15 }}
+          className="w-full md:w-[272px] md:overflow-y-auto"
           style={{
-            width: 272, flexShrink: 0,
+            flexShrink: 0,
             borderLeft: "1px solid rgba(232,121,249,0.1)",
-            overflowY: "auto", scrollbarWidth: "none",
+            scrollbarWidth: "none",
             display: "flex", flexDirection: "column",
           }}
         >

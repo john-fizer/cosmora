@@ -745,10 +745,10 @@ export default function ElectionalPage() {
             <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>LOADING SKY DATA</p>
           </div>
         ) : (
-          <div className="flex-1 flex min-h-0 overflow-hidden">
+          <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-y-auto md:overflow-hidden">
 
             {/* Left: activity selector + details */}
-            <div className="flex-1 flex flex-col min-h-0 overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
+            <div className="flex flex-col md:min-h-0 md:flex-1 md:overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
               <div className="px-5 py-5 space-y-6">
 
                 {/* Activity grid */}
@@ -883,7 +883,7 @@ export default function ElectionalPage() {
 
             {/* Right: hour-by-hour timeline */}
             <div
-              className="w-80 flex-shrink-0 flex flex-col overflow-hidden"
+              className="w-full md:w-80 flex-shrink-0 flex flex-col md:overflow-hidden"
               style={{ borderLeft: "1px solid rgba(34,197,94,0.1)" }}
             >
               <div
@@ -894,7 +894,7 @@ export default function ElectionalPage() {
                 <span className="text-[13px] ml-1" style={{ color: "#1e293b" }}>· {selectedActivity.name}</span>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-3" style={{ scrollbarWidth: "thin" }}>
+              <div className="md:flex-1 md:overflow-y-auto p-3" style={{ scrollbarWidth: "thin" }}>
                 <HourTimeline
                   hours={hours}
                   now={now}

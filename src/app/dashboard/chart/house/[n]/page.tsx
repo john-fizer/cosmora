@@ -51,7 +51,8 @@ const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
 
 function HouseOracle({ houseNum, chart, meta }: { houseNum: number; chart: ChartData; meta: HouseMeta }) {
   const [text, setText] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [wanted, setWanted] = useState(false);
   const started = useRef(false);
 
   const house = chart.houses[houseNum - 1];
@@ -60,8 +61,12 @@ function HouseOracle({ houseNum, chart, meta }: { houseNum: number; chart: Chart
   const occupants = chart.planets.filter(p => p.house === houseNum);
 
   useEffect(() => {
-    if (started.current || !house) return;
+    // Calls the AI Oracle — must wait for the user to press "Read the
+    // Oracle" (wanted) rather than firing just because this page loaded,
+    // since every visit would otherwise be a billed call.
+    if (started.current || !house || !wanted) return;
     started.current = true;
+    setLoading(true);
 
     const occupantStr = occupants.length > 0
       ? occupants.map(p => `${p.name} (${p.sign}${p.retrograde ? " ℞" : ""}${p.dignity ? ", " + p.dignity : ""})`).join(", ")
@@ -102,7 +107,7 @@ function HouseOracle({ houseNum, chart, meta }: { houseNum: number; chart: Chart
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [houseNum, house, lord, lordPlanet, occupants]);
+  }, [houseNum, house, lord, lordPlanet, occupants, wanted]);
 
   return (
     <HolographicCard glowColor={`${meta.color}22`} scanLine={loading} style={{ padding: 28 }}>
@@ -121,7 +126,7 @@ function HouseOracle({ houseNum, chart, meta }: { houseNum: number; chart: Chart
             <p key={i} style={{ marginBottom: 16 }}>{para}</p>
           ))}
         </div>
-      ) : (
+      ) : loading ? (
         <div style={{ display: "flex", gap: 8, alignItems: "center", color: "#475569", fontSize: 13 }}>
           <motion.div
             animate={{ opacity: [0.3, 1, 0.3] }}
@@ -130,6 +135,13 @@ function HouseOracle({ houseNum, chart, meta }: { houseNum: number; chart: Chart
           />
           Consulting the cosmos...
         </div>
+      ) : (
+        <button
+          onClick={() => setWanted(true)}
+          style={{ color: meta.color, fontSize: 13, fontWeight: 600, cursor: "pointer", background: "none", border: "none", padding: 0 }}
+        >
+          Read the Oracle →
+        </button>
       )}
     </HolographicCard>
   );
@@ -185,7 +197,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
       />
 
 
-      <main style={{ flex: 1, marginLeft: 64, padding: "32px 32px 80px", position: "relative", zIndex: 1, maxWidth: 1100 }}>
+      <main className="ml-0 md:ml-16 px-4 md:px-8 pb-[110px] md:pb-20" style={{ flex: 1, paddingTop: 32, position: "relative", zIndex: 1, maxWidth: 1100 }}>
 
         {/* Header */}
         <motion.div
@@ -240,7 +252,7 @@ export default function HousePage({ params }: { params: Promise<{ n: string }> }
         </motion.div>
 
         {/* Hero: cusp data + themes */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, marginBottom: 40 }}>
+        <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: 32, marginBottom: 40 }}>
 
           {/* Left: cusp visualization */}
           <motion.div

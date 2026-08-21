@@ -1850,15 +1850,25 @@ export default function ChartPage() {
             )}
           </div>
 
-          {/* Tab switcher */}
-          <div className="flex items-center gap-1">
+          {/* Tab switcher — 11 tabs don't fit any viewport in one row, so this
+              scrolls horizontally instead of forcing the whole page wider
+              (mobile browsers expand the layout viewport to fit overflowing
+              content rather than clipping it, dragging everything with it). */}
+          <div
+            className="flex items-center gap-1 overflow-x-auto"
+            style={{
+              scrollbarWidth: "none", maxWidth: "100%",
+              WebkitMaskImage: "linear-gradient(to right, black 0, black calc(100% - 16px), transparent 100%)",
+              maskImage: "linear-gradient(to right, black 0, black calc(100% - 16px), transparent 100%)",
+            }}
+          >
             {TABS.map(tab => (
               <motion.button
                 key={tab.id}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setActiveTab(tab.id)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-bold tracking-wide cursor-pointer transition-all duration-200"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-bold tracking-wide cursor-pointer transition-all duration-200 flex-shrink-0"
                 style={{
                   background: activeTab === tab.id ? "rgba(123,111,212,0.25)" : "rgba(255,255,255,0.03)",
                   border: activeTab === tab.id ? "1px solid rgba(123,111,212,0.4)" : "1px solid rgba(255,255,255,0.06)",
@@ -2017,17 +2027,21 @@ export default function ChartPage() {
                       <p className="text-[13px] tracking-widest" style={{ color: "#475569" }}>RECALCULATING</p>
                     </div>
                   ) : (
-                    <motion.div
-                      animate={{ y: [0, -8, 0] }}
-                      transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                    >
+                    <div>
                       <ChartWheel
-                        size={splitView ? 380 : 500}
+                        size={(() => {
+                          // 380/500 assumed a desktop-width viewport always had
+                          // room; on a real ~390-430px phone that overflowed
+                          // the page horizontally regardless of splitView.
+                          const w = typeof window !== "undefined" ? window.innerWidth : 960;
+                          if (w < 768) return Math.min(splitView ? 300 : 340, w - 40);
+                          return splitView ? 380 : 500;
+                        })()}
                         interactive
                         chart={chart}
                         onPlanetClick={(name) => warpTo("/dashboard/chart/" + name.toLowerCase())}
                       />
-                    </motion.div>
+                    </div>
                   )}
 
                   {/* Planet detail card on select */}

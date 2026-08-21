@@ -73,7 +73,11 @@ export function ChartSummaryBar({ chart, profileName, onHouseSystemChange, recal
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex-shrink-0 flex items-center justify-between px-6 py-3 gap-4 overflow-x-auto"
+      // justify-content:space-between with overflowing content in a
+      // scrollable flex row pushes content off the start edge in a way
+      // that isn't reachable by scrolling in some browsers — flex-start
+      // (default) plus an ml-auto spacer keeps everything scrollable.
+      className="flex-shrink-0 flex items-center px-6 py-3 gap-4 overflow-x-auto w-full min-w-0"
       style={{
         background: "rgba(2,2,18,0.8)",
         borderBottom: "1px solid rgba(123,111,212,0.12)",
@@ -108,7 +112,7 @@ export function ChartSummaryBar({ chart, profileName, onHouseSystemChange, recal
       </div>
 
       {/* House system switcher */}
-      <div className="flex items-center gap-1 flex-shrink-0">
+      <div className="flex items-center gap-1 flex-shrink-0 md:ml-auto">
         {HOUSE_SYSTEMS.map(hs => (
           <motion.button
             key={hs.value}

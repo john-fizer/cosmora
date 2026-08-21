@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { PLANET_SYMBOLS } from "@/lib/astrology/types";
+import { PLANET_SYMBOLS, TRADITIONAL_RULERS } from "@/lib/astrology/types";
 import type { ChartData, PlanetName } from "@/lib/astrology/types";
 import { selectSkills, formatSkillsForPrompt } from "@/lib/skills";
 import { buildKnowledgeContext } from "@/lib/oracle/knowledge";
@@ -14,10 +14,34 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 function buildChartContext(chart: ChartData): string {
   const p = chart.planets;
   const ascSign = chart.houses[0]?.sign ?? "Unknown";
+  const lordOfYear = chart.annualProfection.lordOfYear;
+
+  // Planets grouped by house — makes co-presence (planets sharing a house)
+  // visible at a glance instead of requiring a scan of a flat list. Missing
+  // a co-present planet was the exact failure mode this was added to fix.
+  const byHouse = new Map<number, typeof p>();
+  for (const pl of p) {
+    if (!byHouse.has(pl.house)) byHouse.set(pl.house, []);
+    byHouse.get(pl.house)!.push(pl);
+  }
 
   const planetSummary = p.map(pl => {
     const decanStr = pl.decan ? ` decan ${pl.decan} (${pl.decanLord} face)` : "";
-    return `${PLANET_SYMBOLS[pl.name] ?? pl.name} ${pl.name}: ${pl.signDegree.toFixed(1)}° ${pl.sign}${decanStr} (House ${pl.house})${pl.retrograde ? " Rx" : ""}${pl.dignity ? ` [${pl.dignity}]` : ""}`;
+    const lordTag = pl.name === lordOfYear ? " ← LORD OF YEAR (activated this year)" : "";
+    return `${PLANET_SYMBOLS[pl.name] ?? pl.name} ${pl.name}: ${pl.signDegree.toFixed(1)}° ${pl.sign}${decanStr} (House ${pl.house})${pl.retrograde ? " Rx" : ""}${pl.dignity ? ` [${pl.dignity}]` : ""}${lordTag}`;
+  }).join("\n");
+
+  // Precomputed so the model reads the correct dispositor instead of
+  // deriving "sign on cusp → traditional ruler → where that planet actually
+  // sits" itself — exactly the multi-step chain it was getting wrong.
+  const houseRulers = chart.houses.map(h => {
+    const ruler = TRADITIONAL_RULERS[h.sign];
+    const rulerPlanet = p.find(pl => pl.name === ruler);
+    const coOccupants = (byHouse.get(h.house) ?? []).map(pl => pl.name).join(", ") || "empty";
+    const rulerLoc = rulerPlanet
+      ? `${rulerPlanet.sign} House ${rulerPlanet.house}${rulerPlanet.retrograde ? " Rx" : ""}${rulerPlanet.dignity ? ` [${rulerPlanet.dignity}]` : ""}${rulerPlanet.name === lordOfYear ? " ← LORD OF YEAR" : ""}`
+      : "unknown";
+    return `House ${h.house} (${h.sign}): ruled by ${ruler}, who is in ${rulerLoc}. Occupants of House ${h.house}: ${coOccupants}.`;
   }).join("\n");
 
   const aspects = chart.aspects.slice(0, 12).map(a =>
@@ -37,6 +61,9 @@ CHART SUMMARY:
 NATAL PLANETS:
 ${planetSummary}
 
+HOUSE RULERS (dispositors — use this table directly, do not re-derive it):
+${houseRulers}
+
 KEY ASPECTS:
 ${aspects}
 
@@ -50,7 +77,15 @@ Lot of Fortune: ${chart.lotOfFortune.toFixed(1)}° | Lot of Spirit: ${chart.lotO
 
 const TOOL_USE_INSTRUCTIONS = `
 TOOL USE INSTRUCTIONS:
-When you have access to a chart, use the available tools to look up specific data BEFORE giving your reading. This allows you to give a precise, data-grounded response rather than working from memory. Use 1–3 tools per response — don't over-query.`;
+When you have access to a chart, use the available tools to look up specific data BEFORE giving your reading. This allows you to give a precise, data-grounded response rather than working from memory. Use 1–3 tools per response — don't over-query.
+
+DELINEATION METHODOLOGY — follow this order for ANY house or topic-based reading (e.g. "what about my relationships / career / money"):
+1. Identify the relevant house and read its ruler directly from the HOUSE RULERS table in the chart context — that table is precomputed and correct. Never re-derive a dispositor from the sign on the cusp yourself; a wrong dispositor invalidates everything built on it.
+2. Note the dispositor's own sign, house, and dignity from that same table entry — this is where the topic's "real story" plays out, not just the house itself.
+3. Check that table's "Occupants" list for the dispositor's house AND for the topic house itself. Every co-present planet modifies or shares the story — naming the dispositor while silently skipping a co-occupant (especially the Lord of the Year, marked inline) is an incomplete reading, not a concise one.
+4. Cross-reference: is the dispositor, or any co-occupant you just found, the Lord of the Year (tagged in the chart context)? If so, that activation is often the single most important point in the reading — lead with it, don't bury it.
+5. Only then check aspects to the dispositor and co-occupants before writing.
+Do this silently before you start writing prose — the reader should never have to ask "did you check X" for you to mention it.`;
 
 // ─── Oracle tools ─────────────────────────────────────────────────────────────
 

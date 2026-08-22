@@ -58,8 +58,10 @@ export function HUDFrame() {
       {/* Corner brackets */}
       <Corner pos="tl" /><Corner pos="tr" /><Corner pos="bl" /><Corner pos="br" />
 
-      {/* Top status readout */}
-      <div className="absolute top-3 left-1/2 -translate-x-1/2 flex items-center gap-5"
+      {/* Top status readout — desktop only: on mobile this centered overlay
+          lands on top of each page's own title/breadcrumb, which sits in
+          roughly the same space now that there's no sidebar to offset it. */}
+      <div className="hidden md:flex absolute top-3 left-1/2 -translate-x-1/2 items-center gap-5"
         style={{ ...MONO, color: "rgba(200,165,91,0.55)" }}>
         <span>COSMORA</span>
         <span style={{ color: "rgba(200,165,91,0.3)" }}>·</span>
@@ -68,8 +70,10 @@ export function HUDFrame() {
         <span style={{ color: "rgba(123,111,212,0.7)" }}>{sector}</span>
       </div>
 
-      {/* Bottom-right version tag */}
-      <div className="absolute bottom-3 right-12"
+      {/* Bottom-right version tag — desktop only: on mobile this sits at
+          the same z-index and screen region as the bottom nav bar's
+          labels and renders on top of them. */}
+      <div className="hidden md:block absolute bottom-3 right-12"
         style={{ ...MONO, color: "rgba(200,165,91,0.28)" }}>
         OBSERVATORY LINK · STABLE
       </div>

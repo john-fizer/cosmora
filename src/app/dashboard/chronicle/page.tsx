@@ -415,17 +415,17 @@ export default function ChroniclePage() {
   return (
     <div className="fixed inset-0 overflow-hidden" style={{ background: "#010810" }}>
       <DashboardBg />
-      <div className="absolute inset-0 overflow-y-auto" style={{ left: 64, scrollbarWidth: "none" }}>
+      <div className="absolute inset-0 overflow-y-auto left-0 md:left-16" style={{ scrollbarWidth: "none" }}>
         <div style={{ maxWidth: 860, margin: "0 auto", padding: "28px 24px 60px" }}>
 
           {/* Header */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
+          <div className="flex flex-wrap items-center" style={{ gap: 12, marginBottom: 4 }}>
             <div style={{ width: 6, height: 28, background: GOLD, borderRadius: 3, boxShadow: `0 0 10px ${GOLD}` }} />
             <h1 style={{ color: "#C0D4FF", fontSize: 22, fontFamily: MONO, letterSpacing: "0.15em", textTransform: "uppercase" }}>Chronicle</h1>
             <span style={{ background: `${GOLD}12`, border: `1px solid ${GOLD}35`, borderRadius: 20, padding: "3px 12px", color: GOLD, fontSize: 9, fontFamily: MONO, letterSpacing: "0.15em" }}>
               {events.length} EVENTS
             </span>
-            <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
+            <div className="md:ml-auto" style={{ display: "flex", gap: 6 }}>
               <button onClick={doExport} style={{ padding: "5px 12px", borderRadius: 8, cursor: "pointer", background: "transparent", border: BORDER, color: "#445577", fontSize: 9, fontFamily: MONO }}>EXPORT</button>
               <button onClick={() => fileRef.current?.click()} style={{ padding: "5px 12px", borderRadius: 8, cursor: "pointer", background: "transparent", border: BORDER, color: "#445577", fontSize: 9, fontFamily: MONO }}>IMPORT</button>
               <input ref={fileRef} type="file" accept=".json" style={{ display: "none" }} onChange={e => { if (e.target.files?.[0]) doImport(e.target.files[0]); e.target.value = ""; }} />

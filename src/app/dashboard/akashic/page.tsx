@@ -194,7 +194,7 @@ export default function AkashicPage() {
           </p>
 
           {/* Grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {filtered.map((e, i) => (
               <motion.div key={e.slug} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.02, 0.4) }}>
                 <EntryCard entry={e} isRelevant={relevantSlugs.has(e.slug)} accentColor={CAT_COLORS[e.category]} />

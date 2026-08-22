@@ -283,7 +283,7 @@ export default function FirdariaPage() {
             </motion.div>
           )}
 
-          <div style={{ display: "grid", gridTemplateColumns: currentMajor ? "1fr 1fr" : "1fr", gap: 20, marginBottom: 32 }}>
+          <div className={currentMajor ? "grid grid-cols-1 md:grid-cols-2 gap-5 mb-8" : "grid grid-cols-1 gap-5 mb-8"}>
             {/* Sub-periods */}
             {currentMajor && (
               <div>

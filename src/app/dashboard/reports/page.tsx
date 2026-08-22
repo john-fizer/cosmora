@@ -612,8 +612,7 @@ export default function ReportsPage() {
       <div className="ml-0 md:ml-16" style={{ padding: "0 0 80px" }}>
 
         {/* ── Header ── */}
-        <div style={{
-          padding: "52px 52px 40px",
+        <div className="px-5 pt-8 pb-8 md:px-[52px] md:pt-[52px] md:pb-10" style={{
           borderBottom: "1px solid rgba(255,255,255,0.05)",
         }}>
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
@@ -643,7 +642,7 @@ export default function ReportsPage() {
           </motion.div>
         </div>
 
-        <div style={{ padding: "40px 52px", maxWidth: 1200 }}>
+        <div className="px-5 py-8 md:px-[52px] md:py-10" style={{ maxWidth: 1200 }}>
 
           {/* ── Report history ── */}
           {reports.filter(r => r.status !== "generating").length > 0 && (
@@ -671,7 +670,7 @@ export default function ReportsPage() {
 
           {/* ── Report type catalog ── */}
           <div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between" style={{ marginBottom: 20, gap: 10 }}>
               <p style={{
                 color: "rgba(255,255,255,0.25)", fontSize: 13, letterSpacing: "0.18em",
                 fontFamily: "'Fragment Mono', monospace",
@@ -681,11 +680,11 @@ export default function ReportsPage() {
               </p>
 
               {/* Persona selector */}
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div className="flex-wrap" style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 13, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em" }}>
                   VOICE
                 </span>
-                <div style={{ display: "flex", gap: 4 }}>
+                <div className="flex-wrap" style={{ display: "flex", gap: 4 }}>
                   {ORACLE_PERSONAS.map(p => {
                     const isActive = p.id === personaId;
                     return (

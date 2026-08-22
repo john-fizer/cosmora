@@ -278,7 +278,7 @@ export default function VedicPage() {
           </div>
 
           {/* Lagna + Moon spotlight */}
-          <div style={{ display: "grid", gridTemplateColumns: moonPlacement ? "1fr 1fr" : "1fr", gap: 14, marginBottom: 22 }}>
+          <div className={moonPlacement ? "grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-[22px]" : "grid grid-cols-1 gap-3.5 mb-[22px]"}>
             <div style={{ background: "linear-gradient(135deg, rgba(167,139,250,0.12), rgba(5,8,22,0.8))", border: "1px solid rgba(167,139,250,0.3)", borderRadius: 14, padding: "14px 18px" }}>
               <div style={{ color: "#a78bfa", fontSize: 8, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 8 }}>LAGNA</div>
               <div style={{ color: "#C0D4FF", fontSize: 17, fontFamily: "'Fragment Mono', monospace" }}>
@@ -326,17 +326,19 @@ export default function VedicPage() {
               {sidereal.placements.map((p, i) => {
                 const col = PLANET_COLORS[p.name] ?? "#8899BB";
                 return (
-                  <div key={i} style={{ display: "grid", gridTemplateColumns: "28px 90px 130px 1fr 60px 30px", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 9, background: "rgba(10,15,35,0.5)" }}>
-                    <span style={{ color: col, fontSize: 14, textAlign: "center" }}>{PLANET_SYMBOLS[p.name] ?? "·"}</span>
-                    <span style={{ color: col, fontSize: 10, fontFamily: "'Fragment Mono', monospace" }}>{p.name.replace("NorthNode", "N.Node")}</span>
-                    <span style={{ color: "#C0D4FF", fontSize: 11, fontFamily: "'Fragment Mono', monospace" }}>
-                      {SIGN_SYMBOLS[p.sign] ?? ""} {p.signDegree.toFixed(1)}° {p.sign}
-                    </span>
-                    <span style={{ color: "#8899BB", fontSize: 10, fontFamily: "'Fragment Mono', monospace" }}>
+                  <div key={i} style={{ padding: "8px 12px", borderRadius: 9, background: "rgba(10,15,35,0.5)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                      <span style={{ color: col, fontSize: 14, width: 16, textAlign: "center", flexShrink: 0 }}>{PLANET_SYMBOLS[p.name] ?? "·"}</span>
+                      <span style={{ color: col, fontSize: 10, fontFamily: "'Fragment Mono', monospace", flexShrink: 0 }}>{p.name.replace("NorthNode", "N.Node")}</span>
+                      <span style={{ color: "#C0D4FF", fontSize: 11, fontFamily: "'Fragment Mono', monospace", flexShrink: 0 }}>
+                        {SIGN_SYMBOLS[p.sign] ?? ""} {p.signDegree.toFixed(1)}° {p.sign}
+                      </span>
+                      <span style={{ color: "#556688", fontSize: 9, fontFamily: "'Fragment Mono', monospace", marginLeft: "auto", flexShrink: 0 }}>H{p.house}</span>
+                      {p.retrograde && <span style={{ color: "#334466", fontSize: 9, fontFamily: "'Fragment Mono', monospace", flexShrink: 0 }}>Rx</span>}
+                    </div>
+                    <div style={{ color: "#8899BB", fontSize: 10, fontFamily: "'Fragment Mono', monospace", marginTop: 4, paddingLeft: 24 }}>
                       {p.nakshatra.nakshatra.name} · <span style={{ color: "#a78bfa" }}>P{p.nakshatra.pada}</span> · {p.nakshatra.nakshatra.lord}
-                    </span>
-                    <span style={{ color: "#556688", fontSize: 9, fontFamily: "'Fragment Mono', monospace" }}>H{p.house}</span>
-                    <span style={{ color: "#334466", fontSize: 9, fontFamily: "'Fragment Mono', monospace" }}>{p.retrograde ? "Rx" : ""}</span>
+                    </div>
                   </div>
                 );
               })}
@@ -428,7 +430,7 @@ export default function VedicPage() {
 
           {/* DASHA */}
           {tab === "dasha" && dasha && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <p style={{ color: "#445577", fontSize: 8, letterSpacing: "0.18em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>MAJOR DASHAS</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>

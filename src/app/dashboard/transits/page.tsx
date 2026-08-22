@@ -1556,10 +1556,10 @@ export default function TransitsPage() {
             <p className="text-[14px]" style={{ color: "#64748b" }}>No chart found.</p>
           </div>
         ) : (
-          <div className="flex-1 flex min-h-0 overflow-hidden">
+          <div className="flex-1 flex flex-col md:flex-row min-h-0 md:overflow-hidden overflow-y-auto">
 
             {/* Left: transit aspects */}
-            <div className="flex-1 flex flex-col min-h-0">
+            <div className="flex flex-col md:flex-1 md:min-h-0">
 
               {/* Aspects header */}
               <div
@@ -1724,7 +1724,7 @@ export default function TransitsPage() {
 
             {/* Right panel: ingresses + stats (TODAY modes only) */}
             {viewMode !== "forecast" && <div
-              className="w-72 flex-shrink-0 flex flex-col overflow-hidden"
+              className="w-full md:w-72 flex-shrink-0 flex flex-col overflow-hidden"
               style={{ borderLeft: "1px solid rgba(123,111,212,0.1)" }}
             >
 

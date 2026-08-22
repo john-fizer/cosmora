@@ -430,7 +430,7 @@ export default function SolarReturnPage() {
 
         {/* Top bar */}
         <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-          className="flex-shrink-0 flex items-center justify-between px-4 md:px-6 py-3"
+          className="flex-shrink-0 flex flex-col md:flex-row md:items-center md:justify-between gap-2 px-4 md:px-6 py-3"
           style={{ borderBottom: "1px solid rgba(245,158,11,0.15)", background: "rgba(1,1,14,0.85)", backdropFilter: "blur(20px)" }}>
           <div className="flex items-center gap-3">
             <Link href="/dashboard">
@@ -446,14 +446,20 @@ export default function SolarReturnPage() {
             <span className="text-[13px] font-bold tracking-widest" style={{ background: "linear-gradient(135deg, #f59e0b, #f97316)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               SOLAR RETURN
             </span>
-            {profile && <><span style={{ color: "#1e293b" }}>/</span><span className="text-[13px]" style={{ color: "#64748b" }}>{profile.name}</span></>}
+            {profile && <span className="hidden md:inline"><span style={{ color: "#1e293b" }}> / </span><span className="text-[13px]" style={{ color: "#64748b" }}>{profile.name}</span></span>}
           </div>
 
           {srChart && (
-            <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div className="flex items-center gap-1 p-1 rounded-xl w-full md:w-auto overflow-x-auto"
+              style={{
+                background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
+                scrollbarWidth: "none",
+                maskImage: "linear-gradient(to right, black calc(100% - 20px), transparent 100%)",
+                WebkitMaskImage: "linear-gradient(to right, black calc(100% - 20px), transparent 100%)",
+              }}>
               {(["overview", "planets", "aspects", "houses", "oracle"] as const).map(tab => (
                 <motion.button key={tab} whileTap={{ scale: 0.95 }} onClick={() => setActiveTab(tab)}
-                  className="px-2.5 py-1 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer transition-all duration-200"
+                  className="flex-shrink-0 px-2.5 py-1 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer transition-all duration-200"
                   style={{
                     background: activeTab === tab ? "rgba(245,158,11,0.2)" : "transparent",
                     color: activeTab === tab ? "#fbbf24" : "#334155",

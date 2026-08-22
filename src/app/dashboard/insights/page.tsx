@@ -2564,7 +2564,12 @@ export default function InsightsPage() {
 
         {/* Tab row */}
         <div className="flex-shrink-0 flex items-center gap-1 px-4 md:px-6 py-2 overflow-x-auto"
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.04)", scrollbarWidth: "none" }}>
+          style={{
+            borderBottom: "1px solid rgba(255,255,255,0.04)",
+            scrollbarWidth: "none",
+            maskImage: "linear-gradient(to right, black calc(100% - 24px), transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to right, black calc(100% - 24px), transparent 100%)",
+          }}>
           {TABS.map(({ id, label }) => (
             <motion.button key={id} whileTap={{ scale: 0.95 }}
               onClick={() => setActiveTab(id)}

@@ -753,7 +753,7 @@ export default function ReleasingPage() {
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="flex-shrink-0 flex items-center justify-between px-4 md:px-6 py-3"
+            className="flex-shrink-0 flex flex-col md:flex-row md:items-center md:justify-between gap-2 px-4 md:px-6 py-3"
             style={{
               borderBottom: "1px solid rgba(6,182,212,0.1)",
               background: "rgba(1,1,14,0.85)",

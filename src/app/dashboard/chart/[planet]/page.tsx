@@ -265,7 +265,7 @@ export default function PlanetDetailPage({
       <DashboardBg />
 
       {/* ── Horizon Hero ── */}
-      <section style={{ position: "relative", height: "62vh", minHeight: 480, overflow: "hidden", marginLeft: 68 }}>
+      <section className="ml-0 md:ml-[68px]" style={{ position: "relative", height: "62vh", minHeight: 480, overflow: "hidden" }}>
         {/* Space → atmosphere gradient */}
         <div style={{ position: "absolute", inset: 0, background: `linear-gradient(180deg, #00000a 25%, ${meta.bgColor}99 100%)` }} />
 

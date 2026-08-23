@@ -516,7 +516,7 @@ export default function AstrocartographyPage() {
     <div className="fixed inset-0" style={{ background: "#010810", overflow: "hidden" }}>
 
       {/* ── Canvas ── */}
-      <div className="absolute inset-0" style={{ left: 64, bottom: 74 }}>
+      <div className="absolute inset-0 left-0 md:left-16" style={{ bottom: 74 }}>
         {viewMode === "flat" ? (
           lines.length > 0 && (
             <FlatEarthCanvas

@@ -190,7 +190,7 @@ export default function OracleMemoriesPage() {
     <div className="flex h-screen overflow-hidden" style={{ background: "var(--bg-base, #08080F)" }}>
       <DashboardBg />
 
-      <div className="flex-1 flex flex-col overflow-hidden" style={{ marginLeft: 64 }}>
+      <div className="flex-1 flex flex-col overflow-hidden ml-0 md:ml-16">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}

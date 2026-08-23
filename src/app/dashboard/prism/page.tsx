@@ -229,8 +229,9 @@ export default function PrismPage() {
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
+        className="left-0 md:left-16"
         style={{
-          position: "absolute", top: 0, left: 64, right: 0, height: 48,
+          position: "absolute", top: 0, right: 0, height: 48,
           display: "flex", alignItems: "center", gap: 20, paddingLeft: 20, paddingRight: 20,
           background: "rgba(5,5,16,0.9)", borderBottom: "1px solid rgba(232,121,249,0.12)",
           backdropFilter: "blur(24px)", zIndex: 20,

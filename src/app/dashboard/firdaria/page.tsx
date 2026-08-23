@@ -210,7 +210,7 @@ export default function FirdariaPage() {
   return (
     <div className="fixed inset-0 overflow-hidden" style={{ background: "#010810" }}>
       <DashboardBg />
-      <div className="absolute inset-0 overflow-y-auto" style={{ left: 64, scrollbarWidth: "none" }}>
+      <div className="absolute inset-0 overflow-y-auto left-0 md:left-16" style={{ scrollbarWidth: "none" }}>
         <div style={{ maxWidth: 900, margin: "0 auto", padding: "28px 24px 48px" }}>
 
           {/* Header */}

@@ -66,8 +66,9 @@ function SectionCard({
           initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1], delay: index * 0.12 }}
+          className="px-5 md:px-9"
           style={{
-            padding: "32px 36px",
+            paddingTop: 32, paddingBottom: 32,
             borderBottom: "1px solid rgba(255,255,255,0.04)",
           }}
         >
@@ -407,11 +408,10 @@ export default function ReportPage() {
         )}
       </AnimatePresence>
 
-      <div style={{ marginLeft: 64 }}>
+      <div className="ml-0 md:ml-16">
 
         {/* ── Report header ── */}
-        <div style={{
-          padding: "44px 52px 36px",
+        <div className="px-5 pt-8 pb-7 md:px-[52px] md:pt-11 md:pb-9" style={{
           background: `linear-gradient(180deg, ${meta.color}08 0%, transparent 100%)`,
           borderBottom: "1px solid rgba(255,255,255,0.05)",
         }}>
@@ -522,7 +522,8 @@ export default function ReportPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            style={{ padding: "8px 52px 24px" }}
+            className="px-5 md:px-[52px]"
+            style={{ paddingTop: 8, paddingBottom: 24 }}
           >
             <Link
               href="/dashboard/marriages"
@@ -543,8 +544,9 @@ export default function ReportPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
+            className="px-5 md:px-[52px] flex-wrap"
             style={{
-              padding: "24px 52px 60px",
+              paddingTop: 24, paddingBottom: 60,
               display: "flex", gap: 12, alignItems: "center",
               borderTop: "1px solid rgba(255,255,255,0.04)",
             }}

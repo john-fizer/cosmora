@@ -808,7 +808,7 @@ export default function CompatibilityPage() {
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="flex-shrink-0 flex items-center justify-between px-4 md:px-6 py-3"
+          className="flex-shrink-0 flex flex-col md:flex-row md:items-center md:justify-between gap-2 px-4 md:px-6 py-3"
           style={{
             borderBottom: "1px solid rgba(6,182,212,0.1)",
             background: "rgba(1,1,14,0.85)",
@@ -837,8 +837,13 @@ export default function CompatibilityPage() {
           {/* Tab switcher */}
           {score && (
             <div
-              className="flex items-center gap-1 p-1 rounded-xl"
-              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}
+              className="flex items-center gap-1 p-1 rounded-xl w-full md:w-auto overflow-x-auto"
+              style={{
+                background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
+                scrollbarWidth: "none",
+                maskImage: "linear-gradient(to right, black calc(100% - 20px), transparent 100%)",
+                WebkitMaskImage: "linear-gradient(to right, black calc(100% - 20px), transparent 100%)",
+              }}
             >
               {(["score", "aspects", "overlay", "composite", "oracle"] as const).map(tab => {
                 const label: Record<typeof tab, string> = { score: "OVERVIEW", aspects: "ASPECTS", overlay: "OVERLAY", composite: "COMPOSITE", oracle: "ORACLE" };
@@ -847,7 +852,7 @@ export default function CompatibilityPage() {
                     key={tab}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setActiveTab(tab)}
-                    className="px-2.5 py-1 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer transition-all duration-200"
+                    className="flex-shrink-0 px-2.5 py-1 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer transition-all duration-200"
                     style={{
                       background: activeTab === tab ? "rgba(244,114,182,0.2)" : "transparent",
                       color: activeTab === tab ? "#f9a8d4" : "#334155",

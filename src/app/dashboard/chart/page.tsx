@@ -1824,10 +1824,10 @@ export default function ChartPage() {
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="flex-shrink-0 flex items-center justify-between px-6 py-3"
+          className="flex-shrink-0 flex flex-wrap md:flex-nowrap items-center justify-between gap-2 md:gap-0 px-4 md:px-6 py-3"
           style={{ borderBottom: "1px solid rgba(123,111,212,0.1)", background: "rgba(2,2,18,0.7)", backdropFilter: "blur(20px)" }}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-shrink-0 order-1 md:order-none">
             <Link href="/dashboard">
               <motion.button
                 whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
@@ -1855,7 +1855,7 @@ export default function ChartPage() {
               (mobile browsers expand the layout viewport to fit overflowing
               content rather than clipping it, dragging everything with it). */}
           <div
-            className="flex items-center gap-1 overflow-x-auto"
+            className="flex items-center gap-1 overflow-x-auto order-3 md:order-none w-full md:w-auto md:flex-1 md:min-w-0 md:mx-4"
             style={{
               scrollbarWidth: "none", maxWidth: "100%",
               WebkitMaskImage: "linear-gradient(to right, black 0, black calc(100% - 16px), transparent 100%)",
@@ -1881,7 +1881,7 @@ export default function ChartPage() {
             ))}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0 order-2 md:order-none">
             {/* Export chart SVG */}
             {chart && (
               <motion.button

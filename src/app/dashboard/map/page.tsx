@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useId } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
 import type { AstroLine, AstroLinePlanet, AstroLineAngle, LocationScore } from "@/lib/astrology/astrocartography";
@@ -26,6 +26,13 @@ const CATEGORY_GLYPH: Record<EnergyCategory, string> = {
   Career: "♕", Love: "♥", Wealth: "✦", Creativity: "✧", Spirituality: "☽", Transformation: "⚡",
 };
 
+type Layers = {
+  planetLines: boolean; energyCenters: boolean; citySkylines: boolean;
+  paranLines: boolean; localSpace: boolean;
+};
+type ViewOptionsState = { houses: boolean; aspects: boolean; midpoints: boolean; parans: boolean };
+type MobileDrawerTab = "planets" | "layers" | "energy" | "view" | "data" | null;
+
 // ─── Eye icon ─────────────────────────────────────────────────────────────────
 function EyeIcon({ visible }: { visible: boolean }) {
   return (
@@ -37,6 +44,190 @@ function EyeIcon({ visible }: { visible: boolean }) {
         : <line x1="1" y1="1" x2="14" y2="10" stroke="#334466" strokeWidth="1" strokeLinecap="round" />
       }
     </svg>
+  );
+}
+
+// ─── Shared panel content — rendered inside the desktop floating cards
+// AND inside the mobile bottom-sheet drawer tabs, so there's one source
+// of truth for each panel instead of duplicated markup. ────────────────
+
+function BirthDataContent({ birthDisplay, birthPlace, latLonStr }: {
+  birthDisplay: { date: string; time: string }; birthPlace: string; latLonStr: string;
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      {[birthDisplay.date, birthDisplay.time, birthPlace, latLonStr].map((v, i) => (
+        <p key={i} style={{
+          color: i === 0 ? "#C0D4FF" : i === 1 ? "#8899BB" : "#556688",
+          fontSize: 11, fontFamily: "'Fragment Mono', monospace", lineHeight: 1.4,
+        }}>{v}</p>
+      ))}
+    </div>
+  );
+}
+
+function MapControlsContent({ layers, toggleLayer, onReset }: {
+  layers: Layers; toggleLayer: (k: keyof Layers) => void; onReset: () => void;
+}) {
+  return (
+    <>
+      <div className="flex flex-col gap-2">
+        {([
+          { key: "planetLines",   label: "PLANET LINES"    },
+          { key: "energyCenters", label: "ENERGY CENTERS"  },
+          { key: "citySkylines",  label: "CITY SKYLINES"   },
+          { key: "paranLines",    label: "PARAN LINES"      },
+          { key: "localSpace",    label: "LOCAL SPACE"      },
+        ] as { key: keyof Layers; label: string }[]).map(({ key, label }) => (
+          <div key={key} className="flex items-center justify-between cursor-pointer" onClick={() => toggleLayer(key)}>
+            <span style={{ color: layers[key] ? "#8899BB" : "#334466", fontSize: 9, letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace" }}>
+              {label}
+            </span>
+            <EyeIcon visible={layers[key]} />
+          </div>
+        ))}
+      </div>
+      <button onClick={onReset} style={{
+        marginTop: 10, width: "100%", padding: "5px 0",
+        background: "rgba(50,213,255,0.06)", border: "1px solid rgba(50,213,255,0.2)",
+        borderRadius: 7, color: "#C8A55B", fontSize: 8, letterSpacing: "0.12em",
+        fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
+      }}>
+        RESET VIEW
+      </button>
+    </>
+  );
+}
+
+function EnergyIntensityContent() {
+  const gradId = useId();
+  return (
+    <div style={{ position: "relative", width: 90, height: 90, margin: "0 auto" }}>
+      <svg width="90" height="90" viewBox="0 0 90 90">
+        <defs>
+          <linearGradient id={gradId} x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#4488FF" />
+            <stop offset="40%" stopColor="#B06AFF" />
+            <stop offset="100%" stopColor="#FF71D1" />
+          </linearGradient>
+        </defs>
+        <circle cx="45" cy="45" r="36" fill="none" stroke="rgba(26,68,187,0.25)" strokeWidth="5" />
+        <circle
+          cx="45" cy="45" r="36" fill="none"
+          stroke={`url(#${gradId})`} strokeWidth="5"
+          strokeLinecap="round"
+          strokeDasharray="226" strokeDashoffset="56"
+          transform="rotate(-90 45 45)"
+        />
+        <text x="45" y="49" textAnchor="middle" fontSize="16" fill="white">✦</text>
+      </svg>
+      <span style={{ position: "absolute", top: 6, right: 0, fontSize: 7, fontFamily: "'Fragment Mono', monospace", color: "#FF71D1", letterSpacing: "0.06em" }}>HIGH</span>
+      <span style={{ position: "absolute", bottom: 6, right: 0, fontSize: 7, fontFamily: "'Fragment Mono', monospace", color: "#4466AA", letterSpacing: "0.06em" }}>LOW</span>
+    </div>
+  );
+}
+
+function ViewOptionsContent({ viewOptions, toggleOption }: {
+  viewOptions: ViewOptionsState; toggleOption: (k: keyof ViewOptionsState) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      {([
+        { key: "houses",    label: "HOUSES"    },
+        { key: "aspects",   label: "ASPECTS"   },
+        { key: "midpoints", label: "MIDPOINTS" },
+        { key: "parans",    label: "PARANS"    },
+      ] as { key: keyof ViewOptionsState; label: string }[]).map(({ key, label }) => (
+        <div key={key} className="flex items-center justify-between">
+          <span style={{ color: "#778899", fontSize: 9, letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace" }}>
+            {label}
+          </span>
+          <button onClick={() => toggleOption(key)} style={{
+            padding: "2px 8px",
+            background: viewOptions[key] ? "rgba(34,197,94,0.12)" : "rgba(100,116,139,0.1)",
+            border: `1px solid ${viewOptions[key] ? "rgba(34,197,94,0.3)" : "rgba(100,116,139,0.2)"}`,
+            borderRadius: 20,
+            color: viewOptions[key] ? "#22c55e" : "#475569",
+            fontSize: 8, letterSpacing: "0.1em",
+            fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
+          }}>
+            {viewOptions[key] ? "SHOW" : "HIDE"}
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PlanetTogglesContent({ activePlanets, togglePlanet, onToggleAll, wrap }: {
+  activePlanets: Set<AstroLinePlanet>; togglePlanet: (p: AstroLinePlanet) => void;
+  onToggleAll: () => void; wrap?: boolean;
+}) {
+  return (
+    <div className={wrap ? "flex flex-wrap items-center gap-1.5" : "flex items-center gap-1 flex-1 overflow-x-auto"} style={wrap ? undefined : { scrollbarWidth: "none" }}>
+      {ASTRO_PLANETS.map(p => {
+        const on  = activePlanets.has(p);
+        const col = PLANET_COLORS[p];
+        return (
+          <button key={p} onClick={() => togglePlanet(p)} style={{
+            display: "flex", alignItems: "center", gap: 4, padding: "3px 10px",
+            background: on ? `${col}14` : "transparent",
+            border: `1px solid ${on ? col + "45" : "transparent"}`,
+            borderRadius: 20, color: on ? col : "#334466",
+            fontSize: 9, letterSpacing: "0.08em",
+            fontFamily: "'Fragment Mono', monospace",
+            cursor: "pointer", transition: "all 0.15s", flexShrink: 0,
+          }}>
+            <span style={{ fontSize: 11 }}>{PLANET_SYMBOLS[p]}</span>
+            <span>{p.toUpperCase()}</span>
+          </button>
+        );
+      })}
+      <button onClick={onToggleAll} style={{
+        padding: "3px 10px", flexShrink: 0,
+        background: "rgba(50,213,255,0.06)", border: "1px solid rgba(50,213,255,0.2)",
+        borderRadius: 20, color: "#C8A55B", fontSize: 8,
+        letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
+      }}>
+        {activePlanets.size === ASTRO_PLANETS.length ? "NONE" : "ALL"}
+      </button>
+    </div>
+  );
+}
+
+function EnergyCategoryContent({ activeCategories, toggleCategory, onToggleAll, wrap }: {
+  activeCategories: Set<EnergyCategory>; toggleCategory: (c: EnergyCategory) => void;
+  onToggleAll: () => void; wrap?: boolean;
+}) {
+  return (
+    <div className={wrap ? "flex flex-wrap items-center gap-1.5" : "flex items-center gap-1 overflow-x-auto"} style={wrap ? undefined : { scrollbarWidth: "none" }}>
+      {ENERGY_CATEGORIES.map(cat => {
+        const on  = activeCategories.has(cat);
+        const col = ENERGY_COLORS[cat];
+        return (
+          <button key={cat} onClick={() => toggleCategory(cat)} title={cat} style={{
+            display: "flex", alignItems: "center", gap: 4, padding: "3px 9px",
+            background: on ? `${col}1A` : "transparent",
+            border: `1px solid ${on ? col + "55" : "rgba(40,60,110,0.3)"}`,
+            borderRadius: 20, color: on ? col : "#3A4A66",
+            fontSize: 8, letterSpacing: "0.08em",
+            fontFamily: "'Fragment Mono', monospace",
+            cursor: "pointer", transition: "all 0.15s", flexShrink: 0,
+          }}>
+            <span style={{ fontSize: 10 }}>{CATEGORY_GLYPH[cat]}</span>
+            <span>{cat.toUpperCase()}</span>
+          </button>
+        );
+      })}
+      <button onClick={onToggleAll} style={{
+        padding: "3px 9px", flexShrink: 0,
+        background: "rgba(50,213,255,0.06)", border: "1px solid rgba(50,213,255,0.2)",
+        borderRadius: 20, color: "#C8A55B", fontSize: 7.5,
+        letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
+      }}>
+        {activeCategories.size === ENERGY_CATEGORIES.length ? "NONE" : "ALL"}
+      </button>
+    </div>
   );
 }
 
@@ -77,10 +268,11 @@ function LocationPanel({ lat, lon, scores, onClose }: {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
+      className="bottom-[162px] md:bottom-[90px]"
       style={{
         // motion's animate={{y}} owns `transform`, so a plain translateX
         // here gets silently dropped — center with left/right + auto margin.
-        position: "absolute", bottom: 90, left: 0, right: 0, margin: "0 auto",
+        position: "absolute", left: 0, right: 0, margin: "0 auto",
         width: "min(400px, 92vw)", maxHeight: "50vh",
         background: "rgba(5,8,22,0.94)",
         border: "1px solid rgba(100,130,255,0.25)",
@@ -402,6 +594,14 @@ export default function AstrocartographyPage() {
     new Set<EnergyCategory>(ENERGY_CATEGORIES)
   );
 
+  // Mobile only: the desktop layout shows Birth Data / Map Controls /
+  // Energy Intensity / View Options as four permanent floating cards over
+  // the globe. On a phone that's six overlapping panels fighting the
+  // globe for space — folded into one bottom-sheet drawer with tabs
+  // instead, so only one panel is visible at a time and the globe is the
+  // default view.
+  const [mobileDrawerTab, setMobileDrawerTab] = useState<MobileDrawerTab>(null);
+
   // ── Load profile ─────────────────────────────────────────────────────────────
   useEffect(() => {
     const id = getActiveProfileId();
@@ -515,8 +715,12 @@ export default function AstrocartographyPage() {
   return (
     <div className="fixed inset-0" style={{ background: "#010810", overflow: "hidden" }}>
 
-      {/* ── Canvas ── */}
-      <div className="absolute inset-0 left-0 md:left-16" style={{ bottom: 74 }}>
+      {/* ── Canvas ──
+          bottom clearance is this page's own 74px bottom bar PLUS the
+          global mobile nav bar (measured ~71px + safe-area) on mobile,
+          where the nav bar sits at the true viewport bottom, on top of
+          (and previously hidden behind) this page's own bottom bar. ── */}
+      <div className="absolute inset-0 left-0 md:left-16 bottom-[146px] md:bottom-[74px]">
         {viewMode === "flat" ? (
           lines.length > 0 && (
             <FlatEarthCanvas
@@ -568,55 +772,48 @@ export default function AstrocartographyPage() {
         {/* Title */}
         <div style={{ flexShrink: 0 }}>
           <span style={{ color: "#C0D4FF", fontSize: 11, fontWeight: 600, letterSpacing: "0.12em" }}>COSMORA 2070</span>
-          <span style={{ color: "#334466", fontSize: 11, letterSpacing: "0.08em" }}> · ASTROCARTOGRAPHY{viewMode === "flat" ? " · FLAT EARTH MODEL" : ""}</span>
+          <span className="hidden sm:inline" style={{ color: "#334466", fontSize: 11, letterSpacing: "0.08em" }}> · ASTROCARTOGRAPHY{viewMode === "flat" ? " · FLAT EARTH MODEL" : ""}</span>
         </div>
 
-        {/* Planet toggles */}
-        <div className="flex items-center gap-1 flex-1 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-          {ASTRO_PLANETS.map(p => {
-            const on  = activePlanets.has(p);
-            const col = PLANET_COLORS[p];
-            return (
-              <button key={p} onClick={() => togglePlanet(p)} style={{
-                display: "flex", alignItems: "center", gap: 4, padding: "3px 10px",
-                background: on ? `${col}14` : "transparent",
-                border: `1px solid ${on ? col + "45" : "transparent"}`,
-                borderRadius: 20, color: on ? col : "#334466",
-                fontSize: 9, letterSpacing: "0.08em",
-                fontFamily: "'Fragment Mono', monospace",
-                cursor: "pointer", transition: "all 0.15s", flexShrink: 0,
-              }}>
-                <span style={{ fontSize: 11 }}>{PLANET_SYMBOLS[p]}</span>
-                <span>{p.toUpperCase()}</span>
-              </button>
-            );
-          })}
+        {/* Planet toggles — desktop only; mobile reaches these via the FILTERS drawer below */}
+        <div className="hidden md:flex flex-1 min-w-0">
+          <PlanetTogglesContent
+            activePlanets={activePlanets}
+            togglePlanet={togglePlanet}
+            onToggleAll={() => setActivePlanets(activePlanets.size === ASTRO_PLANETS.length ? new Set() : new Set(ASTRO_PLANETS))}
+          />
         </div>
 
-        {/* ALL / NONE */}
+        {/* Mobile: single trigger for the panel drawer (planets/layers/energy/view/data) */}
         <button
-          onClick={() => setActivePlanets(activePlanets.size === ASTRO_PLANETS.length ? new Set() : new Set(ASTRO_PLANETS))}
+          onClick={() => setMobileDrawerTab(t => t ? null : "planets")}
+          className="flex md:hidden items-center gap-1.5 ml-auto"
           style={{
-            padding: "3px 10px", flexShrink: 0,
-            background: "rgba(50,213,255,0.06)", border: "1px solid rgba(50,213,255,0.2)",
-            borderRadius: 20, color: "#C8A55B", fontSize: 8,
+            padding: "4px 12px", flexShrink: 0,
+            background: mobileDrawerTab ? "rgba(50,213,255,0.14)" : "rgba(50,213,255,0.06)",
+            border: "1px solid rgba(50,213,255,0.25)",
+            borderRadius: 20, color: "#C8A55B", fontSize: 9,
             letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
           }}
         >
-          {activePlanets.size === ASTRO_PLANETS.length ? "NONE" : "ALL"}
+          ☰ FILTERS
         </button>
       </motion.div>
 
-      {/* ── Category toggle bar — thins the active-city field by energy ── */}
+      {/* ── Category toggle bar — thins the active-city field by energy.
+          Desktop only; mobile reaches this via the FILTERS drawer's
+          Energy tab, so it doesn't add a third permanent bar over the
+          globe on a phone. ── */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.15 }}
+        className="hidden md:flex"
         style={{
           // motion's animate={{y}} owns `transform`, so translateX(-50%)
           // gets dropped — center via left/right + auto margin instead.
           position: "absolute", top: 52, left: 0, right: 0, margin: "0 auto",
-          display: "flex", alignItems: "center", gap: 5,
+          alignItems: "center", gap: 5,
           width: "fit-content", maxWidth: "94vw",
           background: "rgba(5,8,22,0.82)",
           border: "1px solid rgba(30,60,120,0.35)",
@@ -627,48 +824,25 @@ export default function AstrocartographyPage() {
         <span style={{ color: "#445577", fontSize: 7, letterSpacing: "0.18em", fontFamily: "'Fragment Mono', monospace", paddingLeft: 4 }}>
           ENERGY
         </span>
-        {ENERGY_CATEGORIES.map(cat => {
-          const on  = activeCategories.has(cat);
-          const col = ENERGY_COLORS[cat];
-          return (
-            <button key={cat} onClick={() => toggleCategory(cat)} title={cat} style={{
-              display: "flex", alignItems: "center", gap: 4, padding: "3px 9px",
-              background: on ? `${col}1A` : "transparent",
-              border: `1px solid ${on ? col + "55" : "rgba(40,60,110,0.3)"}`,
-              borderRadius: 20, color: on ? col : "#3A4A66",
-              fontSize: 8, letterSpacing: "0.08em",
-              fontFamily: "'Fragment Mono', monospace",
-              cursor: "pointer", transition: "all 0.15s",
-            }}>
-              <span style={{ fontSize: 10 }}>{CATEGORY_GLYPH[cat]}</span>
-              <span>{cat.toUpperCase()}</span>
-            </button>
-          );
-        })}
-        <button
-          onClick={() => setActiveCategories(
-            activeCategories.size === ENERGY_CATEGORIES.length ? new Set() : new Set(ENERGY_CATEGORIES)
-          )}
-          style={{
-            padding: "3px 9px", marginLeft: 2,
-            background: "rgba(50,213,255,0.06)", border: "1px solid rgba(50,213,255,0.2)",
-            borderRadius: 20, color: "#C8A55B", fontSize: 7.5,
-            letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
-          }}
-        >
-          {activeCategories.size === ENERGY_CATEGORIES.length ? "NONE" : "ALL"}
-        </button>
+        <EnergyCategoryContent
+          activeCategories={activeCategories}
+          toggleCategory={toggleCategory}
+          onToggleAll={() => setActiveCategories(activeCategories.size === ENERGY_CATEGORIES.length ? new Set() : new Set(ENERGY_CATEGORIES))}
+        />
       </motion.div>
 
-      {/* ── Top-left: Birth data panel ── */}
+      {/* ── Desktop-only floating panels: Birth Data / Map Controls /
+          Energy Intensity / View Options. On mobile these four permanent
+          cards left almost no clear view of the globe, so they're folded
+          into the FILTERS drawer below instead. ── */}
+
+      {/* Top-left: Birth data panel */}
       <motion.div
         initial={{ opacity: 0, x: -12 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
+        className="hidden md:block"
         style={{
-          // Below the energy-category bar (which spans near-full-width on
-          // narrow screens) instead of beside it — top:54 put all three top
-          // panels on the same row, guaranteeing overlap under ~600px.
           position: "absolute", top: 96, left: 12, width: "min(174px, 44vw)",
           background: "rgba(5,8,22,0.82)",
           border: "1px solid rgba(30,60,120,0.35)",
@@ -679,27 +853,15 @@ export default function AstrocartographyPage() {
         <p style={{ color: "#C8A55B", fontSize: 7.5, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 8 }}>
           YOUR BIRTH DATA
         </p>
-        <div className="flex flex-col gap-1">
-          {[
-            birthDisplay.date,
-            birthDisplay.time,
-            birthPlace,
-            `${latStr}  ${lonStr}`,
-          ].map((v, i) => (
-            <p key={i} style={{
-              color: i === 0 ? "#C0D4FF" : i === 1 ? "#8899BB" : "#556688",
-              fontSize: 11, fontFamily: "'Fragment Mono', monospace",
-              lineHeight: 1.4,
-            }}>{v}</p>
-          ))}
-        </div>
+        <BirthDataContent birthDisplay={birthDisplay} birthPlace={birthPlace} latLonStr={`${latStr}  ${lonStr}`} />
       </motion.div>
 
-      {/* ── Top-right: Map controls panel ── */}
+      {/* Top-right: Map controls panel */}
       <motion.div
         initial={{ opacity: 0, x: 12 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
+        className="hidden md:block"
         style={{
           position: "absolute", top: 96, right: 16, width: "min(192px, 46vw)",
           background: "rgba(5,8,22,0.82)",
@@ -711,46 +873,18 @@ export default function AstrocartographyPage() {
         <p style={{ color: "#C8A55B", fontSize: 7.5, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 10 }}>
           MAP CONTROLS
         </p>
-        <div className="flex flex-col gap-2">
-          {([
-            { key: "planetLines",   label: "PLANET LINES"    },
-            { key: "energyCenters", label: "ENERGY CENTERS"  },
-            { key: "citySkylines",  label: "CITY SKYLINES"   },
-            { key: "paranLines",    label: "PARAN LINES"      },
-            { key: "localSpace",    label: "LOCAL SPACE"      },
-          ] as { key: keyof typeof layers; label: string }[]).map(({ key, label }) => (
-            <div key={key} className="flex items-center justify-between cursor-pointer"
-              onClick={() => toggleLayer(key)}>
-              <span style={{ color: layers[key] ? "#8899BB" : "#334466", fontSize: 9, letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace" }}>
-                {label}
-              </span>
-              <EyeIcon visible={layers[key]} />
-            </div>
-          ))}
-        </div>
-        <button
-          onClick={() => {
-            setActivePlanets(new Set(ASTRO_PLANETS));
-            setActiveAngles(new Set<AstroLineAngle>(["MC", "ASC"]));
-          }}
-          style={{
-            marginTop: 10, width: "100%", padding: "5px 0",
-            background: "rgba(50,213,255,0.06)",
-            border: "1px solid rgba(50,213,255,0.2)",
-            borderRadius: 7, color: "#C8A55B",
-            fontSize: 8, letterSpacing: "0.12em",
-            fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
-          }}
-        >
-          RESET VIEW
-        </button>
+        <MapControlsContent layers={layers} toggleLayer={toggleLayer} onReset={() => {
+          setActivePlanets(new Set(ASTRO_PLANETS));
+          setActiveAngles(new Set<AstroLineAngle>(["MC", "ASC"]));
+        }} />
       </motion.div>
 
-      {/* ── Bottom-left: Energy intensity gauge ── */}
+      {/* Bottom-left: Energy intensity gauge */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
+        className="hidden md:block"
         style={{
           position: "absolute", bottom: 84, left: 12, width: "min(140px, 38vw)",
           background: "rgba(5,8,22,0.82)",
@@ -762,35 +896,15 @@ export default function AstrocartographyPage() {
         <p style={{ color: "#C8A55B", fontSize: 7.5, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 8, textAlign: "center" }}>
           ENERGY INTENSITY
         </p>
-        <div style={{ position: "relative", width: 90, height: 90, margin: "0 auto" }}>
-          <svg width="90" height="90" viewBox="0 0 90 90">
-            <defs>
-              <linearGradient id="eiGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#4488FF" />
-                <stop offset="40%" stopColor="#B06AFF" />
-                <stop offset="100%" stopColor="#FF71D1" />
-              </linearGradient>
-            </defs>
-            <circle cx="45" cy="45" r="36" fill="none" stroke="rgba(26,68,187,0.25)" strokeWidth="5" />
-            <circle
-              cx="45" cy="45" r="36" fill="none"
-              stroke="url(#eiGrad)" strokeWidth="5"
-              strokeLinecap="round"
-              strokeDasharray="226" strokeDashoffset="56"
-              transform="rotate(-90 45 45)"
-            />
-            <text x="45" y="49" textAnchor="middle" fontSize="16" fill="white">✦</text>
-          </svg>
-          <span style={{ position: "absolute", top: 6, right: 0, fontSize: 7, fontFamily: "'Fragment Mono', monospace", color: "#FF71D1", letterSpacing: "0.06em" }}>HIGH</span>
-          <span style={{ position: "absolute", bottom: 6, right: 0, fontSize: 7, fontFamily: "'Fragment Mono', monospace", color: "#4466AA", letterSpacing: "0.06em" }}>LOW</span>
-        </div>
+        <EnergyIntensityContent />
       </motion.div>
 
-      {/* ── Bottom-right: View options ── */}
+      {/* Bottom-right: View options */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
+        className="hidden md:block"
         style={{
           position: "absolute", bottom: 84, right: 12, width: "min(180px, 46vw)",
           background: "rgba(5,8,22,0.82)",
@@ -802,41 +916,111 @@ export default function AstrocartographyPage() {
         <p style={{ color: "#C8A55B", fontSize: 7.5, letterSpacing: "0.2em", fontFamily: "'Fragment Mono', monospace", marginBottom: 8 }}>
           VIEW OPTIONS
         </p>
-        <div className="flex flex-col gap-1.5">
-          {([
-            { key: "houses",    label: "HOUSES"    },
-            { key: "aspects",   label: "ASPECTS"   },
-            { key: "midpoints", label: "MIDPOINTS" },
-            { key: "parans",    label: "PARANS"    },
-          ] as { key: keyof typeof viewOptions; label: string }[]).map(({ key, label }) => (
-            <div key={key} className="flex items-center justify-between">
-              <span style={{ color: "#778899", fontSize: 9, letterSpacing: "0.1em", fontFamily: "'Fragment Mono', monospace" }}>
-                {label}
-              </span>
-              <button onClick={() => toggleOption(key)} style={{
-                padding: "2px 8px",
-                background: viewOptions[key] ? "rgba(34,197,94,0.12)" : "rgba(100,116,139,0.1)",
-                border: `1px solid ${viewOptions[key] ? "rgba(34,197,94,0.3)" : "rgba(100,116,139,0.2)"}`,
-                borderRadius: 20,
-                color: viewOptions[key] ? "#22c55e" : "#475569",
-                fontSize: 8, letterSpacing: "0.1em",
-                fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
-              }}>
-                {viewOptions[key] ? "SHOW" : "HIDE"}
-              </button>
-            </div>
-          ))}
-        </div>
+        <ViewOptionsContent viewOptions={viewOptions} toggleOption={toggleOption} />
       </motion.div>
+
+      {/* ── Mobile-only FILTERS drawer: bottom sheet with tabs, replaces
+          the four cards above so only one panel is on screen at a time
+          and the globe stays clear by default. ── */}
+      <AnimatePresence>
+        {mobileDrawerTab && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 md:hidden"
+              style={{ background: "rgba(0,0,4,0.55)" }}
+              onClick={() => setMobileDrawerTab(null)}
+            />
+            <motion.div
+              initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              className="fixed left-0 right-0 bottom-0 z-40 md:hidden rounded-t-3xl"
+              style={{
+                background: "rgba(5,8,22,0.97)",
+                border: "1px solid rgba(30,60,120,0.35)",
+                borderBottom: "none",
+                backdropFilter: "blur(28px)",
+                // Stays below the global mobile nav bar (z-50) so it's
+                // always reachable — the drawer reserves matching bottom
+                // padding on its content instead of covering the nav.
+                maxHeight: "72vh", display: "flex", flexDirection: "column",
+              }}
+            >
+              {/* Tab switcher */}
+              <div className="flex items-center gap-1 overflow-x-auto flex-shrink-0" style={{ padding: "14px 14px 10px", scrollbarWidth: "none" }}>
+                {([
+                  { id: "planets", label: "PLANETS" },
+                  { id: "layers",  label: "LAYERS"  },
+                  { id: "energy",  label: "ENERGY"  },
+                  { id: "view",    label: "VIEW"    },
+                  { id: "data",    label: "DATA"    },
+                ] as { id: MobileDrawerTab; label: string }[]).map(t => (
+                  <button key={t.id} onClick={() => setMobileDrawerTab(t.id)} style={{
+                    flexShrink: 0, padding: "6px 14px",
+                    background: mobileDrawerTab === t.id ? "rgba(50,213,255,0.14)" : "transparent",
+                    border: mobileDrawerTab === t.id ? "1px solid rgba(50,213,255,0.3)" : "1px solid rgba(255,255,255,0.06)",
+                    borderRadius: 20, color: mobileDrawerTab === t.id ? "#C8A55B" : "#556688",
+                    fontSize: 10, letterSpacing: "0.1em",
+                    fontFamily: "'Fragment Mono', monospace", cursor: "pointer",
+                  }}>
+                    {t.label}
+                  </button>
+                ))}
+                <button onClick={() => setMobileDrawerTab(null)} style={{
+                  marginLeft: "auto", flexShrink: 0, color: "#4455AA", fontSize: 16,
+                  background: "none", border: "none", cursor: "pointer", padding: "0 4px",
+                }}>✕</button>
+              </div>
+
+              {/* Tab content — bottom padding matches the global mobile
+                  nav's real height (~71px + safe area) so content never
+                  sits underneath it. */}
+              <div className="overflow-y-auto" style={{ padding: "6px 18px", paddingBottom: "max(88px, calc(72px + env(safe-area-inset-bottom)))", scrollbarWidth: "none" }}>
+                {mobileDrawerTab === "planets" && (
+                  <PlanetTogglesContent
+                    activePlanets={activePlanets}
+                    togglePlanet={togglePlanet}
+                    onToggleAll={() => setActivePlanets(activePlanets.size === ASTRO_PLANETS.length ? new Set() : new Set(ASTRO_PLANETS))}
+                    wrap
+                  />
+                )}
+                {mobileDrawerTab === "layers" && (
+                  <MapControlsContent layers={layers} toggleLayer={toggleLayer} onReset={() => {
+                    setActivePlanets(new Set(ASTRO_PLANETS));
+                    setActiveAngles(new Set<AstroLineAngle>(["MC", "ASC"]));
+                  }} />
+                )}
+                {mobileDrawerTab === "energy" && (
+                  <>
+                    <div className="mb-4"><EnergyIntensityContent /></div>
+                    <EnergyCategoryContent
+                      activeCategories={activeCategories}
+                      toggleCategory={toggleCategory}
+                      onToggleAll={() => setActiveCategories(activeCategories.size === ENERGY_CATEGORIES.length ? new Set() : new Set(ENERGY_CATEGORIES))}
+                      wrap
+                    />
+                  </>
+                )}
+                {mobileDrawerTab === "view" && (
+                  <ViewOptionsContent viewOptions={viewOptions} toggleOption={toggleOption} />
+                )}
+                {mobileDrawerTab === "data" && (
+                  <BirthDataContent birthDisplay={birthDisplay} birthPlace={birthPlace} latLonStr={`${latStr}  ${lonStr}`} />
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* ── Bottom bar: view toggle + time scrubber ── */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
-        className="left-0 md:left-16"
+        className="left-0 md:left-16 bottom-[72px] md:bottom-0"
         style={{
-          position: "absolute", bottom: 0, right: 0, height: 74,
+          position: "absolute", right: 0, height: 74,
           background: "rgba(5,8,22,0.92)",
           borderTop: "1px solid rgba(30,60,120,0.3)",
           backdropFilter: "blur(24px)",
@@ -902,8 +1086,9 @@ export default function AstrocartographyPage() {
         whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setShowOracle(v => !v)}
+        className="bottom-[156px] md:bottom-[84px]"
         style={{
-          position: "absolute", bottom: 84, left: 0, right: 0, margin: "0 auto",
+          position: "absolute", left: 0, right: 0, margin: "0 auto",
           width: "fit-content",
           display: "flex", alignItems: "center", gap: 6,
           padding: "6px 18px",
@@ -929,10 +1114,11 @@ export default function AstrocartographyPage() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.22 }}
+            className="bottom-[206px] md:bottom-[134px]"
             style={{
               // motion's animate={{y,scale}} owns `transform` — center via
               // left/right + auto margin instead of a dropped translateX.
-              position: "absolute", bottom: 134, left: 0, right: 0, margin: "0 auto",
+              position: "absolute", left: 0, right: 0, margin: "0 auto",
               width: "min(320px, 92vw)", height: 380,
               background: "rgba(5,8,22,0.94)",
               border: "1px solid rgba(80,100,255,0.25)",

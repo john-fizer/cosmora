@@ -654,6 +654,31 @@ interface FlyState {
   arrived: boolean;
 }
 
+// A fixed vertical FOV means the HORIZONTAL FOV collapses on a narrow phone
+// screen — at fov:47 a wide desktop canvas (aspect ~1.7) sees ~75° across,
+// but a portrait phone (aspect ~0.46) only sees ~23° across, roughly a 3×
+// narrower window. That's what made the Sun look oversized and pushed
+// nearby planets to (or past) the frame edge on mobile. Widen the vertical
+// FOV as the canvas gets taller than it is wide so the horizontal field of
+// view stays in a reasonable range regardless of screen shape.
+const BASE_FOV = 47;
+function ResponsiveFov() {
+  const { camera, size } = useThree();
+  useEffect(() => {
+    if (!(camera instanceof THREE.PerspectiveCamera)) return;
+    const aspect = size.width / size.height;
+    let fov = BASE_FOV;
+    if (aspect < 1) {
+      const targetHorizontalFovRad = THREE.MathUtils.degToRad(58);
+      const uncappedFov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(targetHorizontalFovRad / 2) / aspect));
+      fov = Math.min(uncappedFov, 78);
+    }
+    camera.fov = fov;
+    camera.updateProjectionMatrix();
+  }, [camera, size.width, size.height]);
+  return null;
+}
+
 function OrreryCamera({
   flyRef,
   onArrived,
@@ -813,6 +838,7 @@ function OrreryScene({
         <meshBasicMaterial color="#0d1040" transparent opacity={0.08} side={THREE.DoubleSide} depthWrite={false} />
       </mesh>
 
+      <ResponsiveFov />
       <OrreryCamera flyRef={flyRef} onArrived={(name) => onNavigate?.(name)} autoRotate={autoRotate} />
 
       {/* No god-rays (they flicker when a backlit planet crosses the sun) and no

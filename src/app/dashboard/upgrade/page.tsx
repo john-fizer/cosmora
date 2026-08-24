@@ -76,7 +76,11 @@ function UpgradePageInner() {
     <div className="h-screen flex overflow-hidden">
       <DashboardBg />
 
-      <div className="flex-1 flex flex-col items-center justify-center md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-y-auto px-6 py-12">
+      {/* justify-center here used to trap the top of this content: when it's
+          taller than the viewport, centering a scrollable flex column makes
+          the portion that overflows above center unreachable by scrolling
+          (a well-known flexbox quirk) — top-aligned with padding instead. */}
+      <div className="flex-1 flex flex-col items-center md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-y-auto px-6 py-12">
 
         {justUpgraded && (
           <motion.div

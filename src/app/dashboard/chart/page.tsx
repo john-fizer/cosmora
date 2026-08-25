@@ -1850,17 +1850,13 @@ export default function ChartPage() {
             )}
           </div>
 
-          {/* Tab switcher — 11 tabs don't fit any viewport in one row, so this
-              scrolls horizontally instead of forcing the whole page wider
-              (mobile browsers expand the layout viewport to fit overflowing
-              content rather than clipping it, dragging everything with it). */}
+          {/* Tab switcher — 7 tabs don't fit one row on a phone. Cascades
+              onto additional rows via flex-wrap instead of hiding tabs
+              behind a horizontal scroll; on desktop there's enough width
+              that it never needs to wrap at all. */}
           <div
-            className="flex items-center gap-1 overflow-x-auto order-3 md:order-none w-full md:w-auto md:flex-1 md:min-w-0 md:mx-4"
-            style={{
-              scrollbarWidth: "none", maxWidth: "100%",
-              WebkitMaskImage: "linear-gradient(to right, black 0, black calc(100% - 16px), transparent 100%)",
-              maskImage: "linear-gradient(to right, black 0, black calc(100% - 16px), transparent 100%)",
-            }}
+            className="flex items-center gap-1 flex-wrap order-3 md:order-none w-full md:w-auto md:flex-1 md:min-w-0 md:mx-4"
+            style={{ maxWidth: "100%" }}
           >
             {TABS.map(tab => (
               <motion.button

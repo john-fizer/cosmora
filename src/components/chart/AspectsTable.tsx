@@ -56,22 +56,6 @@ export function AspectsTable({ chart, selectedPlanet }: AspectsTableProps) {
         )}
       </div>
 
-      {/* Headers */}
-      <div className="grid gap-3 px-4 py-2 text-[13px] font-bold tracking-widest flex-shrink-0"
-        style={{
-          color: "#475569",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-          gridTemplateColumns: "1.5fr 0.6fr 1.5fr 0.6fr 0.7fr 0.7fr 2fr",
-        }}>
-        <span>PLANET 1</span>
-        <span>ASPECT</span>
-        <span>PLANET 2</span>
-        <span>ORB</span>
-        <span>EXACT</span>
-        <span>APPLYING</span>
-        <span>MEANING</span>
-      </div>
-
       <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
         {filtered.length === 0 ? (
           <div className="flex items-center justify-center h-32">
@@ -105,61 +89,41 @@ export function AspectsTable({ chart, selectedPlanet }: AspectsTableProps) {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: i * 0.02 }}
-                      className="grid gap-3 px-4 py-2.5 transition-all duration-150"
+                      className="flex items-center gap-2 flex-wrap px-4 py-2.5 transition-all duration-150"
                       style={{
-                        gridTemplateColumns: "1.5fr 0.6fr 1.5fr 0.6fr 0.7fr 0.7fr 2fr",
                         borderBottom: "1px solid rgba(255,255,255,0.03)",
                         background: isHighlighted ? `${cfg.color}08` : "transparent",
                         borderLeft: asp.exact ? `2px solid ${cfg.color}60` : "2px solid transparent",
                       }}
                     >
-                      {/* Planet 1 */}
-                      <div className="flex items-center gap-2">
+                      <span className="flex items-center gap-2">
                         <span className="text-[14px]" style={{ color: p1color }}>{PLANET_SYMBOLS[asp.planet1]}</span>
                         <span className="text-[13px] font-medium" style={{ color: "#cbd5e1" }}>{asp.planet1}</span>
-                      </div>
+                      </span>
 
-                      {/* Aspect symbol */}
-                      <div className="flex items-center">
-                        <span className="text-base font-bold" style={{ color: cfg.color }}>{cfg.symbol}</span>
-                      </div>
+                      <span className="text-base font-bold" style={{ color: cfg.color }}>{cfg.symbol}</span>
 
-                      {/* Planet 2 */}
-                      <div className="flex items-center gap-2">
+                      <span className="flex items-center gap-2">
                         <span className="text-[14px]" style={{ color: p2color }}>{PLANET_SYMBOLS[asp.planet2]}</span>
                         <span className="text-[13px] font-medium" style={{ color: "#cbd5e1" }}>{asp.planet2}</span>
-                      </div>
+                      </span>
 
-                      {/* Orb */}
-                      <div className="flex items-center">
-                        <span className="text-[13px] font-mono" style={{ color: asp.orb < 1 ? cfg.color : "#64748b" }}>
-                          {asp.orb.toFixed(1)}°
-                        </span>
-                      </div>
+                      <span className="text-[13px] font-mono" style={{ color: asp.orb < 1 ? cfg.color : "#64748b" }}>
+                        {asp.orb.toFixed(1)}°
+                      </span>
 
-                      {/* Exact */}
-                      <div className="flex items-center">
-                        {asp.exact ? (
-                          <span className="text-[13px] font-bold px-1.5 py-0.5 rounded"
-                            style={{ background: `${cfg.color}20`, color: cfg.color }}>EXACT</span>
-                        ) : (
-                          <span className="text-[13px]" style={{ color: "#2d3748" }}>—</span>
-                        )}
-                      </div>
+                      {asp.exact && (
+                        <span className="text-[13px] font-bold px-1.5 py-0.5 rounded"
+                          style={{ background: `${cfg.color}20`, color: cfg.color }}>EXACT</span>
+                      )}
 
-                      {/* Applying */}
-                      <div className="flex items-center">
-                        <span className="text-[13px]" style={{ color: asp.applying ? "#22c55e" : "#64748b" }}>
-                          {asp.applying ? "▲ Appl." : "▼ Sep."}
-                        </span>
-                      </div>
+                      <span className="text-[13px]" style={{ color: asp.applying ? "#22c55e" : "#64748b" }}>
+                        {asp.applying ? "▲ Appl." : "▼ Sep."}
+                      </span>
 
-                      {/* Meaning snippet */}
-                      <div className="flex items-center">
-                        <span className="text-[13px] leading-tight" style={{ color: "#475569" }}>
-                          {asp.planet1} + {asp.planet2} themes
-                        </span>
-                      </div>
+                      <span className="text-[13px] leading-tight ml-auto" style={{ color: "#475569" }}>
+                        {asp.planet1} + {asp.planet2} themes
+                      </span>
                     </motion.div>
                   );
                 })}

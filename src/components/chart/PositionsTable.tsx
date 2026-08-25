@@ -58,25 +58,12 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
   const mutualReceptions = findMutualReceptions(chart);
   return (
     <div className="h-full flex flex-col">
-      {/* Column headers */}
-      <div
-        className="grid gap-2 px-4 py-2 text-[13px] font-bold tracking-widest flex-shrink-0"
-        style={{
-          color: "#475569",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-          gridTemplateColumns: "1.2fr 1fr 1.1fr 0.7fr 1fr 0.9fr 0.7fr",
-        }}
-      >
-        <span>PLANET</span>
-        <span>POSITION</span>
-        <span>SIGN</span>
-        <span>HOUSE</span>
-        <span>DIGNITY</span>
-        <span>ANGULARITY</span>
-        <span>SPEED</span>
-      </div>
-
-      {/* Rows */}
+      {/* Rows — stacked two-line cards instead of a 7-column grid. The grid
+          version had DIGNITY/ANGULARITY/SPEED getting squeezed past the
+          visible edge on mobile with no way to reach them (fr columns
+          always sum to the container width, but badge/text content inside
+          each column doesn't shrink to match, so it overflows unclipped
+          until it hits the row's own right edge). */}
       <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
         {chart.planets.map((p, i) => {
           const isSelected = selectedPlanet === p.name;
@@ -93,61 +80,44 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
                 onSelectPlanet?.(isSelected ? null : p.name);
                 onPlanetNavigate?.(p.name);
               }}
-              className="grid gap-2 px-4 py-3 cursor-pointer transition-all duration-150"
+              className="px-4 py-3 cursor-pointer transition-all duration-150"
               style={{
-                gridTemplateColumns: "1.2fr 1fr 1.1fr 0.7fr 1fr 0.9fr 0.7fr",
                 borderBottom: "1px solid rgba(255,255,255,0.04)",
-                background: isSelected
-                  ? `${color}10`
-                  : "transparent",
+                background: isSelected ? `${color}10` : "transparent",
                 borderLeft: isSelected ? `2px solid ${color}` : "2px solid transparent",
               }}
               whileHover={{ background: `${color}08` }}
             >
-              {/* Planet */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <PlanetGlyph planet={p.name} color={color} size={18} />
-                <div>
-                  <span className="text-[13px] font-semibold" style={{ color: "#e2e8f0" }}>{p.name}</span>
-                  {p.retrograde && (
-                    <span className="ml-1 text-[13px] font-bold" style={{ color: "#f97316" }}>℞</span>
-                  )}
-                  {mutualReceptions.has(p.name) && (
-                    <span className="ml-1 text-[13px] font-bold px-1 py-0.5 rounded" title="Mutual Reception"
-                      style={{ background: "rgba(123,111,212,0.15)", color: "#818cf8" }}>⇄</span>
-                  )}
-                </div>
-              </div>
-
-              {/* Position */}
-              <div className="flex items-center">
+                <span className="text-[13px] font-semibold" style={{ color: "#e2e8f0" }}>{p.name}</span>
+                {p.retrograde && (
+                  <span className="text-[13px] font-bold" style={{ color: "#f97316" }}>℞</span>
+                )}
+                {mutualReceptions.has(p.name) && (
+                  <span className="text-[13px] font-bold px-1 py-0.5 rounded" title="Mutual Reception"
+                    style={{ background: "rgba(123,111,212,0.15)", color: "#818cf8" }}>⇄</span>
+                )}
                 <span className="text-[13px] font-mono font-medium" style={{ color: "#94a3b8" }}>
                   {formatDegree(p.longitude)}
                 </span>
-              </div>
-
-              {/* Sign */}
-              <div className="flex items-center gap-1.5">
-                <SignGlyph sign={p.sign} size={16} />
-                <span className="text-[13px]" style={{ color }}>{p.sign}</span>
-              </div>
-
-              {/* House */}
-              <div className="flex items-center">
+                <span className="flex items-center gap-1.5">
+                  <SignGlyph sign={p.sign} size={16} />
+                  <span className="text-[13px]" style={{ color }}>{p.sign}</span>
+                </span>
                 <span
-                  className="text-[13px] font-bold px-2 py-0.5 rounded-lg"
+                  className="text-[13px] font-bold px-2 py-0.5 rounded-lg ml-auto"
                   style={{
                     background: "rgba(123,111,212,0.15)",
                     color: "#818cf8",
                     border: "1px solid rgba(123,111,212,0.2)",
                   }}
                 >
-                  {p.house}
+                  H{p.house}
                 </span>
               </div>
 
-              {/* Dignity */}
-              <div className="flex items-center">
+              <div className="flex items-center gap-2 flex-wrap mt-1.5">
                 {p.dignity && (
                   <span
                     className="text-[13px] font-bold px-2 py-0.5 rounded-lg tracking-wide"
@@ -160,22 +130,14 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
                     {dignityConf.label.toUpperCase()}
                   </span>
                 )}
-              </div>
-
-              {/* Angularity */}
-              <div className="flex items-center">
                 <span className="text-[13px]" style={{ color: "#475569" }}>
                   {ANGULARITY[p.house]}
                 </span>
-              </div>
-
-              {/* Speed */}
-              <div className="flex items-center">
                 <span
-                  className="text-[14px] font-mono"
+                  className="text-[13px] font-mono"
                   style={{ color: p.retrograde ? "#f97316" : "#64748b" }}
                 >
-                  {p.speed > 0 ? "+" : ""}{p.speed.toFixed(2)}°
+                  {p.speed > 0 ? "+" : ""}{p.speed.toFixed(2)}°/day
                 </span>
               </div>
             </motion.div>
@@ -207,30 +169,20 @@ export function PositionsTable({ chart, onSelectPlanet, selectedPlanet, onPlanet
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 + i * 0.05 }}
-              className="grid gap-2 px-4 py-3"
-              style={{
-                gridTemplateColumns: "1.2fr 1fr 1.1fr 0.7fr 1fr 0.9fr 0.7fr",
-                borderBottom: "1px solid rgba(255,255,255,0.04)",
-              }}
+              className="flex items-center gap-2 flex-wrap px-4 py-3"
+              style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
             >
-              <div className="flex items-center gap-2">
-                <span className="text-base" style={{ color: lot.color }}>{lot.symbol}</span>
-                <span className="text-[13px] font-semibold" style={{ color: "#94a3b8" }}>{lot.label}</span>
-              </div>
-              <div className="flex items-center">
-                <span className="text-[13px] font-mono" style={{ color: "#94a3b8" }}>{formatDegree(lot.lon)}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
+              <span className="text-base" style={{ color: lot.color }}>{lot.symbol}</span>
+              <span className="text-[13px] font-semibold" style={{ color: "#94a3b8" }}>{lot.label}</span>
+              <span className="text-[13px] font-mono" style={{ color: "#94a3b8" }}>{formatDegree(lot.lon)}</span>
+              <span className="flex items-center gap-1.5">
                 <SignGlyph sign={sign as import("@/lib/astrology/types").ZodiacSign} size={14} />
                 <span className="text-[13px]" style={{ color: "#cbd5e1" }}>{sign}</span>
-              </div>
-              <div className="flex items-center">
-                <span className="text-[13px] font-bold px-2 py-0.5 rounded-lg"
-                  style={{ background:"rgba(123,111,212,0.15)", color:"#818cf8" }}>
-                  {houseIdx + 1}
-                </span>
-              </div>
-              <div /><div /><div />
+              </span>
+              <span className="text-[13px] font-bold px-2 py-0.5 rounded-lg ml-auto"
+                style={{ background:"rgba(123,111,212,0.15)", color:"#818cf8" }}>
+                H{houseIdx + 1}
+              </span>
             </motion.div>
           );
         })}

@@ -54,23 +54,11 @@ export function HousesTable({ chart, onSelectHouse, selectedHouse, onHouseNaviga
 
   return (
     <div className="h-full flex flex-col">
-      {/* Headers */}
-      <div
-        className="grid gap-3 px-4 py-2 text-[13px] font-bold tracking-widest flex-shrink-0"
-        style={{
-          color: "#475569",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-          gridTemplateColumns: "0.5fr 0.7fr 1fr 1.2fr 2fr 1.2fr",
-        }}
-      >
-        <span>HOUSE</span>
-        <span>CUSP</span>
-        <span>SIGN</span>
-        <span>LORD</span>
-        <span>TOPICS</span>
-        <span>OCCUPANTS</span>
-      </div>
-
+      {/* Rows — stacked cards instead of a 6-column grid. TOPICS and
+          OCCUPANTS were getting squeezed past the visible edge on mobile
+          (fr columns fit the container, but the badge/text content inside
+          each one doesn't shrink to match, so it overflows unclipped
+          until it hits the row's own right edge). */}
       <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
         {chart.houses.map((house, i) => {
           const topic = HOUSE_TOPICS[house.house];
@@ -88,69 +76,57 @@ export function HousesTable({ chart, onSelectHouse, selectedHouse, onHouseNaviga
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
               onClick={() => { onSelectHouse?.(isSelected ? null : house.house); onHouseNavigate?.(house.house); }}
-              className="grid gap-3 px-4 py-3 cursor-pointer transition-all duration-150"
+              className="px-4 py-3 cursor-pointer transition-all duration-150"
               style={{
-                gridTemplateColumns: "0.5fr 0.7fr 1fr 1.2fr 2fr 1.2fr",
                 borderBottom: "1px solid rgba(255,255,255,0.04)",
                 background: isSelected ? `${signColor}08` : "transparent",
                 borderLeft: isSelected ? `2px solid ${signColor}` : "2px solid transparent",
               }}
               whileHover={{ background: `${signColor}06` }}
             >
-              {/* House number */}
-              <div className="flex items-center">
-                <div className="flex items-center justify-center w-7 h-7 rounded-lg text-[13px] font-bold"
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center justify-center w-7 h-7 rounded-lg text-[13px] font-bold flex-shrink-0"
                   style={{ background: `${qColor}15`, color: qColor, border: `1px solid ${qColor}30` }}>
                   {house.house}
                 </div>
-              </div>
-
-              {/* Cusp */}
-              <div className="flex items-center">
                 <span className="text-[13px] font-mono" style={{ color: "#94a3b8" }}>
                   {formatCusp(house.longitude)}
                 </span>
-              </div>
-
-              {/* Sign */}
-              <div className="flex items-center gap-1.5">
-                <span className="text-base" style={{ color: signColor }}>{SIGN_SYMBOLS[house.sign]}</span>
-                <span className="text-[13px]" style={{ color: "#cbd5e1" }}>{house.sign}</span>
-              </div>
-
-              {/* Lord */}
-              <div className="flex items-center gap-1.5">
-                <span className="text-[14px]" style={{ color: lordPlanet?.dignity === "domicile" ? "#22c55e" : "#94a3b8" }}>
-                  {PLANET_SYMBOLS[lord]}
+                <span className="flex items-center gap-1.5">
+                  <span className="text-base" style={{ color: signColor }}>{SIGN_SYMBOLS[house.sign]}</span>
+                  <span className="text-[13px]" style={{ color: "#cbd5e1" }}>{house.sign}</span>
                 </span>
-                <div>
+                <span className="flex items-center gap-1.5">
+                  <span className="text-[14px]" style={{ color: lordPlanet?.dignity === "domicile" ? "#22c55e" : "#94a3b8" }}>
+                    {PLANET_SYMBOLS[lord]}
+                  </span>
                   <span className="text-[13px]" style={{ color: "#94a3b8" }}>{lord}</span>
                   {lordPlanet && (
-                    <span className="text-[13px] ml-1" style={{ color: "#475569" }}>
+                    <span className="text-[13px]" style={{ color: "#475569" }}>
                       H{lordPlanet.house}
                     </span>
+                  )}
+                </span>
+
+                {/* Occupants */}
+                <div className="flex items-center gap-1 flex-wrap ml-auto">
+                  {occupants.length === 0 ? (
+                    <span className="text-[13px]" style={{ color: "#2d3748" }}>empty</span>
+                  ) : (
+                    occupants.map(pName => (
+                      <span key={pName} className="text-[14px]" title={pName}
+                        style={{ color: pName === "Sun" ? "#fbbf24" : pName === "Moon" ? "#94a3b8" : "#a78bfa" }}>
+                        {PLANET_SYMBOLS[pName]}
+                      </span>
+                    ))
                   )}
                 </div>
               </div>
 
               {/* Topics */}
-              <div className="flex flex-col justify-center">
+              <div className="mt-1.5">
                 <span className="text-[14px] font-semibold" style={{ color: "#e2e8f0" }}>{topic.title}</span>
-                <span className="text-[13px] leading-tight mt-0.5" style={{ color: "#475569" }}>{topic.keywords}</span>
-              </div>
-
-              {/* Occupants */}
-              <div className="flex items-center gap-1 flex-wrap">
-                {occupants.length === 0 ? (
-                  <span className="text-[13px]" style={{ color: "#2d3748" }}>empty</span>
-                ) : (
-                  occupants.map(pName => (
-                    <span key={pName} className="text-[14px]" title={pName}
-                      style={{ color: pName === "Sun" ? "#fbbf24" : pName === "Moon" ? "#94a3b8" : "#a78bfa" }}>
-                      {PLANET_SYMBOLS[pName]}
-                    </span>
-                  ))
-                )}
+                <span className="text-[13px] leading-tight ml-1.5" style={{ color: "#475569" }}>{topic.keywords}</span>
               </div>
             </motion.div>
           );

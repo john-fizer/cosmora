@@ -2036,15 +2036,17 @@ export default function ChartPage() {
         ) : (
           <div className="flex-1 flex min-h-0 overflow-hidden">
 
-            {/* 3D ORRERY panel */}
-            <AnimatePresence>
-              {activeTab === "ORRERY" && (
-                <motion.div
+            {/* 3D ORRERY panel — no exit fade. Its WebGL canvas has proven
+                not to respect normal CSS compositing (it already painted
+                above dropdowns regardless of z-index — see the portal fix
+                above), so a cross-fade on the wrapper risks a stale frame
+                of the canvas (the bright Sun, specifically) staying
+                visible over whatever tab you switch to next. Unmounting
+                immediately removes that risk instead of animating around
+                a layer that doesn't animate with the rest of the page. */}
+            {activeTab === "ORRERY" && (
+                <div
                   key="orrery-panel"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4 }}
                   className="flex-1 relative"
                 >
                   <SolarSystemOrrery
@@ -2062,9 +2064,8 @@ export default function ChartPage() {
                   >
                     DRAG TO ORBIT · SCROLL TO ZOOM · CLICK PLANET TO EXPLORE
                   </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </div>
+            )}
 
             {/* SPLIT: Wheel panel */}
             <AnimatePresence>

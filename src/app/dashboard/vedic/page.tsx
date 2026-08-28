@@ -176,17 +176,22 @@ export default function VedicPage() {
     setChatStreaming(true);
     setStreamText("");
 
-    // Inject Vedic context on first message only
-    const isFirst = messages.length === 0;
+    // Re-inject Vedic context on every message, not just the first. This
+    // page never sends a `chart` field to /api/chat (it sends its own
+    // sidereal context as message text instead), so the API's own
+    // server-side chart grounding never activates here — and since
+    // `messages` stores the raw, un-enriched text, even turn one's
+    // grounding never made it into `history` for later turns to see.
+    // The model was left to free-associate placements by turn two, which
+    // is exactly the "knows Scorpio, then says Aries" drift reported —
+    // it had no real chart data to check itself against past message one.
     const dashaLine = dasha?.currentMajor
       ? `Current Vimshottari dasha: ${dasha.currentMajor.ruler} major / ${dasha.currentAntar?.antardasha ?? "—"} antardasha.`
       : "";
     const karakaLine = karakas
       ? `Atmakaraka (AK): ${karakas.ak.planet} · Darakaraka (DK): ${karakas.dk.planet}.`
       : "";
-    const enriched = isFirst
-      ? `[JYOTISH CONTEXT for ${profileName}]\n${vedicCtx}\n${dashaLine}\n${karakaLine}\n---\n${content}`
-      : content;
+    const enriched = `[JYOTISH CONTEXT for ${profileName} — this is the real chart on file, re-stated every turn so it stays authoritative regardless of anything said earlier in this conversation]\n${vedicCtx}\n${dashaLine}\n${karakaLine}\n---\n${content}`;
 
     const history = messages.map(m => ({ role: m.role, content: m.content }));
 

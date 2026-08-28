@@ -95,11 +95,19 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
   const aspectR   = cx * 0.440;  // inner boundary for aspect lines
   const coreR     = cx * 0.115;  // core orb
 
+  // ASC/MC/DSC/IC badges: the old fixed "zodOuter + 20" offset only fit
+  // inside the SVG's own viewBox when size >= ~530px — at mobile's
+  // ~300-340px it reliably pushed the ASC/DSC badges past the wheel's own
+  // edge and got clipped. Solve backward from a safe max reach instead of
+  // guessing a constant, so it can never overflow regardless of size.
+  const cardinalBadgeR = Math.max(8, cx * 0.03);
+  const cardinalR       = cx * 0.97 - cardinalBadgeR;
+
   // ASC longitude — rotate wheel so ASC is at 9 o'clock
   const ascLon = chart?.ascendant ?? 0;
 
   // Build planet data from real chart or demo fallback
-  const planets = chart?.planets.map(p => ({
+  const rawPlanets = chart?.planets.map(p => ({
     name: p.name,
     symbol: PLANET_SYMBOLS[p.name] ?? "·",
     angle: lonToAngle(p.longitude, ascLon),
@@ -110,6 +118,38 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
     house: p.house,
     signDeg: p.signDegree,
   })) ?? [];
+
+  // Real charts routinely cluster 2-4 planets within a few degrees of each
+  // other (stelliums), and placing glyphs at their exact angle makes them
+  // overlap into an illegible knot. Spread clashing glyphs apart along the
+  // ring (their tick marks and true positions stay exact — only the glyph
+  // label position shifts) using the same iterative-relaxation approach
+  // real chart software uses: repeatedly nudge any pair closer than the
+  // minimum angular gap apart until the whole ring settles.
+  const MIN_GLYPH_GAP = 9; // degrees
+  const planets = (() => {
+    const sorted = [...rawPlanets].sort((a, b) => a.angle - b.angle);
+    const displayAngles = sorted.map(p => p.angle);
+    const n = displayAngles.length;
+    if (n > 1) {
+      for (let pass = 0; pass < 24; pass++) {
+        let moved = false;
+        for (let i = 0; i < n; i++) {
+          const j = (i + 1) % n;
+          let gap = displayAngles[j] - displayAngles[i];
+          if (j === 0) gap += 360;
+          if (gap < MIN_GLYPH_GAP) {
+            const push = (MIN_GLYPH_GAP - gap) / 2;
+            displayAngles[i] = (displayAngles[i] - push + 360) % 360;
+            displayAngles[j] = (displayAngles[j] + push) % 360;
+            moved = true;
+          }
+        }
+        if (!moved) break;
+      }
+    }
+    return sorted.map((p, i) => ({ ...p, displayAngle: displayAngles[i] }));
+  })();
 
   // Use real aspects or skip
   const aspects = (chart as ChartData & { aspects?: { planet1: string; planet2: string; type: string; orb: number }[] })?.aspects ?? [];
@@ -353,7 +393,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
           const sectorPath = `M ${s1.x} ${s1.y} L ${e1.x} ${e1.y} A ${zodInner * 0.90} ${zodInner * 0.90} 0 ${la} 1 ${e2.x} ${e2.y} L ${s2.x} ${s2.y} A ${zodInner * 0.62} ${zodInner * 0.62} 0 ${la} 0 ${s1.x} ${s1.y} Z`;
 
           // Derived ASC badge
-          const badgePt = polarToXY(derivedAscAngle, zodOuter + 20, cx, cy);
+          const badgePt = polarToXY(derivedAscAngle, cardinalR, cx, cy);
 
           return (
             <g>
@@ -386,7 +426,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
               })}
               {/* PRISM ASC badge */}
               <g>
-                <circle cx={badgePt.x} cy={badgePt.y} r="14"
+                <circle cx={badgePt.x} cy={badgePt.y} r={cardinalBadgeR + 1}
                   fill="rgba(4,4,20,0.9)" stroke="#e879f9" strokeWidth="1.2"
                   style={{ filter: "drop-shadow(0 0 8px rgba(232,121,249,0.7))" }} />
                 <text x={badgePt.x} y={badgePt.y}
@@ -404,10 +444,10 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
         {/* ── ASC/DC/MC/IC badge circles ── */}
         {cardinals.map(({ label, lon, color }) => {
           const angle = lonToAngle(lon, ascLon);
-          const pt = polarToXY(angle, zodOuter + 20, cx, cy);
+          const pt = polarToXY(angle, cardinalR, cx, cy);
           return (
             <g key={label}>
-              <circle cx={pt.x} cy={pt.y} r="13"
+              <circle cx={pt.x} cy={pt.y} r={cardinalBadgeR}
                 fill="rgba(4,4,20,0.9)" stroke={color} strokeWidth="1.2"
                 style={{ filter: `drop-shadow(0 0 6px ${color}66)` }} />
               <text x={pt.x} y={pt.y}
@@ -491,10 +531,13 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
           );
         })}
 
-        {/* ── Planet tick marks ── */}
+        {/* ── Planet tick marks — from the exact ecliptic position at the
+            sign ring down to wherever the glyph actually rendered, so a
+            nudged (collision-avoided) glyph is still traceable back to its
+            true degree. ── */}
         {planets.map(planet => {
           const p1 = polarToXY(planet.angle, zodInner - 2, cx, cy);
-          const p2 = polarToXY(planet.angle, zodInner - 12, cx, cy);
+          const p2 = polarToXY(planet.displayAngle, planetR + 9, cx, cy);
           return (
             <line key={`tick-${planet.name}`}
               x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
@@ -504,7 +547,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
         {/* ── Planet markers ── */}
         {planets.map((planet, i) => {
-          const pt = polarToXY(planet.angle, planetR, cx, cy);
+          const pt = polarToXY(planet.displayAngle, planetR, cx, cy);
           const isHovered = hoveredPlanet === planet.name;
           const degPt = polarToXY(planet.angle, zodInner - 20, cx, cy);
 

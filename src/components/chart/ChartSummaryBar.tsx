@@ -1,7 +1,8 @@
 ﻿"use client";
 
-import React from "react";
+import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
+import { createPortal } from "react-dom";
 import type { ChartData, ZodiacSign } from "@/lib/astrology/types";
 import { SIGN_SYMBOLS, PLANET_SYMBOLS, TRADITIONAL_RULERS } from "@/lib/astrology/types";
 import { SignGlyph, PlanetGlyph } from "@/components/ui/AstroGlyph";
@@ -21,6 +22,9 @@ interface ChartSummaryBarProps {
 }
 
 export function ChartSummaryBar({ chart, profileName, onHouseSystemChange, recalculating }: ChartSummaryBarProps) {
+  const [hsMenuOpen, setHsMenuOpen] = useState(false);
+  const [hsMenuRect, setHsMenuRect] = useState<{ left: number; right: number; top: number } | null>(null);
+  const hsBtnRef = useRef<HTMLButtonElement>(null);
   const sun = chart.planets.find(p => p.name === "Sun");
   const moon = chart.planets.find(p => p.name === "Moon");
   const ascSign = chart.houses[0]?.sign;
@@ -73,24 +77,26 @@ export function ChartSummaryBar({ chart, profileName, onHouseSystemChange, recal
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      // justify-content:space-between with overflowing content in a
-      // scrollable flex row pushes content off the start edge in a way
-      // that isn't reachable by scrolling in some browsers — flex-start
-      // (default) plus an ml-auto spacer keeps everything scrollable.
-      className="flex-shrink-0 flex items-center px-6 py-3 gap-4 overflow-x-auto w-full min-w-0"
+      className="flex-shrink-0 flex items-center px-6 py-3 gap-2 w-full min-w-0"
       style={{
         background: "rgba(2,2,18,0.8)",
         borderBottom: "1px solid rgba(123,111,212,0.12)",
         backdropFilter: "blur(20px)",
-        scrollbarWidth: "none",
-        // Hints there's more to scroll to on narrow screens, where this row
-        // (8 stat pills + house-system switcher) doesn't fit at once.
-        maskImage: "linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%)",
-        WebkitMaskImage: "linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%)",
       }}
     >
-      {/* Summary pills */}
-      <div className="flex items-center gap-3 flex-shrink-0">
+      {/* Summary pills — the only thing that scrolls now. The house system
+          switcher used to live at the end of this same scrollable row,
+          which meant it was invisible unless you happened to swipe all
+          the way past 8 stat pills with no hint it was there. It's a
+          dropdown outside the scroll area now, always visible. */}
+      <div
+        className="flex items-center gap-3 overflow-x-auto flex-1 min-w-0"
+        style={{
+          scrollbarWidth: "none",
+          maskImage: "linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%)",
+        }}
+      >
         {summaryItems.map((item, i) => (
           <motion.div
             key={item.label}
@@ -111,32 +117,79 @@ export function ChartSummaryBar({ chart, profileName, onHouseSystemChange, recal
         ))}
       </div>
 
-      {/* House system switcher */}
-      <div className="flex items-center gap-1 flex-shrink-0 md:ml-auto">
-        {HOUSE_SYSTEMS.map(hs => (
-          <motion.button
-            key={hs.value}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => !recalculating && onHouseSystemChange(hs.value)}
-            disabled={recalculating}
-            className="px-3 py-1.5 rounded-lg text-[13px] font-bold tracking-wider cursor-pointer transition-all duration-150 disabled:opacity-50"
-            style={{
-              background: chart.houseSystem === hs.value ? "rgba(123,111,212,0.25)" : "rgba(255,255,255,0.03)",
-              border: chart.houseSystem === hs.value ? "1px solid rgba(123,111,212,0.4)" : "1px solid rgba(255,255,255,0.06)",
-              color: chart.houseSystem === hs.value ? "#BFB6E8" : "#64748b",
-            }}
-          >
-            {hs.label}
-          </motion.button>
-        ))}
-        {recalculating && (
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-3 h-3 rounded-full border border-t-transparent ml-2"
-            style={{ borderColor: "#7B6FD4" }}
-          />
+      {/* House system dropdown */}
+      <div className="relative flex-shrink-0">
+        <button
+          ref={hsBtnRef}
+          onClick={() => {
+            if (!recalculating) {
+              if (!hsMenuOpen && hsBtnRef.current) {
+                const r = hsBtnRef.current.getBoundingClientRect();
+                setHsMenuRect({ left: r.left, right: r.right, top: r.bottom });
+              }
+              setHsMenuOpen(v => !v);
+            }
+          }}
+          disabled={recalculating}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold tracking-wider cursor-pointer transition-all duration-150 disabled:opacity-50"
+          style={{
+            background: "rgba(123,111,212,0.12)",
+            border: "1px solid rgba(123,111,212,0.3)",
+            color: "#BFB6E8",
+          }}
+        >
+          {recalculating ? (
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="w-3 h-3 rounded-full border border-t-transparent"
+              style={{ borderColor: "#7B6FD4" }}
+            />
+          ) : (
+            HOUSE_SYSTEMS.find(hs => hs.value === chart.houseSystem)?.label ?? "House System"
+          )}
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3 h-3"
+            style={{ transform: hsMenuOpen ? "rotate(180deg)" : "none", transition: "transform 0.15s" }}>
+            <path d="M5 7.5L10 12.5L15 7.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+
+        {/* Portaled to document.body — same WebGL-canvas stacking quirk
+            as the chart page's view picker: the 3D tab's canvas composites
+            above normal DOM content regardless of z-index, so the menu is
+            rendered completely outside the page's DOM tree instead. */}
+        {hsMenuOpen && hsMenuRect && typeof document !== "undefined" && createPortal(
+          <>
+            <div className="fixed inset-0 z-[9998]" onClick={() => setHsMenuOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.15 }}
+              className="fixed flex flex-col gap-1 p-1.5 rounded-xl"
+              style={{
+                right: window.innerWidth - hsMenuRect.right, top: hsMenuRect.top + 6,
+                zIndex: 9999,
+                background: "rgba(10,10,26,0.98)", border: "1px solid rgba(123,111,212,0.3)",
+                backdropFilter: "blur(20px)", boxShadow: "0 12px 32px rgba(0,0,0,0.5)", minWidth: 140,
+              }}
+            >
+              {HOUSE_SYSTEMS.map(hs => (
+                <button
+                  key={hs.value}
+                  onClick={() => { onHouseSystemChange(hs.value); setHsMenuOpen(false); }}
+                  className="px-3 py-2 rounded-lg text-[13px] font-bold tracking-wider text-left cursor-pointer transition-all duration-150"
+                  style={{
+                    background: chart.houseSystem === hs.value ? "rgba(123,111,212,0.25)" : "transparent",
+                    color: chart.houseSystem === hs.value ? "#BFB6E8" : "#94a3b8",
+                  }}
+                >
+                  {hs.label}
+                </button>
+              ))}
+            </motion.div>
+          </>,
+          document.body
         )}
       </div>
     </motion.div>

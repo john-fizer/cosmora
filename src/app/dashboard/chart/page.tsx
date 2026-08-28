@@ -1,7 +1,8 @@
 ﻿"use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { ChartWheel } from "@/components/chart/ChartWheel";
@@ -1686,6 +1687,9 @@ export default function ChartPage() {
   const [loading, setLoading] = useState(true);
   const [recalculating, setRecalculating] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("ORRERY");
+  const [viewMenuOpen, setViewMenuOpen] = useState(false);
+  const [viewMenuRect, setViewMenuRect] = useState<{ left: number; right: number; top: number } | null>(null);
+  const viewBtnRef = useRef<HTMLButtonElement>(null);
   const [selectedPlanet, setSelectedPlanet] = useState<PlanetName | null>(null);
   const [selectedHouse, setSelectedHouse] = useState<number | null>(null);
   const [splitView, setSplitView] = useState(false);
@@ -1850,31 +1854,95 @@ export default function ChartPage() {
             )}
           </div>
 
-          {/* Tab switcher — 7 tabs don't fit one row on a phone. Cascades
-              onto additional rows via flex-wrap instead of hiding tabs
-              behind a horizontal scroll; on desktop there's enough width
-              that it never needs to wrap at all. */}
-          <div
-            className="flex items-center gap-1 flex-wrap order-3 md:order-none w-full md:w-auto md:flex-1 md:min-w-0 md:mx-4"
-            style={{ maxWidth: "100%" }}
-          >
-            {TABS.map(tab => (
-              <motion.button
-                key={tab.id}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => setActiveTab(tab.id)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-bold tracking-wide cursor-pointer transition-all duration-200 flex-shrink-0"
-                style={{
-                  background: activeTab === tab.id ? "rgba(123,111,212,0.25)" : "rgba(255,255,255,0.03)",
-                  border: activeTab === tab.id ? "1px solid rgba(123,111,212,0.4)" : "1px solid rgba(255,255,255,0.06)",
-                  color: activeTab === tab.id ? "#BFB6E8" : "#64748b",
-                }}
-              >
-                {tab.icon}
-                {tab.label}
-              </motion.button>
-            ))}
+          {/* View picker — a real dropdown on mobile (one tap shows every
+              option in a menu, nothing to scroll or hunt for) instead of
+              tabs wrapping across rows. Desktop keeps the full tab row,
+              which fits in one line without needing a menu. */}
+          <div className="relative order-3 md:order-none w-full md:w-auto md:flex-1 md:min-w-0 md:mx-4" style={{ maxWidth: "100%" }}>
+            <button
+              ref={viewBtnRef}
+              onClick={() => {
+                if (!viewMenuOpen && viewBtnRef.current) {
+                  const r = viewBtnRef.current.getBoundingClientRect();
+                  setViewMenuRect({ left: r.left, right: r.right, top: r.bottom });
+                }
+                setViewMenuOpen(v => !v);
+              }}
+              className="flex md:hidden items-center gap-2 w-full px-3 py-2 rounded-xl text-[13px] font-bold tracking-wide cursor-pointer"
+              style={{
+                background: "rgba(123,111,212,0.12)",
+                border: "1px solid rgba(123,111,212,0.3)",
+                color: "#BFB6E8",
+              }}
+            >
+              {TABS.find(t => t.id === activeTab)?.icon}
+              {TABS.find(t => t.id === activeTab)?.label}
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3.5 h-3.5 ml-auto"
+                style={{ transform: viewMenuOpen ? "rotate(180deg)" : "none", transition: "transform 0.15s" }}>
+                <path d="M5 7.5L10 12.5L15 7.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+
+            {/* Portaled to document.body: the 3D tab's WebGL canvas
+                composites in its own GPU layer and paints above normal
+                DOM content regardless of how high z-index goes — a known
+                canvas/WebGL stacking quirk. Rendering the menu completely
+                outside the page's DOM tree (rather than fighting it with
+                z-index) is what actually wins. */}
+            {viewMenuOpen && viewMenuRect && typeof document !== "undefined" && createPortal(
+              <>
+                <div className="fixed inset-0 z-[9998] md:hidden" onClick={() => setViewMenuOpen(false)} />
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.15 }}
+                  className="md:hidden fixed grid grid-cols-2 gap-1 p-2 rounded-xl"
+                  style={{
+                    left: viewMenuRect.left, right: window.innerWidth - viewMenuRect.right, top: viewMenuRect.top + 6,
+                    zIndex: 9999,
+                    background: "rgba(10,10,26,0.98)", border: "1px solid rgba(123,111,212,0.3)",
+                    backdropFilter: "blur(20px)", boxShadow: "0 12px 32px rgba(0,0,0,0.5)",
+                  }}
+                >
+                  {TABS.map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => { setActiveTab(tab.id); setViewMenuOpen(false); }}
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] font-bold tracking-wide cursor-pointer transition-all duration-150"
+                      style={{
+                        background: activeTab === tab.id ? "rgba(123,111,212,0.25)" : "transparent",
+                        color: activeTab === tab.id ? "#BFB6E8" : "#94a3b8",
+                      }}
+                    >
+                      {tab.icon}
+                      {tab.label}
+                    </button>
+                  ))}
+                </motion.div>
+              </>,
+              document.body
+            )}
+
+            <div className="hidden md:flex items-center gap-1 flex-wrap">
+              {TABS.map(tab => (
+                <motion.button
+                  key={tab.id}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => setActiveTab(tab.id)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[13px] font-bold tracking-wide cursor-pointer transition-all duration-200 flex-shrink-0"
+                  style={{
+                    background: activeTab === tab.id ? "rgba(123,111,212,0.25)" : "rgba(255,255,255,0.03)",
+                    border: activeTab === tab.id ? "1px solid rgba(123,111,212,0.4)" : "1px solid rgba(255,255,255,0.06)",
+                    color: activeTab === tab.id ? "#BFB6E8" : "#64748b",
+                  }}
+                >
+                  {tab.icon}
+                  {tab.label}
+                </motion.button>
+              ))}
+            </div>
           </div>
 
           <div className="flex items-center gap-2 flex-shrink-0 order-2 md:order-none">

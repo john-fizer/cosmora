@@ -77,10 +77,15 @@ function HouseOracle({ houseNum, chart, meta }: { houseNum: number; chart: Chart
 
     const prompt = `You are Cosmora, a visionary astrology intelligence. Give me a rich interpretation of my House ${houseNum} (${meta.title} — ${meta.latinName}). Sign on cusp: ${house.sign}. Lord: ${lordStr}. Occupants: ${occupantStr}. Explore what this house means in my life, how the sign colors its expression, and what the lord's placement reveals about how I navigate these themes. 3–4 paragraphs.`;
 
+    // /api/chat reads { message, chart, history }, not { messages: [...] } —
+    // the old shape here meant `message` was always undefined, so the route
+    // 400'd on every call and this panel silently never populated. Passing
+    // `chart` too now gets this the same server-side dispositor grounding
+    // the main Oracle chat has, instead of only the manually-embedded facts.
     fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }),
+      body: JSON.stringify({ message: prompt, chart }),
     })
       .then(async (res) => {
         const reader = res.body?.getReader();

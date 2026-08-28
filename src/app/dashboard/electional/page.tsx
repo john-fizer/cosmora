@@ -480,21 +480,21 @@ function TimingOracle({
     setStreaming(true);
     setText("");
     try {
+      // /api/chat reads { message, chart, history }, not { messages, systemPrompt }
+      // — the old shape here meant `message` was always undefined, so the
+      // route 400'd on every call and this panel silently never populated.
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: [{
-            role: "user",
-            content: [
-              `I want to do: ${activity.name} — ${activity.description}`,
-              `Current planetary hour: ${hourRuler ?? "unknown"}`,
-              `Moon in ${moonSign}${isVoid ? " (void of course)" : ""}`,
-              `Current timing score: ${score > 0 ? "+" : ""}${score} (${scoreLabel})`,
-              "Give me a concise, direct timing oracle in 3-4 sentences. Be specific about whether NOW is good or when to wait. Start directly with your advice — no preamble."
-            ].join("\n"),
-          }],
-          systemPrompt: "You are Cosmora's electional astrology oracle. Give sharp, actionable timing advice. Be direct and specific. Under 100 words total.",
+          message: [
+            "You are Cosmora's electional astrology oracle. Give sharp, actionable timing advice. Be direct and specific. Under 100 words total.",
+            `I want to do: ${activity.name} — ${activity.description}`,
+            `Current planetary hour: ${hourRuler ?? "unknown"}`,
+            `Moon in ${moonSign}${isVoid ? " (void of course)" : ""}`,
+            `Current timing score: ${score > 0 ? "+" : ""}${score} (${scoreLabel})`,
+            "Give me a concise, direct timing oracle in 3-4 sentences. Be specific about whether NOW is good or when to wait. Start directly with your advice — no preamble."
+          ].join("\n"),
         }),
       });
       if (!res.ok || !res.body) { setStreaming(false); return; }

@@ -272,8 +272,15 @@ export default function PrismPage() {
       </motion.div>
 
       {/* ── Main layout ── */}
+      {/* On mobile this container IS the scroll region (flex-col,
+          overflow-y-auto), and it reaches bottom:0 of the true viewport —
+          the same true-bottom real estate the global mobile nav bar
+          occupies as a separate fixed, z-50 element painted on top. Without
+          reserved space, scrolling to the end of the content (where the
+          GENERATE READING button lives) still leaves it sitting underneath
+          the nav bar, unreachable — same fix as the map page's drawer. */}
       <div
-        className="left-0 md:left-16 flex-col md:flex-row overflow-y-auto md:overflow-hidden"
+        className="left-0 md:left-16 flex-col md:flex-row overflow-y-auto md:overflow-hidden pb-[88px] md:pb-0"
         style={{ position: "absolute", top: 48, right: 0, bottom: 0, display: "flex" }}
       >
 

@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import type { ChartData } from "@/lib/astrology/types";
 import { getPersonaById, COSMORA_IDENTITY } from "@/lib/oracle/personas";
+import { buildChartContext, DELINEATION_METHODOLOGY } from "@/lib/oracle/chartContext";
 import { isPro, getOracleUsageToday, incrementOracleUsage, FREE_ORACLE_DAILY_LIMIT } from "@/lib/subscription";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -12,9 +14,10 @@ export async function POST(req: NextRequest) {
       maxTokens?: number;
       persona?: string;
       customerId?: string;
+      chart?: ChartData;
     };
 
-    const { prompt, maxTokens = 400, persona = "oracle", customerId } = body;
+    const { prompt, maxTokens = 400, persona = "oracle", customerId, chart } = body;
 
     // Rate-gate free users
     if (customerId && !isPro(customerId)) {
@@ -33,7 +36,16 @@ export async function POST(req: NextRequest) {
     }
 
     const personaDef = getPersonaById(persona);
-    const system = personaDef.chatSystemPrompt || COSMORA_IDENTITY;
+    const baseIdentity = personaDef.chatSystemPrompt || COSMORA_IDENTITY;
+    // This route has no tool-use loop (unlike /api/chat), so callers embed
+    // chart facts straight into `prompt` — but with no dispositor table or
+    // delineation order to follow, the model was free to invent a plausible-
+    // sounding starting point instead of the correct one, the same failure
+    // mode /api/chat had before its chart-grounding fix. Passing a `chart`
+    // now gets the same precomputed dispositor table and methodology.
+    const system = chart
+      ? `${baseIdentity}\n\n${DELINEATION_METHODOLOGY}\n\n--- NATIVE'S NATAL CHART (this is the real chart on file — ground every claim in it) ---\n${buildChartContext(chart)}\n--- END CHART ---`
+      : baseIdentity;
 
     const stream = await anthropic.messages.create({
       model: "claude-sonnet-4-6",

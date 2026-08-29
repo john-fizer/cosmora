@@ -247,7 +247,7 @@ Speak as the living memory of the cosmos. Present tense for past events (the cos
       const res = await fetch("/api/oracle/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, maxTokens: 500, persona }),
+        body: JSON.stringify({ prompt, chart, maxTokens: 500, persona }),
       });
       if (!res.ok) throw new Error("Stream failed");
       const reader = res.body!.getReader();

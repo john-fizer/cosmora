@@ -1010,10 +1010,12 @@ function ForecastTimeline({
 function EventReadingPanel({
   event,
   natalContext,
+  natalChart,
   onClose,
 }: {
   event: ForecastEvent;
   natalContext: string;
+  natalChart?: ChartData;
   onClose: () => void;
 }) {
   const [reading, setReading] = useState("");
@@ -1044,7 +1046,7 @@ function EventReadingPanel({
       const res = await fetch("/api/oracle/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: buildPrompt(), maxTokens: 250, persona: getOraclePersona() }),
+        body: JSON.stringify({ prompt: buildPrompt(), chart: natalChart, maxTokens: 250, persona: getOraclePersona() }),
       });
       if (!res.ok || !res.body) { setLoading(false); return; }
       const reader = res.body.getReader();
@@ -1713,6 +1715,7 @@ export default function TransitsPage() {
                         <EventReadingPanel
                           event={selectedForecastEvent}
                           natalContext={natalContext}
+                          natalChart={natal ?? undefined}
                           onClose={() => setSelectedForecastEvent(null)}
                         />
                       </div>

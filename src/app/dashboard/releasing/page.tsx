@@ -363,7 +363,7 @@ Under 280 words. Be specific to the placements shown.`;
     fetch("/api/oracle/stream", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, maxTokens: 500, persona }),
+      body: JSON.stringify({ prompt, chart, maxTokens: 500, persona }),
     }).then(async (res) => {
       if (!res.ok || !res.body) { setStreaming(false); return; }
       const reader = res.body.getReader();

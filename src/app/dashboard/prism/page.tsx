@@ -114,14 +114,14 @@ function useReadingStream() {
   const [loading, setLoading] = useState(false);
   const [started, setStarted] = useState(false);
 
-  const generate = useCallback(async (prompt: string) => {
+  const generate = useCallback(async (prompt: string, chart?: ChartData) => {
     if (started) return;
     setStarted(true); setLoading(true); setText("");
     try {
       const res = await fetch("/api/oracle/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, maxTokens: 280, persona: getOraclePersona() }),
+        body: JSON.stringify({ prompt, chart, maxTokens: 280, persona: getOraclePersona() }),
       });
       if (!res.ok || !res.body) { setLoading(false); return; }
       const reader = res.body.getReader();
@@ -201,7 +201,7 @@ export default function PrismPage() {
       .map(p => `${p.name} in natal house ${p.house} (derived house ${derivedHouseOf(p.house, lens.offset)})`)
       .join(", ");
     const prompt = `You are an expert astrologer. Give a concise but insightful reading of this derived chart: ${lens.title}. The ${lens.offset + 1}th natal house becomes the Ascendant. Context: ${lens.subtitle}. Planets: ${planetList}. Focus on what this lens reveals about ${lens.keyword.toLowerCase()}. Be specific, not generic. 3-4 sentences.`;
-    reading.generate(prompt);
+    reading.generate(prompt, chart);
   };
 
   if (loading) {

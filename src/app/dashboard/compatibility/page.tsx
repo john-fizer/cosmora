@@ -8,10 +8,32 @@ import {
   SIGN_SYMBOLS, PLANET_SYMBOLS, ZODIAC_SIGNS, TRADITIONAL_RULERS,
 } from "@/lib/astrology/types";
 import type { ChartData, PlanetName, ZodiacSign, Aspect } from "@/lib/astrology/types";
+import type { TransitAspect } from "@/lib/astrology/transits";
 import {
   listProfiles, getActiveProfileId, getCachedChart,
 } from "@/lib/storage";
 import type { StoredProfile } from "@/lib/storage";
+
+// ─── Daily weather: harmony classification ─────────────────────────────────────
+// Matches ASPECT_ANGLES' harmony values below so "harmonious/harsh" reads
+// consistently whether it's a natal synastry aspect or today's transit.
+const TRANSIT_HARMONY: Record<TransitAspect["type"], number> = {
+  trine: 1, sextile: 0.8, conjunction: 0.5, quincunx: -0.3, opposition: -0.5, square: -1,
+};
+
+type RelationshipType = "romantic" | "business" | "sibling" | "friend";
+const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {
+  romantic: "Romantic", business: "Business", sibling: "Sibling", friend: "Friend",
+};
+// Which houses/planets matter most for the AI interpretation to lean on,
+// per relationship type — a business partnership and a romance shouldn't
+// both get read through a Venus/7th-house lens.
+const RELATIONSHIP_FOCUS: Record<RelationshipType, string> = {
+  romantic: "romantic and intimate dynamics — lean on Venus, Mars, the 5th, 7th, and 8th houses",
+  business: "partnership and shared-enterprise dynamics — lean on Saturn, Mercury, the 2nd, 6th, and 10th houses",
+  sibling: "sibling and peer dynamics — lean on Mercury and the 3rd house",
+  friend: "friendship and shared-community dynamics — lean on the 11th house and Mercury",
+};
 
 // ─── Synastry computation ─────────────────────────────────────────────────────
 
@@ -472,6 +494,160 @@ function AspectRow({ aspect, nameA, nameB }: {
   );
 }
 
+// ─── Daily weather row: today's transit hitting one person's natal chart ──────
+function WeatherRow({ aspect, targetName }: { aspect: TransitAspect; targetName: string }) {
+  const transitColor = PLANET_COLORS[aspect.transitPlanet] ?? "#94a3b8";
+  const natalColor = PLANET_COLORS[aspect.natalPlanet] ?? "#94a3b8";
+  const aspectColor = ASPECT_COLORS[aspect.type];
+  const isHarmonious = TRANSIT_HARMONY[aspect.type] > 0;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -6 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="flex items-center gap-2 px-3 py-2 rounded-lg flex-wrap"
+      style={{
+        background: isHarmonious ? "rgba(34,197,94,0.04)" : "rgba(239,68,68,0.04)",
+        border: `1px solid ${isHarmonious ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.08)"}`,
+      }}
+    >
+      <span className="text-[13px]" style={{ color: "#475569" }}>Transiting</span>
+      <span className="flex items-center gap-1">
+        <span className="text-[14px]" style={{ color: transitColor }}>{PLANET_SYMBOLS[aspect.transitPlanet]}</span>
+        <span className="text-[13px] font-bold" style={{ color: transitColor }}>{aspect.transitPlanet}</span>
+        {aspect.transitRetrograde && <span className="text-[13px]" style={{ color: "#f97316" }}>℞</span>}
+      </span>
+      <span className="text-base leading-none" style={{ color: aspectColor }}>{ASPECT_GLYPHS[aspect.type]}</span>
+      <span className="text-[13px] font-bold tracking-wider capitalize" style={{ color: aspectColor }}>{aspect.type}</span>
+      <span className="flex items-center gap-1">
+        <span className="text-[13px]" style={{ color: "#475569" }}>{targetName}&rsquo;s natal</span>
+        <span className="text-[14px]" style={{ color: natalColor }}>{PLANET_SYMBOLS[aspect.natalPlanet]}</span>
+        <span className="text-[13px] font-bold" style={{ color: natalColor }}>{aspect.natalPlanet}</span>
+      </span>
+      <span className="text-[13px] ml-auto" style={{ color: "#334155" }}>{aspect.orb.toFixed(1)}°</span>
+      {aspect.exact && (
+        <span className="text-[13px] font-bold px-1.5 py-0.5 rounded" style={{ background: `${aspectColor}20`, color: aspectColor }}>EXACT</span>
+      )}
+      {!aspect.exact && (
+        <span className="text-[13px]" style={{ color: aspect.applying ? "#22c55e" : "#64748b" }}>
+          {aspect.applying ? "▲ Appl." : "▼ Sep."}
+        </span>
+      )}
+    </motion.div>
+  );
+}
+
+// ─── Daily weather Oracle ───────────────────────────────────────────────────────
+function DailyWeatherOracle({ profileA, profileB, toA, toB, relationship }: {
+  profileA: StoredProfile; profileB: StoredProfile;
+  toA: TransitAspect[]; toB: TransitAspect[];
+  relationship: RelationshipType;
+}) {
+  const [text, setText] = useState("");
+  const [streaming, setStreaming] = useState(false);
+  const [wanted, setWanted] = useState(false);
+  const hasFired = useRef(false);
+  // Re-fire if the pair, the day's aspects, or the relationship lens changes —
+  // otherwise a stale reading from a different day/pair/lens could linger.
+  const fireKey = `${profileA.id}-${profileB.id}-${relationship}-${toA.length}-${toB.length}`;
+
+  useEffect(() => {
+    if (hasFired.current || !wanted) return;
+    hasFired.current = true;
+
+    // Every placement is tagged with the person's actual name, not "A"/"B" —
+    // ambiguous labeling is exactly what let an oracle drift and confuse
+    // whose chart was whose in an unrelated bug found earlier this pass.
+    const describeA = toA.slice(0, 6).map(a =>
+      `transiting ${a.transitPlanet} ${a.type} ${profileA.name}'s natal ${a.natalPlanet} (orb ${a.orb.toFixed(1)}°, ${TRANSIT_HARMONY[a.type] > 0 ? "harmonious" : "harsh"}${a.exact ? ", EXACT today" : a.applying ? ", applying" : ", separating"})`
+    ).join("; ") || "no major activations today";
+    const describeB = toB.slice(0, 6).map(a =>
+      `transiting ${a.transitPlanet} ${a.type} ${profileB.name}'s natal ${a.natalPlanet} (orb ${a.orb.toFixed(1)}°, ${TRANSIT_HARMONY[a.type] > 0 ? "harmonious" : "harsh"}${a.exact ? ", EXACT today" : a.applying ? ", applying" : ", separating"})`
+    ).join("; ") || "no major activations today";
+
+    const prompt = `You are an expert traditional astrologer giving a daily "relationship weather" reading.
+
+This is a ${RELATIONSHIP_LABELS[relationship]} relationship between ${profileA.name} and ${profileB.name}. Read it through the lens of ${RELATIONSHIP_FOCUS[relationship]} — do not default to a romantic framing unless the relationship type given is romantic.
+
+CRITICAL: keep these two natal charts distinct at all times. Never attribute ${profileA.name}'s placements to ${profileB.name} or vice versa — every planet below is already labeled with whose natal chart it belongs to; preserve those labels exactly.
+
+TODAY'S SKY ACTIVATING ${profileA.name.toUpperCase()}'S CHART: ${describeA}
+TODAY'S SKY ACTIVATING ${profileB.name.toUpperCase()}'S CHART: ${describeB}
+
+Write 2 short paragraphs: (1) what kind of day this is for the relationship overall — good, tense, or mixed, and why, naming the specific activations that matter most; (2) one practical, concrete thing to lean into or watch for today given these activations. Be specific to the aspects listed, not generic. No bullet points.`;
+
+    setStreaming(true);
+    fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: prompt }),
+    }).then(async (res) => {
+      if (!res.ok || !res.body) { setStreaming(false); return; }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        for (const line of lines) {
+          if (!line.startsWith("data:")) continue;
+          const payload = line.slice(5).trim();
+          if (payload === "[DONE]") break;
+          try { const d = JSON.parse(payload); if (d.text) setText(prev => prev + d.text); } catch { /* skip */ }
+        }
+      }
+      setStreaming(false);
+    }).catch(() => setStreaming(false));
+  }, [fireKey, wanted]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="rounded-2xl overflow-hidden mt-5"
+      style={{ border: "1px solid rgba(244,114,182,0.2)", background: "rgba(244,114,182,0.04)" }}
+    >
+      <div className="px-5 py-3" style={{ borderBottom: "1px solid rgba(244,114,182,0.1)" }}>
+        <p className="text-[13px] font-bold tracking-widest" style={{ color: "#f472b6" }}>
+          ✦ TODAY'S READING — {profileA.name} & {profileB.name}
+        </p>
+      </div>
+      <div className="p-5">
+        {!wanted && !text && (
+          <button
+            onClick={() => setWanted(true)}
+            className="text-[13px] font-semibold cursor-pointer"
+            style={{ color: "#f472b6", background: "none", border: "none", padding: 0 }}
+          >
+            Read today's weather →
+          </button>
+        )}
+        {streaming && !text && (
+          <div className="flex items-center gap-3">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1.4, repeat: Infinity, ease: "linear" }}
+              className="w-4 h-4 rounded-full border border-t-transparent flex-shrink-0"
+              style={{ borderColor: "#f472b6" }}
+            />
+            <span className="text-[13px]" style={{ color: "#475569" }}>Reading today's sky…</span>
+          </div>
+        )}
+        {text && (
+          <div className="text-[16px] leading-relaxed space-y-3" style={{ color: "#94a3b8" }}>
+            {text.split("\n\n").map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 function SynastryBiWheel({ chartA, chartB, nameA, nameB, aspects }: {
   chartA: ChartData;
   chartB: ChartData;
@@ -707,7 +883,10 @@ export default function CompatibilityPage() {
   const [personAId, setPersonAId] = useState<string | null>(null);
   const [personBId, setPersonBId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"score" | "aspects" | "overlay" | "composite" | "oracle">("score");
+  const [activeTab, setActiveTab] = useState<"score" | "aspects" | "weather" | "overlay" | "composite" | "oracle">("score");
+  const [relationship, setRelationship] = useState<RelationshipType>("romantic");
+  const [weather, setWeather] = useState<{ toA: TransitAspect[]; toB: TransitAspect[] } | null>(null);
+  const [weatherLoading, setWeatherLoading] = useState(false);
 
   useEffect(() => {
     const profiles = listProfiles();
@@ -751,6 +930,32 @@ export default function CompatibilityPage() {
   const scoreColor = score
     ? score.total >= 70 ? "#22c55e" : score.total >= 50 ? "#f59e0b" : "#ef4444"
     : "#94a3b8";
+
+  // Daily weather — only fetched once the tab is actually opened (billed
+  // server compute), and refetched if the pair changes.
+  useEffect(() => {
+    if (activeTab !== "weather" || !chartA || !chartB) return;
+    if (weather || weatherLoading) return;
+    setWeatherLoading(true);
+    fetch("/api/compatibility/weather", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chartA, chartB }),
+    })
+      .then(r => r.json())
+      .then(data => setWeather({ toA: data.toA ?? [], toB: data.toB ?? [] }))
+      .catch(() => setWeather({ toA: [], toB: [] }))
+      .finally(() => setWeatherLoading(false));
+  }, [activeTab, chartA, chartB, weather, weatherLoading]);
+
+  // Reset cached weather when the pair changes so a stale reading for a
+  // different couple can't linger under the new pair.
+  useEffect(() => { setWeather(null); }, [personAId, personBId]);
+
+  const weatherToAHarmonious = useMemo(() => (weather?.toA ?? []).filter(a => TRANSIT_HARMONY[a.type] > 0), [weather]);
+  const weatherToAHarsh = useMemo(() => (weather?.toA ?? []).filter(a => TRANSIT_HARMONY[a.type] < 0), [weather]);
+  const weatherToBHarmonious = useMemo(() => (weather?.toB ?? []).filter(a => TRANSIT_HARMONY[a.type] > 0), [weather]);
+  const weatherToBHarsh = useMemo(() => (weather?.toB ?? []).filter(a => TRANSIT_HARMONY[a.type] < 0), [weather]);
 
   // ─── Empty / single profile ─────────────────────────────────────────────────
 
@@ -834,19 +1039,18 @@ export default function CompatibilityPage() {
             </span>
           </div>
 
-          {/* Tab switcher */}
+          {/* Tab switcher — wraps instead of scrolling. A horizontally
+              scrolling tab row with no visible cue that more exists isn't
+              discoverable; wrapping keeps every tab visible up front. */}
           {score && (
             <div
-              className="flex items-center gap-1 p-1 rounded-xl w-full md:w-auto overflow-x-auto"
+              className="flex flex-wrap items-center gap-1 p-1 rounded-xl w-full md:w-auto"
               style={{
                 background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
-                scrollbarWidth: "none",
-                maskImage: "linear-gradient(to right, black calc(100% - 20px), transparent 100%)",
-                WebkitMaskImage: "linear-gradient(to right, black calc(100% - 20px), transparent 100%)",
               }}
             >
-              {(["score", "aspects", "overlay", "composite", "oracle"] as const).map(tab => {
-                const label: Record<typeof tab, string> = { score: "OVERVIEW", aspects: "ASPECTS", overlay: "OVERLAY", composite: "COMPOSITE", oracle: "ORACLE" };
+              {(["score", "aspects", "weather", "overlay", "composite", "oracle"] as const).map(tab => {
+                const label: Record<typeof tab, string> = { score: "OVERVIEW", aspects: "ASPECTS", weather: "WEATHER", overlay: "OVERLAY", composite: "COMPOSITE", oracle: "ORACLE" };
                 return (
                   <motion.button
                     key={tab}
@@ -1129,6 +1333,119 @@ export default function CompatibilityPage() {
                             ))}
                           </div>
                         </div>
+                      )}
+                    </motion.div>
+                  )}
+
+                  {/* ─── WEATHER TAB — today's transits activating each chart ─── */}
+                  {activeTab === "weather" && (
+                    <motion.div
+                      key="weather"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      {/* Relationship type — reframes the AI reading below,
+                          not the aspect math itself (the aspects are the
+                          same regardless of relationship type). */}
+                      <div className="flex flex-wrap items-center gap-2 mb-5">
+                        <span className="text-[13px] font-bold tracking-widest mr-1" style={{ color: "#475569" }}>
+                          READING AS
+                        </span>
+                        {(["romantic", "business", "sibling", "friend"] as const).map(rt => (
+                          <button
+                            key={rt}
+                            onClick={() => setRelationship(rt)}
+                            className="px-2.5 py-1 rounded-lg text-[13px] font-bold tracking-wider cursor-pointer transition-all duration-150"
+                            style={{
+                              background: relationship === rt ? "rgba(244,114,182,0.2)" : "rgba(255,255,255,0.03)",
+                              border: relationship === rt ? "1px solid rgba(244,114,182,0.35)" : "1px solid rgba(255,255,255,0.06)",
+                              color: relationship === rt ? "#f9a8d4" : "#64748b",
+                            }}
+                          >
+                            {RELATIONSHIP_LABELS[rt]}
+                          </button>
+                        ))}
+                      </div>
+
+                      {weatherLoading && (
+                        <div className="flex items-center gap-3 py-8 justify-center">
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1.4, repeat: Infinity, ease: "linear" }}
+                            className="w-4 h-4 rounded-full border border-t-transparent flex-shrink-0"
+                            style={{ borderColor: "#f472b6" }}
+                          />
+                          <span className="text-[13px]" style={{ color: "#475569" }}>Reading today's sky against both charts…</span>
+                        </div>
+                      )}
+
+                      {weather && !weatherLoading && (
+                        <>
+                          {/* Person A */}
+                          <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: PLANET_COLORS.Sun ?? "#f9a8d4" }}>
+                            {profileA.name.toUpperCase()}'S DAY
+                          </p>
+                          {weatherToAHarmonious.length === 0 && weatherToAHarsh.length === 0 && (
+                            <p className="text-[13px] mb-4" style={{ color: "#334155" }}>No major activations today.</p>
+                          )}
+                          {weatherToAHarmonious.length > 0 && (
+                            <div className="mb-3">
+                              <p className="text-[13px] font-bold tracking-widest mb-1.5" style={{ color: "#22c55e" }}>
+                                HARMONIOUS · {weatherToAHarmonious.length}
+                              </p>
+                              <div className="space-y-1.5">
+                                {weatherToAHarmonious.map((a, i) => <WeatherRow key={i} aspect={a} targetName={profileA.name} />)}
+                              </div>
+                            </div>
+                          )}
+                          {weatherToAHarsh.length > 0 && (
+                            <div className="mb-5">
+                              <p className="text-[13px] font-bold tracking-widest mb-1.5" style={{ color: "#f59e0b" }}>
+                                HARSH · {weatherToAHarsh.length}
+                              </p>
+                              <div className="space-y-1.5">
+                                {weatherToAHarsh.map((a, i) => <WeatherRow key={i} aspect={a} targetName={profileA.name} />)}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Person B */}
+                          <p className="text-[13px] font-bold tracking-widest mb-2 mt-5" style={{ color: "#818cf8" }}>
+                            {profileB.name.toUpperCase()}'S DAY
+                          </p>
+                          {weatherToBHarmonious.length === 0 && weatherToBHarsh.length === 0 && (
+                            <p className="text-[13px] mb-4" style={{ color: "#334155" }}>No major activations today.</p>
+                          )}
+                          {weatherToBHarmonious.length > 0 && (
+                            <div className="mb-3">
+                              <p className="text-[13px] font-bold tracking-widest mb-1.5" style={{ color: "#22c55e" }}>
+                                HARMONIOUS · {weatherToBHarmonious.length}
+                              </p>
+                              <div className="space-y-1.5">
+                                {weatherToBHarmonious.map((a, i) => <WeatherRow key={i} aspect={a} targetName={profileB.name} />)}
+                              </div>
+                            </div>
+                          )}
+                          {weatherToBHarsh.length > 0 && (
+                            <div>
+                              <p className="text-[13px] font-bold tracking-widest mb-1.5" style={{ color: "#f59e0b" }}>
+                                HARSH · {weatherToBHarsh.length}
+                              </p>
+                              <div className="space-y-1.5">
+                                {weatherToBHarsh.map((a, i) => <WeatherRow key={i} aspect={a} targetName={profileB.name} />)}
+                              </div>
+                            </div>
+                          )}
+
+                          <DailyWeatherOracle
+                            profileA={profileA}
+                            profileB={profileB}
+                            toA={weather.toA}
+                            toB={weather.toB}
+                            relationship={relationship}
+                          />
+                        </>
                       )}
                     </motion.div>
                   )}

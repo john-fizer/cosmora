@@ -68,14 +68,13 @@ function SkyStrip({ planets }: { planets: TransitsData["transitPlanets"] }) {
 
   return (
     <div
-      className="flex-shrink-0 flex items-center gap-2 px-6 py-3 overflow-x-auto"
+      className="flex-shrink-0 flex flex-wrap items-center gap-2 px-4 md:px-6 py-3"
       style={{
         background: "rgba(2,2,18,0.6)",
         borderBottom: "1px solid rgba(123,111,212,0.1)",
-        scrollbarWidth: "none",
       }}
     >
-      <span className="text-[13px] font-bold tracking-widest flex-shrink-0 mr-1" style={{ color: "#334155" }}>
+      <span className="text-[13px] font-bold tracking-widest flex-shrink-0 mr-1 w-full md:w-auto" style={{ color: "#334155" }}>
         SKY NOW
       </span>
       {ordered.map((p, i) => {
@@ -1370,7 +1369,7 @@ export default function TransitsPage() {
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="flex-shrink-0 flex items-center justify-between px-6 py-3 gap-4"
+          className="flex-shrink-0 flex flex-wrap items-center justify-between px-4 md:px-6 py-3 gap-3"
           style={{
             borderBottom: "1px solid rgba(123,111,212,0.1)",
             background: "rgba(2,2,18,0.7)",
@@ -1565,7 +1564,7 @@ export default function TransitsPage() {
 
               {/* Aspects header */}
               <div
-                className="flex-shrink-0 flex items-center gap-3 px-4 py-2"
+                className="flex-shrink-0 flex flex-wrap items-center gap-3 px-4 py-2"
                 style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
               >
                 <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>
@@ -1589,7 +1588,7 @@ export default function TransitsPage() {
                   </>
                 )}
                 {/* View toggle */}
-                <div className="ml-auto flex items-center gap-1 p-0.5 rounded-lg" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                <div className="w-full md:w-auto md:ml-auto flex flex-wrap items-center gap-1 p-0.5 rounded-lg" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
                   {(["list", "calendar", "heat", "wheel", "forecast"] as const).map(mode => (
                     <motion.button
                       key={mode}
@@ -1600,7 +1599,7 @@ export default function TransitsPage() {
                           fetchForecast(natal, forecastMonths);
                         }
                       }}
-                      className="px-2.5 py-1 rounded-md text-[13px] font-bold tracking-widest cursor-pointer transition-all"
+                      className="flex-1 md:flex-none px-2.5 py-1 rounded-md text-[13px] font-bold tracking-widest cursor-pointer transition-all"
                       style={{
                         background: viewMode === mode ? "rgba(123,111,212,0.25)" : "transparent",
                         color: viewMode === mode ? "#BFB6E8" : "#334155",

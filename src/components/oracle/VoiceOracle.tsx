@@ -115,9 +115,16 @@ export function VoiceOracle({ planet, enabled, onPlanetChange, onToggle, onLiveV
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 6, scale: 0.97 }}
               transition={{ duration: 0.14 }}
-              className="absolute right-0 top-full mt-2 z-50 rounded-2xl"
+              // left-0 not right-0: this panel used to always anchor near
+              // the header's right edge, but now that the header's control
+              // row wraps on mobile, the button it hangs off can land near
+              // the left edge instead — right-0 pushed a fixed 296px panel
+              // off the left of the screen in that case. Growing rightward
+              // from the button plus a responsive max-width keeps it
+              // on-screen regardless of where the button ends up.
+              className="absolute left-0 top-full mt-2 z-50 rounded-2xl"
               style={{
-                width: 296,
+                width: "min(296px, 88vw)",
                 background: "rgba(4,4,24,0.98)",
                 border: "1px solid rgba(123,111,212,0.18)",
                 backdropFilter: "blur(28px)",

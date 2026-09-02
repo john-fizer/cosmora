@@ -461,8 +461,9 @@ function ModelSelector({ currentModelId, availability, onChange }: {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.96 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-2 z-50 w-72 rounded-2xl overflow-hidden"
+              className="absolute left-0 top-full mt-2 z-50 rounded-2xl overflow-hidden"
               style={{
+                width: "min(288px, 88vw)",
                 background: "rgba(4,4,28,0.97)",
                 border: "1px solid rgba(123,111,212,0.25)",
                 backdropFilter: "blur(24px)",
@@ -552,8 +553,9 @@ function PersonaSelector({ currentPersonaId, onChange }: {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.96 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-2 z-50 w-72 rounded-2xl overflow-hidden"
+              className="absolute left-0 top-full mt-2 z-50 rounded-2xl overflow-hidden"
               style={{
+                width: "min(288px, 88vw)",
                 background: "rgba(4,4,28,0.97)",
                 border: "1px solid rgba(255,255,255,0.08)",
                 backdropFilter: "blur(24px)",
@@ -916,13 +918,13 @@ export default function OraclePage() {
       <DashboardBg />
       <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 3, background: "radial-gradient(ellipse 120% 110% at 50% 50%, transparent 70%, rgba(2,2,8,0.5))" }} />
 
-      <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10">
+      <div className="flex-1 flex flex-col min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10 overflow-x-hidden">
 
         {/* ── Header ── */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="flex-shrink-0 flex items-center justify-between px-6 py-3 hud-scan-bar"
+          className="flex-shrink-0 flex flex-wrap items-center justify-between gap-2 px-4 md:px-6 py-3 hud-scan-bar"
           style={{ borderBottom: "1px solid rgba(123,111,212,0.2)", background: "rgba(3,4,10,0.85)", backdropFilter: "blur(24px)" }}
         >
           <div className="flex items-center gap-3">
@@ -949,7 +951,13 @@ export default function OraclePage() {
             </motion.button>
           </Link>
 
-          <div className="flex items-center gap-3" style={{ marginLeft: "auto" }}>
+          {/* Was a single non-wrapping row (marginLeft:auto) with 6 controls
+              — status, Voice, Dual Oracle, Persona, Model, Clear — plus the
+              breadcrumb and Memories button ahead of it in the same row.
+              On mobile that pushed everything past Memories off the visible
+              edge, Voice included, with nothing to indicate more existed.
+              Wraps onto its own row(s) now instead. */}
+          <div className="w-full md:w-auto flex flex-wrap items-center gap-3 md:ml-auto">
             <div className="flex items-center gap-2">
               <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 1.5, repeat: Infinity }}
                 className="w-1.5 h-1.5 rounded-full"

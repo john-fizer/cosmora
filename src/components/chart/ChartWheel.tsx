@@ -6,19 +6,24 @@ import type { ChartData, PlanetName } from "@/lib/astrology/types";
 
 // ─── Sign palette ─────────────────────────────────────────────────────────────
 
+// Element-grouped palette instead of one-of-every-color: four refined tones
+// repeated across each element's three signs reads as engineered/systematic
+// rather than a full loud rainbow — fewer, more deliberate colors.
+const FIRE = "#e8a35c", EARTH = "#5eb897", AIR = "#5ec8e8", WATER = "#7b93e0";
+
 const SIGNS = [
-  { name: "Aries",       symbol: "♈", color: "#f87171", abbr: "ARIES"       },
-  { name: "Taurus",      symbol: "♉", color: "#34d399", abbr: "TAURUS"      },
-  { name: "Gemini",      symbol: "♊", color: "#fbbf24", abbr: "GEMINI"      },
-  { name: "Cancer",      symbol: "♋", color: "#67e8f9", abbr: "CANCER"      },
-  { name: "Leo",         symbol: "♌", color: "#fb923c", abbr: "LEO"         },
-  { name: "Virgo",       symbol: "♍", color: "#818cf8", abbr: "VIRGO"       },
-  { name: "Libra",       symbol: "♎", color: "#f472b6", abbr: "LIBRA"       },
-  { name: "Scorpio",     symbol: "♏", color: "#f87171", abbr: "SCORPIO"     },
-  { name: "Sagittarius", symbol: "♐", color: "#fcd34d", abbr: "SAGITTARIUS" },
-  { name: "Capricorn",   symbol: "♑", color: "#94a3b8", abbr: "CAPRICORN"   },
-  { name: "Aquarius",    symbol: "♒", color: "#22d3ee", abbr: "AQUARIUS"    },
-  { name: "Pisces",      symbol: "♓", color: "#c084fc", abbr: "PISCES"      },
+  { name: "Aries",       symbol: "♈", color: FIRE,  abbr: "ARIES"       },
+  { name: "Taurus",      symbol: "♉", color: EARTH, abbr: "TAURUS"      },
+  { name: "Gemini",      symbol: "♊", color: AIR,   abbr: "GEMINI"      },
+  { name: "Cancer",      symbol: "♋", color: WATER, abbr: "CANCER"      },
+  { name: "Leo",         symbol: "♌", color: FIRE,  abbr: "LEO"         },
+  { name: "Virgo",       symbol: "♍", color: EARTH, abbr: "VIRGO"       },
+  { name: "Libra",       symbol: "♎", color: AIR,   abbr: "LIBRA"       },
+  { name: "Scorpio",     symbol: "♏", color: WATER, abbr: "SCORPIO"     },
+  { name: "Sagittarius", symbol: "♐", color: FIRE,  abbr: "SAGITTARIUS" },
+  { name: "Capricorn",   symbol: "♑", color: EARTH, abbr: "CAPRICORN"   },
+  { name: "Aquarius",    symbol: "♒", color: AIR,   abbr: "AQUARIUS"    },
+  { name: "Pisces",      symbol: "♓", color: WATER, abbr: "PISCES"      },
 ];
 
 const PLANET_COLORS: Record<string, string> = {
@@ -156,8 +161,8 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
   // ASC/DSC/MC/IC positions
   const cardinals = [
-    { label: "ASC", lon: ascLon,         color: "#BFB6E8" },
-    { label: "DC",  lon: ascLon + 180,   color: "#BFB6E8" },
+    { label: "ASC", lon: ascLon,         color: "#7dd3fc" },
+    { label: "DC",  lon: ascLon + 180,   color: "#7dd3fc" },
     { label: "MC",  lon: chart?.midheaven ?? (ascLon + 270), color: "#fbbf24" },
     { label: "IC",  lon: (chart?.midheaven ?? (ascLon + 270)) + 180, color: "#fbbf24" },
   ];
@@ -166,10 +171,10 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
     <div className="relative" style={{ width: size, height: size }}>
      <div className="relative w-full h-full">
 
-      {/* ── Outer ambient glow ── */}
+      {/* ── Outer rim light — a thin cool edge instead of a soft colorful bloom ── */}
       <div className="absolute inset-0 rounded-full pointer-events-none" style={{
-        background: "radial-gradient(ellipse at center, rgba(123,111,212,0.18) 0%, rgba(6,182,212,0.08) 45%, transparent 72%)",
-        filter: "blur(4px)",
+        background: "radial-gradient(ellipse at center, rgba(56,130,246,0.10) 0%, rgba(6,182,212,0.05) 50%, transparent 76%)",
+        filter: "blur(2px)",
       }} />
 
       {/* ── Decan toggle ── */}
@@ -180,9 +185,9 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
         className="absolute z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-lg cursor-pointer"
         style={{
           top: 8, right: 8,
-          background: showDecans ? "rgba(123,111,212,0.25)" : "rgba(255,255,255,0.04)",
-          border: `1px solid ${showDecans ? "rgba(123,111,212,0.5)" : "rgba(255,255,255,0.1)"}`,
-          color: showDecans ? "#BFB6E8" : "#475569",
+          background: showDecans ? "rgba(56,130,246,0.25)" : "rgba(255,255,255,0.04)",
+          border: `1px solid ${showDecans ? "rgba(56,130,246,0.5)" : "rgba(255,255,255,0.1)"}`,
+          color: showDecans ? "#7dd3fc" : "#475569",
           fontSize: 11,
           letterSpacing: "0.08em",
           fontFamily: "'Fragment Mono', monospace",
@@ -197,35 +202,20 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
         width={size} height={size}
         viewBox={`0 0 ${size} ${size}`}
         className="relative z-10 chart-wheel-export"
-        style={{ filter: "drop-shadow(0 0 28px rgba(123,111,212,0.45)) drop-shadow(0 0 60px rgba(6,182,212,0.15))" }}
+        style={{ filter: "drop-shadow(0 0 12px rgba(56,130,246,0.20))" }}
       >
         <defs>
-          {/* Core gradient */}
+          {/* Core gradient — tightened radius and cooled toward ice-blue so the
+              center reads as a precision instrument, not a glowing power core */}
           <radialGradient id="cwCoreGrad" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-            <stop offset="20%" stopColor="#a78bfa" stopOpacity="0.8" />
-            <stop offset="55%" stopColor="#7B6FD4" stopOpacity="0.5" />
-            <stop offset="85%" stopColor="#06b6d4" stopOpacity="0.2" />
+            <stop offset="30%" stopColor="#bae6fd" stopOpacity="0.6" />
+            <stop offset="65%" stopColor="#3b82f6" stopOpacity="0.22" />
             <stop offset="100%" stopColor="#00000f" stopOpacity="0" />
           </radialGradient>
-          {/* Zodiac band fill gradient */}
-          <radialGradient id="cwZodBand" cx="50%" cy="50%" r="50%">
-            <stop offset="60%" stopColor="#080820" stopOpacity="0.0" />
-            <stop offset="100%" stopColor="#080820" stopOpacity="0.55" />
-          </radialGradient>
-          {/* Glow filter for aspect lines */}
+          {/* Glow filter for aspect lines — thinner, crisper bloom throughout */}
           <filter id="cwGlow" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="1.5" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-          {/* Planet glow */}
-          <filter id="cwPlanetGlow" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="2.5" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-          {/* Sign glow */}
-          <filter id="cwSignGlow" x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feGaussianBlur stdDeviation="0.9" result="blur" />
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
           {/* Star field pattern */}
@@ -243,7 +233,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
         {/* ── Outer decorative tick ring ── */}
         <g>
-          <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="rgba(123,111,212,0.2)" strokeWidth="0.8" />
+          <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="rgba(56,130,246,0.2)" strokeWidth="0.8" />
           {Array.from({ length: 72 }).map((_, i) => {
             const isMaj = i % 6 === 0; const isMed = i % 3 === 0;
             const a = i * 5 - 90;
@@ -251,8 +241,8 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
             const p2 = polarToXY(a, outerR - (isMaj ? 12 : isMed ? 7 : 4), cx, cy);
             return (
               <line key={i} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-                stroke={isMaj ? "rgba(123,111,212,0.7)" : "rgba(123,111,212,0.22)"}
-                strokeWidth={isMaj ? "1.2" : "0.6"} />
+                stroke={isMaj ? "rgba(56,130,246,0.55)" : "rgba(56,130,246,0.16)"}
+                strokeWidth={isMaj ? "1" : "0.5"} />
             );
           })}
         </g>
@@ -281,22 +271,18 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
           return (
             <g key={sign.name}>
-              {/* Sign sector subtle fill */}
-              <path
-                d={`${arcPath(cx, cy, zodOuter, signStart, signEnd)} L ${polarToXY(signEnd, zodInner, cx, cy).x} ${polarToXY(signEnd, zodInner, cx, cy).y} ${arcPath(cx, cy, zodInner, signEnd, signStart)} Z`}
-                fill={`${sign.color}08`}
-                stroke="none"
-              />
+              {/* No sector fill — the band is bare dark glass; color lives only
+                  in the thin arc/boundary hairlines and the glyph itself */}
               {/* Outer arc accent */}
               <path d={arcPath(cx, cy, zodOuter - 1, signStart, signEnd)}
-                fill="none" stroke={`${sign.color}35`} strokeWidth="1.5" />
+                fill="none" stroke={`${sign.color}18`} strokeWidth="0.8" />
               {/* Inner arc accent */}
               <path d={arcPath(cx, cy, zodInner + 1, signStart, signEnd)}
-                fill="none" stroke={`${sign.color}20`} strokeWidth="0.8" />
+                fill="none" stroke={`${sign.color}10`} strokeWidth="0.5" />
 
               {/* Sign boundary line */}
               <line x1={boundPt1.x} y1={boundPt1.y} x2={boundPt2.x} y2={boundPt2.y}
-                stroke={`${sign.color}50`} strokeWidth="0.8" />
+                stroke={`${sign.color}2c`} strokeWidth="0.5" />
 
               {/* Decan marks (toggle) */}
               {showDecans && (
@@ -308,13 +294,13 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
                 </>
               )}
 
-              {/* Sign glyph */}
+              {/* Sign glyph — crisp, no bloom: a schematic readout, not a lit-up icon */}
               <text
                 x={glyphPt.x} y={glyphPt.y}
                 textAnchor="middle" dominantBaseline="central"
-                fontSize="17"
+                fontSize="16"
                 fill={sign.color}
-                filter="url(#cwSignGlow)"
+                opacity="0.85"
                 style={{ userSelect: "none", fontFamily: "'Noto Sans Symbols 2', serif" }}
               >
                 {sign.symbol}
@@ -326,7 +312,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
                 textAnchor="middle" dominantBaseline="central"
                 fontSize="5.5"
                 fill={sign.color}
-                opacity="0.55"
+                opacity="0.4"
                 letterSpacing="0.5"
                 style={{ userSelect: "none", fontFamily: "'Fragment Mono', monospace" }}
               >
@@ -338,9 +324,9 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
         {/* ── House ring ── */}
         <circle cx={cx} cy={cy} r={zodInner} fill="rgba(4,4,20,0.6)"
-          stroke="rgba(123,111,212,0.25)" strokeWidth="0.8" />
+          stroke="rgba(56,130,246,0.25)" strokeWidth="0.8" />
         <circle cx={cx} cy={cy} r={zodInner * 0.80} fill="none"
-          stroke="rgba(123,111,212,0.12)" strokeWidth="0.5" />
+          stroke="rgba(56,130,246,0.12)" strokeWidth="0.5" />
 
         {/* House cusp lines + numbers */}
         {(chart?.houses ?? Array.from({ length: 12 }, (_, i) => ({ longitude: i * 30 + ascLon }))).map((house, i) => {
@@ -359,7 +345,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
             <g key={i} style={onHouseClick ? { cursor: "pointer" } : {}}
               onClick={() => onHouseClick?.(i)}>
               <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-                stroke={isDerivedAsc ? "#e879f9" : isAngular ? "rgba(168,85,247,0.5)" : "rgba(123,111,212,0.2)"}
+                stroke={isDerivedAsc ? "#e879f9" : isAngular ? "rgba(168,85,247,0.5)" : "rgba(56,130,246,0.2)"}
                 strokeWidth={isDerivedAsc ? "2" : isAngular ? "1.2" : "0.6"} />
               <text
                 x={textPt.x} y={textPt.y}
@@ -441,15 +427,15 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
           );
         })()}
 
-        {/* ── ASC/DC/MC/IC badge circles ── */}
+        {/* ── ASC/DC/MC/IC — flat schematic tick + label, not a glowing badge pill ── */}
         {cardinals.map(({ label, lon, color }) => {
           const angle = lonToAngle(lon, ascLon);
           const pt = polarToXY(angle, cardinalR, cx, cy);
+          const tickStart = polarToXY(angle, zodOuter, cx, cy);
           return (
             <g key={label}>
-              <circle cx={pt.x} cy={pt.y} r={cardinalBadgeR}
-                fill="rgba(4,4,20,0.9)" stroke={color} strokeWidth="1.2"
-                style={{ filter: `drop-shadow(0 0 6px ${color}66)` }} />
+              <line x1={tickStart.x} y1={tickStart.y} x2={pt.x} y2={pt.y}
+                stroke={color} strokeWidth="1" opacity="0.6" />
               <text x={pt.x} y={pt.y}
                 textAnchor="middle" dominantBaseline="central"
                 fontSize="6.5" fill={color} fontWeight="700" letterSpacing="0.5"
@@ -463,7 +449,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
         {/* ── Inner field ── */}
         <circle cx={cx} cy={cy} r={zodInner * 0.62}
-          fill="rgba(3,3,15,0.92)" stroke="rgba(123,111,212,0.2)" strokeWidth="0.8" />
+          fill="rgba(3,3,15,0.92)" stroke="rgba(56,130,246,0.2)" strokeWidth="0.8" />
 
         {/* ── Aspect lines ── */}
         {aspects.length > 0
@@ -504,32 +490,25 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
             })
         }
 
-        {/* ── Core nebula orb ── */}
-        {/* Outer glow halo */}
-        <circle cx={cx} cy={cy} r={coreR * 3.2} fill="url(#cwCoreGrad)" />
-        {/* Energy ring 1 */}
-        <circle cx={cx} cy={cy} r={coreR * 2.0} fill="none"
-          stroke="rgba(123,111,212,0.4)" strokeWidth="0.8" opacity={0.6} />
-        {/* Energy ring 2 */}
+        {/* ── Core — a precision instrument reticle, not an arc-reactor glow ── */}
+        <circle cx={cx} cy={cy} r={coreR * 1.9} fill="url(#cwCoreGrad)" />
+        {/* Instrument rings */}
         <circle cx={cx} cy={cy} r={coreR * 1.5} fill="none"
-          stroke="rgba(6,182,212,0.5)" strokeWidth="0.6" opacity={0.75} />
-        {/* Core */}
-        <circle cx={cx} cy={cy} r={coreR} fill="rgba(123,111,212,0.7)"
-          style={{ filter: "drop-shadow(0 0 8px rgba(123,111,212,0.9))" }} />
-        <circle cx={cx} cy={cy} r={coreR * 0.55}
-          fill="rgba(255,255,255,0.9)" opacity={0.85}
-          style={{ filter: "drop-shadow(0 0 4px rgba(255,255,255,0.95))" }}
-        />
-        {/* Radiating spokes */}
-        {Array.from({ length: 12 }).map((_, i) => {
-          const a = i * 30;
-          const p1 = polarToXY(a, coreR * 1.05, cx, cy);
-          const p2 = polarToXY(a, coreR * 1.85, cx, cy);
+          stroke="rgba(56,130,246,0.35)" strokeWidth="0.6" />
+        <circle cx={cx} cy={cy} r={coreR * 1.15} fill="none"
+          stroke="rgba(186,230,253,0.5)" strokeWidth="0.5" />
+        {/* Crosshair ticks (N/E/S/W) */}
+        {[0, 90, 180, 270].map(a => {
+          const p1 = polarToXY(a, coreR * 1.15, cx, cy);
+          const p2 = polarToXY(a, coreR * 1.5, cx, cy);
           return (
-            <line key={i} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-              stroke="rgba(123,111,212,0.25)" strokeWidth="0.5" />
+            <line key={a} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+              stroke="rgba(186,230,253,0.45)" strokeWidth="0.6" />
           );
         })}
+        {/* Center dot */}
+        <circle cx={cx} cy={cy} r={coreR * 0.4} fill="rgba(186,230,253,0.92)"
+          style={{ filter: "drop-shadow(0 0 4px rgba(125,211,252,0.75))" }} />
 
         {/* ── Planet tick marks — from the exact ecliptic position at the
             sign ring down to wherever the glyph actually rendered, so a
@@ -559,15 +538,13 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
               onMouseLeave={() => setHoveredPlanet(null)}
               onClick={() => onPlanetClick?.(planet.name as PlanetName)}
             >
-              {/* Halo */}
-              <circle cx={pt.x} cy={pt.y} r={isHovered ? 16 : 11}
-                fill={`${planet.color}22`}
-                stroke={`${planet.color}60`} strokeWidth="0.8"
-                filter="url(#cwPlanetGlow)"
+              {/* Node ring — a thin schematic outline, not a filled glow disc */}
+              <circle cx={pt.x} cy={pt.y} r={isHovered ? 15 : 10.5}
+                fill="none"
+                stroke={`${planet.color}${isHovered ? "70" : "40"}`} strokeWidth="0.7"
               />
               {/* Planet dot */}
-              <circle cx={pt.x} cy={pt.y} r="2.8" fill={planet.color}
-                style={{ filter: `drop-shadow(0 0 4px ${planet.color})` }} />
+              <circle cx={pt.x} cy={pt.y} r="2.2" fill={planet.color} />
               {/* Planet symbol */}
               <text x={pt.x} y={pt.y - 14}
                 textAnchor="middle" dominantBaseline="central"
@@ -575,7 +552,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
                 opacity={isHovered ? 1 : 0.9}
                 fontWeight="500"
                 style={{ userSelect: "none", fontFamily: "'Noto Sans Symbols 2', serif",
-                  filter: isHovered ? `drop-shadow(0 0 6px ${planet.color})` : undefined }}
+                  filter: isHovered ? `drop-shadow(0 0 4px ${planet.color})` : undefined }}
               >
                 {planet.symbol}
               </text>

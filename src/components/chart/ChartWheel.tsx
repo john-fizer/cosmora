@@ -3,28 +3,93 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import type { ChartData, PlanetName } from "@/lib/astrology/types";
+import { useTheme } from "@/lib/theme";
 
-// ─── Sign palette ─────────────────────────────────────────────────────────────
+// ─── Per-skin wheel palettes ────────────────────────────────────────────────
+// The wheel's structural chrome, sign tint, and core reticle recolor with the
+// app's global skin switcher (src/lib/theme.tsx) — planet/aspect colors stay
+// fixed everywhere since those carry universal functional meaning elsewhere
+// in the app. Unlisted skins fall back to "cosmic" until they get their own
+// wheel treatment.
+interface WheelSkin {
+  fire: string; earth: string; air: string; water: string; // element sign tint
+  chrome: string;       // "R,G,B" triplet — rings/ticks/lines
+  ring: string;         // "R,G,B" triplet — core instrument ring + dot
+  ascDc: string;        // ASC/DC label + tick color
+  mcIc: string;         // MC/IC accent color
+  angular: string;      // "R,G,B" triplet — angular house (1/4/7/10) lines
+  angularText: string;  // angular house numeral color
+  coreMid: string;      // core gradient mid stop
+  coreOuter: string;    // core gradient outer stop
+  ambient2: string;     // "R,G,B" triplet — secondary rim-light tint
+}
 
-// Element-grouped palette instead of one-of-every-color: four refined tones
-// repeated across each element's three signs reads as engineered/systematic
-// rather than a full loud rainbow — fewer, more deliberate colors.
-const FIRE = "#e8a35c", EARTH = "#5eb897", AIR = "#5ec8e8", WATER = "#7b93e0";
+const WHEEL_SKINS: Record<string, WheelSkin> = {
+  cosmic: {
+    fire: "#e8a35c", earth: "#5eb897", air: "#5ec8e8", water: "#7b93e0",
+    chrome: "56,130,246",
+    ring: "186,230,253",
+    ascDc: "#7dd3fc",
+    mcIc: "#fbbf24",
+    angular: "168,85,247",
+    angularText: "rgba(196,181,253,0.8)",
+    coreMid: "#bae6fd",
+    coreOuter: "#3b82f6",
+    ambient2: "6,182,212",
+  },
+  // Digital/code-readout vibe: everything green, differentiated by brightness
+  // rather than hue, plus one acid-chartreuse accent for MC/IC hierarchy.
+  matrix: {
+    fire: "#baffb0", earth: "#2ee65f", air: "#7dffb0", water: "#1fae4a",
+    chrome: "0,255,65",
+    ring: "186,255,207",
+    ascDc: "#5effa0",
+    mcIc: "#ccff33",
+    angular: "0,255,153",
+    angularText: "rgba(180,255,200,0.85)",
+    coreMid: "#d7ffe0",
+    coreOuter: "#00ff41",
+    ambient2: "0,255,65",
+  },
+  // Astro-instrument HUD vibe: uniform warm amber for the zodiac ring (no
+  // per-element rainbow — matches the reference's single-tone sign band),
+  // cyan reserved for the inner data/instrument rings — the two-tone split
+  // the reference photos use throughout.
+  vedic: {
+    fire: "#fbbf24", earth: "#f59e0b", air: "#fdba74", water: "#ea9a3e",
+    chrome: "34,211,238",
+    ring: "103,232,249",
+    ascDc: "#22d3ee",
+    mcIc: "#fb923c",
+    angular: "251,191,36",
+    angularText: "rgba(253,224,71,0.85)",
+    coreMid: "#67e8f9",
+    coreOuter: "#0e7490",
+    ambient2: "251,146,60",
+  },
+};
 
-const SIGNS = [
-  { name: "Aries",       symbol: "♈", color: FIRE,  abbr: "ARIES"       },
-  { name: "Taurus",      symbol: "♉", color: EARTH, abbr: "TAURUS"      },
-  { name: "Gemini",      symbol: "♊", color: AIR,   abbr: "GEMINI"      },
-  { name: "Cancer",      symbol: "♋", color: WATER, abbr: "CANCER"      },
-  { name: "Leo",         symbol: "♌", color: FIRE,  abbr: "LEO"         },
-  { name: "Virgo",       symbol: "♍", color: EARTH, abbr: "VIRGO"       },
-  { name: "Libra",       symbol: "♎", color: AIR,   abbr: "LIBRA"       },
-  { name: "Scorpio",     symbol: "♏", color: WATER, abbr: "SCORPIO"     },
-  { name: "Sagittarius", symbol: "♐", color: FIRE,  abbr: "SAGITTARIUS" },
-  { name: "Capricorn",   symbol: "♑", color: EARTH, abbr: "CAPRICORN"   },
-  { name: "Aquarius",    symbol: "♒", color: AIR,   abbr: "AQUARIUS"    },
-  { name: "Pisces",      symbol: "♓", color: WATER, abbr: "PISCES"      },
-];
+function getWheelSkin(theme: string): WheelSkin {
+  return WHEEL_SKINS[theme] ?? WHEEL_SKINS.cosmic;
+}
+
+function buildSigns(skin: WheelSkin) {
+  const { fire, earth, air, water } = skin;
+  return [
+    { name: "Aries",       symbol: "♈︎", color: fire,  abbr: "ARIES"       },
+    { name: "Taurus",      symbol: "♉︎", color: earth, abbr: "TAURUS"      },
+    { name: "Gemini",      symbol: "♊︎", color: air,   abbr: "GEMINI"      },
+    { name: "Cancer",      symbol: "♋︎", color: water, abbr: "CANCER"      },
+    { name: "Leo",         symbol: "♌︎", color: fire,  abbr: "LEO"         },
+    { name: "Virgo",       symbol: "♍︎", color: earth, abbr: "VIRGO"       },
+    { name: "Libra",       symbol: "♎︎", color: air,   abbr: "LIBRA"       },
+    { name: "Scorpio",     symbol: "♏︎", color: water, abbr: "SCORPIO"     },
+    { name: "Sagittarius", symbol: "♐︎", color: fire,  abbr: "SAGITTARIUS" },
+    { name: "Capricorn",   symbol: "♑︎", color: earth, abbr: "CAPRICORN"   },
+    { name: "Aquarius",    symbol: "♒︎", color: air,   abbr: "AQUARIUS"    },
+    { name: "Pisces",      symbol: "♓︎", color: water, abbr: "PISCES"      },
+  ];
+}
 
 const PLANET_COLORS: Record<string, string> = {
   Sun: "#fbbf24", Moon: "#94a3b8", Mercury: "#a78bfa", Venus: "#f472b6",
@@ -32,10 +97,14 @@ const PLANET_COLORS: Record<string, string> = {
   Neptune: "#3b82f6", Pluto: "#7B6FD4", NorthNode: "#64748b", Chiron: "#7B6FD4",
 };
 
+// U+FE0E (text presentation selector) suffixed on every glyph below: iOS/
+// Safari treats these codepoints as emoji by default and silently
+// substitutes Apple's own colored artwork, overriding any fill/color set in
+// the SVG — the selector forces the actual font glyph to render instead.
 const PLANET_SYMBOLS: Record<string, string> = {
-  Sun: "☉", Moon: "☽", Mercury: "☿", Venus: "♀", Mars: "♂",
-  Jupiter: "♃", Saturn: "♄", Uranus: "♅", Neptune: "♆", Pluto: "♇",
-  NorthNode: "☊", Chiron: "⚷",
+  Sun: "☉︎", Moon: "☽︎", Mercury: "☿︎", Venus: "♀︎", Mars: "♂︎",
+  Jupiter: "♃︎", Saturn: "♄︎", Uranus: "♅︎", Neptune: "♆︎", Pluto: "♇︎",
+  NorthNode: "☊︎", Chiron: "⚷︎",
 };
 
 const ASPECT_CFG: Record<string, { color: string; dash: string; opacity: number }> = {
@@ -87,6 +156,9 @@ interface ChartWheelProps {
 export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClick, showDecans: initShowDecans = false, derivedOffset = 0, onHouseClick }: ChartWheelProps) {
   const [hoveredPlanet, setHoveredPlanet] = useState<string | null>(null);
   const [showDecans, setShowDecans] = useState(initShowDecans);
+  const { theme } = useTheme();
+  const skin = getWheelSkin(theme);
+  const SIGNS = buildSigns(skin);
 
   const cx = size / 2;
   const cy = size / 2;
@@ -161,10 +233,10 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
   // ASC/DSC/MC/IC positions
   const cardinals = [
-    { label: "ASC", lon: ascLon,         color: "#7dd3fc" },
-    { label: "DC",  lon: ascLon + 180,   color: "#7dd3fc" },
-    { label: "MC",  lon: chart?.midheaven ?? (ascLon + 270), color: "#fbbf24" },
-    { label: "IC",  lon: (chart?.midheaven ?? (ascLon + 270)) + 180, color: "#fbbf24" },
+    { label: "ASC", lon: ascLon,         color: skin.ascDc },
+    { label: "DC",  lon: ascLon + 180,   color: skin.ascDc },
+    { label: "MC",  lon: chart?.midheaven ?? (ascLon + 270), color: skin.mcIc },
+    { label: "IC",  lon: (chart?.midheaven ?? (ascLon + 270)) + 180, color: skin.mcIc },
   ];
 
   return (
@@ -173,7 +245,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
       {/* ── Outer rim light — a thin cool edge instead of a soft colorful bloom ── */}
       <div className="absolute inset-0 rounded-full pointer-events-none" style={{
-        background: "radial-gradient(ellipse at center, rgba(56,130,246,0.10) 0%, rgba(6,182,212,0.05) 50%, transparent 76%)",
+        background: `radial-gradient(ellipse at center, rgba(${skin.chrome},0.10) 0%, rgba(${skin.ambient2},0.05) 50%, transparent 76%)`,
         filter: "blur(2px)",
       }} />
 
@@ -185,9 +257,9 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
         className="absolute z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-lg cursor-pointer"
         style={{
           top: 8, right: 8,
-          background: showDecans ? "rgba(56,130,246,0.25)" : "rgba(255,255,255,0.04)",
-          border: `1px solid ${showDecans ? "rgba(56,130,246,0.5)" : "rgba(255,255,255,0.1)"}`,
-          color: showDecans ? "#7dd3fc" : "#475569",
+          background: showDecans ? `rgba(${skin.chrome},0.25)` : "rgba(255,255,255,0.04)",
+          border: `1px solid ${showDecans ? `rgba(${skin.chrome},0.5)` : "rgba(255,255,255,0.1)"}`,
+          color: showDecans ? skin.ascDc : "#475569",
           fontSize: 11,
           letterSpacing: "0.08em",
           fontFamily: "'Fragment Mono', monospace",
@@ -202,15 +274,15 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
         width={size} height={size}
         viewBox={`0 0 ${size} ${size}`}
         className="relative z-10 chart-wheel-export"
-        style={{ filter: "drop-shadow(0 0 12px rgba(56,130,246,0.20))" }}
+        style={{ filter: `drop-shadow(0 0 12px rgba(${skin.chrome},0.20))` }}
       >
         <defs>
           {/* Core gradient — tightened radius and cooled toward ice-blue so the
               center reads as a precision instrument, not a glowing power core */}
           <radialGradient id="cwCoreGrad" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-            <stop offset="30%" stopColor="#bae6fd" stopOpacity="0.6" />
-            <stop offset="65%" stopColor="#3b82f6" stopOpacity="0.22" />
+            <stop offset="30%" stopColor={skin.coreMid} stopOpacity="0.6" />
+            <stop offset="65%" stopColor={skin.coreOuter} stopOpacity="0.22" />
             <stop offset="100%" stopColor="#00000f" stopOpacity="0" />
           </radialGradient>
           {/* Glow filter for aspect lines — thinner, crisper bloom throughout */}
@@ -233,7 +305,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
         {/* ── Outer decorative tick ring ── */}
         <g>
-          <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="rgba(56,130,246,0.2)" strokeWidth="0.8" />
+          <circle cx={cx} cy={cy} r={outerR} fill="none" stroke={`rgba(${skin.chrome},0.2)`} strokeWidth="0.8" />
           {Array.from({ length: 72 }).map((_, i) => {
             const isMaj = i % 6 === 0; const isMed = i % 3 === 0;
             const a = i * 5 - 90;
@@ -241,7 +313,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
             const p2 = polarToXY(a, outerR - (isMaj ? 12 : isMed ? 7 : 4), cx, cy);
             return (
               <line key={i} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-                stroke={isMaj ? "rgba(56,130,246,0.55)" : "rgba(56,130,246,0.16)"}
+                stroke={isMaj ? `rgba(${skin.chrome},0.55)` : `rgba(${skin.chrome},0.16)`}
                 strokeWidth={isMaj ? "1" : "0.5"} />
             );
           })}
@@ -324,9 +396,9 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
         {/* ── House ring ── */}
         <circle cx={cx} cy={cy} r={zodInner} fill="rgba(4,4,20,0.6)"
-          stroke="rgba(56,130,246,0.25)" strokeWidth="0.8" />
+          stroke={`rgba(${skin.chrome},0.25)`} strokeWidth="0.8" />
         <circle cx={cx} cy={cy} r={zodInner * 0.80} fill="none"
-          stroke="rgba(56,130,246,0.12)" strokeWidth="0.5" />
+          stroke={`rgba(${skin.chrome},0.12)`} strokeWidth="0.5" />
 
         {/* House cusp lines + numbers */}
         {(chart?.houses ?? Array.from({ length: 12 }, (_, i) => ({ longitude: i * 30 + ascLon }))).map((house, i) => {
@@ -345,13 +417,13 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
             <g key={i} style={onHouseClick ? { cursor: "pointer" } : {}}
               onClick={() => onHouseClick?.(i)}>
               <line x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-                stroke={isDerivedAsc ? "#e879f9" : isAngular ? "rgba(168,85,247,0.5)" : "rgba(56,130,246,0.2)"}
+                stroke={isDerivedAsc ? "#e879f9" : isAngular ? `rgba(${skin.angular},0.5)` : `rgba(${skin.chrome},0.2)`}
                 strokeWidth={isDerivedAsc ? "2" : isAngular ? "1.2" : "0.6"} />
               <text
                 x={textPt.x} y={textPt.y}
                 textAnchor="middle" dominantBaseline="central"
                 fontSize={isAngular ? "8.5" : "7.5"}
-                fill={isDerivedAsc ? "#e879f9" : isAngular ? "rgba(196,181,253,0.8)" : "rgba(148,163,184,0.5)"}
+                fill={isDerivedAsc ? "#e879f9" : isAngular ? skin.angularText : "rgba(148,163,184,0.5)"}
                 fontWeight={isDerivedAsc || isAngular ? "700" : "400"}
                 style={{ userSelect: "none", fontFamily: "'Fragment Mono', monospace" }}
               >
@@ -449,7 +521,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
 
         {/* ── Inner field ── */}
         <circle cx={cx} cy={cy} r={zodInner * 0.62}
-          fill="rgba(3,3,15,0.92)" stroke="rgba(56,130,246,0.2)" strokeWidth="0.8" />
+          fill="rgba(3,3,15,0.92)" stroke={`rgba(${skin.chrome},0.2)`} strokeWidth="0.8" />
 
         {/* ── Aspect lines ── */}
         {aspects.length > 0
@@ -494,21 +566,21 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
         <circle cx={cx} cy={cy} r={coreR * 1.9} fill="url(#cwCoreGrad)" />
         {/* Instrument rings */}
         <circle cx={cx} cy={cy} r={coreR * 1.5} fill="none"
-          stroke="rgba(56,130,246,0.35)" strokeWidth="0.6" />
+          stroke={`rgba(${skin.chrome},0.35)`} strokeWidth="0.6" />
         <circle cx={cx} cy={cy} r={coreR * 1.15} fill="none"
-          stroke="rgba(186,230,253,0.5)" strokeWidth="0.5" />
+          stroke={`rgba(${skin.ring},0.5)`} strokeWidth="0.5" />
         {/* Crosshair ticks (N/E/S/W) */}
         {[0, 90, 180, 270].map(a => {
           const p1 = polarToXY(a, coreR * 1.15, cx, cy);
           const p2 = polarToXY(a, coreR * 1.5, cx, cy);
           return (
             <line key={a} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-              stroke="rgba(186,230,253,0.45)" strokeWidth="0.6" />
+              stroke={`rgba(${skin.ring},0.45)`} strokeWidth="0.6" />
           );
         })}
         {/* Center dot */}
-        <circle cx={cx} cy={cy} r={coreR * 0.4} fill="rgba(186,230,253,0.92)"
-          style={{ filter: "drop-shadow(0 0 4px rgba(125,211,252,0.75))" }} />
+        <circle cx={cx} cy={cy} r={coreR * 0.4} fill={`rgba(${skin.ring},0.92)`}
+          style={{ filter: `drop-shadow(0 0 4px rgba(${skin.ring},0.75))` }} />
 
         {/* ── Planet tick marks — from the exact ecliptic position at the
             sign ring down to wherever the glyph actually rendered, so a

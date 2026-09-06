@@ -17,6 +17,7 @@ const THEMES: {
   { id: "alien",      label: "Alien",      primary: "#39ff14", secondary: "#00ffcc", bg: "#000a03" },
   { id: "blood-moon", label: "Blood Moon", primary: "#dc2626", secondary: "#ff4444", bg: "#0a0000" },
   { id: "solar",      label: "Solar",      primary: "#f97316", secondary: "#fbbf24", bg: "#0a0500" },
+  { id: "vedic",      label: "Vedic",      primary: "#fb923c", secondary: "#22d3ee", bg: "#0a0700" },
 ];
 
 export function ThemeSwitcher() {

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-export type ThemeId = "cosmic" | "matrix" | "cyberpunk" | "alien" | "blood-moon" | "solar";
+export type ThemeId = "cosmic" | "matrix" | "cyberpunk" | "alien" | "blood-moon" | "solar" | "vedic";
 
 interface ThemeCtx {
   theme: ThemeId;

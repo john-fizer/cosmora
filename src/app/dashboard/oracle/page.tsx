@@ -125,7 +125,7 @@ function InsightCard({ planet, sign, house, color, delay, onClick }: {
 
 const TOOL_LABELS: Record<string, { label: string; icon: string }> = {
   check_planet_placement: { label: "Scanning planet placement", icon: "⊕" },
-  identify_aspects:       { label: "Mapping aspect patterns",   icon: "⚷" },
+  identify_aspects:       { label: "Mapping aspect patterns",   icon: "⚷︎" },
   calculate_timing:       { label: "Reading profection timing", icon: "⏳" },
   assess_chart_pattern:   { label: "Analyzing chart geometry",  icon: "✦" },
 };

@@ -14,14 +14,14 @@ const PLANET_COLORS: Record<string, string> = {
 };
 
 const PLANET_SYMBOLS: Record<string, string> = {
-  Sun: "☉", Moon: "☽", Mercury: "☿", Venus: "♀", Mars: "♂",
-  Jupiter: "♃", Saturn: "♄", Uranus: "⛢", Neptune: "♆", Pluto: "♇",
-  NorthNode: "☊", Chiron: "⚷",
+  Sun: "☉︎", Moon: "☽︎", Mercury: "☿︎", Venus: "♀︎", Mars: "♂︎",
+  Jupiter: "♃︎", Saturn: "♄︎", Uranus: "⛢", Neptune: "♆︎", Pluto: "♇︎",
+  NorthNode: "☊︎", Chiron: "⚷︎",
 };
 
 const SIGN_SYMBOLS: Record<string, string> = {
-  Aries: "♈", Taurus: "♉", Gemini: "♊", Cancer: "♋", Leo: "♌", Virgo: "♍",
-  Libra: "♎", Scorpio: "♏", Sagittarius: "♐", Capricorn: "♑", Aquarius: "♒", Pisces: "♓",
+  Aries: "♈︎", Taurus: "♉︎", Gemini: "♊︎", Cancer: "♋︎", Leo: "♌︎", Virgo: "♍︎",
+  Libra: "♎︎", Scorpio: "♏︎", Sagittarius: "♐︎", Capricorn: "♑︎", Aquarius: "♒︎", Pisces: "♓︎",
 };
 
 function degStr(lon: number) {

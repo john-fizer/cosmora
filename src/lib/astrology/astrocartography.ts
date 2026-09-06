@@ -39,8 +39,8 @@ export const PLANET_COLORS: Record<AstroLinePlanet, string> = {
 };
 
 export const PLANET_SYMBOLS: Record<AstroLinePlanet, string> = {
-  Sun: "☉", Moon: "☽", Mercury: "☿", Venus: "♀", Mars: "♂",
-  Jupiter: "♃", Saturn: "♄", Uranus: "♅", Neptune: "♆",
+  Sun: "☉︎", Moon: "☽︎", Mercury: "☿︎", Venus: "♀︎", Mars: "♂︎",
+  Jupiter: "♃︎", Saturn: "♄︎", Uranus: "♅︎", Neptune: "♆︎",
 };
 
 // ─── Math helpers ──────────────────────────────────────────────────────────────

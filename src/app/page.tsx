@@ -22,7 +22,7 @@ const FEATURES = [
   { glyph: "⟳", title: "Zodiacal Releasing", desc: "Hellenistic four-level timing. Life chapters decoded through Fortune and Spirit." },
   { glyph: "◈", title: "Pressure Windows", desc: "Three timing systems stacked. When they converge, the season is real — with a protocol of dated actions." },
   { glyph: "✦", title: "AI Oracle", desc: "Claude-powered readings constrained by traditional ruleset. Dignity-sensitive, sect-aware, chart-anchored." },
-  { glyph: "☽", title: "Marriage Patterns", desc: "Moon-count significators, divorce indicators, and blended remedies — one union at a time." },
+  { glyph: "☽︎", title: "Marriage Patterns", desc: "Moon-count significators, divorce indicators, and blended remedies — one union at a time." },
 ];
 
 const FAQ = [

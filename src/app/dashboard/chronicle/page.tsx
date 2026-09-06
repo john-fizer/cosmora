@@ -33,8 +33,8 @@ const BIO_PROMPTS = [
 const EDGE_LABELS: Record<EdgeType, string> = { echoes: "echoes", follows: "follows", caused_by: "caused by", part_of: "part of" };
 
 function tokenChip(token: string): string {
-  // compact display: T.Saturn.square.Moon.H4 → ♄ □ ☽ H4
-  const GLYPH: Record<string, string> = { Sun:"☉",Moon:"☽",Mercury:"☿",Venus:"♀",Mars:"♂",Jupiter:"♃",Saturn:"♄",Uranus:"⛢",Neptune:"♆",Pluto:"♇",Ascendant:"ASC",Midheaven:"MC" };
+  // compact display: T.Saturn.square.Moon.H4 → ♄︎ □ ☽︎ H4
+  const GLYPH: Record<string, string> = { Sun:"☉︎",Moon:"☽︎",Mercury:"☿︎",Venus:"♀︎",Mars:"♂︎",Jupiter:"♃︎",Saturn:"♄︎",Uranus:"⛢",Neptune:"♆︎",Pluto:"♇︎",Ascendant:"ASC",Midheaven:"MC" };
   const ASP: Record<string, string> = { conj:"☌", sextile:"⚹", square:"□", trine:"△", opp:"☍" };
   const parts = token.split(".");
   if (parts[0] === "T") return `${GLYPH[parts[1]] ?? parts[1]} ${ASP[parts[2]] ?? parts[2]} ${GLYPH[parts[3]] ?? parts[3]} ${parts[4]}`;

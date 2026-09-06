@@ -15,7 +15,7 @@ export interface PlanetMeta {
 
 export const PLANET_META: Partial<Record<PlanetName, PlanetMeta>> = {
   Sun: {
-    glyph: "☉",
+    glyph: "☉︎",
     color: "#ffd700",
     bgColor: "#0e0600",
     glowColor: "rgba(255,215,0,0.18)",
@@ -27,7 +27,7 @@ export const PLANET_META: Partial<Record<PlanetName, PlanetMeta>> = {
     exaltedIn: "Aries",
   },
   Moon: {
-    glyph: "☽",
+    glyph: "☽︎",
     color: "#c4b5fd",
     bgColor: "#06030f",
     glowColor: "rgba(196,181,253,0.18)",
@@ -39,7 +39,7 @@ export const PLANET_META: Partial<Record<PlanetName, PlanetMeta>> = {
     exaltedIn: "Taurus",
   },
   Mercury: {
-    glyph: "☿",
+    glyph: "☿︎",
     color: "#a78bfa",
     bgColor: "#05040e",
     glowColor: "rgba(167,139,250,0.18)",
@@ -51,7 +51,7 @@ export const PLANET_META: Partial<Record<PlanetName, PlanetMeta>> = {
     exaltedIn: "Virgo",
   },
   Venus: {
-    glyph: "♀",
+    glyph: "♀︎",
     color: "#f472b6",
     bgColor: "#0d0309",
     glowColor: "rgba(244,114,182,0.18)",
@@ -63,7 +63,7 @@ export const PLANET_META: Partial<Record<PlanetName, PlanetMeta>> = {
     exaltedIn: "Pisces",
   },
   Mars: {
-    glyph: "♂",
+    glyph: "♂︎",
     color: "#ef4444",
     bgColor: "#0e0202",
     glowColor: "rgba(239,68,68,0.20)",
@@ -75,7 +75,7 @@ export const PLANET_META: Partial<Record<PlanetName, PlanetMeta>> = {
     exaltedIn: "Capricorn",
   },
   Jupiter: {
-    glyph: "♃",
+    glyph: "♃︎",
     color: "#f59e0b",
     bgColor: "#0a0700",
     glowColor: "rgba(245,158,11,0.18)",
@@ -87,7 +87,7 @@ export const PLANET_META: Partial<Record<PlanetName, PlanetMeta>> = {
     exaltedIn: "Cancer",
   },
   Saturn: {
-    glyph: "♄",
+    glyph: "♄︎",
     color: "#94a3b8",
     bgColor: "#04060c",
     glowColor: "rgba(148,163,184,0.15)",
@@ -99,7 +99,7 @@ export const PLANET_META: Partial<Record<PlanetName, PlanetMeta>> = {
     exaltedIn: "Libra",
   },
   Uranus: {
-    glyph: "♅",
+    glyph: "♅︎",
     color: "#06b6d4",
     bgColor: "#00060c",
     glowColor: "rgba(6,182,212,0.18)",
@@ -111,7 +111,7 @@ export const PLANET_META: Partial<Record<PlanetName, PlanetMeta>> = {
     exaltedIn: "Scorpio",
   },
   Neptune: {
-    glyph: "♆",
+    glyph: "♆︎",
     color: "#3b82f6",
     bgColor: "#020410",
     glowColor: "rgba(59,130,246,0.18)",
@@ -123,7 +123,7 @@ export const PLANET_META: Partial<Record<PlanetName, PlanetMeta>> = {
     exaltedIn: "Cancer",
   },
   Pluto: {
-    glyph: "♇",
+    glyph: "♇︎",
     color: "#8b5cf6",
     bgColor: "#05010c",
     glowColor: "rgba(139,92,246,0.20)",

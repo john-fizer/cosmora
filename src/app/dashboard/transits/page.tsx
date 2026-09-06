@@ -488,7 +488,7 @@ function TransitBiWheel({ natal, data }: { natal: ChartData; data: TransitsData 
   const R_ZOD_OUT = 125;
   const R_TRANSIT = 145; // transit planets
 
-  const ZODIAC_SYMBOLS = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
+  const ZODIAC_SYMBOLS = ["♈︎","♉︎","♊︎","♋︎","♌︎","♍︎","♎︎","♏︎","♐︎","♑︎","♒︎","♓︎"];
   const ZODIAC_COLORS_ZW = ["#ef4444","#22c55e","#eab308","#9C8AC4","#f97316","#7B6FD4","#ec4899","#dc2626","#f59e0b","#64748b","#06b6d4","#7B6FD4"];
 
   function lonToAngle(lon: number): number {
@@ -614,13 +614,13 @@ function TransitBiWheel({ natal, data }: { natal: ChartData; data: TransitsData 
       <div className="flex gap-4 text-[13px]">
         <div className="flex items-center gap-1.5">
           <div className="w-6 h-6 rounded-full flex items-center justify-center border" style={{ background: "rgba(4,4,28,0.9)", borderColor: "rgba(123,111,212,0.4)" }}>
-            <span style={{ color: "#a78bfa", fontSize: 13 }}>☉</span>
+            <span style={{ color: "#a78bfa", fontSize: 13 }}>☉︎</span>
           </div>
           <span style={{ color: "#475569" }}>Natal (inner)</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-6 h-6 rounded-full flex items-center justify-center border" style={{ background: "rgba(245,158,11,0.1)", borderColor: "rgba(245,158,11,0.5)" }}>
-            <span style={{ color: "#fbbf24", fontSize: 13 }}>☉</span>
+            <span style={{ color: "#fbbf24", fontSize: 13 }}>☉︎</span>
           </div>
           <span style={{ color: "#475569" }}>Transit (outer)</span>
         </div>
@@ -1474,7 +1474,7 @@ export default function TransitsPage() {
                       border: forecastFilter === f ? "1px solid rgba(123,111,212,0.35)" : "1px solid transparent",
                     }}
                   >
-                    {f === "all" ? "ALL" : f === "outer" ? "♃ OUTER" : "✦ MAJOR"}
+                    {f === "all" ? "ALL" : f === "outer" ? "♃︎ OUTER" : "✦ MAJOR"}
                   </motion.button>
                 ))}
               </div>
@@ -1499,7 +1499,7 @@ export default function TransitsPage() {
                 color: filterOuter ? "#a78bfa" : "#64748b",
               }}
             >
-              ♃ OUTER
+              ♃︎ OUTER
             </motion.button>
 
             {/* Applying toggle */}
@@ -1824,7 +1824,7 @@ export default function TransitsPage() {
                           {illumination}% illuminated
                         </p>
                         <p className="text-[13px]" style={{ color: "#334155" }}>
-                          ☽ {SIGN_SYMBOLS[moon.sign as import("@/lib/astrology/types").ZodiacSign]} {moon.sign} · H{moon.house}
+                          ☽︎ {SIGN_SYMBOLS[moon.sign as import("@/lib/astrology/types").ZodiacSign]} {moon.sign} · H{moon.house}
                         </p>
                       </div>
                     </div>

@@ -507,7 +507,7 @@ export default function SolarReturnPage() {
               )}
               {srDatetime && !loading && (
                 <span className="text-[13px]" style={{ color: "#475569" }}>
-                  ☉ returns {formatDatetime(srDatetime)}
+                  ☉︎ returns {formatDatetime(srDatetime)}
                 </span>
               )}
             </motion.div>

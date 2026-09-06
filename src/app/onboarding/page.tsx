@@ -338,8 +338,8 @@ export default function OnboardingPage() {
     };
 
     const reveals = [
-      { label: "SUN", symbol: "☉", color: "#fbbf24", value: `${sun?.sign ?? "?"}`, subtext: `House ${sun?.house ?? "?"} · ${sun?.dignity ? sun.dignity.charAt(0).toUpperCase() + sun.dignity.slice(1) : "Peregrine"}`, signColor: SIGN_COLORS[sun?.sign ?? ""] ?? "#94a3b8" },
-      { label: "MOON", symbol: "☽", color: "#BFB6E8", value: `${moon?.sign ?? "?"}`, subtext: `House ${moon?.house ?? "?"} · ${moon?.dignity ? moon.dignity.charAt(0).toUpperCase() + moon.dignity.slice(1) : "Peregrine"}`, signColor: SIGN_COLORS[moon?.sign ?? ""] ?? "#94a3b8" },
+      { label: "SUN", symbol: "☉︎", color: "#fbbf24", value: `${sun?.sign ?? "?"}`, subtext: `House ${sun?.house ?? "?"} · ${sun?.dignity ? sun.dignity.charAt(0).toUpperCase() + sun.dignity.slice(1) : "Peregrine"}`, signColor: SIGN_COLORS[sun?.sign ?? ""] ?? "#94a3b8" },
+      { label: "MOON", symbol: "☽︎", color: "#BFB6E8", value: `${moon?.sign ?? "?"}`, subtext: `House ${moon?.house ?? "?"} · ${moon?.dignity ? moon.dignity.charAt(0).toUpperCase() + moon.dignity.slice(1) : "Peregrine"}`, signColor: SIGN_COLORS[moon?.sign ?? ""] ?? "#94a3b8" },
       { label: "RISING", symbol: "↑", color: "#06b6d4", value: `${asc?.sign ?? "?"}`, subtext: "Ascendant sign", signColor: SIGN_COLORS[asc?.sign ?? ""] ?? "#94a3b8" },
       { label: "LORD OF YEAR", symbol: PLANET_SYMBOLS[prof.lordOfYear as keyof typeof PLANET_SYMBOLS] ?? "?", color: PLANET_COLORS[prof.lordOfYear] ?? "#f59e0b", value: prof.lordOfYear, subtext: `Age ${prof.age} · H${prof.activatedHouse} activated`, signColor: PLANET_COLORS[prof.lordOfYear] ?? "#f59e0b" },
     ];
@@ -407,7 +407,7 @@ export default function OnboardingPage() {
             style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
           >
             <span style={{ color: revealChart.sect === "day" ? "#fbbf24" : "#BFB6E8", fontSize: "1.1rem" }}>
-              {revealChart.sect === "day" ? "☀" : "☽"}
+              {revealChart.sect === "day" ? "☀︎" : "☽︎"}
             </span>
             <span className="text-[13px] font-medium" style={{ color: "#64748b" }}>
               {revealChart.sect === "day" ? "Day chart — Sun above the horizon at birth" : "Night chart — Sun below the horizon at birth"}

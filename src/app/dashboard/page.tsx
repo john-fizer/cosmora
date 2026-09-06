@@ -1179,7 +1179,7 @@ function RightPanel({ chart, profileId, lat, lon, transits, retrogrades, ingress
         <div className="mt-3 pt-3 flex items-center gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
           <span className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>SECT</span>
           <span className="text-[14px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#BFB6E8" }}>
-            {chart.sect === "day" ? "☀ DAY" : "☽ NIGHT"}
+            {chart.sect === "day" ? "☀︎ DAY" : "☽︎ NIGHT"}
           </span>
           <span className="ml-auto text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>DOMINANT</span>
           <span className="text-[14px] font-bold" style={{ color: ELEMENT_COLORS[dominant as keyof typeof ELEMENT_COLORS] }}>{dominant}</span>
@@ -1334,7 +1334,7 @@ function SignatureCard({ chart, name }: { chart: ChartData; name: string }) {
 
         {/* Bottom row: sect + element + aspect count */}
         <text x={22} y={206} fontSize={8} fill="rgba(123,111,212,0.5)" letterSpacing={1}>
-          {chart.sect === "day" ? "☀ DAY SECT" : "☽ NIGHT SECT"}
+          {chart.sect === "day" ? "☀︎ DAY SECT" : "☽︎ NIGHT SECT"}
         </text>
         <circle cx={220} cy={202} r={3} fill={domColor} />
         <text x={232} y={206} textAnchor="start" fontSize={8} fill={domColor} fontWeight="700">{dominant} dominant</text>

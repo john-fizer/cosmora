@@ -55,7 +55,7 @@ export function ChartSummaryBar({ chart, profileName, onHouseSystemChange, recal
     },
     {
       label: "SECT",
-      value: chart.sect === "day" ? "☀ Day" : "☽ Night",
+      value: chart.sect === "day" ? "☀︎ Day" : "☽︎ Night",
       sub: chart.sect === "day" ? "Jupiter leads" : "Venus leads",
     },
     { label: "MIDHEAVEN", value: formatLon(chart.midheaven), sub: null },

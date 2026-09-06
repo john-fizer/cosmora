@@ -33,7 +33,7 @@ const SIGN_COLORS: string[] = [
   "#f59e0b", "#64748b", "#06b6d4", "#7B6FD4",
 ];
 
-const ZODIAC_GLYPHS = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
+const ZODIAC_GLYPHS = ["♈︎","♉︎","♊︎","♋︎","♌︎","♍︎","♎︎","♏︎","♐︎","♑︎","♒︎","♓︎"];
 
 const ASPECT_COLORS: Record<string, string> = {
   conjunction: "#9C8AC4", opposition: "#ef4444", trine: "#22c55e",

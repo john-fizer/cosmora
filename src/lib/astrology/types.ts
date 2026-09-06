@@ -87,15 +87,20 @@ export const ZODIAC_SIGNS: ZodiacSign[] = [
   "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces",
 ];
 
+// U+FE0E (text presentation selector) suffixed on every glyph: iOS/Safari
+// treats the zodiac and gender-symbol codepoints (♈︎-♓︎, ♀︎, ♂︎) as emoji by
+// default and silently substitutes Apple's own colored artwork for them,
+// overriding any fill/color set in code — the selector forces the font's
+// actual text glyph to render instead.
 export const SIGN_SYMBOLS: Record<ZodiacSign, string> = {
-  Aries:"♈", Taurus:"♉", Gemini:"♊", Cancer:"♋", Leo:"♌", Virgo:"♍",
-  Libra:"♎", Scorpio:"♏", Sagittarius:"♐", Capricorn:"♑", Aquarius:"♒", Pisces:"♓",
+  Aries:"♈︎", Taurus:"♉︎", Gemini:"♊︎", Cancer:"♋︎", Leo:"♌︎", Virgo:"♍︎",
+  Libra:"♎︎", Scorpio:"♏︎", Sagittarius:"♐︎", Capricorn:"♑︎", Aquarius:"♒︎", Pisces:"♓︎",
 };
 
 export const PLANET_SYMBOLS: Record<PlanetName, string> = {
-  Sun:"☉", Moon:"☽", Mercury:"☿", Venus:"♀", Mars:"♂",
-  Jupiter:"♃", Saturn:"♄", Uranus:"♅", Neptune:"♆", Pluto:"♇",
-  NorthNode:"☊", Chiron:"⚷",
+  Sun:"☉︎", Moon:"☽︎", Mercury:"☿︎", Venus:"♀︎", Mars:"♂︎",
+  Jupiter:"♃︎", Saturn:"♄︎", Uranus:"♅︎", Neptune:"♆︎", Pluto:"♇︎",
+  NorthNode:"☊︎", Chiron:"⚷︎",
 };
 
 export const TRADITIONAL_RULERS: Record<ZodiacSign, PlanetName> = {

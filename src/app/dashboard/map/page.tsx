@@ -23,7 +23,7 @@ import type { GlobeMode } from "./GlobeCanvas";
 type ViewMode = "globe" | "flat" | "heatmap";
 
 const CATEGORY_GLYPH: Record<EnergyCategory, string> = {
-  Career: "♕", Love: "♥", Wealth: "✦", Creativity: "✧", Spirituality: "☽", Transformation: "⚡",
+  Career: "♕", Love: "♥", Wealth: "✦", Creativity: "✧", Spirituality: "☽︎", Transformation: "⚡",
 };
 
 type Layers = {

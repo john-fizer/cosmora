@@ -5,7 +5,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
   // ─── FOUNDATIONS: PLANETS ────────────────────────────────────────────────────
 
   {
-    slug: "planet-sun", title: "The Sun", subtitle: "☉ · Identity · Will · Vitality",
+    slug: "planet-sun", title: "The Sun", subtitle: "☉︎ · Identity · Will · Vitality",
     category: "foundations", tags: ["planet", "luminary", "fire", "ego"],
     summary: "The Sun is the core of your conscious identity — the will-power, the ego, and the creative life force that animates your entire chart. It describes where you must shine, the role you are meant to play, and the central theme of this lifetime.",
     chartKeys: [{ type: "planet", name: "Sun" }],
@@ -13,7 +13,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Sun in astrology: identity, vitality, the hero myth, Leo rulership, sect importance in Hellenistic, Surya in Jyotish, solar returns as the yearly chapter.",
   },
   {
-    slug: "planet-moon", title: "The Moon", subtitle: "☽ · Soul · Emotion · The Body",
+    slug: "planet-moon", title: "The Moon", subtitle: "☽︎ · Soul · Emotion · The Body",
     category: "foundations", tags: ["planet", "luminary", "water", "emotion"],
     summary: "The Moon governs your inner world — the habitual emotional responses, the body's instincts, memory, and the quality of your daily felt experience. It is the planet most tied to childhood conditioning and your relationship with safety, nurturing, and belonging.",
     chartKeys: [{ type: "planet", name: "Moon" }],
@@ -21,7 +21,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Moon in astrology: emotion, memory, instinct, the mother archetype, Hellenistic sect luminary for night charts, Chandra in Jyotish, nakshatra placement as soul fingerprint.",
   },
   {
-    slug: "planet-mercury", title: "Mercury", subtitle: "☿ · Mind · Language · Perception",
+    slug: "planet-mercury", title: "Mercury", subtitle: "☿︎ · Mind · Language · Perception",
     category: "foundations", tags: ["planet", "air", "earth", "communication"],
     summary: "Mercury rules the way you think, speak, and process information — the nervous system of the chart. It describes your mental style, the tone of your communication, and how you connect ideas, people, and places.",
     chartKeys: [{ type: "planet", name: "Mercury" }],
@@ -29,7 +29,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Mercury: cognition, language, trade, siblings, the messenger archetype, Gemini/Virgo rulership, Budha in Jyotish, retrograde cycles and their re-examination themes.",
   },
   {
-    slug: "planet-venus", title: "Venus", subtitle: "♀ · Love · Beauty · Value",
+    slug: "planet-venus", title: "Venus", subtitle: "♀︎ · Love · Beauty · Value",
     category: "foundations", tags: ["planet", "air", "earth", "relationship"],
     summary: "Venus describes what you love and how you love — your aesthetic sensibility, your values, your capacity for pleasure and connection. It governs both romance and money as expressions of what you find worth having.",
     chartKeys: [{ type: "planet", name: "Venus" }],
@@ -37,7 +37,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Venus: love, beauty, resources, Aphrodite archetype, Taurus/Libra rulership, Shukra in Jyotish, evening/morning star sect distinction, relationship to the Lot of Fortune.",
   },
   {
-    slug: "planet-mars", title: "Mars", subtitle: "♂ · Drive · Conflict · Courage",
+    slug: "planet-mars", title: "Mars", subtitle: "♂︎ · Drive · Conflict · Courage",
     category: "foundations", tags: ["planet", "fire", "water", "will"],
     summary: "Mars is the engine of desire and the seat of courage — it describes how you assert yourself, what you fight for, and where you direct raw energy. Its placement reveals your relationship with anger, ambition, and physical vitality.",
     chartKeys: [{ type: "planet", name: "Mars" }],
@@ -45,7 +45,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Mars: will, aggression, courage, Ares archetype, Aries/Scorpio traditional rulership, Mangala in Jyotish, malefic by nature but beneficial for action, retrograde cycles.",
   },
   {
-    slug: "planet-jupiter", title: "Jupiter", subtitle: "♃ · Expansion · Wisdom · Grace",
+    slug: "planet-jupiter", title: "Jupiter", subtitle: "♃︎ · Expansion · Wisdom · Grace",
     category: "foundations", tags: ["planet", "fire", "water", "benefic"],
     summary: "Jupiter is the great benefic — it expands, blesses, and brings opportunities wherever it touches. It describes your philosophy of life, your faith, your capacity for abundance, and where the universe seems to open doors for you.",
     chartKeys: [{ type: "planet", name: "Jupiter" }],
@@ -53,7 +53,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Jupiter: expansion, wisdom, faith, Zeus/Guru archetype, Sagittarius/Pisces rulership, Brihaspati in Jyotish, great benefic in Hellenistic tradition, transit cycles of 12 years.",
   },
   {
-    slug: "planet-saturn", title: "Saturn", subtitle: "♄ · Time · Structure · Karma",
+    slug: "planet-saturn", title: "Saturn", subtitle: "♄︎ · Time · Structure · Karma",
     category: "foundations", tags: ["planet", "earth", "air", "malefic"],
     summary: "Saturn is the great teacher — demanding, patient, and ultimately rewarding. It describes where you face limitation, responsibility, and the slow building of mastery. What Saturn touches eventually becomes your greatest area of earned authority.",
     chartKeys: [{ type: "planet", name: "Saturn" }],
@@ -69,7 +69,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Uranus: revolution, electrical disruption, the trickster/inventor, modern rulership of Aquarius, generational influence, Uranus oppositions and mid-life crises.",
   },
   {
-    slug: "planet-neptune", title: "Neptune", subtitle: "♆ · Dreams · Dissolution · Spirit",
+    slug: "planet-neptune", title: "Neptune", subtitle: "♆︎ · Dreams · Dissolution · Spirit",
     category: "foundations", tags: ["planet", "water", "outer", "modern"],
     summary: "Neptune dissolves boundaries — between self and other, real and imagined, sacred and ordinary. Its house and sign describe where you seek transcendence, where illusion is most potent, and where compassion or confusion can run deepest.",
     chartKeys: [{ type: "planet", name: "Neptune" }],
@@ -77,7 +77,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Neptune: dissolution, mysticism, addiction, modern rulership of Pisces, the veil between worlds, Neptune conjunctions as generation-defining spiritual openings.",
   },
   {
-    slug: "planet-pluto", title: "Pluto", subtitle: "♇ · Death · Power · Transformation",
+    slug: "planet-pluto", title: "Pluto", subtitle: "♇︎ · Death · Power · Transformation",
     category: "foundations", tags: ["planet", "water", "outer", "modern"],
     summary: "Pluto rules radical transformation through death and rebirth. Its house and sign describe where power dynamics, compulsion, and irreversible change operate — the place in your chart where you go into the underworld and emerge changed.",
     chartKeys: [{ type: "planet", name: "Pluto" }],
@@ -88,7 +88,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
   // ─── FOUNDATIONS: SIGNS ──────────────────────────────────────────────────────
 
   {
-    slug: "sign-aries", title: "Aries", subtitle: "♈ · Cardinal Fire · The Ram",
+    slug: "sign-aries", title: "Aries", subtitle: "♈︎ · Cardinal Fire · The Ram",
     category: "foundations", tags: ["sign", "fire", "cardinal", "mars"],
     summary: "Aries is the first spark of existence — raw initiative, courage, and the primal need to act. Planets here are impulsive, direct, and driven to pioneer, often learning through trial and error.",
     chartKeys: [{ type: "sign", name: "Aries" }],
@@ -96,7 +96,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Aries: cardinal fire, first sign, Mars-ruled, spring equinox, identity through action, the warrior archetype, Mesha in Jyotish.",
   },
   {
-    slug: "sign-taurus", title: "Taurus", subtitle: "♉ · Fixed Earth · The Bull",
+    slug: "sign-taurus", title: "Taurus", subtitle: "♉︎ · Fixed Earth · The Bull",
     category: "foundations", tags: ["sign", "earth", "fixed", "venus"],
     summary: "Taurus values stability, embodied pleasure, and the slow accumulation of what endures. Planets here build steadily, resist change, and seek to ground the intangible into something real, beautiful, and lasting.",
     chartKeys: [{ type: "sign", name: "Taurus" }],
@@ -104,7 +104,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Taurus: fixed earth, Venus-ruled, sensory pleasure, resource building, the artisan and farmer archetype, Vrishabha in Jyotish.",
   },
   {
-    slug: "sign-gemini", title: "Gemini", subtitle: "♊ · Mutable Air · The Twins",
+    slug: "sign-gemini", title: "Gemini", subtitle: "♊︎ · Mutable Air · The Twins",
     category: "foundations", tags: ["sign", "air", "mutable", "mercury"],
     summary: "Gemini is the sign of the eternal student — curious, quick, and endlessly fascinated by the diversity of information and people. Planets here are versatile, talkative, and prone to seeing multiple sides of every question.",
     chartKeys: [{ type: "sign", name: "Gemini" }],
@@ -112,7 +112,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Gemini: mutable air, Mercury-ruled, duality and multiplicity, communication and commerce, the trickster and messenger, Mithuna in Jyotish.",
   },
   {
-    slug: "sign-cancer", title: "Cancer", subtitle: "♋ · Cardinal Water · The Crab",
+    slug: "sign-cancer", title: "Cancer", subtitle: "♋︎ · Cardinal Water · The Crab",
     category: "foundations", tags: ["sign", "water", "cardinal", "moon"],
     summary: "Cancer is the sign of roots, memory, and emotional safety. Planets here operate through feeling and instinct, building protective shells around what is most precious — home, family, and the continuity of the past.",
     chartKeys: [{ type: "sign", name: "Cancer" }],
@@ -120,7 +120,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Cancer: cardinal water, Moon-ruled, home and family, protective instincts, the mother archetype and the ancestral memory, Karka in Jyotish.",
   },
   {
-    slug: "sign-leo", title: "Leo", subtitle: "♌ · Fixed Fire · The Lion",
+    slug: "sign-leo", title: "Leo", subtitle: "♌︎ · Fixed Fire · The Lion",
     category: "foundations", tags: ["sign", "fire", "fixed", "sun"],
     summary: "Leo is the sign of self-expression, creativity, and the will to be seen. Planets here burn brightly, crave recognition, and operate through dramatic flair — they must create, lead, or perform to feel fully alive.",
     chartKeys: [{ type: "sign", name: "Leo" }],
@@ -128,7 +128,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Leo: fixed fire, Sun-ruled, the king/queen archetype, creative self-expression, pride and generosity, children and play, Simha in Jyotish.",
   },
   {
-    slug: "sign-virgo", title: "Virgo", subtitle: "♍ · Mutable Earth · The Virgin",
+    slug: "sign-virgo", title: "Virgo", subtitle: "♍︎ · Mutable Earth · The Virgin",
     category: "foundations", tags: ["sign", "earth", "mutable", "mercury"],
     summary: "Virgo is the sign of discernment, craft, and devoted service. Planets here analyze, refine, and improve — they are drawn to the work that needs doing and the flaw that needs correcting, often learning to find the sacred in the ordinary.",
     chartKeys: [{ type: "sign", name: "Virgo" }],
@@ -136,7 +136,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Virgo: mutable earth, Mercury-ruled, analysis and purification, service and health, the healer and craftsperson archetype, Kanya in Jyotish.",
   },
   {
-    slug: "sign-libra", title: "Libra", subtitle: "♎ · Cardinal Air · The Scales",
+    slug: "sign-libra", title: "Libra", subtitle: "♎︎ · Cardinal Air · The Scales",
     category: "foundations", tags: ["sign", "air", "cardinal", "venus"],
     summary: "Libra is the sign of relationship, fairness, and the art of finding equilibrium between opposing forces. Planets here operate through partnership and comparison, endlessly weighing what is just, beautiful, or socially harmonious.",
     chartKeys: [{ type: "sign", name: "Libra" }],
@@ -144,7 +144,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Libra: cardinal air, Venus-ruled, justice and balance, the diplomat and aesthete, partnership as the mirror of self, Tula in Jyotish.",
   },
   {
-    slug: "sign-scorpio", title: "Scorpio", subtitle: "♏ · Fixed Water · The Scorpion",
+    slug: "sign-scorpio", title: "Scorpio", subtitle: "♏︎ · Fixed Water · The Scorpion",
     category: "foundations", tags: ["sign", "water", "fixed", "mars", "pluto"],
     summary: "Scorpio is the sign of depth, power, and transformative intensity. Planets here are drawn to the hidden, the taboo, and the irreversible — they want to see what lies beneath the surface, and are willing to go through death to find it.",
     chartKeys: [{ type: "sign", name: "Scorpio" }],
@@ -152,7 +152,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Scorpio: fixed water, Mars (traditional) and Pluto (modern) ruled, depth and transformation, the detective and shaman, sexual and occult themes, Vrishchika in Jyotish.",
   },
   {
-    slug: "sign-sagittarius", title: "Sagittarius", subtitle: "♐ · Mutable Fire · The Archer",
+    slug: "sign-sagittarius", title: "Sagittarius", subtitle: "♐︎ · Mutable Fire · The Archer",
     category: "foundations", tags: ["sign", "fire", "mutable", "jupiter"],
     summary: "Sagittarius is the sign of the philosopher and the adventurer — always seeking the horizon, the meaning behind the event, and the bigger picture. Planets here are expansive, optimistic, and restless for truth.",
     chartKeys: [{ type: "sign", name: "Sagittarius" }],
@@ -160,7 +160,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Sagittarius: mutable fire, Jupiter-ruled, philosophy and long journeys, the archer aiming at truth, higher education and faith, Dhanus in Jyotish.",
   },
   {
-    slug: "sign-capricorn", title: "Capricorn", subtitle: "♑ · Cardinal Earth · The Sea-Goat",
+    slug: "sign-capricorn", title: "Capricorn", subtitle: "♑︎ · Cardinal Earth · The Sea-Goat",
     category: "foundations", tags: ["sign", "earth", "cardinal", "saturn"],
     summary: "Capricorn is the sign of ambition, mastery, and the patient climb toward authority. Planets here work hard, take the long view, and derive their greatest satisfaction from earned achievement and lasting structures.",
     chartKeys: [{ type: "sign", name: "Capricorn" }],
@@ -168,7 +168,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Capricorn: cardinal earth, Saturn-ruled, ambition and career, the elder/patriarch archetype, time and patience as virtues, Makara in Jyotish.",
   },
   {
-    slug: "sign-aquarius", title: "Aquarius", subtitle: "♒ · Fixed Air · The Water Bearer",
+    slug: "sign-aquarius", title: "Aquarius", subtitle: "♒︎ · Fixed Air · The Water Bearer",
     category: "foundations", tags: ["sign", "air", "fixed", "saturn", "uranus"],
     summary: "Aquarius is the sign of the collective, the future, and the radical idea. Planets here operate through community, innovation, and a stubborn commitment to what ought to be — often ahead of their time, sometimes alienated from the present.",
     chartKeys: [{ type: "sign", name: "Aquarius" }],
@@ -176,7 +176,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Aquarius: fixed air, Saturn (traditional) and Uranus (modern) ruled, the visionary and revolutionary, humanitarian ideals, groups and societies, Kumbha in Jyotish.",
   },
   {
-    slug: "sign-pisces", title: "Pisces", subtitle: "♓ · Mutable Water · The Fish",
+    slug: "sign-pisces", title: "Pisces", subtitle: "♓︎ · Mutable Water · The Fish",
     category: "foundations", tags: ["sign", "water", "mutable", "jupiter", "neptune"],
     summary: "Pisces is the sign of dissolution, compassion, and mystical receptivity. Planets here move in and out of reality's edges — drawn to the invisible, the sacred, the suffering of others, and the longing to return to oneness.",
     chartKeys: [{ type: "sign", name: "Pisces" }],
@@ -294,7 +294,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Sect: diurnal (day) vs. nocturnal (night) chart, sect luminaries (Sun for day, Moon for night), sect benefics (Jupiter day, Venus night), sect malefics (Saturn day, Mars night), how sect modifies planetary strength.",
   },
   {
-    slug: "hellenistic-lot-fortune", title: "Lot of Fortune", subtitle: "☽ · Body · Material Circumstances",
+    slug: "hellenistic-lot-fortune", title: "Lot of Fortune", subtitle: "☽︎ · Body · Material Circumstances",
     category: "hellenistic", tags: ["hellenistic", "lots", "arabic-parts"],
     summary: "The Lot of Fortune (Part of Fortune) is the most important of the seven Hermetic Lots — it marks where the Moon's cycle meets the horizon, describing your material circumstances, physical vitality, and the area of life where fortune flows most naturally.",
     chartKeys: [{ type: "planet", name: "Moon" }],
@@ -302,7 +302,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Lot of Fortune: ASC + Moon - Sun (day) / ASC + Sun - Moon (night), body and material lot, the lunar principle externalized, house placement significance, ruler of Fortune as material significator.",
   },
   {
-    slug: "hellenistic-lot-spirit", title: "Lot of Spirit", subtitle: "☉ · Soul · Deliberate Action",
+    slug: "hellenistic-lot-spirit", title: "Lot of Spirit", subtitle: "☉︎ · Soul · Deliberate Action",
     category: "hellenistic", tags: ["hellenistic", "lots", "arabic-parts"],
     summary: "The Lot of Spirit is the complement to Fortune — where Fortune describes what happens to you, Spirit describes what you intentionally do. It governs the soul's agency, reputation, and the deliberate choices that shape a life.",
     chartKeys: [{ type: "planet", name: "Sun" }],
@@ -452,7 +452,7 @@ export const AKASHIC_ENTRIES: AkashicEntry[] = [
     promptHint: "Dasamsha D10: 10 divisions of 3° each, general Parashari formula, D10 Lagna lord as career significator, planets in D10 1st/10th houses as career activators, how D10 confirms or contradicts D1 10th house.",
   },
   {
-    slug: "vedic-rahu-ketu", title: "Rahu & Ketu", subtitle: "☊ ☋ · The Lunar Nodes · Karma's Axis",
+    slug: "vedic-rahu-ketu", title: "Rahu & Ketu", subtitle: "☊︎ ☋ · The Lunar Nodes · Karma's Axis",
     category: "vedic", tags: ["vedic", "nodes", "karma"],
     summary: "Rahu (North Node) and Ketu (South Node) are the shadow planets of Vedic astrology — always exactly opposite each other, they mark the axis of karmic evolution. Rahu hungers for the new and unexperienced; Ketu has mastered and must release.",
     chartKeys: [{ type: "planet", name: "NorthNode" }],

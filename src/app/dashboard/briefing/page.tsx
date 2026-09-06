@@ -480,7 +480,7 @@ function PlanetaryHoursPanel({ lat }: { lat: number }) {
                   {fmtTime(h.start)} – {fmtTime(h.end)}
                 </span>
                 <span className="text-[14px] w-4 text-right flex-shrink-0" style={{ color: h.isDay ? "#fbbf24" : "#BFB6E8" }}>
-                  {h.isDay ? "☀" : "☽"}
+                  {h.isDay ? "☀︎" : "☽︎"}
                 </span>
               </motion.div>
             );
@@ -708,12 +708,12 @@ function WeekForecast({ now, moonLon, ingresses, warpTo }: {
       >
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4 rounded flex items-center justify-center" style={{ background: "rgba(123,111,212,0.2)" }}>
-            <span className="text-[13px]" style={{ color: "#a78bfa" }}>☉</span>
+            <span className="text-[13px]" style={{ color: "#a78bfa" }}>☉︎</span>
           </div>
           <span className="text-[14px]" style={{ color: "#334155" }}>Day ruler</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[14px]" style={{ color: "#BFB6E8" }}>♈</span>
+          <span className="text-[14px]" style={{ color: "#BFB6E8" }}>♈︎</span>
           <span className="text-[14px]" style={{ color: "#334155" }}>Moon sign (approx)</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -1060,7 +1060,7 @@ export default function BriefingPage() {
                         {moonPhase.illumination.toFixed(0)}% illuminated
                       </p>
                       <p className="text-[13px] mt-0.5" style={{ color: "#64748b" }}>
-                        ☽ {SIGN_SYMBOLS[moon.sign]} {moon.sign} H{moon.house}
+                        ☽︎ {SIGN_SYMBOLS[moon.sign]} {moon.sign} H{moon.house}
                       </p>
                     </div>
                     {/* Void indicator */}
@@ -1111,14 +1111,14 @@ export default function BriefingPage() {
                         <div>
                           <p className="text-[13px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
                           <p className="text-[14px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#BFB6E8" }}>
-                            {chart.sect === "day" ? "☀ Day Chart" : "☽ Night Chart"}
+                            {chart.sect === "day" ? "☀︎ Day Chart" : "☽︎ Night Chart"}
                           </p>
                         </div>
                         {sun && (
                           <div>
                             <p className="text-[13px] tracking-widest mb-1" style={{ color: "#334155" }}>SUN NOW</p>
                             <p className="text-[14px] font-bold" style={{ color: "#fbbf24" }}>
-                              ☉ {SIGN_SYMBOLS[sun.sign]} {sun.sign}
+                              ☉︎ {SIGN_SYMBOLS[sun.sign]} {sun.sign}
                             </p>
                           </div>
                         )}

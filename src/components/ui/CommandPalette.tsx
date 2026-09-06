@@ -85,7 +85,7 @@ const PAGE_COMMANDS: Command[] = [
     id: "nav-solar-return",
     label: "Solar Return",
     description: "Your year-ahead chart",
-    icon: "☀",
+    icon: "☀︎",
     category: "Navigate",
     color: "#ffd700",
     action: (r) => r.push("/dashboard/solar-return"),

@@ -29,7 +29,7 @@ export interface PlanetVoiceProfile {
 
 export const PLANET_VOICES: Record<VoicePlanet, PlanetVoiceProfile> = {
   Sun: {
-    planet: "Sun", symbol: "☉",
+    planet: "Sun", symbol: "☉︎",
     voiceId: "pNInz6obpgDQGcFmaJgB",   // Adam — deep, powerful, commanding
     voiceName: "Adam",
     gender: "masculine",
@@ -39,7 +39,7 @@ export const PLANET_VOICES: Record<VoicePlanet, PlanetVoiceProfile> = {
     settings: { stability: 0.72, similarity_boost: 0.80, style: 0.18, use_speaker_boost: true },
   },
   Moon: {
-    planet: "Moon", symbol: "☽",
+    planet: "Moon", symbol: "☽︎",
     voiceId: "21m00Tcm4TlvDq8ikWAM",   // Rachel — calm, gentle, intuitive
     voiceName: "Rachel",
     gender: "feminine",
@@ -49,7 +49,7 @@ export const PLANET_VOICES: Record<VoicePlanet, PlanetVoiceProfile> = {
     settings: { stability: 0.40, similarity_boost: 0.78, style: 0.10, use_speaker_boost: true },
   },
   Mercury: {
-    planet: "Mercury", symbol: "☿",
+    planet: "Mercury", symbol: "☿︎",
     voiceId: "IKne3meq5aSn9XLyUdCD",   // Charlie — energetic, clear, quick
     voiceName: "Charlie",
     gender: "neutral",
@@ -59,7 +59,7 @@ export const PLANET_VOICES: Record<VoicePlanet, PlanetVoiceProfile> = {
     settings: { stability: 0.55, similarity_boost: 0.75, style: 0.28, use_speaker_boost: true },
   },
   Venus: {
-    planet: "Venus", symbol: "♀",
+    planet: "Venus", symbol: "♀︎",
     voiceId: "EXAVITQu4vr4xnSDxMaL",   // Bella — soft, warm, melodic
     voiceName: "Bella",
     gender: "feminine",
@@ -69,7 +69,7 @@ export const PLANET_VOICES: Record<VoicePlanet, PlanetVoiceProfile> = {
     settings: { stability: 0.65, similarity_boost: 0.80, style: 0.13, use_speaker_boost: true },
   },
   Mars: {
-    planet: "Mars", symbol: "♂",
+    planet: "Mars", symbol: "♂︎",
     voiceId: "VR6AewLTigWG4xSOukaG",   // Arnold — crisp, forceful, intense
     voiceName: "Arnold",
     gender: "masculine",
@@ -79,7 +79,7 @@ export const PLANET_VOICES: Record<VoicePlanet, PlanetVoiceProfile> = {
     settings: { stability: 0.58, similarity_boost: 0.78, style: 0.38, use_speaker_boost: true },
   },
   Jupiter: {
-    planet: "Jupiter", symbol: "♃",
+    planet: "Jupiter", symbol: "♃︎",
     voiceId: "TxGEqnHWrfWFTfGW9XjX",   // Josh — deep, resonant, warm
     voiceName: "Josh",
     gender: "masculine",
@@ -89,7 +89,7 @@ export const PLANET_VOICES: Record<VoicePlanet, PlanetVoiceProfile> = {
     settings: { stability: 0.70, similarity_boost: 0.82, style: 0.15, use_speaker_boost: true },
   },
   Saturn: {
-    planet: "Saturn", symbol: "♄",
+    planet: "Saturn", symbol: "♄︎",
     voiceId: "yoZ06aMxZJJ28mfd3POQ",   // Sam — raspy, gravelly, measured
     voiceName: "Sam",
     gender: "masculine",
@@ -99,7 +99,7 @@ export const PLANET_VOICES: Record<VoicePlanet, PlanetVoiceProfile> = {
     settings: { stability: 0.80, similarity_boost: 0.75, style: 0.07, use_speaker_boost: false },
   },
   Uranus: {
-    planet: "Uranus", symbol: "♅",
+    planet: "Uranus", symbol: "♅︎",
     voiceId: "GBv7mTt0atIp3Br8iCZE",   // Thomas — crisp, detached, cold
     voiceName: "Thomas",
     gender: "neutral",
@@ -109,7 +109,7 @@ export const PLANET_VOICES: Record<VoicePlanet, PlanetVoiceProfile> = {
     settings: { stability: 0.62, similarity_boost: 0.72, style: 0.24, use_speaker_boost: true },
   },
   Neptune: {
-    planet: "Neptune", symbol: "♆",
+    planet: "Neptune", symbol: "♆︎",
     voiceId: "AZnzlk1XvdvUeBnXmlld",   // Domi — strong, ethereal, feminine
     voiceName: "Domi",
     gender: "feminine",

@@ -798,7 +798,7 @@ export default function ReleasingPage() {
                     border: lot === l ? `1px solid ${l === "fortune" ? "rgba(6,182,212,0.4)" : "rgba(139,92,246,0.4)"}` : "1px solid transparent",
                   }}
                 >
-                  {l === "fortune" ? "☽ FORTUNE" : "☉ SPIRIT"}
+                  {l === "fortune" ? "☽︎ FORTUNE" : "☉︎ SPIRIT"}
                 </motion.button>
               ))}
             </div>

@@ -30,13 +30,13 @@ const CHAPTERS = [
 
 // Planets placed around the wheel (angle°, radius fraction, color, glyph)
 const STORY_PLANETS = [
-  { angle: 318, rf: 0.74, color: "#FBBF24", glyph: "☉" },
-  { angle: 252, rf: 0.74, color: "#C9D4E8", glyph: "☽" },
-  { angle: 290, rf: 0.74, color: "#A78BFA", glyph: "☿" },
-  { angle: 200, rf: 0.74, color: "#F472B6", glyph: "♀" },
-  { angle: 150, rf: 0.74, color: "#EF4444", glyph: "♂" },
-  { angle: 95,  rf: 0.74, color: "#F59E0B", glyph: "♃" },
-  { angle: 30,  rf: 0.74, color: "#8B9AB4", glyph: "♄" },
+  { angle: 318, rf: 0.74, color: "#FBBF24", glyph: "☉︎" },
+  { angle: 252, rf: 0.74, color: "#C9D4E8", glyph: "☽︎" },
+  { angle: 290, rf: 0.74, color: "#A78BFA", glyph: "☿︎" },
+  { angle: 200, rf: 0.74, color: "#F472B6", glyph: "♀︎" },
+  { angle: 150, rf: 0.74, color: "#EF4444", glyph: "♂︎" },
+  { angle: 95,  rf: 0.74, color: "#F59E0B", glyph: "♃︎" },
+  { angle: 30,  rf: 0.74, color: "#8B9AB4", glyph: "♄︎" },
 ];
 
 // Aspect lines between planet indices

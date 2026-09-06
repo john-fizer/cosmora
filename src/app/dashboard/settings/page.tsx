@@ -156,8 +156,8 @@ function ProfileCard({
             return (
               <div className="flex items-center gap-3 mt-2 pt-2 flex-wrap" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
                 {[
-                  { label: "☉", value: sun  ? `${SIGN_SYMBOLS[sun.sign]}  ${sun.sign.substring(0,3)}` : "—",  color: "#fbbf24" },
-                  { label: "☽", value: moon ? `${SIGN_SYMBOLS[moon.sign]} ${moon.sign.substring(0,3)}` : "—",  color: "#BFB6E8" },
+                  { label: "☉︎", value: sun  ? `${SIGN_SYMBOLS[sun.sign]}  ${sun.sign.substring(0,3)}` : "—",  color: "#fbbf24" },
+                  { label: "☽︎", value: moon ? `${SIGN_SYMBOLS[moon.sign]} ${moon.sign.substring(0,3)}` : "—",  color: "#BFB6E8" },
                   { label: "ASC", value: asc ? `${SIGN_SYMBOLS[asc.sign]} ${asc.sign.substring(0,3)}`  : "—",  color: "#06b6d4" },
                 ].map(({ label, value, color }) => (
                   <div key={label} className="flex items-center gap-1">

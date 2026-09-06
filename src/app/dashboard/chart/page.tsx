@@ -1584,13 +1584,13 @@ function ArabicLots({ chart }: { chart: ChartData }) {
           <p className="text-[13px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>FORMULAE ({isDay ? "DAY SECT" : "NIGHT SECT"})</p>
           <div className="grid grid-cols-2 gap-x-6 gap-y-1">
             {[
-              ["Fortune", isDay ? "ASC + ☽ − ☉" : "ASC + ☉ − ☽"],
-              ["Spirit",  isDay ? "ASC + ☉ − ☽" : "ASC + ☽ − ☉"],
-              ["Eros",    isDay ? "ASC + ♀ − Spirit" : "ASC + Spirit − ♀"],
-              ["Necessity","ASC + ☿ − Fortune"],
-              ["Courage", "ASC + ♂ − Fortune"],
-              ["Victory", "ASC + ♃ − Spirit"],
-              ["Nemesis", "ASC + Fortune − ♄"],
+              ["Fortune", isDay ? "ASC + ☽︎ − ☉︎" : "ASC + ☉︎ − ☽︎"],
+              ["Spirit",  isDay ? "ASC + ☉︎ − ☽︎" : "ASC + ☽︎ − ☉︎"],
+              ["Eros",    isDay ? "ASC + ♀︎ − Spirit" : "ASC + Spirit − ♀︎"],
+              ["Necessity","ASC + ☿︎ − Fortune"],
+              ["Courage", "ASC + ♂︎ − Fortune"],
+              ["Victory", "ASC + ♃︎ − Spirit"],
+              ["Nemesis", "ASC + Fortune − ♄︎"],
             ].map(([name, formula]) => (
               <div key={name} className="flex items-center gap-1">
                 <span className="text-[13px] font-bold w-20" style={{ color: "#475569" }}>{name}</span>

@@ -1491,7 +1491,7 @@ export default function TimelinePage() {
                       <div className="flex items-center gap-2 mt-3">
                         <span className="text-[13px] font-bold tracking-widest" style={{ color: "#475569" }}>SECT</span>
                         <span className="text-[13px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#BFB6E8" }}>
-                          {chart.sect === "day" ? "☀ Day" : "☽ Night"}
+                          {chart.sect === "day" ? "☀︎ Day" : "☽︎ Night"}
                         </span>
                         <span className="text-[13px]" style={{ color: "#334155" }}>
                           — using {chart.sect === "day" ? "Sun" : "Moon"}-led sequence
@@ -1961,25 +1961,25 @@ export default function TimelinePage() {
                       // Jupiter Returns (every ~12 years)
                       ...[12, 24, 36, 48, 60, 72].map(age => ({
                         age, tier: "minor" as const,
-                        label: "♃ Return", sublabel: `Jupiter Return — renewal of faith & opportunity`,
+                        label: "♃︎ Return", sublabel: `Jupiter Return — renewal of faith & opportunity`,
                         color: "#f59e0b",
                       })),
                       // Saturn Returns (~29.5 & ~59)
-                      { age: 29, tier: "major" as const, label: "♄ Return", sublabel: "1st Saturn Return — initiation into adult authority", color: "#94a3b8" },
-                      { age: 59, tier: "major" as const, label: "♄ Return", sublabel: "2nd Saturn Return — legacy and mastery", color: "#94a3b8" },
+                      { age: 29, tier: "major" as const, label: "♄︎ Return", sublabel: "1st Saturn Return — initiation into adult authority", color: "#94a3b8" },
+                      { age: 59, tier: "major" as const, label: "♄︎ Return", sublabel: "2nd Saturn Return — legacy and mastery", color: "#94a3b8" },
                       // Chiron Return (~50-51)
-                      { age: 51, tier: "major" as const, label: "⚷ Return", sublabel: "Chiron Return — healing the core wound", color: "#22c55e" },
+                      { age: 51, tier: "major" as const, label: "⚷︎ Return", sublabel: "Chiron Return — healing the core wound", color: "#22c55e" },
                       // Uranus Opposition (~42)
-                      { age: 42, tier: "major" as const, label: "♅ Opp.", sublabel: "Uranus Opposition — midlife awakening", color: "#06b6d4" },
+                      { age: 42, tier: "major" as const, label: "♅︎ Opp.", sublabel: "Uranus Opposition — midlife awakening", color: "#06b6d4" },
                       // Neptune Square (~41 for current gen)
-                      { age: 41, tier: "minor" as const, label: "♆ □", sublabel: "Neptune Square — dissolution of illusions", color: "#3b82f6" },
+                      { age: 41, tier: "minor" as const, label: "♆︎ □", sublabel: "Neptune Square — dissolution of illusions", color: "#3b82f6" },
                       // Pluto Square (~36-40 for current gen, varies by sign)
-                      { age: 38, tier: "minor" as const, label: "♇ □", sublabel: "Pluto Square — power confrontation with fate", color: "#7B6FD4" },
+                      { age: 38, tier: "minor" as const, label: "♇︎ □", sublabel: "Pluto Square — power confrontation with fate", color: "#7B6FD4" },
                       // Node Return (~18.6 years)
-                      { age: 19, tier: "minor" as const, label: "☊ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
-                      { age: 37, tier: "minor" as const, label: "☊ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
-                      { age: 56, tier: "minor" as const, label: "☊ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
-                      { age: 75, tier: "minor" as const, label: "☊ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
+                      { age: 19, tier: "minor" as const, label: "☊︎ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
+                      { age: 37, tier: "minor" as const, label: "☊︎ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
+                      { age: 56, tier: "minor" as const, label: "☊︎ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
+                      { age: 75, tier: "minor" as const, label: "☊︎ Return", sublabel: "Nodal Return — karmic reset", color: "#64748b" },
                     ].filter(m => m.age <= MAX_AGE);
 
                     // ── Profection year data (all 84 years, cycling 1–12) ─────

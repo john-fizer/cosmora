@@ -396,7 +396,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
             { label: "MOON",      value: moon?.sign,          color: "#BFB6E8", symbol: PLANET_SYMBOLS.Moon },
             { label: "RISING",    value: asc?.sign,           color: "#06b6d4", symbol: "↑" },
             { label: "SECT",      value: chart.sect === "day" ? "Day Chart" : "Night Chart",
-                                                              color: chart.sect === "day" ? "#fbbf24" : "#BFB6E8", symbol: chart.sect === "day" ? "☀" : "☽" },
+                                                              color: chart.sect === "day" ? "#fbbf24" : "#BFB6E8", symbol: chart.sect === "day" ? "☀︎" : "☽︎" },
           ].map(({ label, value, color, symbol }) => value ? (
             <div key={label}>
               <p className="text-[14px] tracking-widest font-bold mb-1" style={{ color: "#334155" }}>{label}</p>
@@ -585,7 +585,7 @@ function OverviewTab({ chart, onAskOracle }: { chart: ChartData; onAskOracle: (p
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0"
                   style={{ background: `${sectLightColor}15`, border: `1px solid ${sectLightColor}30` }}>
-                  <span style={{ color: sectLightColor }}>{isDay ? "☀" : "☽"}</span>
+                  <span style={{ color: sectLightColor }}>{isDay ? "☀︎" : "☽︎"}</span>
                 </div>
                 <div>
                   <p className="text-[13px] font-bold" style={{ color: sectLightColor }}>
@@ -2058,7 +2058,7 @@ function TimingTab({ chart }: { chart: ChartData }) {
           <div>
             <p className="text-[14px] tracking-widest mb-1" style={{ color: "#334155" }}>SECT</p>
             <p className="text-[13px] font-bold" style={{ color: chart.sect === "day" ? "#fbbf24" : "#BFB6E8" }}>
-              {chart.sect === "day" ? "☀ Day" : "☽ Night"}
+              {chart.sect === "day" ? "☀︎ Day" : "☽︎ Night"}
             </p>
           </div>
         </div>

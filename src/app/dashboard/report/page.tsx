@@ -55,7 +55,7 @@ function buildSectionDefs(chart: ChartData): SectionDef[] {
       label: "COSMIC IDENTITY",
       subtitle: "Sun & Ascendant",
       color: "#fbbf24",
-      glyph: "☉",
+      glyph: "☉︎",
       prompt: `${BASE}\n\nSection: COSMIC IDENTITY. Sun in ${sun?.sign} (${sun?.signDegree?.toFixed(1)}°, House ${sun?.house}${sun?.dignity ? `, ${sun.dignity}` : ""}${sun?.retrograde ? ", Rx" : ""}), Ascendant in ${asc?.sign}. This is a ${chart.sect} chart. Describe the core life force, how the identity projects into the world, and the interplay between the essential self and the outer mask.`,
     },
     {
@@ -63,7 +63,7 @@ function buildSectionDefs(chart: ChartData): SectionDef[] {
       label: "EMOTIONAL ARCHITECTURE",
       subtitle: "Moon",
       color: "#BFB6E8",
-      glyph: "☽",
+      glyph: "☽︎",
       prompt: `${BASE}\n\nSection: EMOTIONAL ARCHITECTURE. Moon in ${moon?.sign} (House ${moon?.house}${moon?.dignity ? `, ${moon.dignity}` : ""}${moon?.retrograde ? ", Rx" : ""}). Describe the emotional world — instinctive responses, what nourishes and destabilizes this person, their relationship to memory and early home, and what they need to feel safe.`,
     },
     {
@@ -71,7 +71,7 @@ function buildSectionDefs(chart: ChartData): SectionDef[] {
       label: "MENTAL MATRIX",
       subtitle: "Mercury",
       color: "#a78bfa",
-      glyph: "☿",
+      glyph: "☿︎",
       prompt: `${BASE}\n\nSection: MENTAL MATRIX. Mercury in ${merc?.sign} (House ${merc?.house}${merc?.dignity ? `, ${merc.dignity}` : ""}${merc?.retrograde ? ", Rx" : ""}). Describe how this mind processes and transmits information — its learning style, communication pattern, decision-making architecture, and intellectual signature.`,
     },
     {
@@ -79,7 +79,7 @@ function buildSectionDefs(chart: ChartData): SectionDef[] {
       label: "RELATIONAL GRAVITY",
       subtitle: "Venus",
       color: "#f472b6",
-      glyph: "♀",
+      glyph: "♀︎",
       prompt: `${BASE}\n\nSection: RELATIONAL GRAVITY. Venus in ${venus?.sign} (House ${venus?.house}${venus?.dignity ? `, ${venus.dignity}` : ""}). Describe the aesthetic sensibility, what this person attracts and is drawn toward, how they love, their pleasure principle, and the kind of beauty they create and seek in relationships.`,
     },
     {
@@ -87,7 +87,7 @@ function buildSectionDefs(chart: ChartData): SectionDef[] {
       label: "WARRIOR CODE",
       subtitle: "Mars",
       color: "#ef4444",
-      glyph: "♂",
+      glyph: "♂︎",
       prompt: `${BASE}\n\nSection: WARRIOR CODE. Mars in ${mars?.sign} (House ${mars?.house}${mars?.dignity ? `, ${mars.dignity}` : ""}${mars?.retrograde ? ", Rx" : ""}). Describe how this person acts and pursues desire — their competitive nature, how anger moves through them, their energetic signature, and what fires their ambition.`,
     },
     {
@@ -95,7 +95,7 @@ function buildSectionDefs(chart: ChartData): SectionDef[] {
       label: "EXPANSION FIELD",
       subtitle: "Jupiter",
       color: "#f59e0b",
-      glyph: "♃",
+      glyph: "♃︎",
       prompt: `${BASE}\n\nSection: EXPANSION FIELD. Jupiter in ${jup?.sign} (House ${jup?.house}${jup?.dignity ? `, ${jup.dignity}` : ""}). Describe where natural abundance flows, the philosophical or spiritual lens through which this person grows, and the life territory where fortune tends to compound over time.`,
     },
     {
@@ -103,7 +103,7 @@ function buildSectionDefs(chart: ChartData): SectionDef[] {
       label: "KARMIC ARCHITECTURE",
       subtitle: "Saturn",
       color: "#94a3b8",
-      glyph: "♄",
+      glyph: "♄︎",
       prompt: `${BASE}\n\nSection: KARMIC ARCHITECTURE. Saturn in ${sat?.sign} (House ${sat?.house}${sat?.dignity ? `, ${sat.dignity}` : ""}${sat?.retrograde ? ", Rx" : ""}). Describe the structural challenge this life is asked to master — the relationship with authority, limitation, and discipline, and how consistent effort in this domain forges long-term mastery.`,
     },
     {
@@ -393,8 +393,8 @@ function ReportLanding({
       {chart && (
         <div className="flex flex-wrap items-center justify-center gap-3">
           {[
-            { label: "SUN", value: `${sun?.sign}`, color: "#fbbf24", glyph: "☉" },
-            { label: "MOON", value: `${moon?.sign}`, color: "#BFB6E8", glyph: "☽" },
+            { label: "SUN", value: `${sun?.sign}`, color: "#fbbf24", glyph: "☉︎" },
+            { label: "MOON", value: `${moon?.sign}`, color: "#BFB6E8", glyph: "☽︎" },
             { label: "RISING", value: `${asc?.sign}`, color: "#06b6d4", glyph: "ASC" },
           ].map(item => (
             <div

@@ -68,7 +68,7 @@ const ASPECT_COLORS: Record<string, string> = {
   square: "#f97316", sextile: "#06b6d4", quincunx: "#94a3b8",
 };
 
-const ZODIAC_SYMBOLS = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
+const ZODIAC_SYMBOLS = ["♈︎","♉︎","♊︎","♋︎","♌︎","♍︎","♎︎","♏︎","♐︎","♑︎","♒︎","♓︎"];
 
 // Designed holographic glyph art (sliced from IMG_8835) — replaces font symbols.
 const ZODIAC_GLYPHS = ["aries","taurus","gemini","cancer","leo","virgo","libra","scorpio","sagittarius","capricorn","aquarius","pisces"];

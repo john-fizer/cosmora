@@ -664,7 +664,7 @@ function SynastryBiWheel({ chartA, chartB, nameA, nameB, aspects }: {
   const R_PLANETS_A = 80; // A's planets inside zodiac ring
   const R_PLANETS_B = 128; // B's planets outside zodiac ring
 
-  const ZODIAC = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
+  const ZODIAC = ["♈︎","♉︎","♊︎","♋︎","♌︎","♍︎","♎︎","♏︎","♐︎","♑︎","♒︎","♓︎"];
   const ZODIAC_COLORS = ["#ef4444","#22c55e","#eab308","#9C8AC4","#f97316","#7B6FD4","#ec4899","#dc2626","#f59e0b","#64748b","#06b6d4","#7B6FD4"];
 
   // Convert ecliptic longitude to SVG angle (0° Aries at top, clockwise)

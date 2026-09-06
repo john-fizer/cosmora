@@ -87,7 +87,7 @@ export const REPORT_TYPES: ReportTypeMeta[] = [
     techniques: ["SR chart overview", "SR rising & persona", "SR planets overlay", "Monthly lunations", "SR house activations", "Timing windows"],
     expiryDays: 365,
     estimatedMinutes: 4,
-    icon: "☀",
+    icon: "☀︎",
     color: "#FFD700",
   },
   {
@@ -98,7 +98,7 @@ export const REPORT_TYPES: ReportTypeMeta[] = [
     techniques: ["Natal Saturn placement", "SR house activation", "Life phase themes", "Opposition midpoint", "Karmic harvest", "Building the new structure"],
     expiryDays: 1095,
     estimatedMinutes: 4,
-    icon: "♄",
+    icon: "♄︎",
     color: "#8899BB",
   },
   {

@@ -21,17 +21,17 @@ const DASHA_COLORS: Record<DashaRuler, string> = {
   Mars: "#ef4444", Rahu: "#06b6d4", Jupiter: "#f59e0b", Saturn: "#94a3b8", Mercury: "#a78bfa",
 };
 const DASHA_SYMBOLS: Record<DashaRuler, string> = {
-  Ketu: "☋", Venus: "♀", Sun: "☉", Moon: "☽", Mars: "♂",
-  Rahu: "☊", Jupiter: "♃", Saturn: "♄", Mercury: "☿",
+  Ketu: "☋", Venus: "♀︎", Sun: "☉︎", Moon: "☽︎", Mars: "♂︎",
+  Rahu: "☊︎", Jupiter: "♃︎", Saturn: "♄︎", Mercury: "☿︎",
 };
 const SIGN_SYMBOLS: Record<string, string> = {
-  Aries: "♈", Taurus: "♉", Gemini: "♊", Cancer: "♋", Leo: "♌", Virgo: "♍",
-  Libra: "♎", Scorpio: "♏", Sagittarius: "♐", Capricorn: "♑", Aquarius: "♒", Pisces: "♓",
+  Aries: "♈︎", Taurus: "♉︎", Gemini: "♊︎", Cancer: "♋︎", Leo: "♌︎", Virgo: "♍︎",
+  Libra: "♎︎", Scorpio: "♏︎", Sagittarius: "♐︎", Capricorn: "♑︎", Aquarius: "♒︎", Pisces: "♓︎",
 };
 const PLANET_SYMBOLS: Record<string, string> = {
-  Sun: "☉", Moon: "☽", Mercury: "☿", Venus: "♀", Mars: "♂",
-  Jupiter: "♃", Saturn: "♄", Uranus: "⛢", Neptune: "♆", Pluto: "♇",
-  NorthNode: "☊", SouthNode: "☋", Chiron: "⚷",
+  Sun: "☉︎", Moon: "☽︎", Mercury: "☿︎", Venus: "♀︎", Mars: "♂︎",
+  Jupiter: "♃︎", Saturn: "♄︎", Uranus: "⛢", Neptune: "♆︎", Pluto: "♇︎",
+  NorthNode: "☊︎", SouthNode: "☋", Chiron: "⚷︎",
 };
 const PLANET_COLORS: Record<string, string> = {
   Sun: "#fbbf24", Moon: "#BFB6E8", Mercury: "#a78bfa", Venus: "#f472b6",

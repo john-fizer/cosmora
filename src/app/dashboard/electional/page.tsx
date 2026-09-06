@@ -363,7 +363,7 @@ function HourTimeline({ hours, now, activity, moonSign, isVoid }: {
                 )}
               </div>
               <p className="text-[13px]" style={{ color: "#334155" }}>
-                {fmtTime(h.start)} – {fmtTime(h.end)} · {h.isDay ? "☀" : "☽"}
+                {fmtTime(h.start)} – {fmtTime(h.end)} · {h.isDay ? "☀︎" : "☽︎"}
               </p>
             </div>
 
@@ -728,7 +728,7 @@ export default function ElectionalPage() {
             )}
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: `${SIGN_COLORS[moonSign]}10`, border: `1px solid ${SIGN_COLORS[moonSign]}20` }}>
               <span className="text-[14px]" style={{ color: SIGN_COLORS[moonSign] }}>{SIGN_SYMBOLS[moonSign]}</span>
-              <span className="text-[13px] font-bold" style={{ color: SIGN_COLORS[moonSign] }}>☽ {moonSign}</span>
+              <span className="text-[13px] font-bold" style={{ color: SIGN_COLORS[moonSign] }}>☽︎ {moonSign}</span>
               {isVoid && <span className="text-[14px] font-bold" style={{ color: "#f97316" }}>VoC</span>}
             </div>
           </div>
@@ -851,7 +851,7 @@ export default function ElectionalPage() {
                   style={{ background: `${SIGN_COLORS[moonSign]}08`, border: `1px solid ${SIGN_COLORS[moonSign]}20` }}
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-base" style={{ color: SIGN_COLORS[moonSign] }}>☽ {SIGN_SYMBOLS[moonSign]}</span>
+                    <span className="text-base" style={{ color: SIGN_COLORS[moonSign] }}>☽︎ {SIGN_SYMBOLS[moonSign]}</span>
                     <p className="text-[13px] font-bold tracking-widest" style={{ color: "#334155" }}>
                       MOON IN {moonSign.toUpperCase()}
                       {isVoid && " · VOID OF COURSE"}

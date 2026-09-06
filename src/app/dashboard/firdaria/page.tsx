@@ -16,8 +16,8 @@ const PLANET_COLORS: Record<FirdariaRuler, string> = {
 };
 
 const PLANET_SYMBOLS: Record<FirdariaRuler, string> = {
-  Sun: "☉", Venus: "♀", Mercury: "☿", Moon: "☽", Saturn: "♄",
-  Jupiter: "♃", Mars: "♂", NorthNode: "☊", SouthNode: "☋",
+  Sun: "☉︎", Venus: "♀︎", Mercury: "☿︎", Moon: "☽︎", Saturn: "♄︎",
+  Jupiter: "♃︎", Mars: "♂︎", NorthNode: "☊︎", SouthNode: "☋",
 };
 
 const RULER_THEMES: Record<FirdariaRuler, string> = {

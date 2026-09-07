@@ -1,7 +1,8 @@
 ﻿"use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTheme, type ThemeId } from "@/lib/theme";
 
 const THEMES: {
@@ -23,21 +24,40 @@ const THEMES: {
 export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
   const [open, setOpen] = useState(false);
+  // The panel used to be position:absolute inside this component's own
+  // wrapper, which works fine in the desktop sidebar but gets silently
+  // clipped when this component is placed inside a scrollable/overflow
+  // container (e.g. the mobile "More" bottom sheet) — the same class of bug
+  // fixed elsewhere in the chart UI this session. Portaling to document.body
+  // and computing screen position from the trigger's own rect sidesteps any
+  // ancestor's overflow/clipping entirely.
+  const [anchor, setAnchor] = useState<{ left: number; bottom: number } | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const current = THEMES.find((t) => t.id === theme) ?? THEMES[0];
+
+  const toggleOpen = () => {
+    if (!open && triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setAnchor({ left: rect.left + rect.width / 2, bottom: window.innerHeight - rect.top + 12 });
+    }
+    setOpen(v => !v);
+  };
 
   return (
     <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center" }}>
-      <AnimatePresence>
-        {open && (
+      {open && anchor && createPortal(
+        <>
+        <div className="fixed inset-0 z-[199]" onClick={() => setOpen(false)} />
+        <AnimatePresence>
           <motion.div
             initial={{ opacity: 0, y: 6, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 6, scale: 0.94 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
             style={{
-              position: "absolute",
-              bottom: "calc(100% + 12px)",
-              left: "50%",
+              position: "fixed",
+              bottom: anchor.bottom,
+              left: anchor.left,
               transform: "translateX(-50%)",
               background: "rgba(1,1,14,0.97)",
               border: "1px solid rgba(6,182,212,0.18)",
@@ -143,12 +163,15 @@ export function ThemeSwitcher() {
               borderBottom: "1px solid rgba(6,182,212,0.18)",
             }} />
           </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>
+        </>,
+        document.body
+      )}
 
       {/* Trigger button */}
       <motion.button
-        onClick={() => setOpen((v) => !v)}
+        ref={triggerRef}
+        onClick={toggleOpen}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         title="Change Skin"

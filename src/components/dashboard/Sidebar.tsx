@@ -762,6 +762,12 @@ function MobileNav({ pathname }: { pathname: string }) {
                   );
                 })}
               </div>
+
+              <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "14px 20px" }} />
+
+              <div className="flex justify-center pb-2">
+                <ThemeSwitcher />
+              </div>
             </motion.div>
           </>
         )}

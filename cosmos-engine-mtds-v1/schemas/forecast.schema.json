@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ForecastObject",
+  "type": "object",
+  "required": [
+    "id",
+    "tenant_id",
+    "theme",
+    "time_window",
+    "score_type",
+    "score",
+    "evidence",
+    "limitations"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "tenant_id": {
+      "type": "string"
+    },
+    "theme": {
+      "type": "string"
+    },
+    "time_window": {
+      "type": "object",
+      "properties": {
+        "starts_at": {
+          "type": "string"
+        },
+        "ends_at": {
+          "type": "string"
+        }
+      }
+    },
+    "score_type": {
+      "enum": [
+        "signal_strength",
+        "calibrated_probability"
+      ]
+    },
+    "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "drivers": {
+      "type": "array"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "language_mode": {
+      "enum": [
+        "reflective",
+        "possibility",
+        "scenario"
+      ]
+    }
+  }
+}

@@ -1,0 +1,43 @@
+openapi: 3.1.0
+info:
+  title: Cosmos Engine API
+  version: 0.1.0
+paths:
+  /v1/birth-profiles:
+    post:
+      summary: Create a birth profile
+      responses:
+        '201': { description: Created }
+  /v1/events:
+    post:
+      summary: Create a life event
+      responses:
+        '201': { description: Created }
+    get:
+      summary: List life events
+      responses:
+        '200': { description: OK }
+  /v1/astrology/derived-points:
+    get:
+      summary: List derived astrology points
+      parameters:
+        - name: profile_id
+          in: query
+          required: true
+          schema: { type: string }
+        - name: types
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+  /v1/graph/neighborhood:
+    get:
+      summary: Fetch graph neighborhood for an object
+      responses:
+        '200': { description: OK }
+  /v1/forecasts:
+    post:
+      summary: Create a forecast request
+      responses:
+        '202': { description: Accepted }

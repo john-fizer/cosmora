@@ -4,6 +4,8 @@ import { getPool, closePool } from "../src/db.js";
 
 let tenantId: string;
 let userId: string;
+let tenantIdB: string;
+let userIdB: string;
 
 beforeAll(async () => {
   const pool = getPool();
@@ -16,6 +18,16 @@ beforeAll(async () => {
     [tenantId],
   );
   userId = user.rows[0].id;
+
+  const tenantB = await pool.query(
+    "INSERT INTO tenants (name) VALUES ('test-tenant-b') RETURNING id",
+  );
+  tenantIdB = tenantB.rows[0].id;
+  const userB = await pool.query(
+    "INSERT INTO users (tenant_id, email) VALUES ($1, 'test-b@example.com') RETURNING id",
+    [tenantIdB],
+  );
+  userIdB = userB.rows[0].id;
 });
 
 afterAll(async () => {
@@ -134,6 +146,46 @@ describe("birth profile CRUD", () => {
     expect(getResponse.statusCode).toBe(200);
     expect(getResponse.json().birthDate).toBe("1991-04-23");
 
+    await app.close();
+  });
+
+  it("prevents a different tenant from reading another tenant's birth profile", async () => {
+    const app = buildServer();
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/v1/birth-profiles",
+      headers: { "x-tenant-id": tenantId },
+      payload: {
+        userId,
+        birthDate: "1991-04-23",
+        birthTime: "08:06",
+        timezone: "America/Chicago",
+        latitude: 41.8781,
+        longitude: -87.6298,
+      },
+    });
+    expect(createResponse.statusCode).toBe(201);
+    const created = createResponse.json();
+
+    const crossTenantResponse = await app.inject({
+      method: "GET",
+      url: `/v1/birth-profiles/${created.id}`,
+      headers: { "x-tenant-id": tenantIdB },
+    });
+    expect(crossTenantResponse.statusCode).toBe(404);
+
+    await app.close();
+  });
+
+  it("rejects a malformed :id path param with 400 when x-tenant-id is valid", async () => {
+    const app = buildServer();
+    const response = await app.inject({
+      method: "GET",
+      url: "/v1/birth-profiles/not-a-valid-uuid",
+      headers: { "x-tenant-id": tenantId },
+    });
+    expect(response.statusCode).toBe(400);
     await app.close();
   });
 });

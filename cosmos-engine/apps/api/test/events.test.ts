@@ -4,6 +4,7 @@ import { getPool, closePool } from "../src/db.js";
 
 let tenantId: string;
 let userId: string;
+let tenantIdB: string;
 
 beforeAll(async () => {
   const pool = getPool();
@@ -16,6 +17,15 @@ beforeAll(async () => {
     [tenantId],
   );
   userId = user.rows[0].id;
+
+  const tenantB = await pool.query(
+    "INSERT INTO tenants (name) VALUES ('test-tenant-events-b') RETURNING id",
+  );
+  tenantIdB = tenantB.rows[0].id;
+  await pool.query(
+    "INSERT INTO users (tenant_id, email) VALUES ($1, 'events-b@example.com') RETURNING id",
+    [tenantIdB],
+  );
 });
 
 afterAll(async () => {
@@ -100,6 +110,35 @@ describe("life event CRUD", () => {
       headers: { "x-tenant-id": tenantId },
     });
     expect(response.statusCode).toBe(400);
+    await app.close();
+  });
+
+  it("does not leak events to a different tenant querying the same ownerUserId", async () => {
+    const app = buildServer();
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/v1/events",
+      headers: { "x-tenant-id": tenantId },
+      payload: {
+        ownerUserId: userId,
+        eventType: "CareerStart",
+        title: "Tenant A only event",
+        startsAt: "2026-09-24T00:00:00Z",
+        timezone: "America/Chicago",
+        sourceType: "manual",
+      },
+    });
+    expect(createResponse.statusCode).toBe(201);
+
+    const crossTenantResponse = await app.inject({
+      method: "GET",
+      url: `/v1/events?ownerUserId=${userId}`,
+      headers: { "x-tenant-id": tenantIdB },
+    });
+    expect(crossTenantResponse.statusCode).toBe(200);
+    expect(crossTenantResponse.json()).toEqual([]);
+
     await app.close();
   });
 });

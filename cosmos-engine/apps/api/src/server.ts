@@ -3,6 +3,7 @@ import { healthRoutes } from "./routes/health.js";
 import { birthProfileRoutes } from "./routes/birthProfiles.js";
 import { eventRoutes } from "./routes/events.js";
 import { derivedPointRoutes } from "./routes/derivedPoints.js";
+import { openapiRoutes } from "./openapi.js";
 
 export function buildServer() {
   const app = Fastify({ logger: true });
@@ -10,6 +11,7 @@ export function buildServer() {
   app.register(birthProfileRoutes);
   app.register(eventRoutes);
   app.register(derivedPointRoutes);
+  app.register(openapiRoutes);
   return app;
 }
 

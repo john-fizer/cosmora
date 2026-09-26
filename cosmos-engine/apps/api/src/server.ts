@@ -2,12 +2,14 @@ import Fastify from "fastify";
 import { healthRoutes } from "./routes/health.js";
 import { birthProfileRoutes } from "./routes/birthProfiles.js";
 import { eventRoutes } from "./routes/events.js";
+import { derivedPointRoutes } from "./routes/derivedPoints.js";
 
 export function buildServer() {
   const app = Fastify({ logger: true });
   app.register(healthRoutes);
   app.register(birthProfileRoutes);
   app.register(eventRoutes);
+  app.register(derivedPointRoutes);
   return app;
 }
 

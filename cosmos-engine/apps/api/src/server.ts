@@ -1,9 +1,11 @@
 import Fastify from "fastify";
 import { healthRoutes } from "./routes/health.js";
+import { birthProfileRoutes } from "./routes/birthProfiles.js";
 
 export function buildServer() {
   const app = Fastify({ logger: true });
   app.register(healthRoutes);
+  app.register(birthProfileRoutes);
   return app;
 }
 

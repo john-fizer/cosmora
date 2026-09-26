@@ -77,4 +77,63 @@ describe("birth profile CRUD", () => {
     expect(response.statusCode).toBe(400);
     await app.close();
   });
+
+  it("rejects a malformed x-tenant-id with 400 instead of a raw Postgres error", async () => {
+    const app = buildServer();
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/v1/birth-profiles",
+      headers: { "x-tenant-id": "not-a-uuid" },
+      payload: {
+        userId,
+        birthDate: "1991-04-23",
+        birthTime: "08:06",
+        timezone: "America/Chicago",
+        latitude: 41.8781,
+        longitude: -87.6298,
+      },
+    });
+    expect(createResponse.statusCode).toBe(400);
+
+    const getResponse = await app.inject({
+      method: "GET",
+      url: "/v1/birth-profiles/00000000-0000-0000-0000-000000000000",
+      headers: { "x-tenant-id": "not-a-uuid" },
+    });
+    expect(getResponse.statusCode).toBe(400);
+
+    await app.close();
+  });
+
+  it("returns birthDate as the exact submitted YYYY-MM-DD string, not an ISO timestamp", async () => {
+    const app = buildServer();
+
+    const createResponse = await app.inject({
+      method: "POST",
+      url: "/v1/birth-profiles",
+      headers: { "x-tenant-id": tenantId },
+      payload: {
+        userId,
+        birthDate: "1991-04-23",
+        birthTime: "08:06",
+        timezone: "America/Chicago",
+        latitude: 41.8781,
+        longitude: -87.6298,
+      },
+    });
+    expect(createResponse.statusCode).toBe(201);
+    const created = createResponse.json();
+    expect(created.birthDate).toBe("1991-04-23");
+
+    const getResponse = await app.inject({
+      method: "GET",
+      url: `/v1/birth-profiles/${created.id}`,
+      headers: { "x-tenant-id": tenantId },
+    });
+    expect(getResponse.statusCode).toBe(200);
+    expect(getResponse.json().birthDate).toBe("1991-04-23");
+
+    await app.close();
+  });
 });

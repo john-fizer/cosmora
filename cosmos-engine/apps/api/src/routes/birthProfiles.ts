@@ -2,12 +2,21 @@ import type { FastifyInstance } from "fastify";
 import { birthProfileInputSchema } from "@cosmos-engine/schemas";
 import { getPool } from "../db.js";
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function formatDate(value: unknown): string {
+  if (value instanceof Date) {
+    return value.toISOString().slice(0, 10);
+  }
+  return String(value);
+}
+
 function toApiShape(row: Record<string, unknown>) {
   return {
     id: row.id,
     tenantId: row.tenant_id,
     userId: row.user_id,
-    birthDate: row.birth_date,
+    birthDate: formatDate(row.birth_date),
     birthTime: row.birth_time,
     timezone: row.timezone,
     latitude: Number(row.latitude),
@@ -24,6 +33,9 @@ export async function birthProfileRoutes(app: FastifyInstance) {
     const tenantId = request.headers["x-tenant-id"];
     if (typeof tenantId !== "string") {
       return reply.code(400).send({ error: "x-tenant-id header is required" });
+    }
+    if (!UUID_REGEX.test(tenantId)) {
+      return reply.code(400).send({ error: "x-tenant-id must be a valid UUID" });
     }
 
     const parsed = birthProfileInputSchema.safeParse(request.body);
@@ -58,6 +70,12 @@ export async function birthProfileRoutes(app: FastifyInstance) {
     const tenantId = request.headers["x-tenant-id"];
     if (typeof tenantId !== "string") {
       return reply.code(400).send({ error: "x-tenant-id header is required" });
+    }
+    if (!UUID_REGEX.test(tenantId)) {
+      return reply.code(400).send({ error: "x-tenant-id must be a valid UUID" });
+    }
+    if (!UUID_REGEX.test(request.params.id)) {
+      return reply.code(400).send({ error: "id must be a valid UUID" });
     }
 
     const pool = getPool();

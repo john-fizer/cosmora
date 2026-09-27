@@ -5,6 +5,8 @@ import { birthProfileRoutes } from "./routes/birthProfiles.js";
 import { eventRoutes } from "./routes/events.js";
 import { derivedPointRoutes } from "./routes/derivedPoints.js";
 import { openapiRoutes } from "./openapi.js";
+import { tenantRoutes } from "./routes/tenants.js";
+import { userRoutes } from "./routes/users.js";
 
 export function buildServer() {
   const app = Fastify({ logger: true });
@@ -13,6 +15,8 @@ export function buildServer() {
   app.register(eventRoutes);
   app.register(derivedPointRoutes);
   app.register(openapiRoutes);
+  app.register(tenantRoutes);
+  app.register(userRoutes);
   return app;
 }
 

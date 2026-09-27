@@ -7,6 +7,7 @@ import { derivedPointRoutes } from "./routes/derivedPoints.js";
 import { openapiRoutes } from "./openapi.js";
 import { tenantRoutes } from "./routes/tenants.js";
 import { userRoutes } from "./routes/users.js";
+import { observatorySceneRoutes } from "./routes/observatoryScene.js";
 
 export function buildServer() {
   const app = Fastify({ logger: true });
@@ -17,6 +18,7 @@ export function buildServer() {
   app.register(openapiRoutes);
   app.register(tenantRoutes);
   app.register(userRoutes);
+  app.register(observatorySceneRoutes);
   return app;
 }
 

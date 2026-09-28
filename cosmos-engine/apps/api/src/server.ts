@@ -1,5 +1,6 @@
 import { pathToFileURL } from "node:url";
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 import { healthRoutes } from "./routes/health.js";
 import { birthProfileRoutes } from "./routes/birthProfiles.js";
 import { eventRoutes } from "./routes/events.js";
@@ -11,6 +12,7 @@ import { observatorySceneRoutes } from "./routes/observatoryScene.js";
 
 export function buildServer() {
   const app = Fastify({ logger: true });
+  app.register(cors, { origin: true });
   app.register(healthRoutes);
   app.register(birthProfileRoutes);
   app.register(eventRoutes);

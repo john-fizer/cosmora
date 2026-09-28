@@ -12,7 +12,8 @@ import { observatorySceneRoutes } from "./routes/observatoryScene.js";
 
 export function buildServer() {
   const app = Fastify({ logger: true });
-  app.register(cors, { origin: true });
+  // MVP: defaults to the local Vite dev server's origin. Set CORS_ORIGIN before any non-localhost deployment.
+  app.register(cors, { origin: process.env.CORS_ORIGIN ?? "http://localhost:5173" });
   app.register(healthRoutes);
   app.register(birthProfileRoutes);
   app.register(eventRoutes);

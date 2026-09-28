@@ -30,7 +30,7 @@ export async function observatorySceneRoutes(app: FastifyInstance) {
       }
 
       const eventResult = await pool.query(
-        "SELECT title, starts_at FROM life_events WHERE id = $1 AND tenant_id = $2",
+        "SELECT title, starts_at FROM life_events WHERE id = $1 AND tenant_id = $2 AND deleted_at IS NULL",
         [eventId, tenantId],
       );
       if (eventResult.rows.length === 0) {

@@ -1423,7 +1423,7 @@ git commit -m "cosmos-engine: render the observatory scene with react-three-fibe
 
 **Files:** none created or modified — this task verifies Tasks 1-7 work together as a real running app.
 
-- [ ] **Step 1: Bring up the full stack**
+- [x] **Step 1: Bring up the full stack**
 
 From `cosmos-engine/`:
 ```bash
@@ -1434,7 +1434,7 @@ Wait for Postgres to accept connections, then:
 DATABASE_URL=postgres://cosmos:cosmos@localhost:5432/cosmos npm run migrate
 ```
 
-- [ ] **Step 2: Start the API**
+- [x] **Step 2: Start the API**
 
 ```bash
 cd apps/api && DATABASE_URL=postgres://cosmos:cosmos@localhost:5432/cosmos node --experimental-strip-types src/server.ts
@@ -1443,11 +1443,11 @@ cd apps/api && DATABASE_URL=postgres://cosmos:cosmos@localhost:5432/cosmos node 
 
 If this fails with `ERR_MODULE_NOT_FOUND` (a known, already-ledgered Sprint 1 gap: Node's native TS type-stripping doesn't resolve `.js`-suffixed relative imports to sibling `.ts` files on this Node version), use `npx tsx src/server.ts` instead as a workaround for this verification pass — don't attempt to fix the underlying tooling gap as part of this task, just get the server running so the rest of this task can proceed.
 
-- [ ] **Step 3: Start the web app**
+- [x] **Step 3: Start the web app**
 
 In another terminal: `cd apps/web && npm run dev`
 
-- [ ] **Step 4: Drive the app in a real browser**
+- [x] **Step 4: Drive the app in a real browser**
 
 Open `http://localhost:5173` in a browser (or use browser automation tooling if available in your environment). Fill in the birth-profile fields (defaults are pre-filled), fill in an event title and a date/time, submit. Confirm:
 - The form submits without an error message appearing.
@@ -1456,13 +1456,15 @@ Open `http://localhost:5173` in a browser (or use browser automation tooling if 
 - No errors appear in the browser console.
 - Dragging the mouse orbits the camera (confirms `OrbitControls` is working).
 
-- [ ] **Step 5: Tear down**
+- [x] **Step 5: Tear down**
 
 Stop the web dev server, stop the API server, and run `docker compose -f infra/docker-compose.yml down` from `cosmos-engine/`.
 
-- [ ] **Step 6: Record the result**
+- [x] **Step 6: Record the result**
 
 Document what you observed (pass/fail, and any screenshots if your tooling supports capturing them) — this is the plan's final acceptance evidence, not a code change, so there is nothing to commit for this task.
+
+**Result: PASS (2026-10-06).** Port 5173 was occupied by an unrelated local process, so Vite bound to 5174 instead; the API's `CORS_ORIGIN` default only allowed 5173, so cross-origin requests from the form would have failed silently (opaque CORS error, not a form error) had this gone unnoticed — restarted the API with `CORS_ORIGIN=http://localhost:5174` to match. This is an artifact of running two dev stacks on one machine, not a code defect, and isn't a new gap beyond the already-ledgered CORS-origin item above. With that corrected, drove the full flow via browser automation: submitted the onboarding form (birth profile + "Started new job" life event), the Observatory view replaced the form, and after a moment 10 purple natal-planet spheres (Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, Sun, Moon) plus 1 gold event sphere rendered with text labels. No console errors. Drag-to-orbit confirmed working (camera and labels rotated correctly in 3D). Stack torn down cleanly afterward (processes killed, `docker compose down` removed the Postgres container and network).
 
 ## Known gaps carried forward (not silently dropped)
 

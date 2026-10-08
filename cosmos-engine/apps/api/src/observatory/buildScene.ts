@@ -15,6 +15,7 @@ export interface BuildScenePayloadInput {
   eventId: string;
   eventTitle: string;
   eventStartsAt: string;
+  eventTimezone: string;
 }
 
 // Deterministic (not random) so that buildScenePayload is a pure function of
@@ -22,14 +23,29 @@ export interface BuildScenePayloadInput {
 // which the "is deterministic for the same inputs" test relies on.
 function deterministicSceneId(input: BuildScenePayloadInput): string {
   return createHash("sha256")
-    .update(`${input.profileId}:${input.birthDate}:${input.eventId}:${input.eventStartsAt}`)
+    .update(
+      `${input.profileId}:${input.birthDate}:${input.eventId}:${input.eventStartsAt}:${input.eventTimezone}`,
+    )
     .digest("hex")
     .slice(0, 32);
 }
 
+// The event's *calendar date* for placement purposes is the date in the
+// event's own local timezone, not the UTC date of its stored instant — a
+// 23:30 event and its 04:30-UTC-next-day instant must land on the same day.
+function localCalendarDate(utcInstant: string, timeZone: string): string {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return formatter.format(new Date(utcInstant));
+}
+
 export function buildScenePayload(input: BuildScenePayloadInput): ScenePayload {
   const natalPoints = computeMockNatalPoints(input.profileId, input.birthDate);
-  const eventDateOnly = input.eventStartsAt.slice(0, 10);
+  const eventDateOnly = localCalendarDate(input.eventStartsAt, input.eventTimezone);
   const eventPoints = computeMockNatalPoints(input.eventId, eventDateOnly);
   const eventSun = eventPoints.find((p) => p.body === "Sun")!;
 

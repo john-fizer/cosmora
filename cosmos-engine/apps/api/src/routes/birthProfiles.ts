@@ -4,19 +4,14 @@ import { getPool } from "../db.js";
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-function formatDate(value: unknown): string {
-  if (value instanceof Date) {
-    return value.toISOString().slice(0, 10);
-  }
-  return String(value);
-}
-
 function toApiShape(row: Record<string, unknown>) {
   return {
     id: row.id,
     tenantId: row.tenant_id,
     userId: row.user_id,
-    birthDate: formatDate(row.birth_date),
+    // birth_date is a Postgres DATE; db.ts registers a type parser that
+    // keeps it as the raw "YYYY-MM-DD" string (see db.ts for why).
+    birthDate: String(row.birth_date),
     birthTime: row.birth_time,
     timezone: row.timezone,
     latitude: Number(row.latitude),

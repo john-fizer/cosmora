@@ -30,16 +30,18 @@ export async function observatorySceneRoutes(app: FastifyInstance) {
       }
 
       const eventResult = await pool.query(
-        "SELECT title, starts_at FROM life_events WHERE id = $1 AND tenant_id = $2 AND deleted_at IS NULL",
+        "SELECT title, starts_at, timezone FROM life_events WHERE id = $1 AND tenant_id = $2 AND deleted_at IS NULL",
         [eventId, tenantId],
       );
       if (eventResult.rows.length === 0) {
         return reply.code(404).send({ error: "life event not found" });
       }
 
-      const birthDateRaw = profileResult.rows[0].birth_date;
-      const birthDate =
-        birthDateRaw instanceof Date ? birthDateRaw.toISOString().slice(0, 10) : String(birthDateRaw);
+      // birth_date is a Postgres DATE; db.ts's type parser keeps it as the
+      // raw "YYYY-MM-DD" string. starts_at is a TIMESTAMPTZ (a real instant,
+      // safe to serialize via toISOString); which *calendar day* that
+      // instant falls on depends on the event's own stored timezone, not UTC.
+      const birthDate = String(profileResult.rows[0].birth_date);
       const eventStartsAtRaw = eventResult.rows[0].starts_at;
       const eventStartsAt =
         eventStartsAtRaw instanceof Date ? eventStartsAtRaw.toISOString() : String(eventStartsAtRaw);
@@ -50,6 +52,7 @@ export async function observatorySceneRoutes(app: FastifyInstance) {
         eventId,
         eventTitle: eventResult.rows[0].title,
         eventStartsAt,
+        eventTimezone: eventResult.rows[0].timezone,
       });
       return reply.send(scene);
     },

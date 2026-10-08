@@ -11,6 +11,7 @@ describe("buildScenePayload", () => {
       eventId: "event-1",
       eventTitle: "Joined Cosmos Engine",
       eventStartsAt: "2026-09-24",
+      eventTimezone: "UTC",
     });
     expect(scene.nodes).toHaveLength(11);
     expect(scene.nodes.filter((n) => n.type === "natal_planet")).toHaveLength(10);
@@ -27,6 +28,7 @@ describe("buildScenePayload", () => {
       eventId: "event-1",
       eventTitle: "Joined Cosmos Engine",
       eventStartsAt: "2026-09-24",
+      eventTimezone: "UTC",
     });
     const b = buildScenePayload({
       profileId: "profile-1",
@@ -34,6 +36,7 @@ describe("buildScenePayload", () => {
       eventId: "event-1",
       eventTitle: "Joined Cosmos Engine",
       eventStartsAt: "2026-09-24",
+      eventTimezone: "UTC",
     });
     expect(a).toEqual(b);
   });
@@ -45,11 +48,37 @@ describe("buildScenePayload", () => {
       eventId: "event-1",
       eventTitle: "Joined Cosmos Engine",
       eventStartsAt: "2026-09-24",
+      eventTimezone: "UTC",
     });
     for (const node of scene.nodes.filter((n) => n.type === "natal_planet")) {
       expect(node.z).toBe(2);
     }
     expect(scene.nodes.find((n) => n.type === "event")!.z).toBe(5);
+  });
+
+  it("computes the event's placement date from its own local timezone, not the UTC instant", () => {
+    // 2020-06-16T04:30:00Z is 2020-06-15T23:30:00-05:00 in America/Chicago
+    // (CDT, UTC-5 in June): the UTC calendar date and the event's own local
+    // calendar date land on different days.
+    const utcDate = buildScenePayload({
+      profileId: "profile-1",
+      birthDate: "1991-04-23",
+      eventId: "event-1",
+      eventTitle: "Late-night event",
+      eventStartsAt: "2020-06-16T04:30:00Z",
+      eventTimezone: "UTC",
+    });
+    const chicagoDate = buildScenePayload({
+      profileId: "profile-1",
+      birthDate: "1991-04-23",
+      eventId: "event-1",
+      eventTitle: "Late-night event",
+      eventStartsAt: "2020-06-16T04:30:00Z",
+      eventTimezone: "America/Chicago",
+    });
+    expect(utcDate.timeWindow.end).toBe("2020-06-16");
+    expect(chicagoDate.timeWindow.end).toBe("2020-06-15");
+    expect(chicagoDate).not.toEqual(utcDate);
   });
 });
 
@@ -140,6 +169,41 @@ describe("GET /v1/observatory/scene", () => {
       headers: { "x-tenant-id": tenantId },
     });
     expect(response.statusCode).toBe(400);
+    await app.close();
+  });
+
+  it("uses the stored event's own timezone, not UTC, to compute its placement date", async () => {
+    const app = buildServer();
+    const pool = getPool();
+    const user = await pool.query(
+      "INSERT INTO users (tenant_id, email) VALUES ($1, 'scene-tz@example.com') RETURNING id",
+      [tenantId],
+    );
+    const userId = user.rows[0].id;
+
+    // 04:30 UTC is 23:30 the previous day in America/Chicago (CDT, UTC-5 in June).
+    const eventResponse = await app.inject({
+      method: "POST",
+      url: "/v1/events",
+      headers: { "x-tenant-id": tenantId },
+      payload: {
+        ownerUserId: userId,
+        eventType: "CareerStart",
+        title: "Late-night event",
+        startsAt: "2020-06-16T04:30:00Z",
+        timezone: "America/Chicago",
+        sourceType: "manual",
+      },
+    });
+    const lateNightEventId = eventResponse.json().id;
+
+    const sceneResponse = await app.inject({
+      method: "GET",
+      url: `/v1/observatory/scene?profile_id=${profileId}&event_id=${lateNightEventId}`,
+      headers: { "x-tenant-id": tenantId },
+    });
+    expect(sceneResponse.statusCode).toBe(200);
+    expect(sceneResponse.json().timeWindow.end).toBe("2020-06-15");
     await app.close();
   });
 });

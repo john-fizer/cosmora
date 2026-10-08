@@ -3,6 +3,37 @@ info:
   title: Cosmos Engine API
   version: 0.1.0
 paths:
+  /v1/tenants:
+    post:
+      summary: Create a tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, minLength: 1 }
+      responses:
+        '201': { description: Created }
+        '400': { description: Invalid payload }
+  /v1/users:
+    post:
+      summary: Create a user under a tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenantId]
+              properties:
+                tenantId: { type: string, format: uuid }
+                email: { type: string, format: email, nullable: true }
+      responses:
+        '201': { description: Created }
+        '400': { description: Invalid payload }
   /v1/birth-profiles:
     post:
       summary: Create a birth profile
@@ -102,3 +133,70 @@ paths:
       responses:
         '200': { description: OK }
         '400': { description: Missing profile_id }
+  /v1/observatory/scene:
+    get:
+      summary: Build the Observatory scene payload for a profile + event pair
+      parameters:
+        - name: profile_id
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+        - name: event_id
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+        - name: x-tenant-id
+          in: header
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [sceneId, timeWindow, nodes, edges, animations, filters]
+                properties:
+                  sceneId: { type: string }
+                  timeWindow:
+                    type: object
+                    required: [start, end]
+                    properties:
+                      start: { type: string }
+                      end: { type: string }
+                  nodes:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, type, x, y, z, label]
+                      properties:
+                        id: { type: string }
+                        type: { type: string, enum: [natal_planet, event] }
+                        x: { type: number }
+                        y: { type: number }
+                        z: { type: number }
+                        label: { type: string }
+                  edges:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, from, to, type, weight]
+                      properties:
+                        id: { type: string }
+                        from: { type: string }
+                        to: { type: string }
+                        type: { type: string }
+                        weight: { type: number }
+                  animations:
+                    type: array
+                    items: {}
+                  filters:
+                    type: object
+                    required: [showMidpoints, showAntiscia, showForecasts]
+                    properties:
+                      showMidpoints: { type: boolean }
+                      showAntiscia: { type: boolean }
+                      showForecasts: { type: boolean }
+        '400': { description: Missing or invalid profile_id/event_id/x-tenant-id }
+        '404': { description: Birth profile or life event not found for this tenant }

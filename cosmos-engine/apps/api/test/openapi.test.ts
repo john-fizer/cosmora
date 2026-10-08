@@ -8,6 +8,9 @@ describe("GET /v1/openapi.yaml", () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toContain("openapi: 3.1.0");
     expect(response.body).toContain("/v1/birth-profiles");
+    expect(response.body).toContain("/v1/tenants");
+    expect(response.body).toContain("/v1/users");
+    expect(response.body).toContain("/v1/observatory/scene");
     await app.close();
   });
 });

@@ -274,18 +274,23 @@ function PlanetaryHourWidget({ lat, lon }: { lat: number; lon: number }) {
 // ─── Live clock ───────────────────────────────────────────────────────────────
 
 function CosmicClock() {
-  const [time, setTime] = useState(() => new Date());
+  // Starts null (same on server and first client paint) so hydration never
+  // has to compare two different instants of `new Date()`; the real value
+  // is filled in client-only, after mount, like the rest of the app's
+  // browser-only reads.
+  const [time, setTime] = useState<Date | null>(null);
   useEffect(() => {
+    setTime(new Date());
     const id = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
   return (
     <div className="text-center">
       <p className="text-[13px] font-bold tracking-widest" style={{ color: "#06b6d4", fontFamily: "'Share Tech Mono', monospace" }}>
-        {time.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "2-digit", second: "2-digit" })}
+        {time ? time.toLocaleTimeString("en-US", { hour12: true, hour: "numeric", minute: "2-digit", second: "2-digit" }) : " "}
       </p>
       <p className="text-[13px] tracking-widest" style={{ color: "#334155" }}>
-        {time.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).toUpperCase()}
+        {time ? time.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).toUpperCase() : " "}
       </p>
     </div>
   );

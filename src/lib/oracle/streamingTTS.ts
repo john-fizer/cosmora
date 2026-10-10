@@ -122,6 +122,10 @@ export function useStreamingTTS(planet: VoicePlanet, aspects: Aspect[] = []) {
       if (fetching.current === 0) { setIsActive(false); setActiveProvider(null); }
       return;
     }
+    // Stable self-recursive callback (deps: []) — tryPlay only calls itself
+    // from inside callbacks that run after this closure has finished being
+    // assigned, so the forward reference is safe.
+    // eslint-disable-next-line react-hooks/immutability -- see comment above
     if (item.failed) { tryPlay(fromIdx + 1); return; }
     if (!item.blobUrl) return;
 

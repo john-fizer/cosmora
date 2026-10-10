@@ -431,6 +431,9 @@ function HistoryRow({ report, onClick }: { report: Report; onClick: () => void }
   const meta = REPORT_TYPES.find(r => r.id === report.type);
   if (!meta) return null;
   const isExpired = new Date(report.expiresAt) < new Date();
+  // This row only ever renders client-side, after the reports list has loaded,
+  // so Date.now() here can't disagree with a server-rendered value.
+  // eslint-disable-next-line react-hooks/purity -- see comment above
   const age = Math.floor((Date.now() - new Date(report.generatedAt).getTime()) / (1000 * 60 * 60 * 24));
 
   return (

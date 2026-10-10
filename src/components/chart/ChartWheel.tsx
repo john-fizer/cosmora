@@ -294,7 +294,7 @@ export function ChartWheel({ size = 480, interactive = true, chart, onPlanetClic
           <pattern id="cwStars" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
             {[...Array(8)].map((_, i) => (
               <circle key={i} cx={Math.sin(i * 137.5) * 18 + 20} cy={Math.cos(i * 137.5) * 18 + 20}
-                r={Math.random() < 0.5 ? 0.4 : 0.7} fill="white" opacity={0.15 + (i % 3) * 0.1} />
+                r={i % 2 === 0 ? 0.4 : 0.7} fill="white" opacity={0.15 + (i % 3) * 0.1} />
             ))}
           </pattern>
         </defs>

@@ -1846,6 +1846,9 @@ export default function TransitsPage() {
                 const moonAspects = (data.aspects ?? []).filter(a =>
                   a.transitPlanet === "Moon" && a.applying && a.daysToExact !== null
                 );
+                // This block only renders once transit data has loaded client-side
+                // (data starts null), so Date.now() here can't disagree with SSR.
+                // eslint-disable-next-line react-hooks/purity -- see comment above
                 const nextSignDate = new Date(Date.now() + hoursToNextSign * 3600000);
                 const nextSignIdx = (Math.floor(moon.longitude / 30) + 1) % 12;
                 const nextSignName = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"][nextSignIdx];

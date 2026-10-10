@@ -671,6 +671,9 @@ export default function OraclePage() {
     if (chart && pendingAutoSeed) {
       const q = pendingAutoSeed;
       setPendingAutoSeed(null);
+      // sendMessage is defined later in this component; the setTimeout callback
+      // only runs after the full render (and its definition) has completed.
+      // eslint-disable-next-line react-hooks/immutability -- forward reference is safe, see above
       setTimeout(() => sendMessage(q), 400);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

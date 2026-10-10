@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // This repo nests a separate git worktree and vendored skill scripts;
+    // neither is app source and both have their own tooling.
+    ".worktrees/**",
+    ".agents/**",
+    ".claude/**",
   ]),
 ]);
 

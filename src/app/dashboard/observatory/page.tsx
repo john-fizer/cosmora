@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { DashboardBg } from "@/components/ui/DashboardBg";
@@ -11,30 +11,33 @@ import { getChronicle } from "@/lib/chronicle/storage";
 import type { LifeEvent } from "@/lib/chronicle/types";
 import { computeSkyState } from "@/lib/chronicle/sky-state";
 import type { SkyState } from "@/lib/chronicle/sky-state";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 
 // Three.js/R3F must not render during SSR — matches how map/chart pages load their Canvas components.
 const ObservatoryCanvas = dynamic(() => import("@/components/three/ObservatoryCanvas"), { ssr: false });
 
 const MONO = "'Fragment Mono', monospace";
 
-export default function ObservatoryPage() {
-  const [profile, setProfile] = useState<StoredProfile | null>(null);
-  const [chart, setChart] = useState<ChartData | null>(null);
-  const [events, setEvents] = useState<LifeEvent[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+interface ObservatoryData {
+  profile: StoredProfile | null;
+  chart: ChartData | null;
+  events: LifeEvent[];
+}
 
-  useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) { setLoading(false); return; }
-    const p = getProfile(id);
-    const c = getCachedChart(id);
-    if (!p || !c) { setLoading(false); return; }
-    setProfile(p);
-    setChart(c);
-    setEvents(getChronicle(id).events);
-    setLoading(false);
-  }, []);
+const EMPTY_OBSERVATORY_DATA: ObservatoryData = { profile: null, chart: null, events: [] };
+
+function readObservatoryData(): ObservatoryData {
+  const id = getActiveProfileId();
+  const p = id ? getProfile(id) : null;
+  const c = id ? getCachedChart(id) : null;
+  if (!id || !p || !c) return { profile: null, chart: null, events: [] };
+  return { profile: p, chart: c, events: getChronicle(id).events };
+}
+
+export default function ObservatoryPage() {
+  const { value: data, loading } = useClientSnapshot(readObservatoryData, EMPTY_OBSERVATORY_DATA);
+  const { profile, chart, events } = data;
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const skyStates = useMemo(() => {
     const map = new Map<string, SkyState>();

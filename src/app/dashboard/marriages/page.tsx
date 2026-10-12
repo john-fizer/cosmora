@@ -7,7 +7,7 @@ import { DashboardBg } from "@/components/ui/DashboardBg";
 import { GuideModeToggle } from "@/components/ui/GuideModeToggle";
 import {
   getActiveProfileId, getCachedChart,
-  getGuideMode, type GuideMode,
+  type GuideMode,
   getMarriageReadings, saveMarriageReading, type MarriageReading,
   getUnlockedMarriages, unlockNextMarriage,
 } from "@/lib/storage";
@@ -16,6 +16,8 @@ import {
   calculateMarriageSignificators, detectDivorceIndicators, getRemediesForIndicators,
   type MarriageSignificator, type MarriageNumber, type DivorceIndicator, type RemedyTrack,
 } from "@/lib/astrology/marriages";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
+import { useGuideMode } from "@/lib/useGuideMode";
 
 const MONO = "'Fragment Mono', monospace";
 const SERIF = "'Cormorant Garamond', serif";
@@ -179,6 +181,9 @@ function MarriageCard({
   // endpoint and must wait for the user to explicitly ask for it (see the
   // "Reveal reading" gate below) rather than firing on page load.
   useEffect(() => {
+    // Synchronizes local state with the changing cachedReading prop; the
+    // fetch below only fires when the user has explicitly asked (started).
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
     setReading(cachedReading);
     if (cachedReading || !started) return;
     fetchReading();
@@ -322,29 +327,29 @@ function MarriageCard({
   );
 }
 
+interface MarriagesProfileData {
+  profileId: string | null;
+  chart: ChartData | null;
+  unlocked: number;
+}
+
+const EMPTY_MARRIAGES_PROFILE: MarriagesProfileData = { profileId: null, chart: null, unlocked: 1 };
+
+function readMarriagesProfile(): MarriagesProfileData {
+  const id = getActiveProfileId();
+  if (!id) return { profileId: null, chart: null, unlocked: 1 };
+  return { profileId: id, chart: getCachedChart(id), unlocked: getUnlockedMarriages(id) };
+}
+
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function MarriagesPage() {
-  const [profileId, setProfileId] = useState<string | null>(null);
-  const [chart, setChart] = useState<ChartData | null>(null);
-  const [mode, setMode] = useState<GuideMode>("star");
-  const [unlocked, setUnlocked] = useState(1);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const id = getActiveProfileId();
-    setProfileId(id);
-    if (id) {
-      setChart(getCachedChart(id));
-      setUnlocked(getUnlockedMarriages(id));
-    }
-    setMode(getGuideMode());
-    setReady(true);
-
-    const onMode = (e: Event) => setMode((e as CustomEvent<GuideMode>).detail);
-    window.addEventListener("cosmora-guide-mode", onMode);
-    return () => window.removeEventListener("cosmora-guide-mode", onMode);
-  }, []);
+  const { value: profileData, loading } = useClientSnapshot(readMarriagesProfile, EMPTY_MARRIAGES_PROFILE);
+  const { profileId, chart, unlocked: initialUnlocked } = profileData;
+  const mode = useGuideMode();
+  const [unlockedOverride, setUnlockedOverride] = useState<number | null>(null);
+  const unlocked = unlockedOverride ?? initialUnlocked;
+  const ready = !loading;
 
   const significators = chart ? calculateMarriageSignificators(chart) : [];
   const visible = significators.slice(0, unlocked);
@@ -404,7 +409,7 @@ export default function MarriagesPage() {
                 mode={mode}
                 isLatestUnlocked={sig.marriage === unlocked}
                 canUnlockNext={unlocked < 4}
-                onUnlockNext={() => setUnlocked(unlockNextMarriage(profileId))}
+                onUnlockNext={() => setUnlockedOverride(unlockNextMarriage(profileId))}
               />
             ))}
           </div>

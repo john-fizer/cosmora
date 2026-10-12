@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { DashboardBg } from "@/components/ui/DashboardBg";
@@ -9,6 +9,20 @@ import {
   type MarriageReading,
 } from "@/lib/storage";
 import type { MarriageNumber } from "@/lib/astrology/marriages";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
+
+interface ArchiveProfileData {
+  profileId: string | null;
+  readings: MarriageReading[];
+}
+
+const EMPTY_ARCHIVE_PROFILE: ArchiveProfileData = { profileId: null, readings: [] };
+
+function readArchiveProfile(): ArchiveProfileData {
+  const id = getActiveProfileId();
+  if (!id) return { profileId: null, readings: [] };
+  return { profileId: id, readings: getMarriageReadings(id) };
+}
 
 const MONO = "'Fragment Mono', monospace";
 const SERIF = "'Cormorant Garamond', serif";
@@ -69,21 +83,16 @@ function ReadingRow({ reading, onDelete }: { reading: MarriageReading; onDelete:
 }
 
 export default function MarriageArchivePage() {
-  const [profileId, setProfileId] = useState<string | null>(null);
-  const [readings, setReadings] = useState<MarriageReading[]>([]);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const id = getActiveProfileId();
-    setProfileId(id);
-    if (id) setReadings(getMarriageReadings(id));
-    setReady(true);
-  }, []);
+  const { value: profileData, loading } = useClientSnapshot(readArchiveProfile, EMPTY_ARCHIVE_PROFILE);
+  const { profileId, readings: initialReadings } = profileData;
+  const [readingsOverride, setReadingsOverride] = useState<MarriageReading[] | null>(null);
+  const readings = readingsOverride ?? initialReadings;
+  const ready = !loading;
 
   const handleDelete = (readingId: string) => {
     if (!profileId) return;
     deleteMarriageReading(profileId, readingId);
-    setReadings(getMarriageReadings(profileId));
+    setReadingsOverride(getMarriageReadings(profileId));
   };
 
   return (

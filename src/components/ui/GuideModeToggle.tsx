@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { getGuideMode, setGuideMode, type GuideMode } from "@/lib/storage";
+import { setGuideMode, type GuideMode } from "@/lib/storage";
+import { useGuideMode } from "@/lib/useGuideMode";
 
 /**
  * Star ✦ / Spirit ◈ — the global voice switch.
@@ -10,16 +10,9 @@ import { getGuideMode, setGuideMode, type GuideMode } from "@/lib/storage";
  * Saved preference; dispatches `cosmora-guide-mode` so open pages react live.
  */
 export function GuideModeToggle({ compact = false }: { compact?: boolean }) {
-  const [mode, setMode] = useState<GuideMode>("star");
+  const mode = useGuideMode();
 
-  useEffect(() => {
-    setMode(getGuideMode());
-    const onChange = (e: Event) => setMode((e as CustomEvent<GuideMode>).detail);
-    window.addEventListener("cosmora-guide-mode", onChange);
-    return () => window.removeEventListener("cosmora-guide-mode", onChange);
-  }, []);
-
-  const pick = (m: GuideMode) => { setMode(m); setGuideMode(m); };
+  const pick = (m: GuideMode) => setGuideMode(m);
 
   const OPTIONS: { id: GuideMode; glyph: string; label: string; color: string }[] = [
     { id: "star",   glyph: "✦", label: "Star",   color: "#C8A55B" },

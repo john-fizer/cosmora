@@ -13,6 +13,7 @@ import {
   listProfiles, getActiveProfileId, getCachedChart,
 } from "@/lib/storage";
 import type { StoredProfile } from "@/lib/storage";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 
 // ─── Daily weather: harmony classification ─────────────────────────────────────
 // Matches ASPECT_ANGLES' harmony values below so "harmonious/harsh" reads
@@ -877,33 +878,48 @@ function PlanetOverlay({ chartA, chartB, nameA, nameB }: {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
+interface CompatibilityProfilesData {
+  allProfiles: StoredProfile[];
+  chartMap: Record<string, ChartData | null>;
+  defaultAId: string | null;
+  defaultBId: string | null;
+}
+
+const EMPTY_COMPATIBILITY_PROFILES: CompatibilityProfilesData = {
+  allProfiles: [],
+  chartMap: {},
+  defaultAId: null,
+  defaultBId: null,
+};
+
+function readCompatibilityProfiles(): CompatibilityProfilesData {
+  const profiles = listProfiles();
+  const activeId = getActiveProfileId();
+  const chartMap: Record<string, ChartData | null> = {};
+  profiles.forEach(p => { chartMap[p.id] = getCachedChart(p.id); });
+
+  const defaultAId = profiles.length >= 1 ? (activeId ?? profiles[0]?.id ?? null) : null;
+  const defaultBId = profiles.length >= 2
+    ? (profiles.find(p => p.id !== defaultAId)?.id ?? null)
+    : null;
+
+  return { allProfiles: profiles, chartMap, defaultAId, defaultBId };
+}
+
 export default function CompatibilityPage() {
-  const [allProfiles, setAllProfiles] = useState<StoredProfile[]>([]);
-  const [chartMap, setChartMap] = useState<Record<string, ChartData | null>>({});
-  const [personAId, setPersonAId] = useState<string | null>(null);
-  const [personBId, setPersonBId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { value: profilesData, loading } = useClientSnapshot(readCompatibilityProfiles, EMPTY_COMPATIBILITY_PROFILES);
+  const { allProfiles, chartMap, defaultAId, defaultBId } = profilesData;
+  // personAId/personBId are real interactive state (the dropdowns below let
+  // the user swap either person); until the user picks, fall back to the
+  // default pair computed from the loaded profiles.
+  const [personAIdOverride, setPersonAId] = useState<string | null>(null);
+  const [personBIdOverride, setPersonBId] = useState<string | null>(null);
+  const personAId = personAIdOverride ?? defaultAId;
+  const personBId = personBIdOverride ?? defaultBId;
   const [activeTab, setActiveTab] = useState<"score" | "aspects" | "weather" | "overlay" | "composite" | "oracle">("score");
   const [relationship, setRelationship] = useState<RelationshipType>("romantic");
   const [weather, setWeather] = useState<{ toA: TransitAspect[]; toB: TransitAspect[] } | null>(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
-
-  useEffect(() => {
-    const profiles = listProfiles();
-    const activeId = getActiveProfileId();
-    setAllProfiles(profiles);
-
-    const charts: Record<string, ChartData | null> = {};
-    profiles.forEach(p => { charts[p.id] = getCachedChart(p.id); });
-    setChartMap(charts);
-
-    if (profiles.length >= 1) setPersonAId(activeId ?? profiles[0]?.id ?? null);
-    if (profiles.length >= 2) {
-      const otherProfile = profiles.find(p => p.id !== (activeId ?? profiles[0]?.id));
-      setPersonBId(otherProfile?.id ?? null);
-    }
-    setLoading(false);
-  }, []);
 
   const chartA = personAId ? (chartMap[personAId] ?? null) : null;
   const chartB = personBId ? (chartMap[personBId] ?? null) : null;
@@ -936,6 +952,9 @@ export default function CompatibilityPage() {
   useEffect(() => {
     if (activeTab !== "weather" || !chartA || !chartB) return;
     if (weather || weatherLoading) return;
+    // Real on-demand effect (gated by activeTab/weather/weatherLoading, not
+    // a plain mount); this starts the async fetch below.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
     setWeatherLoading(true);
     fetch("/api/compatibility/weather", {
       method: "POST",
@@ -950,6 +969,7 @@ export default function CompatibilityPage() {
 
   // Reset cached weather when the pair changes so a stale reading for a
   // different couple can't linger under the new pair.
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronizes derived state with a changing prop, the sanctioned use of an effect
   useEffect(() => { setWeather(null); }, [personAId, personBId]);
 
   const weatherToAHarmonious = useMemo(() => (weather?.toA ?? []).filter(a => TRANSIT_HARMONY[a.type] > 0), [weather]);

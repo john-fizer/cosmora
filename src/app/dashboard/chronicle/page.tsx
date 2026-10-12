@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { getActiveProfileId, getProfile, getCachedChart, generateId } from "@/lib/storage";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 import type { StoredProfile } from "@/lib/storage";
 import type { ChartData } from "@/lib/astrology/types";
 import {
@@ -214,10 +215,23 @@ function SkyStateView({ state }: { state: SkyState }) {
   );
 }
 
+interface ChronicleProfileData {
+  profile: StoredProfile | null;
+  chart: ChartData | null;
+}
+
+const EMPTY_CHRONICLE_PROFILE: ChronicleProfileData = { profile: null, chart: null };
+
+function readChronicleProfile(): ChronicleProfileData {
+  const id = getActiveProfileId();
+  if (!id) return { profile: null, chart: null };
+  return { profile: getProfile(id), chart: getCachedChart(id) };
+}
+
 // ─── Main page ───────────────────────────────────────────────────────────────
 export default function ChroniclePage() {
-  const [profile, setProfile] = useState<StoredProfile | null>(null);
-  const [chart, setChart] = useState<ChartData | null>(null);
+  const { value: profileData } = useClientSnapshot(readChronicleProfile, EMPTY_CHRONICLE_PROFILE);
+  const { profile, chart } = profileData;
   const [events, setEvents] = useState<LifeEvent[]>([]);
   const [people, setPeople] = useState<Person[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -242,14 +256,15 @@ export default function ChroniclePage() {
   };
 
   useEffect(() => {
+    if (!profile || !chart) return;
     const id = getActiveProfileId();
     if (!id) return;
-    const p = getProfile(id);
-    const c = getCachedChart(id);
-    if (!p || !c) return;
-    setProfile(p); setChart(c); reload(id);
+    // Real subscription effect (pulls remote sync changes below and reloads
+    // again if any landed); this initial reload is its synchronous fast path.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
+    reload(id);
     void pullAll(id).then(changed => { if (changed) reload(id); });
-  }, []);
+  }, [profile, chart]);
 
   // Sky states for expanded card + signature search (computed on view, never stored)
   const skyStates = useMemo(() => {

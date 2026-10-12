@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useEffect, useMemo, useRef, useCallback, useSyncExternalStore } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { DashboardBg } from "@/components/ui/DashboardBg";
@@ -9,6 +9,7 @@ import type { ChartData, PlanetName, ZodiacSign } from "@/lib/astrology/types";
 import type { TransitsData } from "@/lib/astrology/transits";
 import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
 import type { StoredProfile } from "@/lib/storage";
+import { useTickingClock } from "@/lib/useTickingClock";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -595,20 +596,7 @@ export default function ElectionalPage() {
   const [loading, setLoading] = useState(true);
   const [selectedActivity, setSelectedActivity] = useState<Activity>(ACTIVITIES[0]);
 
-  // useState(new Date()) evaluates a fresh instant on both the server render
-  // and the client's first render — two different instants, so anything
-  // rendered from it (planetary hours below) would hydration-mismatch, the
-  // same bug CosmicClock had. useSyncExternalStore instead: null on the
-  // server/first paint, then a real ticking Date client-side.
-  const tickRef = useRef<Date | null>(null);
-  const subscribeNow = useCallback((onChange: () => void) => {
-    tickRef.current = new Date();
-    const id = setInterval(() => { tickRef.current = new Date(); onChange(); }, 5000);
-    return () => clearInterval(id);
-  }, []);
-  const getNowSnapshot = useCallback(() => tickRef.current, []);
-  const getNowServerSnapshot = useCallback(() => null, []);
-  const now = useSyncExternalStore(subscribeNow, getNowSnapshot, getNowServerSnapshot);
+  const now = useTickingClock(5000);
 
   useEffect(() => {
     const id = getActiveProfileId();

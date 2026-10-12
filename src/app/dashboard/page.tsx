@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -10,6 +10,7 @@ import { SignGlyph, PlanetGlyph } from "@/components/ui/AstroGlyph";
 import type { Ingress } from "@/lib/astrology/transits";
 import { getActiveProfileId, getProfile, getCachedChart, setCachedChart } from "@/lib/storage";
 import { useClientSnapshot } from "@/lib/useClientSnapshot";
+import { useTickingClock } from "@/lib/useTickingClock";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { useWarpTo } from "@/components/ui/WarpTransition";
 import { ScanBar } from "@/components/three/HUDPanel";
@@ -275,25 +276,7 @@ function PlanetaryHourWidget({ lat, lon }: { lat: number; lon: number }) {
 // ─── Live clock ───────────────────────────────────────────────────────────────
 
 function CosmicClock() {
-  // useSyncExternalStore instead of useState+useEffect: returns null on the
-  // server and on first client paint (so hydration always agrees). The
-  // snapshot value is only ever updated from inside `subscribe`'s interval
-  // tick (not computed fresh on every call to the snapshot getter), so it
-  // stays referentially stable between ticks as the contract requires.
-  const tickRef = useRef<Date | null>(null);
-  // subscribe must be referentially stable across renders — an inline arrow
-  // function here gets recreated every render, which makes React tear down
-  // and resubscribe on every commit; combined with subscribe mutating
-  // tickRef as a side effect of being called, that resubscribe loop is a
-  // real "Maximum update depth exceeded" crash, not just wasted work.
-  const subscribe = useCallback((onChange: () => void) => {
-    tickRef.current = new Date();
-    const id = setInterval(() => { tickRef.current = new Date(); onChange(); }, 1000);
-    return () => clearInterval(id);
-  }, []);
-  const getSnapshot = useCallback(() => tickRef.current, []);
-  const getServerSnapshot = useCallback(() => null, []);
-  const time = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const time = useTickingClock(1000);
   return (
     <div className="text-center">
       <p className="text-[13px] font-bold tracking-widest" style={{ color: "#06b6d4", fontFamily: "'Share Tech Mono', monospace" }}>

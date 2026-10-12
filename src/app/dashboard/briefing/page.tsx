@@ -10,6 +10,7 @@ import type { TransitsData, TransitAspect, Ingress } from "@/lib/astrology/trans
 import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
 import type { StoredProfile } from "@/lib/storage";
 import { useWarpTo } from "@/components/ui/WarpTransition";
+import { useTickingClock } from "@/lib/useTickingClock";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -367,18 +368,13 @@ Be specific, poetic but grounded. Max 200 words total. Avoid generic phrases. Pl
 // ─── Planetary Hours Panel ────────────────────────────────────────────────────
 
 function PlanetaryHoursPanel({ lat }: { lat: number }) {
-  const [now, setNow] = useState(new Date());
+  const now = useTickingClock(1000);
 
-  useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
-
-  const hours = computePlanetaryHours(now, lat);
-  const current = getCurrentHour(hours, now);
+  const hours = now ? computePlanetaryHours(now, lat) : [];
+  const current = now ? getCurrentHour(hours, now) : null;
   const meaning = current ? PLANETARY_HOUR_MEANINGS[current.planet] : null;
 
-  const remainingMs = current ? current.end.getTime() - now.getTime() : 0;
+  const remainingMs = current && now ? current.end.getTime() - now.getTime() : 0;
   const remainMins  = Math.floor(remainingMs / 60000);
   const remainSecs  = Math.floor((remainingMs % 60000) / 1000);
 
@@ -454,7 +450,7 @@ function PlanetaryHoursPanel({ lat }: { lat: number }) {
         <div className="space-y-1">
           {visibleHours.map((h, i) => {
             const isCurrent = h === current;
-            const isPast = h.end.getTime() < now.getTime();
+            const isPast = now ? h.end.getTime() < now.getTime() : false;
             const color = PLANET_COLORS[h.planet] ?? "#64748b";
             return (
               <motion.div
@@ -892,16 +888,13 @@ export default function BriefingPage() {
   const [profile, setProfile] = useState<StoredProfile | null>(null);
   const [transitsData, setTransitsData] = useState<TransitsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [now, setNow] = useState(new Date());
-
-  // Live clock
-  useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
+  const now = useTickingClock(1000);
 
   useEffect(() => {
     const id = getActiveProfileId();
+    // Real subscription effect (fetches transits below when there's a
+    // cached chart); this is its synchronous "no profile" fast path.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
     if (!id) { setLoading(false); return; }
     const prof = getProfile(id);
     const cached = getCachedChart(id);
@@ -934,9 +927,9 @@ export default function BriefingPage() {
   // Planetary Hours (use profile lat if available)
   const lat = profile?.latitude ?? 40.0;
 
-  const dayName = now.toLocaleDateString("en-US", { weekday: "long" });
-  const dateStr = now.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-  const timeStr = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit", hour12: true });
+  const dayName = now ? now.toLocaleDateString("en-US", { weekday: "long" }) : "";
+  const dateStr = now ? now.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "";
+  const timeStr = now ? now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit", hour12: true }) : "";
 
   if (!loading && !chart) {
     return (
@@ -1181,7 +1174,7 @@ export default function BriefingPage() {
               )}
 
               {/* ─── 7-Day Forecast ─────────────────────────────────────── */}
-              {transitsData && moon && (
+              {transitsData && moon && now && (
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.33 }}>
                   <SectionLabel label="7-DAY FORECAST" sub="Day rulers · Moon signs · Ingresses" />
                   <WeekForecast

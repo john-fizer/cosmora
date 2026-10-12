@@ -1,9 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState, useEffect, useCallback, useRef, useId } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef, useId } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 import type { AstroLine, AstroLinePlanet, AstroLineAngle, LocationScore } from "@/lib/astrology/astrocartography";
 import {
   PLANET_COLORS, PLANET_SYMBOLS, ASTRO_PLANETS,
@@ -557,16 +558,48 @@ function MapOracle({
   );
 }
 
+interface MapProfileData {
+  noProfile: boolean;
+  profileName: string;
+  birthDatetime: string | null;
+  birthPlace: string;
+  birthLat: number;
+  birthLon: number;
+}
+
+const EMPTY_MAP_PROFILE: MapProfileData = {
+  noProfile: false, profileName: "Native", birthDatetime: null, birthPlace: "—", birthLat: 0, birthLon: 0,
+};
+
+function readMapProfile(): MapProfileData {
+  const id = getActiveProfileId();
+  const profile = id ? getProfile(id) : null;
+  if (!id || !profile) {
+    return { ...EMPTY_MAP_PROFILE, noProfile: true };
+  }
+  const chart = getCachedChart(id);
+  const dt = chart?.birthDatetime ??
+    (profile.birthDate && profile.birthTime ? `${profile.birthDate}T${profile.birthTime}:00` : null);
+  if (!dt) {
+    return { ...EMPTY_MAP_PROFILE, noProfile: true };
+  }
+  return {
+    noProfile: false,
+    profileName: profile.name ?? "Native",
+    birthDatetime: dt,
+    birthPlace: profile.birthPlace ?? "—",
+    birthLat: profile.latitude || 0,
+    birthLon: profile.longitude || 0,
+  };
+}
+
 // ─── Main page ─────────────────────────────────────────────────────────────────
 export default function AstrocartographyPage() {
+  const { value: profileData, loading: profileLoading } = useClientSnapshot(readMapProfile, EMPTY_MAP_PROFILE);
+  const { noProfile, profileName, birthDatetime, birthPlace, birthLat, birthLon } = profileData;
   const [lines,          setLines]          = useState<AstroLine[]>([]);
-  const [loading,        setLoading]        = useState(true);
-  const [noProfile,      setNoProfile]      = useState(false);
-  const [profileName,    setProfileName]    = useState("Native");
-  const [birthDatetime,  setBirthDatetime]  = useState<string | null>(null);
-  const [birthPlace,     setBirthPlace]     = useState("—");
-  const [birthLat,       setBirthLat]       = useState(0);
-  const [birthLon,       setBirthLon]       = useState(0);
+  const [fetchLoading,   setFetchLoading]   = useState(false);
+  const loading = profileLoading || (birthDatetime !== null && fetchLoading);
 
   const [activePlanets,  setActivePlanets]  = useState<Set<AstroLinePlanet>>(new Set(ASTRO_PLANETS));
   const [activeAngles,   setActiveAngles]   = useState<Set<AstroLineAngle>>(new Set<AstroLineAngle>(["MC", "ASC"]));
@@ -589,7 +622,6 @@ export default function AstrocartographyPage() {
   const [activeVortex,    setActiveVortex]    = useState<VortexNodePublic | null>(null);
   const [showOracle,      setShowOracle]      = useState(false);
 
-  const [topSpots, setTopSpots] = useState<CitySpot[]>([]);
   const [activeCategories, setActiveCategories] = useState<Set<EnergyCategory>>(
     new Set<EnergyCategory>(ENERGY_CATEGORIES)
   );
@@ -602,49 +634,33 @@ export default function AstrocartographyPage() {
   // default view.
   const [mobileDrawerTab, setMobileDrawerTab] = useState<MobileDrawerTab>(null);
 
-  // ── Load profile ─────────────────────────────────────────────────────────────
-  useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) { setNoProfile(true); setLoading(false); return; }
-    const profile = getProfile(id);
-    if (!profile) { setNoProfile(true); setLoading(false); return; }
-    setProfileName(profile.name ?? "Native");
-    setBirthPlace(profile.birthPlace ?? "—");
-    if (profile.latitude)  setBirthLat(profile.latitude);
-    if (profile.longitude) setBirthLon(profile.longitude);
-    const chart = getCachedChart(id);
-    const dt = chart?.birthDatetime ??
-      (profile.birthDate && profile.birthTime ? `${profile.birthDate}T${profile.birthTime}:00` : null);
-    if (!dt) { setNoProfile(true); setLoading(false); return; }
-    setBirthDatetime(dt);
-  }, []);
-
   // ── Fetch astrocartography lines ─────────────────────────────────────────────
   useEffect(() => {
     if (!birthDatetime) return;
-    setLoading(true);
+    // Real subscription effect (fetches astrocartography lines below);
+    // this starts the async fetch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
+    setFetchLoading(true);
     fetch("/api/astrocartography", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ birthDatetime }),
     })
       .then(r => r.json())
-      .then(data => { setLines(data.lines ?? []); setLoading(false); })
-      .catch(() => setLoading(false));
+      .then(data => { setLines(data.lines ?? []); setFetchLoading(false); })
+      .catch(() => setFetchLoading(false));
   }, [birthDatetime]);
 
   // ── Compute active cities: only where a planetary line crosses close by ───────
-  useEffect(() => {
-    if (lines.length === 0) { setTopSpots([]); return; }
-    setTopSpots(activeCities(CITIES, lines, {
-      thresholdDeg: 1.6,                 // ~175 km — line must cross close to activate
-      categories: activeCategories,
-      planets: activePlanets,
-      angles: activeAngles,
-      minSepDeg: 7,                      // de-clutter so cities don't drown each other
-      cap: 14,
-    }));
-  }, [lines, activeCategories, activePlanets, activeAngles]);
+  // Pure function of lines/filters — no need for an effect + state copy.
+  const topSpots = useMemo(() => lines.length === 0 ? [] : activeCities(CITIES, lines, {
+    thresholdDeg: 1.6,                 // ~175 km — line must cross close to activate
+    categories: activeCategories,
+    planets: activePlanets,
+    angles: activeAngles,
+    minSepDeg: 7,                      // de-clutter so cities don't drown each other
+    cap: 14,
+  }), [lines, activeCategories, activePlanets, activeAngles]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
   const handleLocationClick = useCallback((lat: number, lon: number) => {

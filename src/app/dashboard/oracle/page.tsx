@@ -18,6 +18,32 @@ import type { MemoryCategory } from "@/lib/storage";
 import { ORACLE_MODELS, getModelById } from "@/lib/oracle/models";
 import { ORACLE_PERSONAS, getPersonaById } from "@/lib/oracle/personas";
 import type { PersonaId } from "@/lib/oracle/personas";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
+
+interface OracleProfileData {
+  profileId: string | null;
+  profileName: string;
+  chart: ChartData | null;
+  initialModelId: string;
+  initialPersonaId: PersonaId;
+}
+
+const EMPTY_ORACLE_PROFILE: OracleProfileData = {
+  profileId: null, profileName: "", chart: null,
+  initialModelId: "claude-opus-4-7", initialPersonaId: "oracle",
+};
+
+function readOracleProfile(): OracleProfileData {
+  const id = getActiveProfileId();
+  const profile = id ? getProfile(id) : null;
+  return {
+    profileId: id,
+    profileName: profile?.name ?? "",
+    chart: id ? getCachedChart(id) : null,
+    initialModelId: getOracleModel(),
+    initialPersonaId: getOraclePersona() as PersonaId,
+  };
+}
 import { VoiceOracle } from "@/components/oracle/VoiceOracle";
 import { InsightPlayer } from "@/components/oracle/InsightPlayer";
 import { type VoicePlanet } from "@/lib/oracle/voice";
@@ -604,19 +630,35 @@ function PersonaSelector({ currentPersonaId, onChange }: {
 // ─── Main oracle page ─────────────────────────────────────────────────────────
 
 export default function OraclePage() {
-  const [chart, setChart] = useState<ChartData | null>(null);
-  const [profileId, setProfileId] = useState<string | null>(null);
-  const [profileName, setProfileName] = useState("");
+  const { value: profileData } = useClientSnapshot(readOracleProfile, EMPTY_ORACLE_PROFILE);
+  const { profileId, profileName, chart, initialModelId, initialPersonaId } = profileData;
   const [messages, setMessages] = useState<Message[]>([]);
   const [query, setQuery] = useState("");
   const [orbState, setOrbState] = useState<OrbState>("idle");
   const [streamText, setStreamText] = useState("");
   const [msgId, setMsgId] = useState(0);
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [modelId, setModelId] = useState("claude-opus-4-7");
-  const [personaId, setPersonaId] = useState<PersonaId>("oracle");
+  const [modelIdOverride, setModelIdOverride] = useState<string | null>(null);
+  const modelId = modelIdOverride ?? initialModelId;
+  const [personaIdOverride, setPersonaIdOverride] = useState<PersonaId | null>(null);
+  const personaId = personaIdOverride ?? initialPersonaId;
   const [modelAvailability, setModelAvailability] = useState<Record<string, { available: boolean }>>({});
   const [pendingAutoSeed, setPendingAutoSeed] = useState<string | null>(null);
+
+  // messages/msgId are updated via functional setState throughout this file
+  // (streaming responses append from async callbacks that need the latest
+  // value, not a value captured at effect time), so they stay real React
+  // state rather than folding into the snapshot/override pattern above —
+  // this just seeds them once from chat history after profileId resolves.
+  useEffect(() => {
+    if (!profileId) return;
+    const history = getChatHistory(profileId);
+    if (history.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
+      setMessages(history.map((m, i) => ({ ...m, id: i })));
+      setMsgId(history.length);
+    }
+  }, [profileId]);
   const [toolCalls, setToolCalls] = useState<ToolCallEvent[]>([]);
   const [voicePlanet, setVoicePlanet]   = useState<VoicePlanet>("Moon");
   const [voiceEnabled, setVoiceEnabled] = useState(false);
@@ -636,23 +678,6 @@ export default function OraclePage() {
   const lastUserMsgRef = useRef("");
 
   useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) return;
-    setProfileId(id);
-    const profile = getProfile(id);
-    if (profile) setProfileName(profile.name);
-    const cached = getCachedChart(id);
-    if (cached) setChart(cached);
-    const history = getChatHistory(id);
-    if (history.length > 0) {
-      setMessages(history.map((m, i) => ({ ...m, id: i })));
-      setMsgId(history.length);
-    }
-    setModelId(getOracleModel());
-    setPersonaId(getOraclePersona() as PersonaId);
-  }, []);
-
-  useEffect(() => {
     fetch("/api/models")
       .then(r => r.json())
       .then((d: { availability: Record<string, { available: boolean }> }) => setModelAvailability(d.availability ?? {}))
@@ -663,6 +688,7 @@ export default function OraclePage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const autoQ = params.get("q");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reads the URL (client-only, never rendered directly, consumed once below)
     if (autoQ) setPendingAutoSeed(autoQ);
   }, []);
 
@@ -670,6 +696,7 @@ export default function OraclePage() {
   useEffect(() => {
     if (chart && pendingAutoSeed) {
       const q = pendingAutoSeed;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- gated by chart+pendingAutoSeed, not a plain mount; starts the auto-send below
       setPendingAutoSeed(null);
       // sendMessage is defined later in this component; the setTimeout callback
       // only runs after the full render (and its definition) has completed.
@@ -879,12 +906,12 @@ export default function OraclePage() {
   };
 
   const handleModelChange = (id: string) => {
-    setModelId(id);
+    setModelIdOverride(id);
     setOracleModel(id);
   };
 
   const handlePersonaChange = (id: PersonaId) => {
-    setPersonaId(id);
+    setPersonaIdOverride(id);
     setOraclePersona(id);
   };
 

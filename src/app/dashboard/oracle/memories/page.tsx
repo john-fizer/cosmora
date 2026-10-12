@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { DashboardBg } from "@/components/ui/DashboardBg";
@@ -8,6 +8,20 @@ import {
   getActiveProfileId, getOracleMemories, deleteOracleMemory, updateOracleMemory,
 } from "@/lib/storage";
 import type { OracleMemory, MemoryCategory } from "@/lib/storage";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
+
+interface MemoriesProfileData {
+  profileId: string | null;
+  memories: OracleMemory[];
+}
+
+const EMPTY_MEMORIES_PROFILE: MemoriesProfileData = { profileId: null, memories: [] };
+
+function readMemoriesProfile(): MemoriesProfileData {
+  const id = getActiveProfileId();
+  if (!id) return { profileId: null, memories: [] };
+  return { profileId: id, memories: getOracleMemories(id) };
+}
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
@@ -151,29 +165,24 @@ function MemoryCard({
 // ─── Main page ─────────────────────────────────────────────────────────────────
 
 export default function OracleMemoriesPage() {
-  const [memories, setMemories]     = useState<OracleMemory[]>([]);
-  const [profileId, setProfileId]   = useState<string | null>(null);
+  const { value: profileData } = useClientSnapshot(readMemoriesProfile, EMPTY_MEMORIES_PROFILE);
+  const { profileId, memories: initialMemories } = profileData;
+  const [memoriesOverride, setMemoriesOverride] = useState<OracleMemory[] | null>(null);
+  const memories = memoriesOverride ?? initialMemories;
   const [activeFilter, setFilter]   = useState<MemoryCategory | "all">("all");
   const [search, setSearch]         = useState("");
-
-  useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) return;
-    setProfileId(id);
-    setMemories(getOracleMemories(id));
-  }, []);
 
   const handleDelete = useCallback((memId: string) => {
     if (!profileId) return;
     deleteOracleMemory(profileId, memId);
-    setMemories(prev => prev.filter(m => m.id !== memId));
-  }, [profileId]);
+    setMemoriesOverride(memories.filter(m => m.id !== memId));
+  }, [profileId, memories]);
 
   const handleUpdateCat = useCallback((memId: string, cat: MemoryCategory) => {
     if (!profileId) return;
     updateOracleMemory(profileId, memId, { category: cat });
-    setMemories(prev => prev.map(m => m.id === memId ? { ...m, category: cat } : m));
-  }, [profileId]);
+    setMemoriesOverride(memories.map(m => m.id === memId ? { ...m, category: cat } : m));
+  }, [profileId, memories]);
 
   const filtered = memories.filter(m => {
     if (activeFilter !== "all" && m.category !== activeFilter) return false;

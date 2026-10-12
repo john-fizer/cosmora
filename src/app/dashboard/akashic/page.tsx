@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 import { toSiderealChart, buildVimshottariDasha, buildCharaKarakas, lahiriAyanamsa } from "@/lib/astrology/sidereal";
 import { AKASHIC_ENTRIES } from "@/lib/akashic/entries";
 import { getEntryChartContext } from "@/lib/akashic/chart-context";
@@ -81,32 +82,35 @@ function EntryCard({ entry, isRelevant, accentColor }: {
   );
 }
 
+interface AkashicData {
+  chart: ChartData | null;
+  sidereal: SiderealChart | null;
+  dasha: VimshottariData | null;
+  karakas: CharaKarakas | null;
+}
+
+const EMPTY_AKASHIC_DATA: AkashicData = { chart: null, sidereal: null, dasha: null, karakas: null };
+
+function readAkashicData(): AkashicData {
+  const id = getActiveProfileId();
+  const profile = id ? getProfile(id) : null;
+  const c = id ? getCachedChart(id) : null;
+  if (!id || !profile || !c) return { chart: null, sidereal: null, dasha: null, karakas: null };
+  const birthDatetime = `${profile.birthDate}T${profile.birthTime}Z`;
+  const sc = toSiderealChart(c, birthDatetime);
+  const ay = lahiriAyanamsa(new Date(birthDatetime));
+  const moonP = c.planets.find(p => p.name === "Moon");
+  const dasha = moonP
+    ? buildVimshottariDasha(((moonP.longitude - sc.ayanamsa) % 360 + 360) % 360, birthDatetime)
+    : null;
+  return { chart: c, sidereal: sc, dasha, karakas: buildCharaKarakas(c, ay) };
+}
+
 export default function AkashicPage() {
-  const [chart, setChart]         = useState<ChartData | null>(null);
-  const [sidereal, setSidereal]   = useState<SiderealChart | null>(null);
-  const [dasha, setDasha]         = useState<VimshottariData | null>(null);
-  const [karakas, setKarakas]     = useState<CharaKarakas | null>(null);
+  const { value: data } = useClientSnapshot(readAkashicData, EMPTY_AKASHIC_DATA);
+  const { chart, sidereal, dasha, karakas } = data;
   const [query, setQuery]         = useState("");
   const [activecat, setActivecat] = useState<AkashicCategory | "all">("all");
-
-  useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) return;
-    const profile = getProfile(id);
-    const c = getCachedChart(id);
-    if (!profile || !c) return;
-    const birthDatetime = `${profile.birthDate}T${profile.birthTime}Z`;
-    const sc = toSiderealChart(c, birthDatetime);
-    const ay = lahiriAyanamsa(new Date(birthDatetime));
-    setChart(c);
-    setSidereal(sc);
-    const moonP = c.planets.find(p => p.name === "Moon");
-    if (moonP) {
-      const moonSidereal = ((moonP.longitude - sc.ayanamsa) % 360 + 360) % 360;
-      setDasha(buildVimshottariDasha(moonSidereal, birthDatetime));
-    }
-    setKarakas(buildCharaKarakas(c, ay));
-  }, []);
 
   const relevantSlugs = useMemo(() => {
     if (!chart) return new Set<string>();

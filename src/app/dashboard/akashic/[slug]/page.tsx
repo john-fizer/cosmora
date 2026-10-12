@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 import { toSiderealChart, buildVimshottariDasha, buildCharaKarakas, lahiriAyanamsa } from "@/lib/astrology/sidereal";
 import { ENTRIES_BY_SLUG } from "@/lib/akashic/entries";
 import { getEntryChartContext } from "@/lib/akashic/chart-context";
-import type { AkashicEntry, AkashicCategory, EntryChartContext } from "@/lib/akashic/types";
+import type { AkashicEntry, AkashicCategory } from "@/lib/akashic/types";
 import type { ChartData } from "@/lib/astrology/types";
 import type { SiderealChart, VimshottariData, CharaKarakas } from "@/lib/astrology/sidereal";
 
@@ -30,46 +31,48 @@ const CAT_LABELS: Record<AkashicCategory, string> = {
 
 function cacheKey(slug: string) { return `cosmora_akashic_${slug}`; }
 
+interface AkashicChartData {
+  chart: ChartData | null;
+  sidereal: SiderealChart | null;
+  dasha: VimshottariData | null;
+  karakas: CharaKarakas | null;
+}
+
+const EMPTY_AKASHIC_CHART_DATA: AkashicChartData = { chart: null, sidereal: null, dasha: null, karakas: null };
+
+function readAkashicChartData(): AkashicChartData {
+  const id = getActiveProfileId();
+  const profile = id ? getProfile(id) : null;
+  const c = id ? getCachedChart(id) : null;
+  if (!id || !profile || !c) return { chart: null, sidereal: null, dasha: null, karakas: null };
+  const birthDatetime = `${profile.birthDate}T${profile.birthTime}Z`;
+  const sc = toSiderealChart(c, birthDatetime);
+  const ay = lahiriAyanamsa(new Date(birthDatetime));
+  const moonP = c.planets.find(p => p.name === "Moon");
+  const dasha = moonP
+    ? buildVimshottariDasha(((moonP.longitude - sc.ayanamsa) % 360 + 360) % 360, birthDatetime)
+    : null;
+  return { chart: c, sidereal: sc, dasha, karakas: buildCharaKarakas(c, ay) };
+}
+
 export default function AkashicArticlePage() {
   const params   = useParams<{ slug: string }>();
   const slug     = params?.slug ?? "";
   const entry    = ENTRIES_BY_SLUG[slug] as AkashicEntry | undefined;
 
-  const [chart, setChart]         = useState<ChartData | null>(null);
-  const [sidereal, setSidereal]   = useState<SiderealChart | null>(null);
-  const [dasha, setDasha]         = useState<VimshottariData | null>(null);
-  const [karakas, setKarakas]     = useState<CharaKarakas | null>(null);
-  const [context, setContext]     = useState<EntryChartContext | null>(null);
+  const { value: chartData } = useClientSnapshot(readAkashicChartData, EMPTY_AKASHIC_CHART_DATA);
+  const { chart, sidereal, dasha, karakas } = chartData;
   const [body, setBody]           = useState("");
   const [generating, setGenerating] = useState(false);
   const [reloadNonce, setReloadNonce] = useState(0);
   const [wanted, setWanted] = useState(false);
 
-  // Load chart
-  useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) return;
-    const profile = getProfile(id);
-    const c = getCachedChart(id);
-    if (!profile || !c) return;
-    const birthDatetime = `${profile.birthDate}T${profile.birthTime}Z`;
-    const sc = toSiderealChart(c, birthDatetime);
-    const ay = lahiriAyanamsa(new Date(birthDatetime));
-    setChart(c);
-    setSidereal(sc);
-    const moonP = c.planets.find(p => p.name === "Moon");
-    if (moonP) {
-      const moonSidereal = ((moonP.longitude - sc.ayanamsa) % 360 + 360) % 360;
-      setDasha(buildVimshottariDasha(moonSidereal, birthDatetime));
-    }
-    setKarakas(buildCharaKarakas(c, ay));
-  }, []);
-
-  // Compute context once chart is loaded
-  useEffect(() => {
-    if (!entry || !chart) return;
-    setContext(getEntryChartContext(entry, chart, sidereal, dasha, karakas));
-  }, [entry, chart, sidereal, dasha, karakas]);
+  // Derived from chartData, which is already resolved synchronously above —
+  // no effect needed to "wait" for it.
+  const context = useMemo(
+    () => (entry && chart ? getEntryChartContext(entry, chart, sidereal, dasha, karakas) : null),
+    [entry, chart, sidereal, dasha, karakas],
+  );
 
   // Load a cached body for free; generating a new one calls the AI and must
   // wait for the user to press "Read this entry" (see the gate below) rather
@@ -78,7 +81,14 @@ export default function AkashicArticlePage() {
   useEffect(() => {
     if (!entry) return;
     const cached = typeof window !== "undefined" ? localStorage.getItem(cacheKey(slug)) : null;
-    if (cached) { setBody(cached); return; }
+    if (cached) {
+      // This effect is a real subscription (it re-fires on slug/reloadNonce/wanted
+      // to stream a fresh generation); the cache-hit branch is a fast-path short
+      // circuit, not a plain "read once on mount".
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
+      setBody(cached);
+      return;
+    }
     if (!wanted) return;
 
     const generate = async () => {

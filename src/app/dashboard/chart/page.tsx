@@ -14,6 +14,7 @@ import { SolarSystemOrrery } from "@/components/three/SolarSystemOrrery";
 import type { ChartData, PlanetName, ZodiacSign } from "@/lib/astrology/types";
 import { PLANET_SYMBOLS, ZODIAC_SIGNS, SIGN_SYMBOLS, TRADITIONAL_RULERS, DOMICILE } from "@/lib/astrology/types";
 import { getActiveProfileId, getProfile, getCachedChart, setCachedChart } from "@/lib/storage";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 import { useWarpTo } from "@/components/ui/WarpTransition";
 import { getStarConjunctions } from "@/lib/astrology/fixedStars";
 
@@ -1679,12 +1680,27 @@ function ArabicLots({ chart }: { chart: ChartData }) {
   );
 }
 
+interface ChartPageProfile {
+  profileId: string | null;
+  profileName: string;
+}
+
+const EMPTY_CHART_PAGE_PROFILE: ChartPageProfile = { profileId: null, profileName: "" };
+
+function readChartPageProfile(): ChartPageProfile {
+  const id = getActiveProfileId();
+  const profile = id ? getProfile(id) : null;
+  if (!id || !profile) return { profileId: null, profileName: "" };
+  return { profileId: id, profileName: profile.name };
+}
+
 export default function ChartPage() {
   const warpTo = useWarpTo();
+  const { value: profileData, loading: profileLoading } = useClientSnapshot(readChartPageProfile, EMPTY_CHART_PAGE_PROFILE);
+  const { profileId, profileName } = profileData;
   const [chart, setChart] = useState<ChartData | null>(null);
-  const [profileId, setProfileId] = useState<string | null>(null);
-  const [profileName, setProfileName] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [chartLoading, setChartLoading] = useState(true);
+  const loading = profileLoading || chartLoading;
   const [recalculating, setRecalculating] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("ORRERY");
   const [viewMenuOpen, setViewMenuOpen] = useState(false);
@@ -1695,18 +1711,18 @@ export default function ChartPage() {
   const [splitView, setSplitView] = useState(false);
 
   useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) { setLoading(false); return; }
-    const profile = getProfile(id);
-    if (!profile) { setLoading(false); return; }
+    if (profileLoading) return;
+    // Real subscription effect (fetches the chart from the API when there's
+    // no cache, below); these early returns are its synchronous fast paths.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
+    if (!profileId) { setChartLoading(false); return; }
+    const profile = getProfile(profileId);
+    if (!profile) { setChartLoading(false); return; }
 
-    setProfileId(id);
-    setProfileName(profile.name);
-
-    const cached = getCachedChart(id);
+    const cached = getCachedChart(profileId);
     if (cached) {
       setChart(cached);
-      setLoading(false);
+      setChartLoading(false);
     } else {
       fetch("/api/chart", {
         method: "POST",
@@ -1721,11 +1737,11 @@ export default function ChartPage() {
         }),
       })
         .then(r => r.ok ? r.json() : null)
-        .then(data => { if (data) { setCachedChart(id, data); setChart(data); } })
+        .then(data => { if (data) { setCachedChart(profileId, data); setChart(data); } })
         .catch(() => {})
-        .finally(() => setLoading(false));
+        .finally(() => setChartLoading(false));
     }
-  }, []);
+  }, [profileLoading, profileId]);
 
   const handleHouseSystemChange = async (hs: string) => {
     if (!profileId || !chart || chart.houseSystem === hs) return;

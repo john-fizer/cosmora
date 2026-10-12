@@ -9,6 +9,7 @@ const PlanetView3D = dynamic(() => import("@/components/three/PlanetView3D"), { 
 import { getPlanetMeta, PLANET_ORDER } from "@/lib/astrology/planetMeta";
 import { useWarpTo } from "@/components/ui/WarpTransition";
 import { getActiveProfileId, getCachedChart } from "@/lib/storage";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 import { PLANET_SYMBOLS, SIGN_SYMBOLS } from "@/lib/astrology/types";
 import type { ChartData, PlanetName } from "@/lib/astrology/types";
 import type { TransitAspect } from "@/lib/astrology/transits";
@@ -155,6 +156,11 @@ function OraclePanel({ text, loading, started, onStart }: { text: string; loadin
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
+function readPlanetPageChart(): ChartData | null {
+  const id = getActiveProfileId();
+  return id ? getCachedChart(id) : null;
+}
+
 export default function PlanetDetailPage({
   params,
 }: {
@@ -164,20 +170,13 @@ export default function PlanetDetailPage({
   const planetName = (planetSlug.charAt(0).toUpperCase() + planetSlug.slice(1)) as PlanetName;
   const meta = getPlanetMeta(planetName);
 
-  const [chart, setChart] = useState<ChartData | null>(null);
+  const { value: chart } = useClientSnapshot(readPlanetPageChart, null);
   const [liveTransits, setLiveTransits] = useState<TransitAspect[]>([]);
   const [oracleText, setOracleText] = useState("");
   const [oracleLoading, setOracleLoading] = useState(false);
   const [oracleWanted, setOracleWanted] = useState(false);
   const oracleStarted = useRef(false);
   const warpTo = useWarpTo();
-
-  useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) return;
-    const cached = getCachedChart(id);
-    if (cached) setChart(cached);
-  }, []);
 
   // Fetch live transits for this planet
   useEffect(() => {
@@ -218,6 +217,9 @@ export default function PlanetDetailPage({
 
     const query = `Give me a focused reading of my ${planetName} in ${pd.sign}, House ${pd.house}${pd.dignity ? `, dignity: ${pd.dignity}` : ""}${pd.retrograde ? ", retrograde" : ""}. Key aspects: ${aspects.length ? aspects.join("; ") : "none notable"}. Include the archetype, core expression in this sign and house, and practical insight.`;
 
+    // Real on-demand effect (gated by oracleWanted + oracleStarted ref, not a
+    // deps-driven re-run); this starts the async fetch below.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
     setOracleLoading(true);
     fetch("/api/chat", {
       method: "POST",

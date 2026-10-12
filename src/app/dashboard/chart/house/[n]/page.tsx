@@ -8,6 +8,7 @@ import { useWarpTo } from "@/components/ui/WarpTransition";
 import { SIGN_SYMBOLS, PLANET_SYMBOLS, TRADITIONAL_RULERS } from "@/lib/astrology/types";
 import { PLANET_META } from "@/lib/astrology/planetMeta";
 import { getActiveProfileId, getCachedChart } from "@/lib/storage";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 import type { ChartData, PlanetName } from "@/lib/astrology/types";
 
 // ─── House metadata ───────────────────────────────────────────────────────────
@@ -154,20 +155,17 @@ function HouseOracle({ houseNum, chart, meta }: { houseNum: number; chart: Chart
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
+function readHousePageChart(): ChartData | null {
+  const pid = getActiveProfileId();
+  return pid ? getCachedChart(pid) : null;
+}
+
 export default function HousePage({ params }: { params: Promise<{ n: string }> }) {
   const { n } = use(params);
   const houseNum = parseInt(n, 10);
   const warpTo = useWarpTo();
 
-  const [chart, setChart] = useState<ChartData | null>(null);
-
-  useEffect(() => {
-    const pid = getActiveProfileId();
-    if (pid) {
-      const c = getCachedChart(pid);
-      if (c) setChart(c);
-    }
-  }, []);
+  const { value: chart } = useClientSnapshot(readHousePageChart, null);
 
   const meta = HOUSE_META[houseNum];
   if (!meta || houseNum < 1 || houseNum > 12) {

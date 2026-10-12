@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { DashboardBg } from "@/components/ui/DashboardBg";
@@ -280,13 +280,15 @@ function ActivityCard({ activity, selected, onClick }: {
 
 function HourTimeline({ hours, now, activity, moonSign, isVoid }: {
   hours: PlanetaryHour[];
-  now: Date;
+  now: Date | null;
   activity: Activity;
   moonSign: ZodiacSign;
   isVoid: boolean;
 }) {
   const fmtTime = (d: Date) => d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
-  const nowMs = now.getTime();
+  // hours is always [] when now is null (see computePlanetaryHours call site),
+  // so this value is never actually used for anything below.
+  const nowMs = now?.getTime() ?? 0;
 
   // Show only upcoming + current hours for rest of day
   const relevant = hours.filter(h => h.end.getTime() > nowMs - 3600000).slice(0, 18);
@@ -387,12 +389,14 @@ function HourTimeline({ hours, now, activity, moonSign, isVoid }: {
 
 function BestWindows({ hours, now, activity, moonSign, isVoid }: {
   hours: PlanetaryHour[];
-  now: Date;
+  now: Date | null;
   activity: Activity;
   moonSign: ZodiacSign;
   isVoid: boolean;
 }) {
-  const nowMs = now.getTime();
+  // hours is always [] when now is null (see computePlanetaryHours call site),
+  // so this value is never actually used for anything below.
+  const nowMs = now?.getTime() ?? 0;
   const fmtTime = (d: Date) => d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
 
   const upcoming = hours
@@ -589,16 +593,28 @@ export default function ElectionalPage() {
   const [profile, setProfile] = useState<StoredProfile | null>(null);
   const [transitsData, setTransitsData] = useState<TransitsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [now, setNow] = useState(new Date());
   const [selectedActivity, setSelectedActivity] = useState<Activity>(ACTIVITIES[0]);
 
-  useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 5000);
-    return () => clearInterval(t);
+  // useState(new Date()) evaluates a fresh instant on both the server render
+  // and the client's first render — two different instants, so anything
+  // rendered from it (planetary hours below) would hydration-mismatch, the
+  // same bug CosmicClock had. useSyncExternalStore instead: null on the
+  // server/first paint, then a real ticking Date client-side.
+  const tickRef = useRef<Date | null>(null);
+  const subscribeNow = useCallback((onChange: () => void) => {
+    tickRef.current = new Date();
+    const id = setInterval(() => { tickRef.current = new Date(); onChange(); }, 5000);
+    return () => clearInterval(id);
   }, []);
+  const getNowSnapshot = useCallback(() => tickRef.current, []);
+  const getNowServerSnapshot = useCallback(() => null, []);
+  const now = useSyncExternalStore(subscribeNow, getNowSnapshot, getNowServerSnapshot);
 
   useEffect(() => {
     const id = getActiveProfileId();
+    // Real subscription effect (fetches transits below when there's a cached
+    // chart); this is its synchronous "no profile" fast path.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
     if (!id) { setLoading(false); return; }
     const prof = getProfile(id);
     const cached = getCachedChart(id);
@@ -619,7 +635,7 @@ export default function ElectionalPage() {
   }, []);
 
   const lat = profile?.latitude ?? 40.0;
-  const hours = useMemo(() => computePlanetaryHours(now, lat), [now, lat]);
+  const hours = useMemo(() => now ? computePlanetaryHours(now, lat) : [], [now, lat]);
 
   const moon = transitsData?.transitPlanets.find(p => p.name === "Moon");
   const moonSign: ZodiacSign = moon
@@ -631,12 +647,12 @@ export default function ElectionalPage() {
   );
   const isVoid = transitsData !== null && moonAspects.length === 0;
 
-  const currentHour = hours.find(h => {
+  const currentHour = now ? hours.find(h => {
     const t = now.getTime();
     return t >= h.start.getTime() && t < h.end.getTime();
-  });
+  }) : undefined;
 
-  const dayRuler = DAY_RULERS[now.getDay()];
+  const dayRuler = DAY_RULERS[now ? now.getDay() : 0];
   const overallScore = currentHour ? scoreWindow(currentHour, moonSign, isVoid, selectedActivity) : 0;
   const { label: overallLabel, color: overallColor } = getScoreLabel(overallScore);
 

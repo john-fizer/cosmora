@@ -13,6 +13,7 @@ import type {
   DivisionalChart, VargaPlacement, CharaKarakas, CharaKaraka,
 } from "@/lib/astrology/sidereal";
 import type { ChartData } from "@/lib/astrology/types";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 
 const KEY_DIVISIONALS = [1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60];
 
@@ -111,13 +112,51 @@ function DashaRow({ p, isAntar = false }: { p: DashaPeriod; isAntar?: boolean })
 
 type TabKey = "placements" | "navamsha" | "varga" | "karakas" | "dasha" | "oracle";
 
+interface VedicPageData {
+  sidereal: SiderealChart | null;
+  rawChart: ChartData | null;
+  ayanamsa: number;
+  dasha: VimshottariData | null;
+  karakas: CharaKarakas | null;
+  noProfile: boolean;
+  vedicCtx: string;
+  profileName: string;
+}
+
+const EMPTY_VEDIC_DATA: VedicPageData = {
+  sidereal: null, rawChart: null, ayanamsa: 0, dasha: null, karakas: null,
+  noProfile: false, vedicCtx: "", profileName: "Native",
+};
+
+function readVedicData(): VedicPageData {
+  const id = getActiveProfileId();
+  const profile = id ? getProfile(id) : null;
+  const chart = id ? getCachedChart(id) : null;
+  if (!id || !profile || !chart) {
+    return { ...EMPTY_VEDIC_DATA, noProfile: true };
+  }
+  const birthDatetime = `${profile.birthDate}T${profile.birthTime}Z`;
+  const sc = toSiderealChart(chart, birthDatetime);
+  const ay = lahiriAyanamsa(new Date(birthDatetime));
+  const moonP = chart.planets.find(p => p.name === "Moon");
+  const dasha = moonP
+    ? buildVimshottariDasha(((moonP.longitude - sc.ayanamsa) % 360 + 360) % 360, birthDatetime)
+    : null;
+  return {
+    sidereal: sc,
+    rawChart: chart,
+    ayanamsa: ay,
+    dasha,
+    karakas: buildCharaKarakas(chart, ay),
+    noProfile: false,
+    vedicCtx: buildVedicContext(chart, birthDatetime),
+    profileName: profile.name ?? "Native",
+  };
+}
+
 export default function VedicPage() {
-  const [sidereal, setSidereal]   = useState<SiderealChart | null>(null);
-  const [rawChart, setRawChart]   = useState<ChartData | null>(null);
-  const [ayanamsa, setAyanamsa]   = useState(0);
-  const [dasha, setDasha]         = useState<VimshottariData | null>(null);
-  const [karakas, setKarakas]     = useState<CharaKarakas | null>(null);
-  const [noProfile, setNoProfile] = useState(false);
+  const { value: data } = useClientSnapshot(readVedicData, EMPTY_VEDIC_DATA);
+  const { sidereal, rawChart, ayanamsa, dasha, karakas, noProfile, vedicCtx, profileName } = data;
   const [tab, setTab]             = useState<TabKey>("placements");
   const [selectedD, setSelectedD] = useState(9);
 
@@ -127,32 +166,8 @@ export default function VedicPage() {
   const [chatStreaming, setChatStreaming] = useState(false);
   const [streamText, setStreamText]   = useState("");
   const [msgId, setMsgId]             = useState(0);
-  const [vedicCtx, setVedicCtx]       = useState("");
-  const [profileName, setProfileName] = useState("Native");
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef  = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) { setNoProfile(true); return; }
-    const profile = getProfile(id);
-    const chart   = getCachedChart(id);
-    if (!profile || !chart) { setNoProfile(true); return; }
-    const birthDatetime = `${profile.birthDate}T${profile.birthTime}Z`;
-    const sc = toSiderealChart(chart, birthDatetime);
-    const ay = lahiriAyanamsa(new Date(birthDatetime));
-    setSidereal(sc);
-    setRawChart(chart);
-    setAyanamsa(ay);
-    setProfileName(profile.name ?? "Native");
-    setVedicCtx(buildVedicContext(chart, birthDatetime));
-    const moonP = chart.planets.find(p => p.name === "Moon");
-    if (moonP) {
-      const moonSidereal = ((moonP.longitude - sc.ayanamsa) % 360 + 360) % 360;
-      setDasha(buildVimshottariDasha(moonSidereal, birthDatetime));
-    }
-    setKarakas(buildCharaKarakas(chart, ay));
-  }, []);
 
   useEffect(() => {
     if (tab === "oracle") bottomRef.current?.scrollIntoView({ behavior: "smooth" });

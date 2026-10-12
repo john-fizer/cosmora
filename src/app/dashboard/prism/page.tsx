@@ -151,6 +151,9 @@ export default function PrismPage() {
 
   useEffect(() => {
     const id = getActiveProfileId();
+    // Real subscription effect (fetches/calculates the chart below when
+    // there's no cache); this is its synchronous "no profile" fast path.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
     if (!id) { setLoading(false); return; }
     const profile = getProfile(id);
     if (!profile) { setLoading(false); return; }

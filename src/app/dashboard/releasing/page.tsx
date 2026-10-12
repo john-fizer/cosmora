@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { DashboardBg } from "@/components/ui/DashboardBg";
@@ -11,6 +11,7 @@ import {
 import type { ChartData, ZodiacSign, PlanetName } from "@/lib/astrology/types";
 import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
 import type { StoredProfile } from "@/lib/storage";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 import {
   buildZRData, buildL1Periods, buildSubPeriods, signHouseDiff,
   ZR_MINOR_YEARS, ZR_TOTAL_YEARS,
@@ -566,10 +567,22 @@ Under 280 words. Be specific to the placements shown.`;
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
+interface ReleasingPageData {
+  profile: StoredProfile | null;
+  chart: ChartData | null;
+}
+
+const EMPTY_RELEASING_DATA: ReleasingPageData = { profile: null, chart: null };
+
+function readReleasingProfile(): ReleasingPageData {
+  const id = getActiveProfileId();
+  if (!id) return { profile: null, chart: null };
+  return { profile: getProfile(id), chart: getCachedChart(id) };
+}
+
 export default function ReleasingPage() {
-  const [chart, setChart] = useState<ChartData | null>(null);
-  const [profile, setProfile] = useState<StoredProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { value: data, loading } = useClientSnapshot(readReleasingProfile, EMPTY_RELEASING_DATA);
+  const { profile, chart } = data;
 
   // Lot selector
   const [lot, setLot] = useState<"fortune" | "spirit">("fortune");
@@ -586,14 +599,6 @@ export default function ReleasingPage() {
   const [selectedPeriod, setSelectedPeriod] = useState<ZRPeriod | null>(null);
 
   const panelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) { setLoading(false); return; }
-    setProfile(getProfile(id));
-    setChart(getCachedChart(id));
-    setLoading(false);
-  }, []);
 
   const lotLon = useMemo(() => {
     if (!chart) return 0;

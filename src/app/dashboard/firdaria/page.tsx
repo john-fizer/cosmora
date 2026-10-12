@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 import {
   buildFirdariaData,
 } from "@/lib/astrology/firdaria";
@@ -130,27 +131,42 @@ function PeriodBar({ period, isSubPeriod = false }: { period: FirdariaPeriod; is
   );
 }
 
+interface FirdariaPageData {
+  firdaria: FirdariaData | null;
+  noProfile: boolean;
+  sect: "day" | "night";
+  profileName: string;
+}
+
+const EMPTY_FIRDARIA_DATA: FirdariaPageData = {
+  firdaria: null,
+  noProfile: false,
+  sect: "day",
+  profileName: "Native",
+};
+
+function readFirdariaData(): FirdariaPageData {
+  const id = getActiveProfileId();
+  const profile = id ? getProfile(id) : null;
+  const chart = id ? getCachedChart(id) : null;
+  if (!id || !profile || !chart) {
+    return { firdaria: null, noProfile: true, sect: "day", profileName: "Native" };
+  }
+  const sect = chart.sect ?? "day";
+  const birthDatetime = `${profile.birthDate}T${profile.birthTime}Z`;
+  return {
+    firdaria: buildFirdariaData(sect, birthDatetime),
+    noProfile: false,
+    sect,
+    profileName: profile.name ?? "Native",
+  };
+}
+
 export default function FirdariaPage() {
-  const [firdaria, setFirdaria]   = useState<FirdariaData | null>(null);
-  const [noProfile, setNoProfile] = useState(false);
-  const [sect, setSect]           = useState<"day" | "night">("day");
-  const [profileName, setProfileName] = useState("Native");
+  const { value: data } = useClientSnapshot(readFirdariaData, EMPTY_FIRDARIA_DATA);
+  const { firdaria, noProfile, sect, profileName } = data;
   const [reading, setReading]     = useState("");
   const [streaming, setStreaming] = useState(false);
-
-  useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) { setNoProfile(true); return; }
-    const profile = getProfile(id);
-    if (!profile) { setNoProfile(true); return; }
-    const chart = getCachedChart(id);
-    if (!chart) { setNoProfile(true); return; }
-    const s = chart.sect ?? "day";
-    setSect(s);
-    setProfileName(profile.name ?? "Native");
-    const birthDatetime = `${profile.birthDate}T${profile.birthTime}Z`;
-    setFirdaria(buildFirdariaData(s, birthDatetime));
-  }, []);
 
   const streamReading = async () => {
     if (streaming || !firdaria?.currentMajor) return;

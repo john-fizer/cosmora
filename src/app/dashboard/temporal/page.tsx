@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { getActiveProfileId, getCachedChart, getProfile, getOraclePersona } from "@/lib/storage";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 import type { ChartData } from "@/lib/astrology/types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -166,8 +167,13 @@ function PlanetChip({ p }: { p: { name: string; sign: string; signDegree: number
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
+function readTemporalChart(): ChartData | null {
+  const pid = getActiveProfileId();
+  return pid ? getCachedChart(pid) : null;
+}
+
 export default function TemporalOraclePage() {
-  const [chart, setChart] = useState<ChartData | null>(null);
+  const { value: chart } = useClientSnapshot(readTemporalChart, null);
   const [query, setQuery] = useState("");
   const [memory, setMemory] = useState("");
   const [loading, setLoading] = useState(false);
@@ -177,11 +183,6 @@ export default function TemporalOraclePage() {
   const [readingLoading, setReadingLoading] = useState(false);
   const [showMemory, setShowMemory] = useState(false);
   const readingRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const pid = getActiveProfileId();
-    if (pid) setChart(getCachedChart(pid));
-  }, []);
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault();

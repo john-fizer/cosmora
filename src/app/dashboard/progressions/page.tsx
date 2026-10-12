@@ -75,6 +75,9 @@ export default function ProgressionsPage() {
 
   useEffect(() => {
     const id = getActiveProfileId();
+    // Real subscription effect (fetches progressions from the API below);
+    // this is its synchronous "no profile" fast path.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
     if (!id) { setNoProfile(true); setLoading(false); return; }
     const profile = getProfile(id);
     const chart   = getCachedChart(id);

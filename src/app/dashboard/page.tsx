@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -9,6 +9,7 @@ import { PLANET_SYMBOLS, SIGN_SYMBOLS } from "@/lib/astrology/types";
 import { SignGlyph, PlanetGlyph } from "@/components/ui/AstroGlyph";
 import type { Ingress } from "@/lib/astrology/transits";
 import { getActiveProfileId, getProfile, getCachedChart, setCachedChart } from "@/lib/storage";
+import { useClientSnapshot } from "@/lib/useClientSnapshot";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { useWarpTo } from "@/components/ui/WarpTransition";
 import { ScanBar } from "@/components/three/HUDPanel";
@@ -274,16 +275,25 @@ function PlanetaryHourWidget({ lat, lon }: { lat: number; lon: number }) {
 // ─── Live clock ───────────────────────────────────────────────────────────────
 
 function CosmicClock() {
-  // Starts null (same on server and first client paint) so hydration never
-  // has to compare two different instants of `new Date()`; the real value
-  // is filled in client-only, after mount, like the rest of the app's
-  // browser-only reads.
-  const [time, setTime] = useState<Date | null>(null);
-  useEffect(() => {
-    setTime(new Date());
-    const id = setInterval(() => setTime(new Date()), 1000);
+  // useSyncExternalStore instead of useState+useEffect: returns null on the
+  // server and on first client paint (so hydration always agrees). The
+  // snapshot value is only ever updated from inside `subscribe`'s interval
+  // tick (not computed fresh on every call to the snapshot getter), so it
+  // stays referentially stable between ticks as the contract requires.
+  const tickRef = useRef<Date | null>(null);
+  // subscribe must be referentially stable across renders — an inline arrow
+  // function here gets recreated every render, which makes React tear down
+  // and resubscribe on every commit; combined with subscribe mutating
+  // tickRef as a side effect of being called, that resubscribe loop is a
+  // real "Maximum update depth exceeded" crash, not just wasted work.
+  const subscribe = useCallback((onChange: () => void) => {
+    tickRef.current = new Date();
+    const id = setInterval(() => { tickRef.current = new Date(); onChange(); }, 1000);
     return () => clearInterval(id);
   }, []);
+  const getSnapshot = useCallback(() => tickRef.current, []);
+  const getServerSnapshot = useCallback(() => null, []);
+  const time = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   return (
     <div className="text-center">
       <p className="text-[13px] font-bold tracking-widest" style={{ color: "#06b6d4", fontFamily: "'Share Tech Mono', monospace" }}>
@@ -481,6 +491,10 @@ function DailyBriefing({ chart, transits, profileId }: {
     keyRef.current = key;
     const dismissKey = `${key}_dismissed`;
     if (typeof localStorage === "undefined") return;
+    // This effect is a real run-once-per-mount subscription (initialized.current
+    // guards it, not a deps array) with an async fetch fallback below; the
+    // dismissed/cached checks are its synchronous fast-path short circuits.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
     if (localStorage.getItem(dismissKey) === "1") { setDismissed(true); return; }
     const cached = localStorage.getItem(key);
     if (cached) { setText(cached); return; }
@@ -1371,46 +1385,69 @@ function SignatureCard({ chart, name }: { chart: ChartData; name: string }) {
   );
 }
 
+interface DashboardProfileData {
+  profileId: string | null;
+  profileName: string;
+  profileCoords: { lat: number; lon: number };
+}
+
+const EMPTY_DASHBOARD_PROFILE: DashboardProfileData = {
+  profileId: null,
+  profileName: "",
+  profileCoords: { lat: 0, lon: 0 },
+};
+
+function readDashboardProfile(): DashboardProfileData {
+  const id = getActiveProfileId();
+  const profile = id ? getProfile(id) : null;
+  if (!id || !profile) return { profileId: null, profileName: "", profileCoords: { lat: 0, lon: 0 } };
+  return {
+    profileId: id,
+    profileName: profile.name,
+    profileCoords: { lat: profile.latitude ?? 0, lon: profile.longitude ?? 0 },
+  };
+}
+
 export default function DashboardPage() {
+  const { value: profileData, loading: profileLoading } = useClientSnapshot(readDashboardProfile, EMPTY_DASHBOARD_PROFILE);
+  const { profileId, profileName, profileCoords } = profileData;
   const [chart, setChart] = useState<ChartData | null>(null);
-  const [profileId, setProfileId] = useState<string | null>(null);
-  const [profileName, setProfileName] = useState("");
-  const [profileCoords, setProfileCoords] = useState<{ lat: number; lon: number }>({ lat: 0, lon: 0 });
-  const [loading, setLoading] = useState(true);
+  const [chartLoading, setChartLoading] = useState(true);
   const [selectedPlanet, setSelectedPlanet] = useState<PlanetPosition | null>(null);
   const [showSignatureCard, setShowSignatureCard] = useState(false);
   const [transitAspects, setTransitAspects] = useState<TransitPill[]>([]);
   const [retrogradePlanets, setRetrogradePlanets] = useState<PlanetName[]>([]);
   const [upcomingIngresses, setUpcomingIngresses] = useState<Ingress[]>([]);
+  const loading = profileLoading || chartLoading;
 
   useEffect(() => {
-    const id = getActiveProfileId();
-    if (!id) { setLoading(false); return; }
-    const profile = getProfile(id);
-    if (!profile) { setLoading(false); return; }
-    setProfileId(id);
-    setProfileName(profile.name);
-    setProfileCoords({ lat: profile.latitude ?? 0, lon: profile.longitude ?? 0 });
-    const cached = getCachedChart(id);
+    if (profileLoading) return;
+    // Real subscription effect (fetches the chart from the API when there's
+    // no cache, below); these early returns are its synchronous fast paths.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- see comment above
+    if (!profileId) { setChartLoading(false); return; }
+    const cached = getCachedChart(profileId);
     if (cached) {
       setChart(cached);
-      setLoading(false);
-    } else {
-      fetch("/api/chart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          birthDate: profile.birthDate, birthTime: profile.birthTime,
-          latitude: profile.latitude, longitude: profile.longitude,
-          timezone: profile.timezone, houseSystem: profile.houseSystem,
-        }),
-      })
-        .then(r => r.ok ? r.json() : null)
-        .then(data => { if (data) { setCachedChart(id, data); setChart(data); } })
-        .catch(() => {})
-        .finally(() => setLoading(false));
+      setChartLoading(false);
+      return;
     }
-  }, []);
+    const profile = getProfile(profileId);
+    if (!profile) { setChartLoading(false); return; }
+    fetch("/api/chart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        birthDate: profile.birthDate, birthTime: profile.birthTime,
+        latitude: profile.latitude, longitude: profile.longitude,
+        timezone: profile.timezone, houseSystem: profile.houseSystem,
+      }),
+    })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data) { setCachedChart(profileId, data); setChart(data); } })
+      .catch(() => {})
+      .finally(() => setChartLoading(false));
+  }, [profileLoading, profileId]);
 
   useEffect(() => {
     if (!chart) return;

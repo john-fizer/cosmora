@@ -1,0 +1,302 @@
+{
+  "date": "2026-10-04T18:00:00.000Z",
+  "transitPlanets": [
+    {
+      "name": "Sun",
+      "longitude": 191.52792788429565,
+      "sign": "Libra",
+      "signDegree": 11.52792788429565,
+      "house": 3,
+      "retrograde": false,
+      "speed": 0.9853723332671507,
+      "dignity": "fall"
+    },
+    {
+      "name": "Moon",
+      "longitude": 117.13843856570765,
+      "sign": "Cancer",
+      "signDegree": 27.138438565707645,
+      "house": 12,
+      "retrograde": false,
+      "speed": 13.960304056170173,
+      "dignity": "domicile"
+    },
+    {
+      "name": "Mercury",
+      "longitude": 215.49089152969407,
+      "sign": "Scorpio",
+      "signDegree": 5.490891529694068,
+      "house": 4,
+      "retrograde": false,
+      "speed": 1.2263058483213172,
+      "dignity": "peregrine"
+    },
+    {
+      "name": "Venus",
+      "longitude": 218.44560230233606,
+      "sign": "Scorpio",
+      "signDegree": 8.445602302336056,
+      "house": 4,
+      "retrograde": true,
+      "speed": -0.07649512615034837,
+      "dignity": "detriment"
+    },
+    {
+      "name": "Mars",
+      "longitude": 123.85980567127422,
+      "sign": "Leo",
+      "signDegree": 3.8598056712742164,
+      "house": 1,
+      "retrograde": false,
+      "speed": 0.5741380589647633,
+      "dignity": "peregrine"
+    },
+    {
+      "name": "Jupiter",
+      "longitude": 140.25231989009058,
+      "sign": "Leo",
+      "signDegree": 20.252319890090575,
+      "house": 1,
+      "retrograde": false,
+      "speed": 0.17288995874434931,
+      "dignity": "peregrine"
+    },
+    {
+      "name": "Saturn",
+      "longitude": 11.281071601049575,
+      "sign": "Aries",
+      "signDegree": 11.281071601049575,
+      "house": 9,
+      "retrograde": true,
+      "speed": -0.07864810284797841,
+      "dignity": "fall"
+    },
+    {
+      "name": "Uranus",
+      "longitude": 65.45777908921673,
+      "sign": "Gemini",
+      "signDegree": 5.457779089216729,
+      "house": 11,
+      "retrograde": true,
+      "speed": -0.019934648405637745,
+      "dignity": "peregrine"
+    },
+    {
+      "name": "Neptune",
+      "longitude": 2.7623944751787803,
+      "sign": "Aries",
+      "signDegree": 2.7623944751787803,
+      "house": 9,
+      "retrograde": true,
+      "speed": -0.027293554049890645,
+      "dignity": "peregrine"
+    },
+    {
+      "name": "Pluto",
+      "longitude": 303.0989542980128,
+      "sign": "Aquarius",
+      "signDegree": 3.0989542980128135,
+      "house": 7,
+      "retrograde": true,
+      "speed": -0.005092139998851053,
+      "dignity": "peregrine"
+    },
+    {
+      "name": "NorthNode",
+      "longitude": 327.5143143067225,
+      "sign": "Aquarius",
+      "signDegree": 27.514314306722497,
+      "house": 7,
+      "retrograde": true,
+      "speed": -0.053,
+      "dignity": "peregrine"
+    }
+  ],
+  "aspects": [
+    {
+      "transitPlanet": "Saturn",
+      "transitSign": "Aries",
+      "transitLon": 11.281071601049575,
+      "transitRetrograde": true,
+      "natalPlanet": "Mercury",
+      "natalSign": "Aries",
+      "natalLon": 11.005796734607259,
+      "natalHouse": 9,
+      "type": "conjunction",
+      "orb": 0.28,
+      "exact": true,
+      "applying": true,
+      "daysToExact": 0.9
+    },
+    {
+      "transitPlanet": "Venus",
+      "transitSign": "Scorpio",
+      "transitLon": 218.44560230233606,
+      "transitRetrograde": true,
+      "natalPlanet": "Jupiter",
+      "natalSign": "Virgo",
+      "natalLon": 157.774864855445,
+      "natalHouse": 2,
+      "type": "sextile",
+      "orb": 0.67,
+      "exact": false,
+      "applying": true,
+      "daysToExact": 15.4
+    },
+    {
+      "transitPlanet": "Neptune",
+      "transitSign": "Aries",
+      "transitLon": 2.7623944751787803,
+      "transitRetrograde": true,
+      "natalPlanet": "Moon",
+      "natalSign": "Leo",
+      "natalLon": 121.96686521668892,
+      "natalHouse": 1,
+      "type": "trine",
+      "orb": 0.8,
+      "exact": false,
+      "applying": true,
+      "daysToExact": 0.1
+    },
+    {
+      "transitPlanet": "Pluto",
+      "transitSign": "Aquarius",
+      "transitLon": 303.0989542980128,
+      "transitRetrograde": true,
+      "natalPlanet": "Moon",
+      "natalSign": "Leo",
+      "natalLon": 121.96686521668892,
+      "natalHouse": 1,
+      "type": "opposition",
+      "orb": 1.13,
+      "exact": false,
+      "applying": true,
+      "daysToExact": 0.1
+    },
+    {
+      "transitPlanet": "Mercury",
+      "transitSign": "Scorpio",
+      "transitLon": 215.49089152969407,
+      "transitRetrograde": false,
+      "natalPlanet": "NorthNode",
+      "natalSign": "Capricorn",
+      "natalLon": 275.88648541354974,
+      "natalHouse": 6,
+      "type": "sextile",
+      "orb": 0.4,
+      "exact": false,
+      "applying": false,
+      "daysToExact": null
+    },
+    {
+      "transitPlanet": "Jupiter",
+      "transitSign": "Leo",
+      "transitLon": 140.25231989009058,
+      "transitRetrograde": false,
+      "natalPlanet": "Mars",
+      "natalSign": "Aquarius",
+      "natalLon": 319.82031413115783,
+      "natalHouse": 7,
+      "type": "opposition",
+      "orb": 0.43,
+      "exact": false,
+      "applying": false,
+      "daysToExact": null
+    },
+    {
+      "transitPlanet": "Uranus",
+      "transitSign": "Gemini",
+      "transitLon": 65.45777908921673,
+      "transitRetrograde": true,
+      "natalPlanet": "NorthNode",
+      "natalSign": "Capricorn",
+      "natalLon": 275.88648541354974,
+      "natalHouse": 6,
+      "type": "quincunx",
+      "orb": 0.43,
+      "exact": false,
+      "applying": false,
+      "daysToExact": null
+    },
+    {
+      "transitPlanet": "Sun",
+      "transitSign": "Libra",
+      "transitLon": 191.52792788429565,
+      "transitRetrograde": false,
+      "natalPlanet": "Mercury",
+      "natalSign": "Aries",
+      "natalLon": 11.005796734607259,
+      "natalHouse": 9,
+      "type": "opposition",
+      "orb": 0.52,
+      "exact": false,
+      "applying": false,
+      "daysToExact": null
+    },
+    {
+      "transitPlanet": "Mars",
+      "transitSign": "Leo",
+      "transitLon": 123.85980567127422,
+      "transitRetrograde": false,
+      "natalPlanet": "Moon",
+      "natalSign": "Leo",
+      "natalLon": 121.96686521668892,
+      "natalHouse": 1,
+      "type": "conjunction",
+      "orb": 1.89,
+      "exact": false,
+      "applying": false,
+      "daysToExact": null
+    }
+  ],
+  "ingresses": [
+    {
+      "planet": "Moon",
+      "fromSign": "Cancer",
+      "toSign": "Leo",
+      "date": "2026-10-05",
+      "daysUntil": 1,
+      "retrograde": false
+    },
+    {
+      "planet": "Sun",
+      "fromSign": "Libra",
+      "toSign": "Scorpio",
+      "date": "2026-10-23",
+      "daysUntil": 19,
+      "retrograde": false
+    },
+    {
+      "planet": "Venus",
+      "fromSign": "Scorpio",
+      "toSign": "Libra",
+      "date": "2026-10-25",
+      "daysUntil": 21,
+      "retrograde": true
+    },
+    {
+      "planet": "Mars",
+      "fromSign": "Leo",
+      "toSign": "Virgo",
+      "date": "2026-11-26",
+      "daysUntil": 53,
+      "retrograde": false
+    },
+    {
+      "planet": "Mercury",
+      "fromSign": "Scorpio",
+      "toSign": "Sagittarius",
+      "date": "2026-12-06",
+      "daysUntil": 63,
+      "retrograde": false
+    },
+    {
+      "planet": "Jupiter",
+      "fromSign": "Leo",
+      "toSign": "Virgo",
+      "date": "2027-07-26",
+      "daysUntil": 295,
+      "retrograde": false
+    }
+  ]
+}

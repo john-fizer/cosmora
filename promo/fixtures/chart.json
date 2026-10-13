@@ -1,0 +1,337 @@
+{
+  "profile": {
+    "name": "Alex Rivera",
+    "birthDate": "1992-03-14",
+    "birthTime": "14:35:00",
+    "birthPlace": "Los Angeles, CA",
+    "latitude": 34.0522,
+    "longitude": -118.2437,
+    "timezone": "America/Los_Angeles",
+    "houseSystem": "whole_sign"
+  },
+  "chart": {
+    "calculatedAt": "2026-10-13T04:22:08.203Z",
+    "birthDatetime": "1992-03-14T22:35:00.000Z",
+    "latitude": 34.0522,
+    "longitude": -118.2437,
+    "timezone": "America/Los_Angeles",
+    "houseSystem": "whole_sign",
+    "sect": "day",
+    "ascendant": 132.7415702036178,
+    "midheaven": 35.59319669476986,
+    "planets": [
+      {
+        "name": "Sun",
+        "longitude": 354.60404181501826,
+        "sign": "Pisces",
+        "signDegree": 24.604041815018263,
+        "house": 8,
+        "retrograde": false,
+        "speed": 0.9958109037078202,
+        "dignity": "peregrine",
+        "decan": 3,
+        "decanLord": "Mars"
+      },
+      {
+        "name": "Moon",
+        "longitude": 121.96686521668892,
+        "sign": "Leo",
+        "signDegree": 1.966865216688916,
+        "house": 1,
+        "retrograde": false,
+        "speed": 14.67595869826198,
+        "dignity": "peregrine",
+        "decan": 1,
+        "decanLord": "Saturn"
+      },
+      {
+        "name": "Mercury",
+        "longitude": 11.005796734607259,
+        "sign": "Aries",
+        "signDegree": 11.005796734607259,
+        "house": 9,
+        "retrograde": false,
+        "speed": 0.22334177997481675,
+        "dignity": "peregrine",
+        "decan": 2,
+        "decanLord": "Sun"
+      },
+      {
+        "name": "Venus",
+        "longitude": 331.1648214022118,
+        "sign": "Pisces",
+        "signDegree": 1.1648214022118282,
+        "house": 8,
+        "retrograde": false,
+        "speed": 1.2346273266304024,
+        "dignity": "exaltation",
+        "decan": 1,
+        "decanLord": "Saturn"
+      },
+      {
+        "name": "Mars",
+        "longitude": 319.82031413115783,
+        "sign": "Aquarius",
+        "signDegree": 19.82031413115783,
+        "house": 7,
+        "retrograde": false,
+        "speed": 0.7733906197390752,
+        "dignity": "peregrine",
+        "decan": 2,
+        "decanLord": "Mercury"
+      },
+      {
+        "name": "Jupiter",
+        "longitude": 157.774864855445,
+        "sign": "Virgo",
+        "signDegree": 7.774864855445003,
+        "house": 2,
+        "retrograde": true,
+        "speed": -0.12011058327254887,
+        "dignity": "detriment",
+        "decan": 1,
+        "decanLord": "Sun"
+      },
+      {
+        "name": "Saturn",
+        "longitude": 314.3400002920341,
+        "sign": "Aquarius",
+        "signDegree": 14.34000029203412,
+        "house": 7,
+        "retrograde": false,
+        "speed": 0.10020108838125452,
+        "dignity": "domicile",
+        "decan": 2,
+        "decanLord": "Mercury"
+      },
+      {
+        "name": "Uranus",
+        "longitude": 287.40922531720753,
+        "sign": "Capricorn",
+        "signDegree": 17.40922531720753,
+        "house": 6,
+        "retrograde": false,
+        "speed": 0.03083757082640659,
+        "dignity": "peregrine",
+        "decan": 2,
+        "decanLord": "Mars"
+      },
+      {
+        "name": "Neptune",
+        "longitude": 288.59368277916906,
+        "sign": "Capricorn",
+        "signDegree": 18.593682779169058,
+        "house": 6,
+        "retrograde": false,
+        "speed": 0.01934988517268721,
+        "dignity": "peregrine",
+        "decan": 2,
+        "decanLord": "Mars"
+      },
+      {
+        "name": "Pluto",
+        "longitude": 232.85168606974457,
+        "sign": "Scorpio",
+        "signDegree": 22.851686069744574,
+        "house": 4,
+        "retrograde": true,
+        "speed": -0.011106913264143259,
+        "dignity": "domicile",
+        "decan": 3,
+        "decanLord": "Venus"
+      },
+      {
+        "name": "NorthNode",
+        "longitude": 275.88648541354974,
+        "sign": "Capricorn",
+        "signDegree": 5.886485413549735,
+        "house": 6,
+        "retrograde": true,
+        "speed": -0.053,
+        "dignity": "peregrine",
+        "decan": 1,
+        "decanLord": "Jupiter"
+      }
+    ],
+    "houses": [
+      {
+        "house": 1,
+        "longitude": 120,
+        "sign": "Leo",
+        "signDegree": 0
+      },
+      {
+        "house": 2,
+        "longitude": 150,
+        "sign": "Virgo",
+        "signDegree": 0
+      },
+      {
+        "house": 3,
+        "longitude": 180,
+        "sign": "Libra",
+        "signDegree": 0
+      },
+      {
+        "house": 4,
+        "longitude": 210,
+        "sign": "Scorpio",
+        "signDegree": 0
+      },
+      {
+        "house": 5,
+        "longitude": 240,
+        "sign": "Sagittarius",
+        "signDegree": 0
+      },
+      {
+        "house": 6,
+        "longitude": 270,
+        "sign": "Capricorn",
+        "signDegree": 0
+      },
+      {
+        "house": 7,
+        "longitude": 300,
+        "sign": "Aquarius",
+        "signDegree": 0
+      },
+      {
+        "house": 8,
+        "longitude": 330,
+        "sign": "Pisces",
+        "signDegree": 0
+      },
+      {
+        "house": 9,
+        "longitude": 0,
+        "sign": "Aries",
+        "signDegree": 0
+      },
+      {
+        "house": 10,
+        "longitude": 30,
+        "sign": "Taurus",
+        "signDegree": 0
+      },
+      {
+        "house": 11,
+        "longitude": 60,
+        "sign": "Gemini",
+        "signDegree": 0
+      },
+      {
+        "house": 12,
+        "longitude": 90,
+        "sign": "Cancer",
+        "signDegree": 0
+      }
+    ],
+    "aspects": [
+      {
+        "planet1": "Sun",
+        "planet2": "Pluto",
+        "type": "trine",
+        "orb": 1.7523557452736895,
+        "exact": false,
+        "applying": false
+      },
+      {
+        "planet1": "Moon",
+        "planet2": "Venus",
+        "type": "quincunx",
+        "orb": 0.8020438144770878,
+        "exact": true,
+        "applying": false
+      },
+      {
+        "planet1": "Mercury",
+        "planet2": "Saturn",
+        "type": "sextile",
+        "orb": 3.3342035574268607,
+        "exact": false,
+        "applying": false
+      },
+      {
+        "planet1": "Mercury",
+        "planet2": "Uranus",
+        "type": "square",
+        "orb": 6.40342858260027,
+        "exact": false,
+        "applying": false
+      },
+      {
+        "planet1": "Mercury",
+        "planet2": "NorthNode",
+        "type": "square",
+        "orb": 5.119311321057523,
+        "exact": false,
+        "applying": false
+      },
+      {
+        "planet1": "Venus",
+        "planet2": "Jupiter",
+        "type": "opposition",
+        "orb": 6.610043453233175,
+        "exact": false,
+        "applying": false
+      },
+      {
+        "planet1": "Venus",
+        "planet2": "NorthNode",
+        "type": "sextile",
+        "orb": 4.721664011337907,
+        "exact": false,
+        "applying": false
+      },
+      {
+        "planet1": "Mars",
+        "planet2": "Saturn",
+        "type": "conjunction",
+        "orb": 5.48031383912371,
+        "exact": false,
+        "applying": false
+      },
+      {
+        "planet1": "Mars",
+        "planet2": "Pluto",
+        "type": "square",
+        "orb": 3.0313719385867444,
+        "exact": false,
+        "applying": false
+      },
+      {
+        "planet1": "Jupiter",
+        "planet2": "NorthNode",
+        "type": "trine",
+        "orb": 1.8883794418952675,
+        "exact": false,
+        "applying": true
+      },
+      {
+        "planet1": "Uranus",
+        "planet2": "Neptune",
+        "type": "conjunction",
+        "orb": 1.1844574619615287,
+        "exact": false,
+        "applying": false
+      },
+      {
+        "planet1": "Neptune",
+        "planet2": "Pluto",
+        "type": "sextile",
+        "orb": 4.258003290575516,
+        "exact": false,
+        "applying": false
+      }
+    ],
+    "annualProfection": {
+      "age": 34,
+      "activatedHouse": 11,
+      "activatedSign": "Gemini",
+      "lordOfYear": "Mercury"
+    },
+    "lotOfFortune": 260.10439360528846,
+    "lotOfSpirit": 5.378746801947159
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "score": 27,
+  "level": "clear",
+  "activeSources": 1,
+  "signals": [
+    {
+      "source": "transits",
+      "weight": 0.59425,
+      "label": "Saturn conjunction natal Mercury (Lord of Year)",
+      "detail": "Transiting Saturn conjunction natal Mercury — orb 0.3°, applying, exact.",
+      "easesBy": "2026-10-19"
+    },
+    {
+      "source": "transits",
+      "weight": 0.45,
+      "label": "Pluto opposition natal Moon",
+      "detail": "Transiting Pluto opposition natal Moon — orb 1.1°, applying.",
+      "easesBy": "2026-10-18"
+    },
+    {
+      "source": "transits",
+      "weight": 0.13612500000000002,
+      "label": "Mars conjunction natal Moon",
+      "detail": "Transiting Mars conjunction natal Moon — orb 1.9°, separating."
+    }
+  ],
+  "computedAt": "2026-10-04T18:00:00.000Z"
+}

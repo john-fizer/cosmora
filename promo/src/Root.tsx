@@ -1,6 +1,6 @@
 import React from "react";
 import { Composition } from "remotion";
-import "../../src/app/globals.css";
+import "./tailwind-entry.css";
 import { PressureScene, PRESSURE_SCENE_DURATION } from "./compositions/PressureScene";
 import { OracleScene, ORACLE_SCENE_DURATION } from "./compositions/OracleScene";
 import { ChartScene, CHART_SCENE_DURATION } from "./compositions/ChartScene";

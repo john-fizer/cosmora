@@ -1,0 +1,13 @@
+/**
+ * Tailwind v4 auto-detects which files to scan for class names based on the
+ * location of the CSS file importing `tailwindcss` — but that heuristic
+ * runs inside @remotion/tailwind-v4's postcss-loader in THIS project's
+ * webpack context (/promo), so it was scanning around /promo instead of
+ * walking out to ../src where the real app's components (and almost all
+ * the Tailwind classes actually used by this render) live. That's why
+ * mounted pages were missing most of their spacing/sizing/flex utilities —
+ * explains the collapsed panels, oversized icons, etc. seen while debugging.
+ * This explicit @source forces the real tree into the scan.
+ */
+@import "../../src/app/globals.css";
+@source "../../src";

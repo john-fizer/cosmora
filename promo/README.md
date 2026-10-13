@@ -28,9 +28,19 @@ branch `promo/cosmora-reel`, in its own `/promo` project so the main app's
   pressure-window report for a demo profile, and writes them to `fixtures/*.json`.
   `fixtures/oracle-answer.json` is a hand-written but chart-grounded Oracle answer
   (referencing this demo chart's actual placements) standing in for a live AI call.
-- `src/compositions/PageFrame.tsx` wraps a mounted real page with a gentle CSS
-  camera move (push-in / tilt) and helpers (`useFrameAction`, `clickByText`) for
-  scripting real clicks (tab switches, etc.) on the real UI at specific frames.
+- `src/compositions/ZoomFrame.tsx` is the camera wrapper used by every scene that
+  mounts a real page — a slow push-in via CSS `zoom` (not `transform`; see "Fixed
+  rough edges" below for why). `src/compositions/PageFrame.tsx` holds the
+  interaction helpers (`useFrameAction`, `clickByText`) for scripting real clicks
+  (tab switches, etc.) on the real UI at specific frames — independent of which
+  camera wrapper is used.
+- `src/compositions/ViewportFix.tsx` forces Tailwind's `h-screen`/`min-h-screen`
+  to the real composition height (see below — `100vh` doesn't resolve correctly
+  inside Remotion's renderer).
+- `src/tailwind-entry.css` adds an explicit `@source "../../src"` so Tailwind's
+  v4 content scanner actually walks the real app's component tree for class
+  names (see below — without it, almost every utility class used by the mounted
+  pages was silently missing).
 
 ## Scenes (current)
 
@@ -80,21 +90,41 @@ npx remotion still src/index.ts <CompositionId> out/<name>.png --frame=<n>
 npx remotion render src/index.ts <CompositionId> out/<name>.mp4
 ```
 
-## Known rough edges (not yet resolved)
+## Fixed rough edges
 
-- **Transits / Map scenes**: both real pages render their main panel/map quite small
-  when mounted outside the app's full dashboard shell (likely sized relative to a
-  sidebar sibling we don't mount). Current fix is a brute-force camera zoom; worth a
-  cleaner fix once the overall cut is approved.
-- **Oracle streaming**: the real page's streaming text reveal is fetch/timer-driven,
-  not frame-driven, so it isn't reliably reproducible frame-by-frame. We sidestepped
-  this by seeding the full conversation into `localStorage` chat history directly
-  (the real page loads real history on mount) instead of simulating a live stream.
-- **GlassHero hero video**: tried for the Hook scene first (the real landing-page
-  hero), but produced flaky/partial paints on single-frame still renders (likely
-  `<video>` load-timing). Swapped to `DashboardBg` (the real dashboard starfield)
-  for reliability — revisit if the hero video look is wanted specifically.
-- A real **Placidus house-cusp bug** was found while generating fixtures (duplicate
-  cusps for house 2/8, 3/9, 5/11, 6/12 on this demo chart) — sidestepped by using
-  whole-sign houses for the demo profile. Not fixed here (out of scope for this
-  branch) — worth a look on the main app.
+Three independent Remotion/Chrome-headless compatibility issues were silently
+making every mounted page (not just Transits/Map) render with missing spacing,
+collapsed panels, or oversized icons. All three are now worked around; see the
+inline comments at each fix for the detail:
+
+1. **Tailwind v4 wasn't scanning the real app's source for class names.**
+   `@remotion/tailwind-v4`'s content auto-detection runs inside `/promo`'s
+   webpack context, so it only looked around `/promo` — missing almost every
+   utility class actually used by components living in `../src`. Pages rendered
+   with most spacing/sizing/flex classes silently absent. Fixed with an explicit
+   `@source "../../src"` in `src/tailwind-entry.css`. This was the root cause of
+   most of what looked like "broken layout" — fixing it alone resolved the
+   Transits aspect list, the Chart tab bar/summary row, and more.
+2. **`100vh` (Tailwind's `h-screen`/`min-h-screen`) doesn't resolve to the real
+   composition height inside Remotion's renderer** — it measured ~492px instead
+   of 1920px regardless of composition size or wrapper, while `window.innerHeight`
+   and `getBoundingClientRect()` on real ancestors correctly read 1920. This
+   silently capped any `h-screen` flex layout (Chart, Transits, Oracle all use
+   it) to a cramped box, collapsing flex-1 children designed to fill the frame.
+   Fixed with `ViewportFix.tsx`, which force-overrides those classes to the real
+   `useVideoConfig()` height via a scoped `!important` style tag.
+3. **A CSS `transform` (or `perspective`) on any ancestor breaks `position: fixed`
+   elements** — it makes that ancestor the containing block instead of the true
+   viewport (this is correct CSS spec behavior, not a Remotion bug). Every
+   mounted page renders `DashboardBg` (and some add their own vignette overlays)
+   as `position: fixed`, so the original transform-based camera (`PageFrame`'s
+   `scale()`/`rotateX()`) was corrupting the starfield into warped/oversized
+   blobs, and collapsing Map's `fixed inset-0` root panel to a tiny box. Fixed by
+   switching every scene's camera to `ZoomFrame` (`zoom` instead of `transform`),
+   which doesn't trigger that CSS rule. Costs the subtle 3D tilt `PageFrame` had
+   (`zoom` can't rotate) — a flat push-in is what every scene uses now.
+
+Found and intentionally **not fixed on this branch**: a real Placidus house-cusp
+bug surfaced while generating fixtures (duplicate cusps for house 2/8, 3/9, 5/11,
+6/12 on the demo chart). Sidestepped by using whole-sign houses for the demo
+profile instead. Worth a look on the main app — out of scope for a promo video.

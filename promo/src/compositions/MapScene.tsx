@@ -1,19 +1,22 @@
 import React from "react";
 import AstrocartographyPage from "@/app/dashboard/map/page";
 import { FixtureSeeder } from "../mocks/FixtureSeeder";
-import { PageFrame } from "./PageFrame";
+import { ZoomFrame } from "./ZoomFrame";
+import { ViewportFix } from "./ViewportFix";
 
 export const MAP_SCENE_DURATION = 180; // 6s @ 30fps
 
+// This page roots itself with `fixed inset-0` — PageFrame's transform wrapper
+// made that collapse to a tiny box (a CSS transform/perspective on an
+// ancestor changes the containing block for position:fixed elements per
+// spec). ZoomFrame uses `zoom` instead, which doesn't trigger that.
 export function MapScene() {
   return (
     <FixtureSeeder>
-      {/* NOTE: the real map panel renders small here (likely sized for a
-          desktop sibling layout we don't mount) — framing is a known rough
-          edge to revisit after the overall cut is approved. */}
-      <PageFrame origin="0% 0%" move={{ scale: [1.6, 1.75] }}>
+      <ViewportFix />
+      <ZoomFrame scale={[1, 1.08]}>
         <AstrocartographyPage />
-      </PageFrame>
+      </ZoomFrame>
     </FixtureSeeder>
   );
 }

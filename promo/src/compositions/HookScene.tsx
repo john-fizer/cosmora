@@ -29,7 +29,10 @@ export function HookScene() {
 
   return (
     <div style={{ width: "100%", height: "100%", background: COLOR.void, position: "relative", overflow: "hidden" }}>
-      <div style={{ width: "100%", height: "100%", transform: `scale(${scale})` }}>
+      {/* zoom, not transform:scale — DashboardBg is position:fixed, and a
+          transform on any ancestor hijacks its containing block away from
+          the true viewport (CSS spec), corrupting the starfield. */}
+      <div style={{ width: "100%", height: "100%", zoom: scale }}>
         <DashboardBg />
       </div>
       <div

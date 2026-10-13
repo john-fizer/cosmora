@@ -1,7 +1,9 @@
 import React from "react";
 import PressurePage from "@/app/dashboard/pressure/page";
 import { FixtureSeeder } from "../mocks/FixtureSeeder";
-import { PageFrame, useFrameAction, clickByText } from "./PageFrame";
+import { useFrameAction, clickByText } from "./PageFrame";
+import { ZoomFrame } from "./ZoomFrame";
+import { ViewportFix } from "./ViewportFix";
 
 export const PRESSURE_SCENE_DURATION = 180; // 6s @ 30fps
 
@@ -15,9 +17,10 @@ export function PressureScene() {
 
   return (
     <FixtureSeeder>
-      <PageFrame move={{ scale: [1.1, 1.04], tiltX: [-1.5, 0] }}>
+      <ViewportFix />
+      <ZoomFrame scale={[1.08, 1.0]}>
         <PressurePage />
-      </PageFrame>
+      </ZoomFrame>
     </FixtureSeeder>
   );
 }

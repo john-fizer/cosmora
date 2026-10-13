@@ -55,8 +55,42 @@ branch `promo/cosmora-reel`, in its own `/promo` project so the main app's
 | `EndCardScene` | `compositions/EndCardScene.tsx` | Logo, tagline, real `GlowButton` CTA |
 
 Each is independently registered in `src/Root.tsx` so you can preview/render one at a
-time. A `FullReel` composition that sequences all six with transitions is the next
-step once the cut above is approved.
+time.
+
+### `FullReel` — the sequenced cut
+
+`compositions/FullReel.tsx` sequences all seven above into the final 32s (960 frames
+@ 30fps) reel, matching the brief's timing exactly: Hook 0-3s, Chart 3-9s, Oracle
+9-15s, Pressure 15-21s, Transits 21-24s, Map 24-27s, End card 27-32s. Transits and
+Map are trimmed from their standalone 6s preview length to 3s each via `<Sequence
+durationInFrames={90}>` — together they're the brief's single "fast montage" beat,
+not two full scenes back to back; trimming is safe since neither has scripted
+interactions tied to its full 180-frame length (unlike Chart/Pressure, whose clicks
+fire at local frames 75/135 and 20 — those still land correctly since a `<Sequence>`
+gives its child a local frame count starting at 0, regardless of its position in the
+parent timeline).
+
+- **`GlowWipe.tsx`** — a brand-palette (gold → violet) radial flash centered on each
+  cut, rendered once at the `FullReel` level (not per-scene) so it never risks
+  double-mounting two real dashboard pages at once during a crossfade — every mounted
+  page carries its own `position: fixed` background and heavy real state, so two
+  mounted simultaneously is the kind of fragile edge case the "fixed rough edges"
+  pass above was about avoiding. **Must carry a very high `zIndex`** (999999) — real
+  dashboard pages commonly use `z-40`/`z-50` on sticky headers, which otherwise paint
+  above an overlay with a lower or default z-index regardless of DOM order.
+- **`SceneCaption.tsx`** — the brief's "kinetic text (2-5 words)" requirement, shown
+  as a small pill chip (not raw floating text) in the top-left corner of each
+  real-page scene. A self-contained chip with its own backdrop reads clearly no
+  matter what real UI happens to be behind it — unlike a raw text overlay, which
+  (like `GlowWipe`) needs the same high z-index fix to avoid being buried under a
+  page's own header, and even then can be hard to read against arbitrary live
+  content. Captions live only in `FullReel` — the original per-scene files are
+  untouched so their already-approved stills still render exactly as reviewed.
+- **Audio** — `src/audio.ts` is the "clean audio track slot": set `HAS_SCORE = true`
+  once a real score file exists at `public/audio/score.mp3` (or change `SCORE_SRC`).
+  `FullReel`'s `scoreVolume()` gives it a soft swell under each cut ("hits on scene
+  changes" per the brief) once enabled — with no file, the slot is inert and the
+  render is silent rather than failing on a missing asset.
 
 ## Editing copy
 
@@ -69,15 +103,19 @@ step once the cut above is approved.
 
 ## Editing timing / camera
 
-Each scene file exports a `*_DURATION` constant (frames @ 30fps) and a `<PageFrame
-move={{...}}>` call controlling the camera (`scale`, `tiltX`, `tiltY`, `panX`, `panY`
-as `[startValue, endValue]` pairs across the scene). `origin` controls the CSS
-transform-origin (default top-center — most of these pages are built for a shorter
-desktop viewport, so top-anchored zoom avoids panning into empty space below the
-content).
+Each standalone scene file exports a `*_SCENE_DURATION` constant (frames @ 30fps,
+used by its own `<Composition>` in `Root.tsx` for solo preview/render) and wraps its
+real page in `<ZoomFrame scale={[start, end]}>` — a slow `zoom`-based push-in, the
+only camera move available (see "Fixed rough edges" below for why `zoom` and not
+`transform`). To change `FullReel`'s actual cut timing/order, edit the `HOOK` /
+`CHART` / `ORACLE` / ... frame-count constants at the top of `FullReel.tsx` — those
+drive each scene's `<Sequence from={...} durationInFrames={...}>`, independent of the
+`*_SCENE_DURATION` used for solo preview.
 
 Scripted interactions (tab clicks, etc.) use `useFrameAction(frame, async () => {...})`
-in the scene file — see `ChartScene.tsx` / `PressureScene.tsx` for examples.
+in the scene file — see `ChartScene.tsx` / `PressureScene.tsx` for examples. These
+fire on the scene's own local frame count, so they still land correctly inside
+`FullReel`'s `<Sequence>` regardless of where that scene sits in the full timeline.
 
 ## Commands
 
@@ -88,6 +126,9 @@ npm run fixtures         # regenerate fixtures/*.json from the real engine
 npm run studio            # remotion studio — live-preview every composition
 npx remotion still src/index.ts <CompositionId> out/<name>.png --frame=<n>
 npx remotion render src/index.ts <CompositionId> out/<name>.mp4
+
+# The final vertical cut:
+npx remotion render src/index.ts FullReel out/cosmora-reel-9x16.mp4
 ```
 
 ## Fixed rough edges

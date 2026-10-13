@@ -8,6 +8,7 @@ import { TransitsScene, TRANSITS_SCENE_DURATION } from "./compositions/TransitsS
 import { MapScene, MAP_SCENE_DURATION } from "./compositions/MapScene";
 import { HookScene, HOOK_SCENE_DURATION } from "./compositions/HookScene";
 import { EndCardScene, END_CARD_SCENE_DURATION } from "./compositions/EndCardScene";
+import { FullReel, FULL_REEL_DURATION } from "./compositions/FullReel";
 
 const W = 1080;
 const H = 1920;
@@ -71,6 +72,14 @@ export function RemotionRoot() {
         height={H}
         fps={FPS}
         durationInFrames={END_CARD_SCENE_DURATION}
+      />
+      <Composition
+        id="FullReel"
+        component={FullReel}
+        width={W}
+        height={H}
+        fps={FPS}
+        durationInFrames={FULL_REEL_DURATION}
       />
     </>
   );

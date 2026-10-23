@@ -86,11 +86,16 @@ parent timeline).
   page's own header, and even then can be hard to read against arbitrary live
   content. Captions live only in `FullReel` — the original per-scene files are
   untouched so their already-approved stills still render exactly as reviewed.
-- **Audio** — `src/audio.ts` is the "clean audio track slot": set `HAS_SCORE = true`
-  once a real score file exists at `public/audio/score.mp3` (or change `SCORE_SRC`).
-  `FullReel`'s `scoreVolume()` gives it a soft swell under each cut ("hits on scene
-  changes" per the brief) once enabled — with no file, the slot is inert and the
-  render is silent rather than failing on a missing asset.
+- **Audio** — `src/audio.ts` is the "clean audio track slot": `HAS_SCORE` gates
+  whether `FullReel` includes an `<Audio>` track at all, so the render stays silent
+  (not broken) when no score file exists. The score itself lives at
+  `<repo>/public/audio/score.mp3` — **not** under `/promo` — because
+  `remotion.config.ts` points Remotion's `publicDir` at the main app's `public/`
+  folder (the same place textures/glyphs are served from; see "How it works"
+  above), so `staticFile("audio/score.mp3")` resolves there. `FullReel`'s
+  `scoreVolume()` gives it a soft swell under each cut ("hits on scene changes" per
+  the brief). Current score: `Reality_Warp.mp3` (first draft, flagged by the user as
+  not quite the intended direction — swap the file and keep the same path to replace).
 
 ## Editing copy
 

@@ -9,6 +9,7 @@ import { MapScene, MAP_SCENE_DURATION } from "./compositions/MapScene";
 import { HookScene, HOOK_SCENE_DURATION } from "./compositions/HookScene";
 import { EndCardScene, END_CARD_SCENE_DURATION } from "./compositions/EndCardScene";
 import { FullReel, FULL_REEL_DURATION } from "./compositions/FullReel";
+import { ChartFragments, CHART_FRAGMENTS_DURATION } from "./compositions/ChartFragments";
 
 const W = 1080;
 const H = 1920;
@@ -72,6 +73,14 @@ export function RemotionRoot() {
         height={H}
         fps={FPS}
         durationInFrames={END_CARD_SCENE_DURATION}
+      />
+      <Composition
+        id="ChartFragments"
+        component={ChartFragments}
+        width={W}
+        height={H}
+        fps={FPS}
+        durationInFrames={CHART_FRAGMENTS_DURATION}
       />
       <Composition
         id="FullReel"

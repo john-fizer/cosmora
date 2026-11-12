@@ -1,11 +1,10 @@
 "use client";
 
 /**
- * GlassHero — the home's first screen. A PRE-RENDERED photoreal Saturn
- * (Higgsfield, 16k-grade) carries the fidelity that real-time WebGL can't — no
- * "80s NASA" flat-sphere look. It stays alive via cursor parallax + a slow
- * ambient drift (the "seeing realtime" feel without a low-fi live sphere or a
- * looping/​drifting video). Liquid-glass UI floats over it: a glass pill navbar,
+ * GlassHero — the home's first screen. A real-time, living Earth (day/night
+ * terminator, city lights, drifting clouds, Fresnel atmosphere, gold
+ * astrocartography pings) replaces the old pre-rendered Saturn video loop —
+ * see LivingEarthHero. Liquid-glass UI floats over it: a glass pill navbar,
  * a typewriter headline, and a glass CTA. Scrolling hands off into the dive.
  *
  * Inspired (only) by Mainframe (typewriter + cursor-reactive bg), the dark
@@ -13,10 +12,11 @@
  * Cosmora's brand (Void + Solar gold, Cormorant/Outfit/Fragment Mono).
  */
 
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { COLOR, FONT, SOLAR } from "@/lib/design/tokens";
+import LivingEarthHero from "./LivingEarthHero";
 
 // ── Typewriter ────────────────────────────────────────────────────────────────
 function useTypewriter(text: string, speed = 42, startDelay = 500) {
@@ -35,46 +35,6 @@ function useTypewriter(text: string, speed = 42, startDelay = 500) {
     return () => clearTimeout(start);
   }, [text, speed, startDelay]);
   return { displayed, done };
-}
-
-// ── Full-screen photoreal video background (Bloom structure) ────────────────────
-// A seamless loop: the clip was generated with the SAME photoreal Saturn as its
-// first AND last frame, so the planet spins / the sky drifts and it returns
-// exactly to the start — native loop, no pop, no boomerang, no fade. A poster
-// (the still) avoids any first-frame flash. A subtle cursor parallax keeps the
-// glass UI feeling layered over a live scene.
-function VideoBg() {
-  const wrap = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    let raf = 0;
-    const target = { x: 0, y: 0 };
-    const cur = { x: 0, y: 0 };
-    const onMove = (e: PointerEvent) => {
-      target.x = e.clientX / window.innerWidth - 0.5;
-      target.y = e.clientY / window.innerHeight - 0.5;
-    };
-    const tick = () => {
-      cur.x += (target.x - cur.x) * 0.05;
-      cur.y += (target.y - cur.y) * 0.05;
-      if (wrap.current) wrap.current.style.transform = `scale(1.06) translate(${cur.x * -1.4}%, ${cur.y * -1.1}%)`;
-      raf = requestAnimationFrame(tick);
-    };
-    window.addEventListener("pointermove", onMove);
-    raf = requestAnimationFrame(tick);
-    return () => { window.removeEventListener("pointermove", onMove); cancelAnimationFrame(raf); };
-  }, []);
-  return (
-    <div className="absolute inset-0 overflow-hidden">
-      <div ref={wrap} className="absolute inset-0 will-change-transform">
-        <video
-          src="/videos/saturn-hero.mp4"
-          poster="/images/hero-saturn.jpg"
-          autoPlay loop muted playsInline preload="auto"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-      </div>
-    </div>
-  );
 }
 
 // ── Glass UI ────────────────────────────────────────────────────────────────────
@@ -128,7 +88,7 @@ export default function GlassHero() {
 
   return (
     <section className="relative w-full h-screen overflow-hidden" style={{ background: COLOR.void }}>
-      <VideoBg />
+      <LivingEarthHero />
 
       {/* Left-side readability gradient so copy holds over the planet */}
       <div className="absolute inset-0 z-[1] pointer-events-none"
@@ -136,10 +96,12 @@ export default function GlassHero() {
       {/* Cinematic vignette */}
       <div className="absolute inset-0 z-[1] pointer-events-none"
         style={{ boxShadow: "inset 0 0 240px 70px rgba(8,8,15,0.8)" }} />
-      {/* Bottom fade — melt the hero into the void so it flows into the dive below
-          with no hard seam (the dive opens on the same near-black starfield) */}
-      <div className="absolute inset-x-0 bottom-0 z-[2] h-48 pointer-events-none"
-        style={{ background: "linear-gradient(to top, #08080F 0%, rgba(8,8,15,0.65) 45%, transparent 100%)" }} />
+      {/* Bottom fade — melts the hero into the void so it flows into the dive
+          below with no hard seam. Tall and fully opaque at the base: the live
+          Earth is far brighter than the old video plate, so a thin/weak fade
+          used to leave a visible cut where this section meets CosmosToYou. */}
+      <div className="absolute inset-x-0 bottom-0 z-[2] h-72 pointer-events-none"
+        style={{ background: "linear-gradient(to top, #08080F 0%, #08080F 22%, rgba(8,8,15,0.8) 55%, transparent 100%)" }} />
 
       <GlassNav />
 

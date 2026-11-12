@@ -52,6 +52,10 @@ export default function CosmosToYou() {
       <div className="sticky top-0 h-screen overflow-hidden">
         <div className="absolute inset-0" style={{ zIndex: 1 }}>
           <CosmicJourney progress={p} />
+          {/* Top fade — meets GlassHero's bottom fade so the two scenes melt
+              together instead of cutting from one starfield brightness to another */}
+          <div className="absolute inset-x-0 top-0 h-72 pointer-events-none"
+            style={{ background: "linear-gradient(to bottom, #08080F 0%, rgba(8,8,15,0.7) 45%, transparent 100%)" }} />
         </div>
         <div className="absolute inset-0" style={{ zIndex: 2 }}>
           {STATIONS.map((s, i) => <Station key={i} s={s} progress={p} />)}

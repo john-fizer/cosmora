@@ -1,10 +1,15 @@
 import { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import type { ChartData } from "@/lib/astrology/types";
-import type { ReportType, ReportSection } from "@/lib/reports/types";
+import type { ReportType, ReportSection, SynthesisSource } from "@/lib/reports/types";
 import { PLANET_SYMBOLS } from "@/lib/astrology/types";
 import { getPersonaById } from "@/lib/oracle/personas";
 import { buildVedicContext, buildDegreeContext } from "@/lib/astrology/sidereal";
+import { buildZRData, describeZRChain, ZR_MAX_LEVEL } from "@/lib/astrology/zodiacalReleasing";
+import { buildTransitForecast, describeForecast } from "@/lib/astrology/transitForecast";
+import { calculateTransits } from "@/lib/astrology/transits";
+import { computeSynastry, computeScore, computeComposite, getRelationshipArchetype, describeSynastry, describeComposite } from "@/lib/astrology/synastry";
+import { detectPressure, describePressure } from "@/lib/astrology/pressureWindows";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -51,6 +56,10 @@ function getTechniques(
   chartContext: string,
   birthYear: number,
   dual?: { vedicContext: string; degreeContext: string },
+  zr?: { fortuneDesc: string; spiritDesc: string; fortuneLoosening: boolean; spiritLoosening: boolean; deepestLevel: number },
+  transits?: { majorDesc: string; currentDesc: string; ingressDesc: string },
+  compat?: { partnerContext: string; synastryDesc: string; compositeDesc: string; archetype: string; score: number; partnerName: string },
+  synthesis?: { sources: SynthesisSource[]; parts: Partial<Record<SynthesisSource, string>> },
 ): Technique[] {
   const base = `You are Cosmora, the world's most advanced astrological intelligence. You analyze charts with precision, referencing specific placements. Write in flowing paragraphs — authoritative, specific, never generic. No bullet points. Reference exact degrees and placements. Plain prose only — no markdown (**bold**, *asterisks*); emphasize through word choice, not symbols.\n\nNATIVE'S CHART:\n${chartContext}`;
 
@@ -59,6 +68,10 @@ function getTechniques(
 
   const map: Record<ReportType, Technique[]> = {
     dual_zodiac: [], // built dynamically below — requires sidereal + degree contexts
+    zodiacal_releasing: [], // built dynamically below — requires the computed ZR chains
+    transit_forecast: [], // built dynamically below — requires the computed forecast scan
+    compatibility: [], // built dynamically below — requires the partner's chart
+    full_synthesis: [], // built dynamically below — requires the selected sources
     natal_delineation: [
       { id: "solar_identity", label: "Sun Sign & House", areaOfLife: "Identity", prompt: `${base}\n\nWrite a precise, deeply specific analysis of this native's Sun — its sign, degree, house position, aspects, and dignity. What is the core solar mission? How does this placement shape their fundamental identity and life purpose? 3–4 paragraphs. Be specific to the exact placements you see.` },
       { id: "lunar_emotional", label: "Moon & Emotional Body", areaOfLife: "Emotions", prompt: `${base}\n\nAnalyze the native's Moon in depth — sign, house, aspects, dignity, phase if discernible. What is their emotional default? What do they need to feel safe? How do their instincts operate? Where do they retreat? 3–4 paragraphs.` },
@@ -138,6 +151,105 @@ function getTechniques(
         prompt: `${base}\n\n${dual.vedicContext}\n\nAnalyze the nakshatra placements in depth — especially the Moon's nakshatra (the janma nakshatra, foundation of Vedic personality analysis), the Ascendant's nakshatra, and the Sun's. For each: the deity, symbol, and nature; what the pada (quarter) refines via its navamsa sign; and what the nakshatra lord's own placement adds. 3–4 paragraphs.`,
       },
     ];
+  }
+
+  // Zodiacal releasing runs the two lots as independent cascades (Fortune = body,
+  // circumstance, livelihood; Spirit = mind, action, reputation — they are NOT the
+  // same claim read twice, so no convergence phase, just a closing synthesis).
+  if (type === "zodiacal_releasing" && zr) {
+    const looseningNote = zr.fortuneLoosening || zr.spiritLoosening
+      ? `A Loosening of Bonds is active right now in ${[zr.fortuneLoosening && "Fortune", zr.spiritLoosening && "Spirit"].filter(Boolean).join(" and ")}.`
+      : "No Loosening of Bonds is active in either lot at present.";
+
+    return [
+      {
+        id: "zr_fortune", label: "Fortune Cascade", areaOfLife: "Circumstance & Body",
+        prompt: `${base}\n\n${zr.fortuneDesc}\n\nThe Lot of Fortune's Zodiacal Releasing governs circumstance, the body, livelihood, and material fortune — what happens TO this native. Read the nested chain above as a single continuous story: what the L1 major chapter has been building, how the current sub-period refines it, and what practically is shifting in their circumstances right now. Be specific to the exact signs, lords, and derived houses shown — never invent a date or sign not listed. 3–4 paragraphs.`,
+      },
+      {
+        id: "zr_spirit", label: "Spirit Cascade", areaOfLife: "Action & Reputation",
+        prompt: `${base}\n\n${zr.spiritDesc}\n\nThe Lot of Spirit's Zodiacal Releasing governs action, initiative, and reputation — what this native DOES and is seen doing. Read the nested chain above as a single continuous story: the overarching chapter of action this life is in, how the current sub-period refines it, and what is practically shifting in their choices and visibility right now. Be specific to the exact signs, lords, and derived houses shown — never invent a date or sign not listed. 3–4 paragraphs.`,
+      },
+      {
+        id: "zr_loosening", label: "Loosening of Bonds", areaOfLife: "Major Transitions",
+        prompt: `${base}\n\n${zr.fortuneDesc}\n\n${zr.spiritDesc}\n\n${looseningNote}\n\nIn Hellenistic Zodiacal Releasing, a Loosening of Bonds occurs when an L2 sub-period falls in the 7th sign (opposition) from its L1 major period — the classical marker of a major life restructuring, where old obligations and identities release and a fundamental repositioning is underway. Explain precisely whether this native is inside one right now in either lot, and if not, state plainly when (which L1 chapter, roughly how far off) the next one in either lot will arrive based on the chain shown. Do not manufacture urgency that isn't in the data. 2–3 paragraphs.`,
+      },
+      {
+        id: "zr_fine_timing", label: `Fine-Grain Window (L${zr.deepestLevel})`, areaOfLife: "Current Window",
+        prompt: `${base}\n\n${zr.fortuneDesc}\n\nThe deepest period listed in the Fortune chain above (L${zr.deepestLevel}) is the finest-resolution window Zodiacal Releasing can compute for this native right now — potentially a matter of weeks or months rather than years. Interpret specifically what that smallest window means: what it reveals about the immediate day-to-day texture of this period, nested inside everything the broader chapters already established. If the chain doesn't reach L${ZR_MAX_LEVEL}, say what resolution it does reach and interpret that. 2–3 paragraphs.`,
+      },
+      {
+        id: "zr_synthesis", label: "The Nested Story", areaOfLife: "Synthesis",
+        prompt: `${base}\n\n${zr.fortuneDesc}\n\n${zr.spiritDesc}\n\n${looseningNote}\n\nSynthesize both cascades into one picture. Where do Fortune (circumstance) and Spirit (action) point toward the same underlying chapter, and where do they describe two different layers of the same life right now — one happening TO this native, the other being DONE by them? Close with the single most useful sentence about what time it is in this person's life. 2–3 paragraphs.`,
+      },
+    ];
+  }
+
+  if (type === "transit_forecast" && transits) {
+    return [
+      {
+        id: "tf_major", label: "Major Activations", areaOfLife: "The Big Theme",
+        prompt: `${base}\n\nMAJOR-SIGNIFICANCE EVENTS IN THE NEXT THREE MONTHS:\n  ${transits.majorDesc}\n\nThese are the outer-planet-to-Sun/Moon activations and retrograde stations the sky actually makes to this native's chart over the window — not generic forecasting, the real scanned dates. Read them as one connected story: what is the single biggest theme of this period, and how do these specific events build on or complicate each other in sequence? Be specific to the dates and houses shown — never invent an event not listed. If the list is short or empty, say plainly that this is a quiet period rather than manufacturing drama. 3–4 paragraphs.`,
+      },
+      {
+        id: "tf_current", label: "Active Right Now", areaOfLife: "This Week",
+        prompt: `${base}\n\nEXACT AND APPLYING ASPECTS TODAY:\n  ${transits.currentDesc}\n\nOf everything listed, which aspects are closest to exact or already applying right now, and what do they concretely feel like day to day this week? Ground every claim in the specific planet, house, and orb shown. 2–3 paragraphs.`,
+      },
+      {
+        id: "tf_ingresses", label: "Sign Changes Ahead", areaOfLife: "What Shifts",
+        prompt: `${base}\n\nUPCOMING SIGN CHANGES AND STATIONS:\n  ${transits.ingressDesc}\n\nFor each ingress or station listed, explain concretely what changes once it happens — not generic "X enters Y" copy, but what practically shifts for this native given their own chart. Prioritize the ones happening soonest. 2–3 paragraphs.`,
+      },
+      {
+        id: "tf_synthesis", label: "The Next Three Months", areaOfLife: "Synthesis",
+        prompt: `${base}\n\nMAJOR EVENTS:\n  ${transits.majorDesc}\n\nACTIVE NOW:\n  ${transits.currentDesc}\n\nAHEAD:\n  ${transits.ingressDesc}\n\nSynthesize the whole window into one timeline: what matters most, roughly when, and in what order. Close with the single most useful piece of practical guidance for the next three months. 2–3 paragraphs.`,
+      },
+    ];
+  }
+
+  if (type === "compatibility" && compat) {
+    return [
+      {
+        id: "compat_core", label: "Core Bond", areaOfLife: "What Draws Them Together",
+        prompt: `${base}\n\nPARTNER'S CHART (${compat.partnerName}):\n${compat.partnerContext}\n\nSTRONGEST SYNASTRY ASPECTS (this native's planet listed first):\n  ${compat.synastryDesc}\n\nCompatibility score: ${compat.score}/100. Relationship archetype: ${compat.archetype}.\n\nRead the harmonious, bonding aspects in this list — what draws these two people together, what feels easy, where the natural chemistry lives. Name the 2–3 strongest contacts specifically (which planet of this native's to which of ${compat.partnerName}'s) and what each one concretely means. Never invent an aspect not listed. 3–4 paragraphs.`,
+      },
+      {
+        id: "compat_friction", label: "Friction & Growth Edges", areaOfLife: "What Takes Work",
+        prompt: `${base}\n\nPARTNER'S CHART (${compat.partnerName}):\n${compat.partnerContext}\n\nSTRONGEST SYNASTRY ASPECTS:\n  ${compat.synastryDesc}\n\nRead the tense, hard aspects (squares, oppositions, harsh conjunctions) in this list — where friction naturally arises and what it's actually about, not vague warnings. For each major tension named, say what it asks of both people to work with it productively rather than be ruled by it. Never invent an aspect not listed; if the list is mostly harmonious, say so plainly rather than manufacturing conflict. 3 paragraphs.`,
+      },
+      {
+        id: "compat_composite", label: "The Relationship Itself", areaOfLife: "The Third Entity",
+        prompt: `${base}\n\nCOMPOSITE CHART (the relationship's own midpoint chart):\n  ${compat.compositeDesc}\n\nIn relationship astrology, the composite chart describes the relationship as its own entity, separate from either person — what this partnership is FOR, how it behaves in the world. Read the composite Sun, Moon, and any other striking placements above as describing the relationship's own identity and purpose. Be specific to the signs/houses shown. 2–3 paragraphs.`,
+      },
+      {
+        id: "compat_synthesis", label: "The Relationship Story", areaOfLife: "Synthesis",
+        prompt: `${base}\n\nPARTNER'S CHART (${compat.partnerName}):\n${compat.partnerContext}\n\nSYNASTRY ASPECTS:\n  ${compat.synastryDesc}\n\nScore: ${compat.score}/100 · Archetype: ${compat.archetype}\n\nSynthesize the whole picture into one story: what kind of connection this is, its real strengths, its real edges, and the single most useful thing both people should understand about why this relationship feels the way it does. 2–3 paragraphs.`,
+      },
+    ];
+  }
+
+  if (type === "full_synthesis" && synthesis) {
+    const SOURCE_LABEL: Record<SynthesisSource, string> = {
+      releasing: "Zodiacal Releasing", transits: "Transit Forecast",
+      profection: "Annual Profection", pressure: "Pressure Convergence",
+    };
+    const SOURCE_AREA: Record<SynthesisSource, string> = {
+      releasing: "Nested Chapter", transits: "Sky Right Now",
+      profection: "This Year", pressure: "Convergence",
+    };
+
+    const included = synthesis.sources.filter(s => synthesis.parts[s]);
+    const sourceTechniques: Technique[] = included.map(s => ({
+      id: `fs_${s}`, label: SOURCE_LABEL[s], areaOfLife: SOURCE_AREA[s],
+      prompt: `${base}\n\n${SOURCE_LABEL[s].toUpperCase()}:\n  ${synthesis.parts[s]}\n\nRead this technique's real computed data above on its own terms — what it specifically says about this native's timing right now. Be specific to the exact values shown; never invent a date, sign, or signal not listed. This is one voice in a larger combined reading, so stay focused on what only this technique reveals. 2–3 paragraphs.`,
+    }));
+
+    const allDesc = included.map(s => `${SOURCE_LABEL[s].toUpperCase()}:\n  ${synthesis.parts[s]}`).join("\n\n");
+    sourceTechniques.push({
+      id: "fs_synthesis", label: "Synthesis", areaOfLife: "The Combined Picture",
+      prompt: `${base}\n\n${allDesc}\n\nThese are ${included.length} independent timing techniques computed for the same native, same moment. Synthesize them into ONE combined picture: where do they point toward the same underlying chapter of life, and where does each add a layer the others don't? Close with the single most useful sentence about what time it is in this person's life, drawing on everything above. 3 paragraphs.`,
+    });
+
+    return sourceTechniques;
   }
 
   return map[type] ?? [];
@@ -325,11 +437,20 @@ export async function POST(req: NextRequest) {
       profileId: string;
       reportId: string;
       persona?: string;
+      partnerChart?: ChartData;
+      partnerName?: string;
+      sources?: SynthesisSource[];
     };
 
-    const { reportType, chart, birthDatetime, persona = "oracle" } = body;
+    const { reportType, chart, birthDatetime, persona = "oracle", partnerChart, partnerName, sources } = body;
     if (!reportType || !chart) {
       return new Response(JSON.stringify({ error: "reportType and chart required" }), { status: 400 });
+    }
+    if (reportType === "compatibility" && !partnerChart) {
+      return new Response(JSON.stringify({ error: "partnerChart required for compatibility reports" }), { status: 400 });
+    }
+    if (reportType === "full_synthesis" && !sources?.length) {
+      return new Response(JSON.stringify({ error: "at least one source required for full synthesis reports" }), { status: 400 });
     }
 
     const chartContext = buildChartContext(chart);
@@ -340,7 +461,91 @@ export async function POST(req: NextRequest) {
       ? { vedicContext: buildVedicContext(chart, birthDatetime), degreeContext: buildDegreeContext(chart) }
       : undefined;
 
-    const techniques = getTechniques(reportType, chartContext, birthYear, dual);
+    // Zodiacal releasing — compute both lots' nested chains once, server-side, so the
+    // technique agents interpret real dates/signs instead of inventing them.
+    const zr = reportType === "zodiacal_releasing"
+      ? (() => {
+          const fortune = buildZRData(chart.lotOfFortune, birthDatetime);
+          const spirit = buildZRData(chart.lotOfSpirit, birthDatetime);
+          return {
+            fortuneDesc: describeZRChain(fortune.currentChain, "Fortune"),
+            spiritDesc: describeZRChain(spirit.currentChain, "Spirit"),
+            fortuneLoosening: fortune.currentL2?.isLooseningOfBonds ?? false,
+            spiritLoosening: spirit.currentL2?.isLooseningOfBonds ?? false,
+            deepestLevel: fortune.currentChain.length,
+          };
+        })()
+      : undefined;
+
+    // Transit forecast — scan the next 3 months once, server-side, plus the live
+    // snapshot for "active right now", so the technique agents never invent dates.
+    const transits = reportType === "transit_forecast"
+      ? (() => {
+          const events = buildTransitForecast(chart, 3);
+          const major = events.filter(e => e.significance === "major");
+          const ingressesAndStations = events.filter(e => e.type === "ingress" || e.type === "station").slice(0, 10);
+          const live = calculateTransits(chart, new Date());
+          const currentDesc = live.aspects.slice(0, 10).map(a =>
+            `${a.transitPlanet}${a.transitRetrograde ? " Rx" : ""} ${a.type} natal ${a.natalPlanet} H${a.natalHouse} (orb ${a.orb}°${a.exact ? " exact" : a.applying ? " applying" : " separating"})`
+          ).join("\n  ") || "No tight aspects active today.";
+          return {
+            majorDesc: describeForecast(major, 15),
+            currentDesc,
+            ingressDesc: describeForecast(ingressesAndStations, 10),
+          };
+        })()
+      : undefined;
+
+    // Compatibility — compute the real synastry/composite once, server-side, so the
+    // technique agents read exact aspects instead of inventing a connection.
+    const compat = reportType === "compatibility" && partnerChart
+      ? (() => {
+          const aspects = computeSynastry(chart, partnerChart);
+          const score = computeScore(aspects);
+          const archetype = getRelationshipArchetype(aspects);
+          const composite = computeComposite(chart, partnerChart);
+          return {
+            partnerContext: buildChartContext(partnerChart),
+            synastryDesc: describeSynastry(aspects, 15),
+            compositeDesc: describeComposite(composite),
+            archetype: archetype.name,
+            score: score.total,
+            partnerName: partnerName ?? "the partner",
+          };
+        })()
+      : undefined;
+
+    // Full synthesis — compute whichever sources were requested once, server-side,
+    // reusing each technique's own real engine rather than re-deriving anything.
+    const synthesis = reportType === "full_synthesis" && sources?.length
+      ? (() => {
+          const parts: Partial<Record<SynthesisSource, string>> = {};
+          if (sources.includes("releasing")) {
+            const fortune = buildZRData(chart.lotOfFortune, birthDatetime);
+            const spirit = buildZRData(chart.lotOfSpirit, birthDatetime);
+            parts.releasing = `${describeZRChain(fortune.currentChain, "Fortune")}\n  ${describeZRChain(spirit.currentChain, "Spirit")}`;
+          }
+          if (sources.includes("transits")) {
+            const events = buildTransitForecast(chart, 3);
+            const major = events.filter(e => e.significance === "major");
+            const live = calculateTransits(chart, new Date());
+            const currentDesc = live.aspects.slice(0, 6).map(a =>
+              `${a.transitPlanet}${a.transitRetrograde ? " Rx" : ""} ${a.type} natal ${a.natalPlanet} H${a.natalHouse} (orb ${a.orb}°)`
+            ).join("\n  ") || "No tight aspects active today.";
+            parts.transits = `ACTIVE NOW:\n  ${currentDesc}\n\nMAJOR EVENTS AHEAD:\n  ${describeForecast(major, 10)}`;
+          }
+          if (sources.includes("profection")) {
+            const p = chart.annualProfection;
+            parts.profection = `Age ${p.age} — House ${p.activatedHouse} (${p.activatedSign}) activated this year. Lord of Year: ${p.lordOfYear}.`;
+          }
+          if (sources.includes("pressure")) {
+            parts.pressure = describePressure(detectPressure(chart, birthDatetime, new Date()));
+          }
+          return { sources, parts };
+        })()
+      : undefined;
+
+    const techniques = getTechniques(reportType, chartContext, birthYear, dual, zr, transits, compat, synthesis);
 
     if (!techniques.length) {
       return new Response(JSON.stringify({ error: "Unknown report type" }), { status: 400 });

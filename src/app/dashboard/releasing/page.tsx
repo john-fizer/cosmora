@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { DashboardBg } from "@/components/ui/DashboardBg";
@@ -14,9 +14,10 @@ import type { StoredProfile } from "@/lib/storage";
 import { useClientSnapshot } from "@/lib/useClientSnapshot";
 import {
   buildZRData, buildL1Periods, buildSubPeriods, signHouseDiff,
-  ZR_MINOR_YEARS, ZR_TOTAL_YEARS,
+  ZR_MAX_LEVEL, ZR_HOUSE_THEMES,
 } from "@/lib/astrology/zodiacalReleasing";
 import type { ZRPeriod } from "@/lib/astrology/zodiacalReleasing";
+import { FullReportCard } from "@/components/reports/FullReportCard";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -32,15 +33,11 @@ const PLANET_COLORS: Partial<Record<PlanetName, string>> = {
   Uranus: "#06b6d4", Neptune: "#3b82f6", Pluto: "#7B6FD4",
 };
 
-const HOUSE_THEMES: Record<number, string> = {
-  1: "Identity & Self", 2: "Resources & Values", 3: "Mind & Communication",
-  4: "Home & Roots", 5: "Creativity & Pleasure", 6: "Health & Service",
-  7: "Partnership & Other", 8: "Transformation & Depth", 9: "Wisdom & Expansion",
-  10: "Career & Legacy", 11: "Community & Vision", 12: "Shadow & Retreat",
-};
-
-const LEVEL_COLORS = ["#06b6d4", "#a78bfa", "#f472b6", "#f59e0b"];
-const LEVEL_LABELS = ["L1 · MAJOR PERIOD", "L2 · MINOR PERIOD", "L3 · SUB-MINOR", "L4 · FINE GRAIN"];
+const LEVEL_COLORS = ["#06b6d4", "#a78bfa", "#f472b6", "#f59e0b", "#34d399", "#818cf8", "#fb7185", "#facc15"];
+const LEVEL_LABELS = [
+  "L1 · MAJOR PERIOD", "L2 · MINOR PERIOD", "L3 · SUB-PERIOD", "L4 · SUB-SUB-PERIOD",
+  "L5 · FINE WINDOW", "L6 · FINER WINDOW", "L7 · PRECISE WINDOW", "L8 · EXACT WINDOW",
+];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -66,29 +63,11 @@ function fmtDuration(years: number): string {
   return `${days} days`;
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-function LevelPill({ level, active, onClick }: {
-  level: 1 | 2 | 3 | 4;
-  active: boolean;
-  onClick: () => void;
-}) {
-  const color = LEVEL_COLORS[level - 1];
-  return (
-    <motion.button
-      whileTap={{ scale: 0.95 }}
-      onClick={onClick}
-      className="flex-shrink-0 px-3 py-1.5 rounded-lg text-[13px] font-bold tracking-widest cursor-pointer transition-all duration-200"
-      style={{
-        background: active ? `${color}25` : "transparent",
-        color: active ? color : "#334155",
-        border: active ? `1px solid ${color}50` : "1px solid rgba(255,255,255,0.05)",
-      }}
-    >
-      L{level}
-    </motion.button>
-  );
+function periodKey(p: ZRPeriod): string {
+  return `${p.level}-${p.sign}-${p.start.getTime()}`;
 }
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 function LooseningBadge() {
   return (
@@ -103,16 +82,11 @@ function LooseningBadge() {
   );
 }
 
-function CurrentCascade({ l1, l2, l3, l4 }: {
-  l1?: ZRPeriod;
-  l2?: ZRPeriod;
-  l3?: ZRPeriod;
-  l4?: ZRPeriod;
-}) {
-  const periods = [l1, l2, l3, l4].filter(Boolean) as ZRPeriod[];
+function CurrentCascade({ chain }: { chain: ZRPeriod[] }) {
+  if (!chain.length) return null;
   return (
     <div className="flex flex-wrap gap-2 items-center">
-      {periods.map((p, i) => {
+      {chain.map((p, i) => {
         const color = SIGN_COLORS[p.sign];
         const levelColor = LEVEL_COLORS[p.level - 1];
         return (
@@ -120,10 +94,7 @@ function CurrentCascade({ l1, l2, l3, l4 }: {
             {i > 0 && <span className="text-[13px]" style={{ color: "#1e293b" }}>→</span>}
             <div
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl"
-              style={{
-                background: `${color}10`,
-                border: `1px solid ${color}30`,
-              }}
+              style={{ background: `${color}10`, border: `1px solid ${color}30` }}
             >
               <span className="text-[11px] font-bold tracking-widest" style={{ color: levelColor }}>L{p.level}</span>
               <span className="text-base" style={{ color }}>{SIGN_SYMBOLS[p.sign]}</span>
@@ -137,159 +108,111 @@ function CurrentCascade({ l1, l2, l3, l4 }: {
   );
 }
 
-function PeriodBar({ periods, onHover }: { periods: ZRPeriod[]; onHover?: (p: ZRPeriod | null) => void }) {
-  if (!periods.length) return null;
-  const totalMs = periods.reduce((s, p) => s + (p.end.getTime() - p.start.getTime()), 0);
+// ─── Tree table ───────────────────────────────────────────────────────────────
 
-  return (
-    <div className="flex h-3 rounded-full overflow-hidden w-full" style={{ gap: 1 }}>
-      {periods.map((p, i) => {
-        const w = ((p.end.getTime() - p.start.getTime()) / totalMs) * 100;
-        const color = SIGN_COLORS[p.sign];
-        return (
-          <motion.div
-            key={i}
-            className="h-full cursor-pointer relative"
-            style={{
-              width: `${w}%`,
-              background: p.isCurrent ? color : p.isPast ? `${color}30` : `${color}50`,
-              boxShadow: p.isCurrent ? `0 0 8px ${color}80` : "none",
-              flexShrink: 0,
-            }}
-            whileHover={{ scaleY: 1.5 }}
-            onMouseEnter={() => onHover?.(p)}
-            onMouseLeave={() => onHover?.(null)}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
-function PeriodCard({
-  period,
-  parentSign,
-  isSelected,
-  onClick,
-  profectionSign,
+function ZRTreeRow({
+  period, chain, expanded, onToggle, onSelect, isSelected, profectionSign, registerRef,
 }: {
   period: ZRPeriod;
-  parentSign?: ZodiacSign;
-  isSelected: boolean;
-  onClick: () => void;
+  chain: ZRPeriod[];
+  expanded: Set<string>;
+  onToggle: (key: string) => void;
+  onSelect: (period: ZRPeriod, chain: ZRPeriod[]) => void;
+  isSelected: (period: ZRPeriod) => boolean;
   profectionSign?: ZodiacSign;
+  registerRef: (key: string, el: HTMLDivElement | null) => void;
 }) {
+  const key = periodKey(period);
+  const isOpen = expanded.has(key);
+  const canExpand = period.level < ZR_MAX_LEVEL;
+  const children = useMemo(
+    () => (isOpen && canExpand ? buildSubPeriods(period, period.level + 1) : []),
+    [isOpen, canExpand, period]
+  );
+
   const color = SIGN_COLORS[period.sign];
+  const levelColor = LEVEL_COLORS[period.level - 1];
   const lord = TRADITIONAL_RULERS[period.sign];
   const lordColor = PLANET_COLORS[lord] ?? "#94a3b8";
-  const profectionHouse = profectionSign ? signHouseDiff(profectionSign, period.sign) : null;
-  const profectionColor = profectionSign ? SIGN_COLORS[profectionSign] : "#f59e0b";
+  const selected = isSelected(period);
+  const profHouse = profectionSign ? signHouseDiff(profectionSign, period.sign) : null;
 
   return (
-    <motion.button
-      whileHover={{ x: 2 }}
-      whileTap={{ scale: 0.99 }}
-      onClick={onClick}
-      className="w-full text-left flex items-start gap-3 px-3 py-3 rounded-xl cursor-pointer transition-all duration-200"
-      style={{
-        background: isSelected
-          ? `${color}12`
-          : period.isCurrent
-          ? `${color}08`
-          : "rgba(255,255,255,0.02)",
-        border: isSelected
-          ? `1px solid ${color}35`
-          : period.isCurrent
-          ? `1px solid ${color}20`
-          : "1px solid rgba(255,255,255,0.04)",
-        borderLeft: period.isCurrent
-          ? `3px solid ${color}`
-          : period.isLooseningOfBonds
-          ? "3px solid #f59e0b"
-          : `3px solid ${color}30`,
-      }}
-    >
-      {/* Current pulse */}
-      {period.isCurrent && (
-        <motion.div
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0"
-          style={{ background: color, boxShadow: `0 0 6px ${color}` }}
-        />
-      )}
-      {!period.isCurrent && (
-        <div className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0"
-          style={{ background: period.isPast ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.12)" }}
-        />
-      )}
+    <>
+      <motion.div
+        ref={el => registerRef(key, el)}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        onClick={() => onSelect(period, chain)}
+        className="w-full text-left flex items-center gap-2 py-2 pr-3 rounded-lg cursor-pointer transition-colors"
+        style={{
+          paddingLeft: 8 + (period.level - 1) * 20,
+          background: selected ? `${color}14` : period.isCurrent ? `${color}0A` : "transparent",
+          borderLeft: period.isCurrent ? `2px solid ${color}` : period.isLooseningOfBonds ? "2px solid #f59e0b" : "2px solid transparent",
+        }}
+      >
+        <button
+          onClick={(e) => { e.stopPropagation(); if (canExpand) onToggle(key); }}
+          className="flex-shrink-0 w-5 h-5 flex items-center justify-center rounded cursor-pointer text-[11px]"
+          style={{ color: canExpand ? "#64748b" : "transparent", background: canExpand ? "rgba(255,255,255,0.04)" : "transparent" }}
+        >
+          {canExpand ? (isOpen ? "▾" : "▸") : ""}
+        </button>
 
-      {/* Sign glyph */}
-      <span className="text-lg flex-shrink-0 mt-0.5" style={{ color }}>{SIGN_SYMBOLS[period.sign]}</span>
+        <span className="text-[10px] font-bold tracking-wider flex-shrink-0 w-6" style={{ color: levelColor }}>L{period.level}</span>
+        <span className="text-base flex-shrink-0" style={{ color }}>{SIGN_SYMBOLS[period.sign]}</span>
+        <span className="text-[13px] font-bold flex-shrink-0 w-20" style={{ color: period.isCurrent ? color : "#94a3b8" }}>{period.sign}</span>
 
-      {/* Main content */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[14px] font-bold" style={{ color: period.isCurrent ? color : "#94a3b8" }}>
-            {period.sign}
-          </span>
+        <span className="text-[12px] flex-shrink-0 hidden sm:inline" style={{ color: "#475569" }}>
+          {fmtDate(period.start)} → {fmtDate(period.end)}
+        </span>
+        <span className="text-[12px] flex-shrink-0" style={{ color: "#334155" }}>· {fmtDuration(period.years)}</span>
+
+        <span className="text-[12px] truncate flex-1 hidden md:inline" style={{ color: "#334155" }}>
+          {period.level > 1 ? ZR_HOUSE_THEMES[period.derivedHouse] : ""}
+        </span>
+
+        <span className="flex-shrink-0 flex items-center gap-1 ml-auto">
           {period.isCurrent && (
-            <span className="text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded"
-              style={{ background: `${color}20`, color }}>
-              NOW
-            </span>
+            <span className="text-[10px] font-bold tracking-widest px-1.5 py-0.5 rounded" style={{ background: `${color}20`, color }}>NOW</span>
           )}
           {period.isLooseningOfBonds && <LooseningBadge />}
-          {parentSign && !period.isLooseningOfBonds && (
-            <span className="text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded"
-              style={{ background: "rgba(255,255,255,0.05)", color: "#475569" }}>
-              H{period.derivedHouse} ZR
-            </span>
-          )}
-          {/* Profection-relative house (derivative relativity) */}
-          {profectionHouse && profectionSign && (
+          {profHouse && profectionSign && (
             <span
-              className="text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded"
-              style={{ background: `${profectionColor}15`, color: profectionColor, border: `1px solid ${profectionColor}30` }}
-              title={`H${profectionHouse} relative to this year's profection sign (${profectionSign})`}
+              className="text-[10px] font-bold tracking-widest px-1.5 py-0.5 rounded hidden sm:inline"
+              style={{ background: `${SIGN_COLORS[profectionSign]}15`, color: SIGN_COLORS[profectionSign] }}
+              title={`H${profHouse} from this year's profection sign`}
             >
-              H{profectionHouse} {SIGN_SYMBOLS[profectionSign]}
+              H{profHouse}
             </span>
           )}
-        </div>
-        <p className="text-[13px] mt-0.5" style={{ color: "#475569" }}>
-          {fmtDate(period.start)} → {fmtDate(period.end)} · {fmtDuration(period.years)}
-        </p>
-        {parentSign && (
-          <p className="text-[13px] mt-0.5" style={{ color: "#334155" }}>
-            {HOUSE_THEMES[period.derivedHouse] ?? ""}
-            {profectionHouse && profectionSign && (
-              <span style={{ color: "#1e293b" }}>
-                {" "}· <span style={{ color: profectionColor }}>{HOUSE_THEMES[profectionHouse]}</span> this year
-              </span>
-            )}
-          </p>
-        )}
-      </div>
+          <span className="text-[12px] w-6 text-right" style={{ color: lordColor }}>{PLANET_SYMBOLS[lord]}</span>
+        </span>
+      </motion.div>
 
-      {/* Lord */}
-      <div className="flex-shrink-0 text-right">
-        <span className="text-sm" style={{ color: lordColor }}>{PLANET_SYMBOLS[lord]}</span>
-        <p className="text-[11px] font-bold" style={{ color: lordColor }}>{lord}</p>
-      </div>
-    </motion.button>
+      <AnimatePresence initial={false}>
+        {isOpen && children.map((c) => (
+          <ZRTreeRow
+            key={periodKey(c)}
+            period={c}
+            chain={[...chain, c]}
+            expanded={expanded}
+            onToggle={onToggle}
+            onSelect={onSelect}
+            isSelected={isSelected}
+            profectionSign={profectionSign}
+            registerRef={registerRef}
+          />
+        ))}
+      </AnimatePresence>
+    </>
   );
 }
 
 // ─── Reading Panel ────────────────────────────────────────────────────────────
 
 function ReadingPanel({
-  period,
-  chain,
-  chart,
-  lot,
-  onClose,
-  profectionSign,
+  period, chain, chart, lot, onClose, profectionSign,
 }: {
   period: ZRPeriod;
   chain: ZRPeriod[];
@@ -316,7 +239,7 @@ function ReadingPanel({
 
     const chainDesc = chain.map((p, i) => {
       const lines = [`L${p.level} ${p.sign} (${fmtDate(p.start)} – ${fmtDate(p.end)})`];
-      if (i > 0) lines.push(`H${p.derivedHouse} of L${chain[i - 1].level}: ${HOUSE_THEMES[p.derivedHouse]}`);
+      if (i > 0) lines.push(`H${p.derivedHouse} of L${chain[i - 1].level}: ${ZR_HOUSE_THEMES[p.derivedHouse]}`);
       if (p.isLooseningOfBonds) lines.push("⚠ LOOSENING OF BONDS — L2 in opposition to L1");
       return lines.join(" · ");
     }).join("\n  ");
@@ -333,8 +256,8 @@ function ReadingPanel({
       ? `\nDERIVATIVE RELATIVITY (PROFECTION OVERLAY):
 Current profection year: Age ${chart.annualProfection.age}, H${chart.annualProfection.activatedHouse} (${profectionSign}) activated — lord of year: ${chart.annualProfection.lordOfYear}
 ${period.sign} is H${profHouse} counted from this year's profection sign (${profectionSign})
-Profection-relative theme: ${HOUSE_THEMES[profHouse]}
-This means: the ZR period's general themes are filtered THIS year through a ${HOUSE_THEMES[profHouse].toLowerCase()} lens because the profection wheel has placed ${profectionSign} as the current frame of reference. What is permanently true about this ZR period shifts in emphasis to "${HOUSE_THEMES[profHouse]}" this year specifically.`
+Profection-relative theme: ${ZR_HOUSE_THEMES[profHouse]}
+This means: the ZR period's general themes are filtered THIS year through a ${ZR_HOUSE_THEMES[profHouse].toLowerCase()} lens because the profection wheel has placed ${profectionSign} as the current frame of reference. What is permanently true about this ZR period shifts in emphasis to "${ZR_HOUSE_THEMES[profHouse]}" this year specifically.`
       : "";
 
     const prompt = `You are a traditional Hellenistic astrologer interpreting a Zodiacal Releasing chart.
@@ -349,12 +272,12 @@ NATAL CONTEXT:
 - Sect: ${chart.sect}
 
 READING REQUESTED FOR: L${period.level} ${period.sign} period
-${period.level > 1 ? `ZR derived house: H${period.derivedHouse} of parent (${HOUSE_THEMES[period.derivedHouse]}).` : ""}
-${profHouse && profectionSign ? `Profection-relative house: H${profHouse} from ${profectionSign} (${HOUSE_THEMES[profHouse]}) — THIS YEAR'S specific lens.` : ""}
+${period.level > 1 ? `ZR derived house: H${period.derivedHouse} of parent (${ZR_HOUSE_THEMES[period.derivedHouse]}).` : ""}
+${profHouse && profectionSign ? `Profection-relative house: H${profHouse} from ${profectionSign} (${ZR_HOUSE_THEMES[profHouse]}) — THIS YEAR'S specific lens.` : ""}
 
 Interpret this timing window in 3 focused paragraphs:
 1. What life area and themes this period activates based on its sign, derived house position, and ${lord} as its lord — be specific to the natal context
-2. ${profHouse && profectionSign ? `How the DERIVATIVE RELATIVITY shifts the emphasis: the ZR period reads as "${HOUSE_THEMES[period.derivedHouse]}" generally, but the profection wheel this year places the focus on "${HOUSE_THEMES[profHouse]}" — explain how these two lenses compound` : `What the ${period.level > 1 ? `nested quality (H${period.derivedHouse} of the ${chain[period.level - 2]?.sign ?? "parent"} chapter)` : "overarching chapter theme"} means for this person's lived experience right now`}
+2. ${profHouse && profectionSign ? `How the DERIVATIVE RELATIVITY shifts the emphasis: the ZR period reads as "${ZR_HOUSE_THEMES[period.derivedHouse]}" generally, but the profection wheel this year places the focus on "${ZR_HOUSE_THEMES[profHouse]}" — explain how these two lenses compound` : `What the ${period.level > 1 ? `nested quality (H${period.derivedHouse} of the ${chain[period.level - 2]?.sign ?? "parent"} chapter)` : "overarching chapter theme"} means for this person's lived experience right now`}
 3. What to lean into, what to watch for, and ${period.isLooseningOfBonds ? "what specifically is being released or restructured in this loosening of bonds period" : "one key actionable insight for this window"}
 
 Under 280 words. Be specific to the placements shown.`;
@@ -387,16 +310,9 @@ Under 280 words. Be specific to the placements shown.`;
       exit={{ opacity: 0, x: 24 }}
       transition={{ duration: 0.3 }}
       className="flex flex-col h-full"
-      style={{
-        background: "rgba(4,4,20,0.97)",
-        borderLeft: "1px solid rgba(255,255,255,0.06)",
-      }}
+      style={{ background: "rgba(4,4,20,0.97)", borderLeft: "1px solid rgba(255,255,255,0.06)" }}
     >
-      {/* Panel header */}
-      <div
-        className="flex-shrink-0 flex items-center justify-between px-4 py-3"
-        style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
-      >
+      <div className="flex-shrink-0 flex items-center justify-between px-4 py-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="flex items-center gap-2">
           <span className="text-xl" style={{ color }}>{SIGN_SYMBOLS[period.sign]}</span>
           <div>
@@ -406,28 +322,16 @@ Under 280 words. Be specific to the placements shown.`;
             <p className="text-[15px] font-bold" style={{ color }}>{period.sign}</p>
           </div>
         </div>
-        <button
-          onClick={onClose}
-          className="w-7 h-7 flex items-center justify-center rounded-lg cursor-pointer"
-          style={{ background: "rgba(255,255,255,0.05)", color: "#475569" }}
-        >
-          ×
-        </button>
+        <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-lg cursor-pointer" style={{ background: "rgba(255,255,255,0.05)", color: "#475569" }}>×</button>
       </div>
 
-      {/* Period info */}
       <div className="flex-shrink-0 px-4 py-3 space-y-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[13px]" style={{ color: "#475569" }}>
-            {fmtDate(period.start)} → {fmtDate(period.end)}
-          </span>
+          <span className="text-[13px]" style={{ color: "#475569" }}>{fmtDate(period.start)} → {fmtDate(period.end)}</span>
           <span className="text-[13px]" style={{ color: "#334155" }}>·</span>
           <span className="text-[13px]" style={{ color: "#64748b" }}>{fmtDuration(period.years)}</span>
           {period.isCurrent && (
-            <span className="text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded"
-              style={{ background: `${color}20`, color }}>
-              ACTIVE NOW
-            </span>
+            <span className="text-[11px] font-bold tracking-widest px-1.5 py-0.5 rounded" style={{ background: `${color}20`, color }}>ACTIVE NOW</span>
           )}
         </div>
 
@@ -448,7 +352,7 @@ Under 280 words. Be specific to the placements shown.`;
           {period.level > 1 && (
             <div className="flex-1 min-w-0">
               <p className="text-[11px] tracking-widest font-bold" style={{ color: "#334155" }}>ACTIVATES</p>
-              <p className="text-[13px]" style={{ color: "#64748b" }}>{HOUSE_THEMES[period.derivedHouse]}</p>
+              <p className="text-[13px]" style={{ color: "#64748b" }}>{ZR_HOUSE_THEMES[period.derivedHouse]}</p>
             </div>
           )}
         </div>
@@ -460,9 +364,7 @@ Under 280 words. Be specific to the placements shown.`;
             className="rounded-xl p-3"
             style={{ background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.3)" }}
           >
-            <p className="text-[12px] font-bold tracking-widest mb-1" style={{ color: "#f59e0b" }}>
-              ⟳ LOOSENING OF BONDS
-            </p>
+            <p className="text-[12px] font-bold tracking-widest mb-1" style={{ color: "#f59e0b" }}>⟳ LOOSENING OF BONDS</p>
             <p className="text-[13px] leading-relaxed" style={{ color: "#92400e" }}>
               L2 {period.sign} sits in the 7th sign from L1 {chain[0]?.sign ?? ""}. In traditional Hellenistic timing, this opposition marks a major life pivot — structures dissolve, identities release, and a fundamental repositioning is underway.
             </p>
@@ -470,7 +372,6 @@ Under 280 words. Be specific to the placements shown.`;
         )}
       </div>
 
-      {/* Timing chain */}
       {chain.length > 1 && (
         <div className="flex-shrink-0 px-4 py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
           <p className="text-[11px] font-bold tracking-widest mb-2" style={{ color: "#1e293b" }}>NESTED CHAIN</p>
@@ -482,11 +383,7 @@ Under 280 words. Be specific to the placements shown.`;
                   {i > 0 && <span className="text-[11px]" style={{ color: "#1e293b" }}>›</span>}
                   <span
                     className="text-[11px] font-bold px-1.5 py-0.5 rounded"
-                    style={{
-                      background: `${c}15`,
-                      color: p === period ? c : `${c}80`,
-                      border: p === period ? `1px solid ${c}40` : "1px solid transparent",
-                    }}
+                    style={{ background: `${c}15`, color: p === period ? c : `${c}80`, border: p === period ? `1px solid ${c}40` : "1px solid transparent" }}
                   >
                     L{p.level} {SIGN_SYMBOLS[p.sign]} {p.sign}
                   </span>
@@ -497,25 +394,20 @@ Under 280 words. Be specific to the placements shown.`;
         </div>
       )}
 
-      {/* Reading area */}
       <div className="flex-1 overflow-y-auto px-4 py-4" style={{ scrollbarWidth: "thin" }}>
         {!started ? (
           <div className="space-y-3">
             <p className="text-[13px]" style={{ color: "#475569" }}>
               {period.level === 1
                 ? `AI reading for the ${period.sign} L1 major period — the overarching life chapter ruled by ${lord}.`
-                : `AI reading for ${period.sign} at L${period.level} — H${period.derivedHouse} (${HOUSE_THEMES[period.derivedHouse]}) of the ${chain[period.level - 2]?.sign ?? "parent"} chapter.`}
+                : `AI reading for ${period.sign} at L${period.level} — H${period.derivedHouse} (${ZR_HOUSE_THEMES[period.derivedHouse]}) of the ${chain[period.level - 2]?.sign ?? "parent"} chapter.`}
             </p>
             <motion.button
               whileHover={{ scale: 1.02, boxShadow: `0 0 24px ${color}25` }}
               whileTap={{ scale: 0.97 }}
               onClick={generate}
               className="w-full py-2.5 rounded-xl text-[13px] font-bold tracking-widest cursor-pointer"
-              style={{
-                background: `${color}15`,
-                border: `1px solid ${color}35`,
-                color,
-              }}
+              style={{ background: `${color}15`, border: `1px solid ${color}35`, color }}
             >
               ✦ GENERATE READING
             </motion.button>
@@ -568,149 +460,73 @@ Under 280 words. Be specific to the placements shown.`;
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 interface ReleasingPageData {
+  profileId: string | null;
   profile: StoredProfile | null;
   chart: ChartData | null;
 }
 
-const EMPTY_RELEASING_DATA: ReleasingPageData = { profile: null, chart: null };
+const EMPTY_RELEASING_DATA: ReleasingPageData = { profileId: null, profile: null, chart: null };
 
 function readReleasingProfile(): ReleasingPageData {
   const id = getActiveProfileId();
-  if (!id) return { profile: null, chart: null };
-  return { profile: getProfile(id), chart: getCachedChart(id) };
+  if (!id) return { profileId: null, profile: null, chart: null };
+  return { profileId: id, profile: getProfile(id), chart: getCachedChart(id) };
 }
 
 export default function ReleasingPage() {
   const { value: data, loading } = useClientSnapshot(readReleasingProfile, EMPTY_RELEASING_DATA);
-  const { profile, chart } = data;
+  const { profileId, chart } = data;
 
-  // Lot selector
   const [lot, setLot] = useState<"fortune" | "spirit">("fortune");
-
-  // Level navigation
-  const [activeLevel, setActiveLevel] = useState<1 | 2 | 3 | 4>(1);
-
-  // Drill-down state: which period at each level is "selected" (for showing its sub-periods)
-  const [drilledL1, setDrilledL1] = useState<ZRPeriod | null>(null);
-  const [drilledL2, setDrilledL2] = useState<ZRPeriod | null>(null);
-  const [drilledL3, setDrilledL3] = useState<ZRPeriod | null>(null);
-
-  // Selected period for reading
-  const [selectedPeriod, setSelectedPeriod] = useState<ZRPeriod | null>(null);
-
-  const panelRef = useRef<HTMLDivElement>(null);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [selected, setSelected] = useState<{ period: ZRPeriod; chain: ZRPeriod[] } | null>(null);
+  const rowRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   const lotLon = useMemo(() => {
     if (!chart) return 0;
     return lot === "fortune" ? chart.lotOfFortune : chart.lotOfSpirit;
   }, [chart, lot]);
 
-  // Derivative relativity: current profection year sign rotates the ZR reading
   const profectionSign = chart?.annualProfection.activatedSign;
 
-  // L1 periods
-  const l1 = useMemo(() => {
-    if (!chart) return [];
-    return buildL1Periods(lotLon, chart.birthDatetime);
+  const zrData = useMemo(() => {
+    if (!chart) return null;
+    return buildZRData(lotLon, (chart as ChartData & { birthDatetime?: string }).birthDatetime ?? "");
   }, [chart, lotLon]);
 
-  const currentL1 = useMemo(() => l1.find(p => p.isCurrent), [l1]);
+  const l1 = useMemo(() => {
+    if (!chart) return [];
+    return buildL1Periods(lotLon, (chart as ChartData & { birthDatetime?: string }).birthDatetime ?? "");
+  }, [chart, lotLon]);
 
-  // Effective drill context (falls back to current)
-  const effectiveL1 = drilledL1 ?? currentL1;
+  // Seed the expanded set to the current L1→L3 path (revealing the current L4 row)
+  // so the page opens already showing "now" without forcing a click-chain first.
+  // This is the React-documented "adjust state during render" pattern (a plain
+  // useState previous-value check, not a ref — refs can't be read/written mid-render).
+  const [seededLot, setSeededLot] = useState<string | null>(null);
+  if (zrData && seededLot !== lot) {
+    setSeededLot(lot);
+    setExpanded(new Set(zrData.currentChain.slice(0, 3).map(periodKey)));
+    setSelected(null);
+  }
 
-  // L2 periods within effectiveL1
-  const l2 = useMemo(() => {
-    if (!effectiveL1) return [];
-    return buildSubPeriods(effectiveL1, 2);
-  }, [effectiveL1]);
+  const toggle = useCallback((key: string) => {
+    setExpanded(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      return next;
+    });
+  }, []);
 
-  const currentL2 = useMemo(() => l2.find(p => p.isCurrent), [l2]);
-  const effectiveL2 = drilledL2 ?? currentL2;
+  const registerRef = useCallback((key: string, el: HTMLDivElement | null) => {
+    if (el) rowRefs.current.set(key, el);
+    else rowRefs.current.delete(key);
+  }, []);
 
-  // L3 periods within effectiveL2
-  const l3 = useMemo(() => {
-    if (!effectiveL2) return [];
-    return buildSubPeriods(effectiveL2, 3);
-  }, [effectiveL2]);
-
-  const currentL3 = useMemo(() => l3.find(p => p.isCurrent), [l3]);
-  const effectiveL3 = drilledL3 ?? currentL3;
-
-  // L4 periods within effectiveL3
-  const l4 = useMemo(() => {
-    if (!effectiveL3) return [];
-    return buildSubPeriods(effectiveL3, 4);
-  }, [effectiveL3]);
-
-  const currentL4 = useMemo(() => l4.find(p => p.isCurrent), [l4]);
-
-  // The currently displayed periods for the active level
-  const activePeriods = useMemo(() => {
-    if (activeLevel === 1) return l1;
-    if (activeLevel === 2) return l2;
-    if (activeLevel === 3) return l3;
-    return l4;
-  }, [activeLevel, l1, l2, l3, l4]);
-
-  // The parent period for the active level (used for "H# of parent" labels)
-  const activeParentPeriod = useMemo(() => {
-    if (activeLevel === 1) return null;
-    if (activeLevel === 2) return effectiveL1;
-    if (activeLevel === 3) return effectiveL2;
-    return effectiveL3;
-  }, [activeLevel, effectiveL1, effectiveL2, effectiveL3]);
-
-  // Chain of periods leading to selectedPeriod
-  const selectedChain = useMemo((): ZRPeriod[] => {
-    if (!selectedPeriod) return [];
-    const chain: ZRPeriod[] = [];
-    if (effectiveL1) chain.push(effectiveL1);
-    if (selectedPeriod.level === 1) return [selectedPeriod];
-    if (effectiveL2 && selectedPeriod.level >= 2) {
-      chain.push(effectiveL2);
-      if (selectedPeriod.level === 2) {
-        chain[chain.length - 1] = selectedPeriod;
-        return chain;
-      }
-    }
-    if (effectiveL3 && selectedPeriod.level >= 3) {
-      if (chain.length > 1) chain.pop();
-      chain.push(effectiveL2 ?? selectedPeriod);
-      chain.push(effectiveL3);
-      if (selectedPeriod.level === 3) {
-        chain[chain.length - 1] = selectedPeriod;
-        return chain;
-      }
-    }
-    chain.push(selectedPeriod);
-    return chain;
-  }, [selectedPeriod, effectiveL1, effectiveL2, effectiveL3]);
-
-  // Simplified chain builder for reading panel
-  const buildChainForPeriod = (p: ZRPeriod): ZRPeriod[] => {
-    if (p.level === 1) return [p];
-    if (p.level === 2) return [effectiveL1!, p].filter(Boolean);
-    if (p.level === 3) return [effectiveL1!, effectiveL2!, p].filter(Boolean);
-    return [effectiveL1!, effectiveL2!, effectiveL3!, p].filter(Boolean);
-  };
-
-  const handlePeriodClick = (p: ZRPeriod) => {
-    setSelectedPeriod(p);
-    // Drill down to show sub-periods
-    if (p.level === 1) {
-      setDrilledL1(p);
-      setDrilledL2(null);
-      setDrilledL3(null);
-      setActiveLevel(2);
-    } else if (p.level === 2) {
-      setDrilledL2(p);
-      setDrilledL3(null);
-      setActiveLevel(3);
-    } else if (p.level === 3) {
-      setDrilledL3(p);
-      setActiveLevel(4);
-    }
+  const jumpToNow = () => {
+    if (!zrData?.currentL1) return;
+    const key = periodKey(zrData.currentL1);
+    rowRefs.current.get(key)?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
   // ─── Empty states ───────────────────────────────────────────────────────────
@@ -737,6 +553,8 @@ export default function ReleasingPage() {
     );
   }
 
+  if (!chart || !zrData) return null;
+
   const lotLonDisplay = lotLon;
   const lotSignDisplay = ZODIAC_SIGNS[Math.floor(lotLonDisplay / 30)] as ZodiacSign;
   const lotColor = SIGN_COLORS[lotSignDisplay];
@@ -748,30 +566,19 @@ export default function ReleasingPage() {
       <div className="nebula-orb" style={{ width: 500, height: 500, left: "-5%", top: "-10%", background: "rgba(6,182,212,0.04)", filter: "blur(100px)" }} />
       <div className="nebula-orb" style={{ width: 400, height: 400, right: "0%", bottom: "0%", background: "rgba(123,111,212,0.04)", filter: "blur(80px)" }} />
 
-
       <div className="flex-1 flex min-h-0 min-w-0 md:ml-[68px] mb-[60px] md:mb-0 relative z-10">
 
-        {/* ── LEFT/CENTER PANEL ─────────────────────────────────────────────── */}
         <div className="flex-1 flex flex-col min-h-0 min-w-0 overflow-hidden">
 
-          {/* Top bar */}
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             className="flex-shrink-0 flex flex-col md:flex-row md:items-center md:justify-between gap-2 px-4 md:px-6 py-3"
-            style={{
-              borderBottom: "1px solid rgba(6,182,212,0.1)",
-              background: "rgba(1,1,14,0.85)",
-              backdropFilter: "blur(20px)",
-            }}
+            style={{ borderBottom: "1px solid rgba(6,182,212,0.1)", background: "rgba(1,1,14,0.85)", backdropFilter: "blur(20px)" }}
           >
             <div className="flex items-center gap-3">
               <Link href="/dashboard">
-                <motion.button
-                  whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-1.5 text-[13px] font-medium cursor-pointer"
-                  style={{ color: "#64748b" }}
-                >
+                <motion.button whileHover={{ x: -2 }} whileTap={{ scale: 0.95 }} className="flex items-center gap-1.5 text-[13px] font-medium cursor-pointer" style={{ color: "#64748b" }}>
                   <svg viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
                     <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
                   </svg>
@@ -782,38 +589,38 @@ export default function ReleasingPage() {
               <span className="text-[13px] font-bold tracking-widest" style={{ color: "#06b6d4" }}>ZODIACAL RELEASING</span>
             </div>
 
-            {/* Lot toggle */}
-            <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
-              {(["fortune", "spirit"] as const).map(l => (
-                <motion.button
-                  key={l}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    setLot(l);
-                    setDrilledL1(null);
-                    setDrilledL2(null);
-                    setDrilledL3(null);
-                    setActiveLevel(1);
-                    setSelectedPeriod(null);
-                  }}
-                  className="px-3 py-1 rounded-lg text-[12px] font-bold tracking-widest cursor-pointer transition-all duration-200"
-                  style={{
-                    background: lot === l ? (l === "fortune" ? "rgba(6,182,212,0.2)" : "rgba(139,92,246,0.2)") : "transparent",
-                    color: lot === l ? (l === "fortune" ? "#06b6d4" : "#7B6FD4") : "#334155",
-                    border: lot === l ? `1px solid ${l === "fortune" ? "rgba(6,182,212,0.4)" : "rgba(139,92,246,0.4)"}` : "1px solid transparent",
-                  }}
-                >
-                  {l === "fortune" ? "☽︎ FORTUNE" : "☉︎ SPIRIT"}
-                </motion.button>
-              ))}
+            <div className="flex items-center gap-2">
+              <motion.button
+                whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+                onClick={jumpToNow}
+                className="px-3 py-1 rounded-lg text-[12px] font-bold tracking-widest cursor-pointer"
+                style={{ background: "rgba(255,255,255,0.04)", color: "#64748b", border: "1px solid rgba(255,255,255,0.06)" }}
+              >
+                ↓ JUMP TO NOW
+              </motion.button>
+              <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                {(["fortune", "spirit"] as const).map(l => (
+                  <motion.button
+                    key={l}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => { setLot(l); setSelected(null); }}
+                    className="px-3 py-1 rounded-lg text-[12px] font-bold tracking-widest cursor-pointer transition-all duration-200"
+                    style={{
+                      background: lot === l ? (l === "fortune" ? "rgba(6,182,212,0.2)" : "rgba(139,92,246,0.2)") : "transparent",
+                      color: lot === l ? (l === "fortune" ? "#06b6d4" : "#7B6FD4") : "#334155",
+                      border: lot === l ? `1px solid ${l === "fortune" ? "rgba(6,182,212,0.4)" : "rgba(139,92,246,0.4)"}` : "1px solid transparent",
+                    }}
+                  >
+                    {l === "fortune" ? "☽︎ FORTUNE" : "☉︎ SPIRIT"}
+                  </motion.button>
+                ))}
+              </div>
             </div>
           </motion.div>
 
-          {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
             <div className="px-4 md:px-6 py-5 max-w-3xl">
 
-              {/* Lot info + explainer */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -826,60 +633,34 @@ export default function ReleasingPage() {
                       ZODIACAL RELEASING · LOT OF {lot.toUpperCase()}
                     </p>
                     <p className="text-[13px] leading-relaxed" style={{ color: "#64748b" }}>
-                      A Hellenistic timing system dividing life into nested sign-periods. L1 defines the overarching life chapter. L2 within L1 fine-tunes the theme. L3 and L4 reveal precise windows within the broader arc. When L2 reaches the 7th sign from L1, the <span style={{ color: "#f59e0b" }}>Loosening of Bonds</span> activates — a major life transition.
+                      A Hellenistic timing system dividing life into nested sign-periods, as deep as L{ZR_MAX_LEVEL}. L1 defines the overarching life chapter; each level inside it fine-tunes the theme down to week-scale windows. When L2 reaches the 7th sign from L1, the <span style={{ color: "#f59e0b" }}>Loosening of Bonds</span> activates — a major life transition.
                     </p>
                   </div>
-                  <div
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl flex-shrink-0"
-                    style={{ background: `${lotColor}12`, border: `1px solid ${lotColor}30` }}
-                  >
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl flex-shrink-0" style={{ background: `${lotColor}12`, border: `1px solid ${lotColor}30` }}>
                     <span className="text-xl" style={{ color: lotColor }}>{SIGN_SYMBOLS[lotSignDisplay]}</span>
                     <div>
-                      <p className="text-[11px] font-bold tracking-widest" style={{ color: "#475569" }}>
-                        LOT OF {lot.toUpperCase()}
-                      </p>
-                      <p className="text-[14px] font-bold" style={{ color: lotColor }}>
-                        {lotSignDisplay} {(lotLonDisplay % 30).toFixed(1)}°
-                      </p>
+                      <p className="text-[11px] font-bold tracking-widest" style={{ color: "#475569" }}>LOT OF {lot.toUpperCase()}</p>
+                      <p className="text-[14px] font-bold" style={{ color: lotColor }}>{lotSignDisplay} {(lotLonDisplay % 30).toFixed(1)}°</p>
                     </div>
                   </div>
                 </div>
               </motion.div>
 
-              {/* Current cascade display */}
-              {currentL1 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.08 }}
-                  className="mb-5"
-                >
+              {zrData.currentChain.length > 0 && (
+                <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="mb-5">
                   <p className="text-[11px] font-bold tracking-widest mb-2" style={{ color: "#334155" }}>CURRENT TIMING</p>
-                  <CurrentCascade
-                    l1={currentL1}
-                    l2={currentL2}
-                    l3={currentL3 ?? undefined}
-                    l4={currentL4 ?? undefined}
-                  />
-                  {(currentL2?.isLooseningOfBonds) && (
+                  <CurrentCascade chain={zrData.currentChain} />
+                  {zrData.currentL2?.isLooseningOfBonds && (
                     <motion.div
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                       className="mt-3 flex items-start gap-3 px-3 py-2.5 rounded-xl"
                       style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)" }}
                     >
-                      <motion.span
-                        animate={{ rotate: [0, 15, -15, 0] }}
-                        transition={{ duration: 3, repeat: Infinity }}
-                        className="text-base flex-shrink-0 mt-0.5"
-                        style={{ color: "#f59e0b" }}
-                      >
-                        ⟳
-                      </motion.span>
+                      <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 3, repeat: Infinity }} className="text-base flex-shrink-0 mt-0.5" style={{ color: "#f59e0b" }}>⟳</motion.span>
                       <div>
                         <p className="text-[13px] font-bold" style={{ color: "#f59e0b" }}>Loosening of Bonds is Active</p>
                         <p className="text-[13px]" style={{ color: "#92400e" }}>
-                          L2 {currentL2?.sign} is in the 7th sign from L1 {currentL1?.sign} — a Hellenistic marker of major life repositioning. Old structures are releasing; a fundamental pivot is underway.
+                          L2 {zrData.currentL2?.sign} is in the 7th sign from L1 {zrData.currentL1?.sign} — a Hellenistic marker of major life repositioning. Old structures are releasing; a fundamental pivot is underway.
                         </p>
                       </div>
                     </motion.div>
@@ -887,32 +668,23 @@ export default function ReleasingPage() {
                 </motion.div>
               )}
 
-              {/* Derivative Relativity panel */}
-              {profectionSign && chart && (
+              {profectionSign && (
                 <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 }}
+                  initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
                   className="rounded-2xl p-3 mb-5"
                   style={{ background: `${SIGN_COLORS[profectionSign]}08`, border: `1px solid ${SIGN_COLORS[profectionSign]}20` }}
                 >
                   <div className="flex items-start justify-between gap-3 flex-wrap">
                     <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-bold tracking-widest mb-1" style={{ color: SIGN_COLORS[profectionSign] }}>
-                        ◑ DERIVATIVE RELATIVITY · PROFECTION OVERLAY
-                      </p>
+                      <p className="text-[11px] font-bold tracking-widest mb-1" style={{ color: SIGN_COLORS[profectionSign] }}>◑ DERIVATIVE RELATIVITY · PROFECTION OVERLAY</p>
                       <p className="text-[13px] leading-relaxed" style={{ color: "#475569" }}>
                         Age {chart.annualProfection.age} · H{chart.annualProfection.activatedHouse} activated this year.
                         Each ZR period is also read as a house counted from{" "}
                         <span style={{ color: SIGN_COLORS[profectionSign] }}>{SIGN_SYMBOLS[profectionSign]} {profectionSign}</span>{" "}
-                        as the new frame of reference — showing <em>this year&apos;s specific emphasis</em> within the ZR arc.
-                        The gold badge on each period is its house from {profectionSign}.
+                        as the new frame of reference — showing <em>this year&apos;s specific emphasis</em> within the ZR arc. The gold badge on each row is its house from {profectionSign}.
                       </p>
                     </div>
-                    <div
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl flex-shrink-0"
-                      style={{ background: `${SIGN_COLORS[profectionSign]}15`, border: `1px solid ${SIGN_COLORS[profectionSign]}30` }}
-                    >
+                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl flex-shrink-0" style={{ background: `${SIGN_COLORS[profectionSign]}15`, border: `1px solid ${SIGN_COLORS[profectionSign]}30` }}>
                       <span className="text-base" style={{ color: SIGN_COLORS[profectionSign] }}>{SIGN_SYMBOLS[profectionSign]}</span>
                       <div>
                         <p className="text-[10px] font-bold tracking-widest" style={{ color: "#475569" }}>THIS YEAR</p>
@@ -923,131 +695,47 @@ export default function ReleasingPage() {
                 </motion.div>
               )}
 
-              {/* Level tabs */}
-              <div className="flex items-center gap-1 mb-4">
-                {([1, 2, 3, 4] as const).map(lvl => (
-                  <LevelPill
-                    key={lvl}
-                    level={lvl}
-                    active={activeLevel === lvl}
-                    onClick={() => setActiveLevel(lvl)}
-                  />
-                ))}
-
-                {/* Breadcrumb showing drill context */}
-                {(drilledL1 || drilledL2 || drilledL3) && (
-                  <div className="flex items-center gap-1 ml-2 overflow-hidden">
-                    <span className="text-[11px]" style={{ color: "#1e293b" }}>|</span>
-                    {effectiveL1 && activeLevel >= 2 && (
-                      <button
-                        onClick={() => {
-                          setActiveLevel(1);
-                          setDrilledL1(null); setDrilledL2(null); setDrilledL3(null);
-                        }}
-                        className="text-[11px] font-bold px-1.5 py-0.5 rounded cursor-pointer"
-                        style={{ color: SIGN_COLORS[effectiveL1.sign], background: `${SIGN_COLORS[effectiveL1.sign]}12` }}
-                      >
-                        {SIGN_SYMBOLS[effectiveL1.sign]} {effectiveL1.sign}
-                      </button>
-                    )}
-                    {effectiveL2 && activeLevel >= 3 && (
-                      <>
-                        <span className="text-[11px]" style={{ color: "#1e293b" }}>›</span>
-                        <button
-                          onClick={() => { setActiveLevel(2); setDrilledL2(null); setDrilledL3(null); }}
-                          className="text-[11px] font-bold px-1.5 py-0.5 rounded cursor-pointer"
-                          style={{ color: SIGN_COLORS[effectiveL2.sign], background: `${SIGN_COLORS[effectiveL2.sign]}12` }}
-                        >
-                          {SIGN_SYMBOLS[effectiveL2.sign]} {effectiveL2.sign}
-                        </button>
-                      </>
-                    )}
-                    {effectiveL3 && activeLevel === 4 && (
-                      <>
-                        <span className="text-[11px]" style={{ color: "#1e293b" }}>›</span>
-                        <button
-                          onClick={() => { setActiveLevel(3); setDrilledL3(null); }}
-                          className="text-[11px] font-bold px-1.5 py-0.5 rounded cursor-pointer"
-                          style={{ color: SIGN_COLORS[effectiveL3.sign], background: `${SIGN_COLORS[effectiveL3.sign]}12` }}
-                        >
-                          {SIGN_SYMBOLS[effectiveL3.sign]} {effectiveL3.sign}
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Level label */}
-              <div className="mb-3">
-                <p className="text-[11px] font-bold tracking-widest mb-1" style={{ color: LEVEL_COLORS[activeLevel - 1] }}>
-                  {LEVEL_LABELS[activeLevel - 1]}
-                  {activeParentPeriod && (
-                    <span style={{ color: "#334155" }}> · within {activeParentPeriod.sign}</span>
-                  )}
-                </p>
-                {activeLevel >= 2 && activeParentPeriod && (
-                  <p className="text-[13px]" style={{ color: "#475569" }}>
-                    Sub-periods counted from {SIGN_SYMBOLS[activeParentPeriod.sign]} {activeParentPeriod.sign} as H1 — showing which area of the {activeParentPeriod.sign} chapter each period activates
-                  </p>
-                )}
-              </div>
-
-              {/* Timeline bar */}
-              <div className="mb-4">
-                <PeriodBar periods={activePeriods} />
-              </div>
-
-              {/* Period list */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${activeLevel}-${effectiveL1?.sign}-${effectiveL2?.sign}-${effectiveL3?.sign}`}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="space-y-1.5"
-                >
-                  {activePeriods.length === 0 ? (
-                    <div className="text-center py-8" style={{ color: "#334155" }}>
-                      <p className="text-[13px]">No periods found for this level. Select a period above to drill down.</p>
-                    </div>
-                  ) : (
-                    activePeriods.map((p, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -6 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.025 }}
-                      >
-                        <PeriodCard
-                          period={p}
-                          parentSign={activeParentPeriod?.sign}
-                          isSelected={selectedPeriod === p}
-                          onClick={() => handlePeriodClick(p)}
-                          profectionSign={profectionSign}
-                        />
-                      </motion.div>
-                    ))
-                  )}
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Click hint */}
-              {activePeriods.length > 0 && (
-                <p className="text-center text-[12px] mt-4" style={{ color: "#1e293b" }}>
-                  Click any period to drill into sub-periods and get an AI reading ↓
-                </p>
+              {profileId && (
+                <FullReportCard reportTypeId="zodiacal_releasing" chart={chart} profileId={profileId} />
               )}
+
+              <div className="mb-3">
+                <p className="text-[11px] font-bold tracking-widest mb-1" style={{ color: "#334155" }}>
+                  FULL LIFE TABLE · {ZR_HOUSE_THEMES[1] ? "EXPAND ANY CHAPTER" : ""}
+                </p>
+                <p className="text-[13px]" style={{ color: "#475569" }}>
+                  Click a row to open it for a reading. Click the arrow to expand its sub-periods, down to L{ZR_MAX_LEVEL}.
+                </p>
+              </div>
+
+              <div className="rounded-xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.05)" }}>
+                {l1.length === 0 ? (
+                  <div className="text-center py-8" style={{ color: "#334155" }}>
+                    <p className="text-[13px]">No periods found.</p>
+                  </div>
+                ) : (
+                  l1.map((p) => (
+                    <ZRTreeRow
+                      key={periodKey(p)}
+                      period={p}
+                      chain={[p]}
+                      expanded={expanded}
+                      onToggle={toggle}
+                      onSelect={(period, chain) => setSelected({ period, chain })}
+                      isSelected={(period) => selected?.period === period}
+                      profectionSign={profectionSign}
+                      registerRef={registerRef}
+                    />
+                  ))
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* ── RIGHT PANEL (reading) ──────────────────────────────────────────── */}
         <AnimatePresence>
-          {selectedPeriod && chart && (
+          {selected && chart && (
             <motion.div
-              ref={panelRef}
               key="reading-panel"
               initial={{ width: 0, opacity: 0 }}
               animate={{ width: 360, opacity: 1 }}
@@ -1057,11 +745,11 @@ export default function ReleasingPage() {
               style={{ maxWidth: 360 }}
             >
               <ReadingPanel
-                period={selectedPeriod}
-                chain={buildChainForPeriod(selectedPeriod)}
+                period={selected.period}
+                chain={selected.chain}
                 chart={chart}
                 lot={lot}
-                onClose={() => setSelectedPeriod(null)}
+                onClose={() => setSelected(null)}
                 profectionSign={profectionSign}
               />
             </motion.div>
@@ -1072,4 +760,3 @@ export default function ReleasingPage() {
     </ProGate>
   );
 }
-

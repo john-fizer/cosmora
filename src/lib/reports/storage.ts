@@ -132,6 +132,7 @@ export function createReportShell(
   subtitle: string,
   expiryDays: number,
   birthDatetime: string,
+  partnerName?: string,
 ): Report {
   const now = new Date();
   const expiry = new Date(now);
@@ -156,6 +157,7 @@ export function createReportShell(
       modelId: "claude-sonnet-4-6",
       persona: "oracle",
       generationMs: 0,
+      partnerName,
     },
   };
 }

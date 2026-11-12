@@ -9,7 +9,22 @@ export type ReportType =
   | "solar_return"
   | "saturn_return"
   | "progressed_planets"
-  | "dual_zodiac";
+  | "dual_zodiac"
+  | "zodiacal_releasing"
+  | "transit_forecast"
+  | "compatibility"
+  | "full_synthesis";
+
+// Sources the Full Synthesis report can be configured to pull from — each maps
+// to one real, already-computed technique elsewhere in the app.
+export type SynthesisSource = "releasing" | "transits" | "profection" | "pressure";
+
+export const SYNTHESIS_SOURCE_META: Record<SynthesisSource, { label: string; description: string }> = {
+  releasing:  { label: "Zodiacal Releasing", description: "The current nested Fortune/Spirit chapter" },
+  transits:   { label: "Transit Forecast",   description: "What's active now and major events ahead" },
+  profection: { label: "Annual Profection",  description: "This year's activated house and lord" },
+  pressure:   { label: "Pressure Convergence", description: "Where independent timing systems agree" },
+};
 
 export interface ReportTypeMeta {
   id: ReportType;
@@ -123,6 +138,50 @@ export const REPORT_TYPES: ReportTypeMeta[] = [
     icon: "◐",
     color: "#22d3ee",
   },
+  {
+    id: "zodiacal_releasing",
+    title: "Zodiacal Releasing",
+    subtitle: "The Nested Timeline of Your Life",
+    description: "The Hellenistic technique of casting your life as nested chapters — major eras from the Lot of Fortune, parallel cycles of action and reputation from the Lot of Spirit, down to the exact months in session now. Where the two lots agree, the timing is undeniable.",
+    techniques: ["Fortune cascade (circumstance & body)", "Spirit cascade (action & reputation)", "Loosening of Bonds check", "Fine-grain current window", "Nested synthesis"],
+    expiryDays: 90, // the fine-grain levels move in weeks/months
+    estimatedMinutes: 4,
+    icon: "◴",
+    color: "#06b6d4",
+  },
+  {
+    id: "transit_forecast",
+    title: "Transit Forecast",
+    subtitle: "The Next Three Months, Scanned",
+    description: "Every exact aspect, sign change, and retrograde station the sky actually makes to your chart over the next three months — scanned day by day, not guessed at. Reads the major activations, what's live right now, and the ingresses ahead as one connected timeline.",
+    techniques: ["Major activations", "Active right now", "Sign changes ahead", "The next three months"],
+    expiryDays: 90,
+    estimatedMinutes: 3,
+    icon: "☌",
+    color: "#38bdf8",
+  },
+  {
+    id: "compatibility",
+    title: "Compatibility",
+    subtitle: "The Synastry Reading",
+    description: "Every real aspect between two charts — not a generic score, the actual planet-to-planet contacts, weighted and read as one relationship story: the core bond, the friction, and the composite chart the relationship itself forms.",
+    techniques: ["Core bond", "Friction & growth edges", "Composite synthesis", "The relationship story"],
+    expiryDays: 3650, // natal-to-natal synastry doesn't expire
+    estimatedMinutes: 3,
+    icon: "⚭",
+    color: "#f472b6",
+  },
+  {
+    id: "full_synthesis",
+    title: "Full Synthesis",
+    subtitle: "Every Technique, One Reading",
+    description: "Choose which timing techniques to include — Zodiacal Releasing, transits, annual profection, pressure convergence — and get one combined reading across all of them, instead of piecing several reports together yourself.",
+    techniques: ["Zodiacal Releasing", "Transit Forecast", "Annual Profection", "Pressure Convergence", "Synthesis"],
+    expiryDays: 60,
+    estimatedMinutes: 4,
+    icon: "✺",
+    color: "#9C8AC4",
+  },
 ];
 
 // ─── Individual section of a generated report ──────────────────────────────────
@@ -166,6 +225,7 @@ export interface Report {
     modelId: string;
     persona: string;
     generationMs: number;
+    partnerName?: string;     // set for two-chart reports (e.g. compatibility)
   };
 }
 

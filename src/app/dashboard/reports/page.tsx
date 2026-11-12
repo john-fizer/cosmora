@@ -10,6 +10,9 @@ import { REPORT_TYPES } from "@/lib/reports/types";
 import type { ReportTypeMeta, Report } from "@/lib/reports/types";
 import { listReports, saveReport, createReportShell } from "@/lib/reports/storage";
 import type { ChartData } from "@/lib/astrology/types";
+import { FullReportCard } from "@/components/reports/FullReportCard";
+import { SynthesisSourcePicker } from "@/components/reports/SynthesisSourcePicker";
+import type { SynthesisSource } from "@/lib/reports/types";
 
 // ─── Confidence gauge ──────────────────────────────────────────────────────────
 
@@ -480,6 +483,9 @@ export default function ReportsPage() {
   const [genProgress, setGenProgress] = useState({ phase: "Initializing...", current: 0, total: 0 });
   const [noProfile, setNoProfile] = useState(false);
   const [personaId, setPersonaId] = useState<PersonaId>("oracle");
+  const [synthesisSources, setSynthesisSources] = useState<Set<SynthesisSource>>(
+    new Set(["releasing", "transits", "profection", "pressure"])
+  );
 
   useEffect(() => {
     const id = getActiveProfileId();
@@ -647,6 +653,21 @@ export default function ReportsPage() {
 
         <div className="px-5 py-8 md:px-[52px] md:py-10" style={{ maxWidth: 1200 }}>
 
+          {/* ── Full Synthesis — featured, configurable ── */}
+          {chart && profileId && (
+            <div style={{ marginBottom: 32 }}>
+              <FullReportCard
+                reportTypeId="full_synthesis"
+                chart={chart}
+                profileId={profileId}
+                titleOverride="Synthesis"
+                extraBody={{ sources: Array.from(synthesisSources) }}
+                canGenerate={synthesisSources.size > 0}
+                picker={<SynthesisSourcePicker selected={synthesisSources} onChange={setSynthesisSources} />}
+              />
+            </div>
+          )}
+
           {/* ── Report history ── */}
           {reports.filter(r => r.status !== "generating").length > 0 && (
             <motion.div
@@ -724,7 +745,7 @@ export default function ReportsPage() {
               gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
               gap: 16,
             }}>
-              {REPORT_TYPES.map((meta, i) => (
+              {REPORT_TYPES.filter(rt => rt.id !== "full_synthesis").map((meta, i) => (
                 <motion.div
                   key={meta.id}
                   initial={{ opacity: 0, y: 20 }}

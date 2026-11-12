@@ -7,9 +7,10 @@ import Link from "next/link";
 import { PLANET_SYMBOLS, SIGN_SYMBOLS } from "@/lib/astrology/types";
 import type { PlanetName, ZodiacSign, ChartData } from "@/lib/astrology/types";
 import type { TransitsData, TransitAspect, Ingress } from "@/lib/astrology/transits";
-import type { ForecastEvent } from "@/app/api/transits/forecast/route";
+import type { ForecastEvent } from "@/lib/astrology/transitForecast";
 import { getActiveProfileId, getProfile, getCachedChart, getOraclePersona } from "@/lib/storage";
 import { useWarpTo } from "@/components/ui/WarpTransition";
+import { FullReportCard } from "@/components/reports/FullReportCard";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -1682,6 +1683,11 @@ export default function TransitsPage() {
                 <div className="flex-1 flex min-h-0">
                   {/* Timeline */}
                   <div className="flex-1 flex flex-col min-h-0">
+                    {natal && profileId && (
+                      <div className="flex-shrink-0 px-4 pt-3">
+                        <FullReportCard reportTypeId="transit_forecast" chart={natal} profileId={profileId} />
+                      </div>
+                    )}
                     {forecastLoading ? (
                       <div className="flex-1 flex flex-col items-center justify-center gap-4">
                         <motion.div

@@ -157,3 +157,13 @@ export function detectPressure(chart: ChartData, birthDatetime: string, date: Da
 
   return { score, level, activeSources, signals, computedAt: date.toISOString() };
 }
+
+// Plain-text description of a pressure report, for grounding AI prompts in the
+// exact computed signals rather than letting the model invent convergences.
+export function describePressure(report: PressureReport): string {
+  if (!report.signals.length) return "No pressure signals detected — a clear, unremarkable period.";
+  const lines = report.signals.map(s =>
+    `[${s.source}] ${s.label} (weight ${s.weight.toFixed(2)}): ${s.detail}${s.easesBy ? ` — eases by ${s.easesBy}` : ""}`
+  );
+  return `Score ${report.score}/100 · ${report.level.toUpperCase()} · ${report.activeSources} independent systems agree\n  ${lines.join("\n  ")}`;
+}

@@ -4,12 +4,11 @@ import { HAS_SCORE, SCORE_SRC } from "../audio";
 import { HookScene } from "./HookScene";
 import { ChartFragments } from "./ChartFragments";
 import { OracleFragments } from "./OracleFragments";
-import { PressureScene } from "./PressureScene";
-import { TransitsScene } from "./TransitsScene";
-import { MapScene } from "./MapScene";
+import { PressureFragments } from "./PressureFragments";
+import { TransitsFragments } from "./TransitsFragments";
+import { MapFragments } from "./MapFragments";
 import { EndCardScene } from "./EndCardScene";
 import { GlowWipe } from "./GlowWipe";
-import { SceneCaption } from "./SceneCaption";
 
 // Scene order + durations per the brief's timing spec. Transits and Map are
 // trimmed from their standalone 6s preview length (180f) to 3s each (90f) —
@@ -63,18 +62,15 @@ export function FullReel() {
       </Sequence>
 
       <Sequence from={PRESSURE_FROM} durationInFrames={PRESSURE} name="Pressure">
-        <PressureScene />
-        <SceneCaption text="Know what's coming" />
+        <PressureFragments />
       </Sequence>
 
       <Sequence from={TRANSITS_FROM} durationInFrames={TRANSITS} name="Transits">
-        <TransitsScene />
-        <SceneCaption text="Live sky, tracked" />
+        <TransitsFragments />
       </Sequence>
 
       <Sequence from={MAP_FROM} durationInFrames={MAP} name="Map">
-        <MapScene />
-        <SceneCaption text="Where you're powerful" />
+        <MapFragments />
       </Sequence>
 
       <Sequence from={END_CARD_FROM} durationInFrames={END_CARD} name="EndCard">

@@ -11,6 +11,9 @@ import { EndCardScene, END_CARD_SCENE_DURATION } from "./compositions/EndCardSce
 import { FullReel, FULL_REEL_DURATION } from "./compositions/FullReel";
 import { ChartFragments, CHART_FRAGMENTS_DURATION } from "./compositions/ChartFragments";
 import { OracleFragments, ORACLE_FRAGMENTS_DURATION } from "./compositions/OracleFragments";
+import { PressureFragments, PRESSURE_FRAGMENTS_DURATION } from "./compositions/PressureFragments";
+import { TransitsFragments, TRANSITS_FRAGMENTS_DURATION } from "./compositions/TransitsFragments";
+import { MapFragments, MAP_FRAGMENTS_DURATION } from "./compositions/MapFragments";
 
 const W = 1080;
 const H = 1920;
@@ -90,6 +93,30 @@ export function RemotionRoot() {
         height={H}
         fps={FPS}
         durationInFrames={ORACLE_FRAGMENTS_DURATION}
+      />
+      <Composition
+        id="PressureFragments"
+        component={PressureFragments}
+        width={W}
+        height={H}
+        fps={FPS}
+        durationInFrames={PRESSURE_FRAGMENTS_DURATION}
+      />
+      <Composition
+        id="TransitsFragments"
+        component={TransitsFragments}
+        width={W}
+        height={H}
+        fps={FPS}
+        durationInFrames={TRANSITS_FRAGMENTS_DURATION}
+      />
+      <Composition
+        id="MapFragments"
+        component={MapFragments}
+        width={W}
+        height={H}
+        fps={FPS}
+        durationInFrames={MAP_FRAGMENTS_DURATION}
       />
       <Composition
         id="FullReel"

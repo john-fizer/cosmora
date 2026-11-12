@@ -2,8 +2,8 @@ import React from "react";
 import { AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { HAS_SCORE, SCORE_SRC } from "../audio";
 import { HookScene } from "./HookScene";
-import { ChartScene } from "./ChartScene";
-import { OracleScene } from "./OracleScene";
+import { ChartFragments } from "./ChartFragments";
+import { OracleFragments } from "./OracleFragments";
 import { PressureScene } from "./PressureScene";
 import { TransitsScene } from "./TransitsScene";
 import { MapScene } from "./MapScene";
@@ -55,13 +55,11 @@ export function FullReel() {
       </Sequence>
 
       <Sequence from={CHART_FROM} durationInFrames={CHART} name="Chart">
-        <ChartScene />
-        <SceneCaption text="Your exact sky" />
+        <ChartFragments />
       </Sequence>
 
       <Sequence from={ORACLE_FROM} durationInFrames={ORACLE} name="Oracle">
-        <OracleScene />
-        <SceneCaption text="Ask it anything" />
+        <OracleFragments />
       </Sequence>
 
       <Sequence from={PRESSURE_FROM} durationInFrames={PRESSURE} name="Pressure">

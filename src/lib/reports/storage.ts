@@ -154,7 +154,7 @@ export function createReportShell(
     metadata: {
       birthDatetime,
       chartHash: btoa(birthDatetime).slice(0, 12),
-      modelId: "claude-sonnet-4-6",
+      modelId: "claude-sonnet-5-5",
       persona: "oracle",
       generationMs: 0,
       partnerName,

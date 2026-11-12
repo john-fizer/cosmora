@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       : baseIdentity;
 
     const stream = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
+      model: "claude-sonnet-5-5",
       max_tokens: maxTokens,
       system,
       messages: [{ role: "user", content: prompt }],

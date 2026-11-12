@@ -92,8 +92,8 @@ export function clearChatHistory(profileId: string): void {
 const MODEL_KEY = "cosmora_oracle_model";
 
 export function getOracleModel(): string {
-  if (typeof window === "undefined") return "claude-opus-4-7";
-  return localStorage.getItem(MODEL_KEY) ?? "claude-opus-4-7";
+  if (typeof window === "undefined") return "claude-opus-5-5";
+  return localStorage.getItem(MODEL_KEY) ?? "claude-opus-5-5";
 }
 
 export function setOracleModel(modelId: string): void {

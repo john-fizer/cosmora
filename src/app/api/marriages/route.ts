@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
 
     // Phase 1: astrological interpretation (always generated)
     const starMsg = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
+      model: "claude-sonnet-5-5",
       max_tokens: 3000,
       messages: [{ role: "user", content: starPrompt }],
     });
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
     // Phase 2: Spirit Guide rewrite (if requested)
     if (guideMode === "spirit") {
       const spiritMsg = await anthropic.messages.create({
-        model: "claude-sonnet-4-6",
+        model: "claude-sonnet-5-5",
         max_tokens: 3000,
         system: SPIRIT_GUIDE_SYSTEM,
         messages: [{

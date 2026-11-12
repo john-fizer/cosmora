@@ -41,7 +41,7 @@ Return ONLY a JSON array of 3 strings. No explanation, no numbering, no extra te
 ["When does this energy peak this year?", "How does my Saturn placement affect this?", "What can I do to work with this energy?"]`;
 
     const response = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
+      model: "claude-haiku-5-5",
       max_tokens: 200,
       messages: [{ role: "user", content: prompt }],
     });

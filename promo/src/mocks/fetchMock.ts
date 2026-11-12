@@ -48,7 +48,7 @@ export function installFixtureFetch() {
 
     if (url.startsWith("/api/models")) {
       const availability = Object.fromEntries(
-        ["claude-opus-4-7", "claude-sonnet-4-7", "gpt-5", "gemini-3-pro"].map((id) => [id, { available: true }])
+        ["claude-opus-5-5", "claude-sonnet-5-5", "gpt-5", "gemini-3-pro"].map((id) => [id, { available: true }])
       );
       return json({ availability });
     }

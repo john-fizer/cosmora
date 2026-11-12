@@ -53,7 +53,7 @@ Multiple events per narrative are expected. Emotional values reflect what the na
 async function callExtraction(text: string, existingPeople: { id: string; name: string }[], previousError?: string): Promise<string> {
   const userMsg = `Existing people (match against these if the narrative mentions them): ${JSON.stringify(existingPeople)}\n\nNarrative:\n${text}${previousError ? `\n\nYour previous response failed to parse: ${previousError}. Return ONLY valid JSON.` : ""}`;
   const resp = await anthropic.messages.create({
-    model: "claude-sonnet-4-6",
+    model: "claude-sonnet-5-5",
     max_tokens: 4000,
     temperature: 0,
     system: SYSTEM,

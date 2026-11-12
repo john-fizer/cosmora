@@ -20,7 +20,7 @@ export interface OracleModel {
 
 export const ORACLE_MODELS: OracleModel[] = [
   {
-    id: "claude-opus-4-7",
+    id: "claude-opus-5-5",
     provider: "anthropic",
     name: "Cosmora Oracle",
     tagline: "Deep · Precise · Hellenistic",
@@ -32,7 +32,7 @@ export const ORACLE_MODELS: OracleModel[] = [
     envKey: "ANTHROPIC_API_KEY",
   },
   {
-    id: "claude-sonnet-4-6",
+    id: "claude-sonnet-5-5",
     provider: "anthropic",
     name: "Cosmora Swift",
     tagline: "Fast · Balanced · Modern",
@@ -44,7 +44,7 @@ export const ORACLE_MODELS: OracleModel[] = [
     envKey: "ANTHROPIC_API_KEY",
   },
   {
-    id: "claude-haiku-4-5-20251001",
+    id: "claude-haiku-5-5",
     provider: "anthropic",
     name: "Cosmora Flash",
     tagline: "Instant · Focused · Quick",
@@ -93,7 +93,7 @@ export const ORACLE_MODELS: OracleModel[] = [
   },
 ];
 
-export const DEFAULT_MODEL_ID = "claude-opus-4-7";
+export const DEFAULT_MODEL_ID = "claude-opus-5-5";
 
 export function getModelById(id: string): OracleModel {
   return ORACLE_MODELS.find(m => m.id === id) ?? ORACLE_MODELS[0];

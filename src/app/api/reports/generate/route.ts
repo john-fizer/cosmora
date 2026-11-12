@@ -267,7 +267,7 @@ async function runConvergence(
   const vedic   = results.filter(r => r.technique.id.startsWith("vedic")).map(r => `[${r.technique.label}]\n${r.body}`).join("\n\n");
 
   const msg = await anthropic.messages.create({
-    model: "claude-sonnet-4-6",
+    model: "claude-sonnet-5-5",
     max_tokens: 1600,
     messages: [{
       role: "user",
@@ -316,7 +316,7 @@ Write in flowing paragraphs with clear theme statements. This is the most author
 
 async function runTechnique(technique: Technique): Promise<{ technique: Technique; body: string; confidence: number }> {
   const msg = await anthropic.messages.create({
-    model: "claude-sonnet-4-6",
+    model: "claude-sonnet-5-5",
     max_tokens: 1200,
     messages: [{ role: "user", content: technique.prompt }],
   });
@@ -345,7 +345,7 @@ async function synthesize(
   const summaries = results.map(r => `[${r.technique.label}]\n${r.body.slice(0, 400)}`).join("\n\n---\n\n");
 
   const msg = await anthropic.messages.create({
-    model: "claude-sonnet-4-6",
+    model: "claude-sonnet-5-5",
     max_tokens: 300,
     messages: [{
       role: "user",
@@ -374,7 +374,7 @@ async function personaRewrite(
   ).join("\n\n");
 
   const msg = await anthropic.messages.create({
-    model: "claude-sonnet-4-6",
+    model: "claude-sonnet-5-5",
     max_tokens: 5000,
     system: persona.reportRewriteSystemPrompt,
     messages: [{

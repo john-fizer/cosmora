@@ -23,7 +23,7 @@ async function parseTemporalQuery(query: string, birthDatetime: string): Promise
   const today = new Date().toISOString().slice(0, 10);
 
   const res = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
+    model: "claude-haiku-5-5",
     max_tokens: 256,
     system: `You are a date-range parser for an astrology app. Given a natural language time reference, return ONLY a JSON object (no markdown, no explanation).
 

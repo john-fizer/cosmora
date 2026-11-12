@@ -30,7 +30,7 @@ interface OracleProfileData {
 
 const EMPTY_ORACLE_PROFILE: OracleProfileData = {
   profileId: null, profileName: "", chart: null,
-  initialModelId: "claude-opus-4-7", initialPersonaId: "oracle",
+  initialModelId: "claude-opus-5-5", initialPersonaId: "oracle",
 };
 
 function readOracleProfile(): OracleProfileData {

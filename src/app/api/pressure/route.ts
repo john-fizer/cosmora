@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       : "No significant pressure signals. All three timing systems read clear.";
 
     const msg = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
+      model: "claude-sonnet-5-5",
       max_tokens: 1400,
       system: guideMode === "spirit" ? SPIRIT_SYSTEM : STAR_SYSTEM,
       messages: [{

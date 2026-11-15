@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
 
     const msg = await anthropic.messages.create({
       model: "claude-sonnet-5-5",
-      max_tokens: 1400,
+      max_tokens: 4000,
       system: guideMode === "spirit" ? SPIRIT_SYSTEM : STAR_SYSTEM,
       messages: [{
         role: "user",

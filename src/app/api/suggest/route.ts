@@ -42,7 +42,8 @@ Return ONLY a JSON array of 3 strings. No explanation, no numbering, no extra te
 
     const response = await client.messages.create({
       model: "claude-haiku-5-5",
-      max_tokens: 200,
+      max_tokens: 1000,
+      output_config: { effort: "low" },
       messages: [{ role: "user", content: prompt }],
     });
 

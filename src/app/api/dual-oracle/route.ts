@@ -87,7 +87,7 @@ async function runClaude(
 
   const response = await anthropic.messages.create({
     model: "claude-sonnet-5-5",
-    max_tokens: 1200,
+    max_tokens: 4000,
     system,
     messages: msgs,
   });
@@ -152,7 +152,7 @@ Synthesize these into the definitive Cosmora oracle response.`;
 
   const stream = anthropic.messages.stream({
     model: "claude-sonnet-5-5",
-    max_tokens: 1500,
+    max_tokens: 4000,
     system,
     messages: [{ role: "user", content: userContent }],
   });

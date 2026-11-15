@@ -63,7 +63,7 @@ Synthesize these influences into a cohesive reading about what life there would 
 
     const stream = await anthropic.messages.create({
       model: "claude-sonnet-5-5",
-      max_tokens: 600,
+      max_tokens: 3000,
       system,
       messages: [{ role: "user", content: userMessage }],
       stream: true,

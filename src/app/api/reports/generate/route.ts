@@ -268,7 +268,7 @@ async function runConvergence(
 
   const msg = await anthropic.messages.create({
     model: "claude-sonnet-5-5",
-    max_tokens: 1600,
+    max_tokens: 5000,
     messages: [{
       role: "user",
       content: `You are the convergence analyst of Cosmora — the final arbiter between two independent astrological systems reading the same birth.
@@ -317,7 +317,7 @@ Write in flowing paragraphs with clear theme statements. This is the most author
 async function runTechnique(technique: Technique): Promise<{ technique: Technique; body: string; confidence: number }> {
   const msg = await anthropic.messages.create({
     model: "claude-sonnet-5-5",
-    max_tokens: 1200,
+    max_tokens: 5000,
     messages: [{ role: "user", content: technique.prompt }],
   });
 
@@ -346,7 +346,7 @@ async function synthesize(
 
   const msg = await anthropic.messages.create({
     model: "claude-sonnet-5-5",
-    max_tokens: 300,
+    max_tokens: 2000,
     messages: [{
       role: "user",
       content: `You are synthesizing an astrological report of type "${type}" for the following native.\n\nCHART:\n${chartContext}\n\nTECHNIQUE SUMMARIES:\n${summaries}\n\nWrite ONE paragraph (2–3 sentences) that is the essential truth and lede of this entire report — the single most important thing the native needs to understand right now. Precise. Specific to their chart. Unforgettable. Do not start with "I" or "This report". Respond with only the paragraph.`,
@@ -375,7 +375,7 @@ async function personaRewrite(
 
   const msg = await anthropic.messages.create({
     model: "claude-sonnet-5-5",
-    max_tokens: 5000,
+    max_tokens: 10000,
     system: persona.reportRewriteSystemPrompt,
     messages: [{
       role: "user",

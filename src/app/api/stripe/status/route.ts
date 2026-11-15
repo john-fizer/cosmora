@@ -11,6 +11,10 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     tier: pro ? "pro" : "free",
     oracleUsed,
-    oracleLimit: pro ? Infinity : FREE_ORACLE_DAILY_LIMIT,
+    // Infinity would serialize to null over JSON (JSON has no representation
+    // for it), silently breaking any oracleUsed < oracleLimit or
+    // oracleLimit - oracleUsed arithmetic a future UI adds. A large finite
+    // sentinel survives the round-trip and behaves identically in practice.
+    oracleLimit: pro ? Number.MAX_SAFE_INTEGER : FREE_ORACLE_DAILY_LIMIT,
   });
 }

@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
@@ -299,7 +299,33 @@ export default function ReportPage() {
   const [visibleCount, setVisibleCount] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackDone, setFeedbackDone] = useState(false);
+  const [shareStatus, setShareStatus] = useState<"idle" | "copied">("idle");
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Same share pattern as the Daily Briefing: native share sheet first
+  // (where sharing actually happens, on mobile), clipboard copy as the
+  // fallback for anything else so the button always does something useful.
+  // The headline is the report's own pull-quote — exactly what's worth
+  // sharing, rather than the full multi-section body.
+  const shareReport = useCallback(async () => {
+    if (!report || !meta) return;
+    const shareText = report.headline
+      ? `${meta.title}\n\n"${report.headline}"\n\n— via Cosmora`
+      : `My ${meta.title} from Cosmora.`;
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({ title: meta.title, text: shareText });
+        return;
+      } catch (err) {
+        if ((err as Error)?.name === "AbortError") return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setShareStatus("copied");
+      setTimeout(() => setShareStatus("idle"), 2000);
+    } catch { /* clipboard unavailable — nothing more we can do */ }
+  }, [report, meta]);
 
   useEffect(() => {
     const pid = getActiveProfileId();
@@ -370,18 +396,32 @@ export default function ReportPage() {
         }}>
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
 
-            {/* Breadcrumb */}
-            <button
-              onClick={() => router.push("/dashboard/reports")}
-              style={{
-                background: "none", border: "none", cursor: "pointer",
-                color: "rgba(255,255,255,0.25)", fontSize: 13,
-                fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em",
-                marginBottom: 20, padding: 0, display: "flex", alignItems: "center", gap: 6,
-              }}
-            >
-              ← REPORTS
-            </button>
+            {/* Breadcrumb + share */}
+            <div className="flex items-center justify-between" style={{ marginBottom: 20 }}>
+              <button
+                onClick={() => router.push("/dashboard/reports")}
+                style={{
+                  background: "none", border: "none", cursor: "pointer",
+                  color: "rgba(255,255,255,0.25)", fontSize: 13,
+                  fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em",
+                  padding: 0, display: "flex", alignItems: "center", gap: 6,
+                }}
+              >
+                ← REPORTS
+              </button>
+              <button
+                onClick={shareReport}
+                style={{
+                  padding: "5px 14px", cursor: "pointer",
+                  background: `${meta.color}10`, border: `1px solid ${meta.color}30`,
+                  borderRadius: 20, color: meta.color,
+                  fontSize: 12, letterSpacing: "0.1em",
+                  fontFamily: "'Fragment Mono', monospace",
+                }}
+              >
+                {shareStatus === "copied" ? "COPIED ✓" : "SHARE ↗"}
+              </button>
+            </div>
 
             <div>
               <p style={{

@@ -20,7 +20,7 @@ export const PLANET_PROVIDER_CHAIN: Record<VoicePlanet, string[]> = {
 // ─── Cartesia voice map ───────────────────────────────────────────────────────
 // Voices chosen for archetypal fit from the live voice library
 const CARTESIA_VOICES: Record<VoicePlanet, string> = {
-  Sun:     "79f8b5fb-2cc8-479a-80df-29f7a7cf1a3e", // Theo — steady, confident narrator
+  Sun:     "56c7989e-7a5f-4d12-838f-e0f910e7356e", // Tristan — calm authority, matches "The Sovereign" archetype
   Moon:    "2f251ac3-89a9-4a77-a452-704b474ccd01", // Lucy — reassuring British female
   Mercury: "47c38ca4-5f35-497b-b1a3-415245fb35e1", // Daniel — clear, crisp, precise
   Venus:   "62ae83ad-4f6a-430b-af41-a9bede9286ca", // Gemma — emotive British female

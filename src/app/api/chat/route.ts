@@ -425,11 +425,15 @@ export async function POST(req: NextRequest) {
       async start(controller) {
         try {
           if (modelConfig.provider === "anthropic") {
+            // Claude 5.5-family models run adaptive thinking by default (it can't
+            // be disabled on Sonnet/Opus 5.5), so a budget sized only for the
+            // visible answer risks the thinking phase alone exhausting it before
+            // any text or tool_use block is written — floor it with headroom.
             await agenticAnthropicStream(
               modelConfig.id,
               systemContent,
               apiMessages,
-              modelConfig.tokens,
+              Math.max(modelConfig.tokens, 4000),
               chart,
               controller,
               encoder

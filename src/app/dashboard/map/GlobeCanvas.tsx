@@ -43,7 +43,7 @@ function ll2xyz(lat: number, lon: number, r = GLOBE_R): THREE.Vector3 {
 // Finds the nearest curated hotspot to a click, within a generous hit radius —
 // topSpots are already de-clustered ≥7° apart (see activeCities), so a 4°
 // radius can't straddle two spots.
-function nearestCitySpot(spots: CitySpot[], lat: number, lon: number, maxDeg = 4): CitySpot | null {
+export function nearestCitySpot(spots: CitySpot[], lat: number, lon: number, maxDeg = 4): CitySpot | null {
   let best: CitySpot | null = null, bestD = Infinity;
   for (const s of spots) {
     const dLat = s.lat - lat;
@@ -559,7 +559,7 @@ function BirthPulseRings({ lat, lon }: { lat: number; lon: number }) {
 // ─── Camera fly-to rig — eases camera + OrbitControls target toward a clicked
 // hot point; a no-op while flyTarget is null, so manual orbit control is
 // otherwise untouched. ─────────────────────────────────────────────────────
-function CameraRig({ flyTarget, controlsRef }: {
+export function CameraRig({ flyTarget, controlsRef }: {
   flyTarget: { camPos: THREE.Vector3; target: THREE.Vector3 } | null;
   controlsRef: React.RefObject<ComponentRef<typeof OrbitControls> | null>;
 }) {
@@ -578,7 +578,7 @@ function CameraRig({ flyTarget, controlsRef }: {
 // rings, tinted by the spot's dominant planet (PLANET_COLORS — the same
 // palette already canonical for the lines). Purely decorative; the parent
 // unmounts it on its own timer. ─────────────────────────────────────────────
-function ZoomFlourish({ pos, color }: { pos: THREE.Vector3; color: string }) {
+export function ZoomFlourish({ pos, color }: { pos: THREE.Vector3; color: string }) {
   const t = useRef(0);
   const ringRefs = useRef<(THREE.Mesh | null)[]>([null, null, null]);
   const flashRef = useRef<THREE.Mesh>(null);

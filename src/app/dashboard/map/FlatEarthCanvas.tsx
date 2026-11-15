@@ -4,13 +4,13 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Html, Billboard } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
-import { useRef, useMemo, useEffect, useState, useCallback } from "react";
+import { useRef, useMemo, useEffect, useState, useCallback, type ComponentRef } from "react";
 import * as THREE from "three";
 
 import type { AstroLine, AstroLinePlanet, AstroLineAngle } from "@/lib/astrology/astrocartography";
 import { PLANET_COLORS, PLANET_SYMBOLS } from "@/lib/astrology/astrocartography";
 import type { CitySpot } from "./GlobeCanvas";
-import { buildSkylineGeo } from "./GlobeCanvas";
+import { buildSkylineGeo, nearestCitySpot, CameraRig, ZoomFlourish } from "./GlobeCanvas";
 import type { Prim } from "@/lib/astrology/skylines";
 import { LANDMARKS, proceduralSkyline } from "@/lib/astrology/skylines";
 
@@ -488,6 +488,29 @@ function FlatEarthScene({
   showCities: boolean; showLines: boolean;
   onLocationClick: (lat: number, lon: number) => void;
 }) {
+  const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
+  const [flyTarget, setFlyTarget] = useState<{ camPos: THREE.Vector3; target: THREE.Vector3 } | null>(null);
+  const [flourish, setFlourish] = useState<{ pos: THREE.Vector3; color: string; key: number } | null>(null);
+  const flourishIdRef = useRef(0);
+
+  // Same cinematic zoom-on-hotspot treatment as the 3D globe view, adapted to
+  // this flat disc's static (non-rotating) projection — see GlobeCanvas for
+  // the shared nearestCitySpot/CameraRig/ZoomFlourish implementations.
+  const handleDiscClick = useCallback((lat: number, lon: number) => {
+    onLocationClick(lat, lon);
+    const spot = nearestCitySpot(topSpots, lat, lon);
+    if (!spot) { setFlyTarget(null); return; }
+
+    const target = project(spot.lon, spot.lat, Y0 + 0.02);
+    const camOffsetDir = new THREE.Vector3(0, 4.8, 3.4).normalize();
+    setFlyTarget({ camPos: target.clone().add(camOffsetDir.multiplyScalar(2.2)), target });
+
+    const id = ++flourishIdRef.current;
+    const dominant = spot.scores?.[0]?.planet;
+    setFlourish({ pos: target, color: dominant ? PLANET_COLORS[dominant] : "#4488FF", key: id });
+    setTimeout(() => { setFlourish(f => (f?.key === id ? null : f)); }, 1300);
+  }, [onLocationClick, topSpots]);
+
   return (
     <>
       <ambientLight intensity={0.08} />
@@ -510,12 +533,15 @@ function FlatEarthScene({
       {showCities && topSpots.map((spot, i) => (
         <CityTower key={spot.city} spot={spot} spotIndex={i} />
       ))}
+      {flourish && <ZoomFlourish pos={flourish.pos} color={flourish.color} />}
 
       <BirthPulseDisc lat={birthLat} lon={birthLon} />
       <NorthPoleMarker />
-      <DiscClickHandler onDiscClick={onLocationClick} />
+      <DiscClickHandler onDiscClick={handleDiscClick} />
+      <CameraRig flyTarget={flyTarget} controlsRef={controlsRef} />
 
       <OrbitControls
+        ref={controlsRef}
         enablePan
         minDistance={1.5}
         maxDistance={9}
@@ -523,6 +549,7 @@ function FlatEarthScene({
         rotateSpeed={0.45}
         dampingFactor={0.07}
         enableDamping
+        onStart={() => setFlyTarget(null)}
       />
 
       <EffectComposer>

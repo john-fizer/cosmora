@@ -479,6 +479,7 @@ function DiscClickHandler({ onDiscClick }: { onDiscClick: (lat: number, lon: num
 function FlatEarthScene({
   lines, activePlanets, activeAngles, topSpots,
   birthLat, birthLon, showCities, showLines, onLocationClick,
+  tourSpot = null,
 }: {
   lines: AstroLine[];
   activePlanets: Set<AstroLinePlanet>;
@@ -487,6 +488,7 @@ function FlatEarthScene({
   birthLat: number; birthLon: number;
   showCities: boolean; showLines: boolean;
   onLocationClick: (lat: number, lon: number) => void;
+  tourSpot?: CitySpot | null;
 }) {
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
   const [flyTarget, setFlyTarget] = useState<{ camPos: THREE.Vector3; target: THREE.Vector3 } | null>(null);
@@ -496,11 +498,7 @@ function FlatEarthScene({
   // Same cinematic zoom-on-hotspot treatment as the 3D globe view, adapted to
   // this flat disc's static (non-rotating) projection — see GlobeCanvas for
   // the shared nearestCitySpot/CameraRig/ZoomFlourish implementations.
-  const handleDiscClick = useCallback((lat: number, lon: number) => {
-    onLocationClick(lat, lon);
-    const spot = nearestCitySpot(topSpots, lat, lon);
-    if (!spot) { setFlyTarget(null); return; }
-
+  const flyToSpot = useCallback((spot: CitySpot) => {
     const target = project(spot.lon, spot.lat, Y0 + 0.02);
     const camOffsetDir = new THREE.Vector3(0, 4.8, 3.4).normalize();
     setFlyTarget({ camPos: target.clone().add(camOffsetDir.multiplyScalar(2.2)), target });
@@ -509,7 +507,20 @@ function FlatEarthScene({
     const dominant = spot.scores?.[0]?.planet;
     setFlourish({ pos: target, color: dominant ? PLANET_COLORS[dominant] : "#4488FF", key: id });
     setTimeout(() => { setFlourish(f => (f?.key === id ? null : f)); }, 1300);
-  }, [onLocationClick, topSpots]);
+  }, []);
+
+  const handleDiscClick = useCallback((lat: number, lon: number) => {
+    onLocationClick(lat, lon);
+    const spot = nearestCitySpot(topSpots, lat, lon);
+    if (!spot) { setFlyTarget(null); return; }
+    flyToSpot(spot);
+  }, [onLocationClick, topSpots, flyToSpot]);
+
+  // External tour mode (driven by the page) steps through topSpots by
+  // changing this prop; each change re-triggers the same fly-to + flourish.
+  useEffect(() => {
+    if (tourSpot) flyToSpot(tourSpot);
+  }, [tourSpot, flyToSpot]);
 
   return (
     <>
@@ -576,13 +587,14 @@ export interface FlatEarthCanvasProps {
   showCities?: boolean;
   showLines?: boolean;
   onLocationClick: (lat: number, lon: number) => void;
+  tourSpot?: CitySpot | null;
 }
 
 export default function FlatEarthCanvas({
   lines, activePlanets, activeAngles, topSpots,
   birthLat = 34.05, birthLon = -118.24,
   showCities = true, showLines = true,
-  onLocationClick,
+  onLocationClick, tourSpot,
 }: FlatEarthCanvasProps) {
   return (
     <Canvas
@@ -600,6 +612,7 @@ export default function FlatEarthCanvas({
         showCities={showCities}
         showLines={showLines}
         onLocationClick={onLocationClick}
+        tourSpot={tourSpot}
       />
     </Canvas>
   );

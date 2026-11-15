@@ -626,6 +626,11 @@ export default function AstrocartographyPage() {
     new Set<EnergyCategory>(ENERGY_CATEGORIES)
   );
 
+  // Tour mode: auto-cycles the camera through the top hotspots, reusing the
+  // same cinematic fly-to + planet flourish that a manual click triggers.
+  const [touring, setTouring] = useState(false);
+  const [tourIdx, setTourIdx] = useState(0);
+
   // Mobile only: the desktop layout shows Birth Data / Map Controls /
   // Energy Intensity / View Options as four permanent floating cards over
   // the globe. On a phone that's six overlapping panels fighting the
@@ -661,6 +666,25 @@ export default function AstrocartographyPage() {
     minSepDeg: 7,                      // de-clutter so cities don't drown each other
     cap: 14,
   }), [lines, activeCategories, activePlanets, activeAngles]);
+
+  const TOUR_LIMIT = 6;
+  const tourSpots = useMemo(() => topSpots.slice(0, TOUR_LIMIT), [topSpots]);
+  const tourSpot = touring ? (tourSpots[tourIdx] ?? null) : null;
+
+  // Advance to the next hotspot on a fixed cadence while touring. Stops
+  // cleanly (via the effect cleanup) the moment `touring` flips off.
+  useEffect(() => {
+    if (!touring || tourSpots.length === 0) return;
+    const id = setInterval(() => setTourIdx(i => (i + 1) % tourSpots.length), 4500);
+    return () => clearInterval(id);
+  }, [touring, tourSpots.length]);
+
+  const toggleTour = useCallback(() => {
+    setTouring(t => {
+      if (!t) setTourIdx(0);
+      return !t;
+    });
+  }, []);
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
   const handleLocationClick = useCallback((lat: number, lon: number) => {
@@ -749,6 +773,7 @@ export default function AstrocartographyPage() {
               showCities={layers.citySkylines}
               showLines={layers.planetLines}
               onLocationClick={handleLocationClick}
+              tourSpot={tourSpot}
             />
           )
         ) : (
@@ -765,6 +790,7 @@ export default function AstrocartographyPage() {
               birthLon={birthLon}
               showCities={layers.citySkylines}
               showLines={layers.planetLines}
+              tourSpot={tourSpot}
             />
           )
         )}
@@ -1069,6 +1095,28 @@ export default function AstrocartographyPage() {
             </button>
           ))}
         </div>
+
+        {/* Tour mode — auto-cycles through the top hotspots */}
+        <button
+          onClick={toggleTour}
+          disabled={tourSpots.length === 0}
+          title={tourSpots.length === 0 ? "No active hot points to tour" : touring ? "Stop the tour" : "Tour the top hot points"}
+          style={{
+            display: "flex", alignItems: "center", gap: 6,
+            padding: "5px 16px",
+            background: touring ? "rgba(200,165,91,0.16)" : "rgba(10,15,30,0.7)",
+            border: touring ? "1px solid rgba(200,165,91,0.4)" : "1px solid rgba(30,60,120,0.35)",
+            borderRadius: 40,
+            color: touring ? "#C8A55B" : tourSpots.length === 0 ? "#2A3A55" : "#445577",
+            fontSize: 9, letterSpacing: "0.14em",
+            fontFamily: "'Fragment Mono', monospace",
+            cursor: tourSpots.length === 0 ? "not-allowed" : "pointer",
+            transition: "all 0.15s",
+          }}
+        >
+          <span style={{ fontSize: 10 }}>{touring ? "◼" : "▶"}</span>
+          {touring ? `TOURING ${tourIdx + 1}/${tourSpots.length}` : "TOUR"}
+        </button>
 
         {/* Time scrubber */}
         <div className="flex items-center gap-3" style={{ width: 480, maxWidth: "80%" }}>

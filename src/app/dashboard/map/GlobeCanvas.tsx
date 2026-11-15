@@ -722,6 +722,7 @@ function Scene({
   onLocationClick, onVortexClick: _,
   birthLat = 34.05, birthLon = -118.24,
   showCities = true, showLines = true,
+  tourSpot = null,
 }: {
   lines: AstroLine[]; activePlanets: Set<AstroLinePlanet>; activeAngles: Set<AstroLineAngle>;
   globeMode: GlobeMode; topSpots: CitySpot[];
@@ -729,6 +730,7 @@ function Scene({
   onVortexClick: (node: unknown) => void;
   birthLat?: number; birthLon?: number;
   showCities?: boolean; showLines?: boolean;
+  tourSpot?: CitySpot | null;
 }) {
   const globeGroupRef = useRef<THREE.Group>(null);
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
@@ -745,15 +747,9 @@ function Scene({
     return lines.filter(l => activePlanets.has(l.planet) && activeAngles.has(l.angle));
   }, [lines, activePlanets, activeAngles, globeMode]);
 
-  // Clicking a curated hot point (within nearestCitySpot's hit radius) triggers
-  // a cinematic camera fly-to plus a planet-themed flourish, on top of the
-  // normal lat/lon location-panel behavior (onLocationClick, unchanged).
-  // Clicking elsewhere releases any active zoom.
-  const handleGlobeClick = useCallback((lat: number, lon: number) => {
-    onLocationClick(lat, lon);
-    const spot = nearestCitySpot(topSpots, lat, lon);
-    if (!spot) { setFlyTarget(null); return; }
-
+  // Shared by both click-to-zoom and the external tour trigger below — flies
+  // the camera to a spot and plays its planet-themed flourish.
+  const flyToSpot = useCallback((spot: CitySpot) => {
     const angle = globeGroupRef.current?.rotation.y ?? 0;
     const localPos = ll2xyz(spot.lat, spot.lon, GLOBE_R * 1.004);
     const worldPos = localPos.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), angle);
@@ -764,7 +760,24 @@ function Scene({
     const dominant = spot.scores?.[0]?.planet;
     setFlourish({ pos: localPos, color: dominant ? PLANET_COLORS[dominant] : "#4488FF", key: id });
     setTimeout(() => { setFlourish(f => (f?.key === id ? null : f)); }, 1300);
-  }, [onLocationClick, topSpots]);
+  }, []);
+
+  // Clicking a curated hot point (within nearestCitySpot's hit radius) triggers
+  // a cinematic camera fly-to plus a planet-themed flourish, on top of the
+  // normal lat/lon location-panel behavior (onLocationClick, unchanged).
+  // Clicking elsewhere releases any active zoom.
+  const handleGlobeClick = useCallback((lat: number, lon: number) => {
+    onLocationClick(lat, lon);
+    const spot = nearestCitySpot(topSpots, lat, lon);
+    if (!spot) { setFlyTarget(null); return; }
+    flyToSpot(spot);
+  }, [onLocationClick, topSpots, flyToSpot]);
+
+  // External tour mode (driven by the page) steps through topSpots by
+  // changing this prop; each change re-triggers the same fly-to + flourish.
+  useEffect(() => {
+    if (tourSpot) flyToSpot(tourSpot);
+  }, [tourSpot, flyToSpot]);
 
   const lineOpacity    = showCities ? 0.62 : 0.90;
   const bloomIntensity = globeMode === "energy" ? 3.2 : globeMode === "lines" ? 2.8 : globeMode === "cities" ? 2.5 : 2.0;
@@ -837,6 +850,7 @@ export default function GlobeCanvas({
   lines, activePlanets, activeAngles, globeMode, topSpots,
   onLocationClick, onVortexClick,
   birthLat, birthLon, showCities, showLines,
+  tourSpot,
 }: {
   lines: AstroLine[]; activePlanets: Set<AstroLinePlanet>; activeAngles: Set<AstroLineAngle>;
   globeMode: GlobeMode; topSpots: CitySpot[];
@@ -844,6 +858,7 @@ export default function GlobeCanvas({
   onVortexClick: (node: unknown) => void;
   birthLat?: number; birthLon?: number;
   showCities?: boolean; showLines?: boolean;
+  tourSpot?: CitySpot | null;
 }) {
   const quality = QUALITY[typeof window !== "undefined" ? detectGpuTier() : "high"];
   return (
@@ -860,6 +875,7 @@ export default function GlobeCanvas({
         onLocationClick={onLocationClick} onVortexClick={onVortexClick}
         birthLat={birthLat} birthLon={birthLon}
         showCities={showCities} showLines={showLines}
+        tourSpot={tourSpot}
       />
     </Canvas>
   );

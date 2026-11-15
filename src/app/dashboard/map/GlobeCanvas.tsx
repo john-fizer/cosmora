@@ -4,7 +4,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Html, useTexture, Billboard } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
-import { useRef, useMemo, useCallback, useState, useEffect, Suspense } from "react";
+import { useRef, useMemo, useCallback, useState, useEffect, Suspense, type ComponentRef } from "react";
 import * as THREE from "three";
 import type { AstroLine, AstroLinePlanet, AstroLineAngle } from "@/lib/astrology/astrocartography";
 import { PLANET_COLORS, PLANET_SYMBOLS, scoreLocation } from "@/lib/astrology/astrocartography";
@@ -38,6 +38,20 @@ function ll2xyz(lat: number, lon: number, r = GLOBE_R): THREE.Vector3 {
   const φ = (lat  * Math.PI) / 180;
   const λ = (-lon * Math.PI) / 180;
   return new THREE.Vector3(r * Math.cos(φ) * Math.cos(λ), r * Math.sin(φ), r * Math.cos(φ) * Math.sin(λ));
+}
+
+// Finds the nearest curated hotspot to a click, within a generous hit radius —
+// topSpots are already de-clustered ≥7° apart (see activeCities), so a 4°
+// radius can't straddle two spots.
+function nearestCitySpot(spots: CitySpot[], lat: number, lon: number, maxDeg = 4): CitySpot | null {
+  let best: CitySpot | null = null, bestD = Infinity;
+  for (const s of spots) {
+    const dLat = s.lat - lat;
+    const dLon = (s.lon - lon) * Math.cos((lat * Math.PI) / 180);
+    const d = Math.hypot(dLat, dLon);
+    if (d < bestD) { bestD = d; best = s; }
+  }
+  return bestD <= maxDeg ? best : null;
 }
 
 function buildLineGeo(lines: number[][][], r: number): THREE.BufferGeometry {
@@ -542,6 +556,67 @@ function BirthPulseRings({ lat, lon }: { lat: number; lon: number }) {
   );
 }
 
+// ─── Camera fly-to rig — eases camera + OrbitControls target toward a clicked
+// hot point; a no-op while flyTarget is null, so manual orbit control is
+// otherwise untouched. ─────────────────────────────────────────────────────
+function CameraRig({ flyTarget, controlsRef }: {
+  flyTarget: { camPos: THREE.Vector3; target: THREE.Vector3 } | null;
+  controlsRef: React.RefObject<ComponentRef<typeof OrbitControls> | null>;
+}) {
+  useFrame((state, dt) => {
+    if (!flyTarget || !controlsRef.current) return;
+    const k = 1 - Math.exp(-2.4 * dt);
+    state.camera.position.lerp(flyTarget.camPos, k);
+    controlsRef.current.target.lerp(flyTarget.target, k);
+    controlsRef.current.update();
+  });
+  return null;
+}
+
+// ─── Zoom flourish — a planet-colored pulse that plays when a hot point's
+// cinematic zoom triggers: a quick flash plus three staggered expanding
+// rings, tinted by the spot's dominant planet (PLANET_COLORS — the same
+// palette already canonical for the lines). Purely decorative; the parent
+// unmounts it on its own timer. ─────────────────────────────────────────────
+function ZoomFlourish({ pos, color }: { pos: THREE.Vector3; color: string }) {
+  const t = useRef(0);
+  const ringRefs = useRef<(THREE.Mesh | null)[]>([null, null, null]);
+  const flashRef = useRef<THREE.Mesh>(null);
+  const col = useMemo(() => new THREE.Color(color).multiplyScalar(2.4), [color]);
+  const ringGeo = useMemo(() => new THREE.RingGeometry(0.05, 0.075, 56), []);
+  const flashGeo = useMemo(() => new THREE.CircleGeometry(0.05, 32), []);
+
+  useFrame((_, dt) => {
+    t.current += dt;
+    ringRefs.current.forEach((m, i) => {
+      if (!m) return;
+      const p = Math.max(0, Math.min((t.current - i * 0.1) / 0.9, 1));
+      m.scale.setScalar(0.4 + p * 3.2);
+      (m.material as THREE.MeshBasicMaterial).opacity = (1 - p) * 0.85;
+    });
+    if (flashRef.current) {
+      const p = Math.min(t.current / 0.45, 1);
+      flashRef.current.scale.setScalar(0.6 + p * 1.6);
+      (flashRef.current.material as THREE.MeshBasicMaterial).opacity = (1 - p) * 0.75;
+    }
+  });
+
+  return (
+    <group position={pos}>
+      <mesh ref={flashRef} geometry={flashGeo} rotation={[-Math.PI / 2, 0, 0]}>
+        <meshBasicMaterial color={col} transparent opacity={0.75} depthWrite={false}
+          side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
+      </mesh>
+      {[0, 1, 2].map(i => (
+        <mesh key={i} ref={el => { ringRefs.current[i] = el; }} geometry={ringGeo} rotation={[-Math.PI / 2, 0, 0]}>
+          <meshBasicMaterial color={col} transparent opacity={0} depthWrite={false}
+            side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 // ─── Astro line ───────────────────────────────────────────────────────────────
 function AstroLineObject({ line, color, dashed, opacity, mode }: {
   line: AstroLine; color: string; dashed: boolean; opacity: number; mode: GlobeMode;
@@ -656,12 +731,40 @@ function Scene({
   showCities?: boolean; showLines?: boolean;
 }) {
   const globeGroupRef = useRef<THREE.Group>(null);
-  useFrame((_, dt) => { if (globeGroupRef.current) globeGroupRef.current.rotation.y += dt * 0.012; });
+  const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
+  const [flyTarget, setFlyTarget] = useState<{ camPos: THREE.Vector3; target: THREE.Vector3 } | null>(null);
+  const [flourish, setFlourish] = useState<{ pos: THREE.Vector3; color: string; key: number } | null>(null);
+  const flourishIdRef = useRef(0);
+
+  // Auto-rotation freezes while a cinematic zoom is active, so the camera
+  // doesn't drift off the hot point it just flew to.
+  useFrame((_, dt) => { if (globeGroupRef.current && !flyTarget) globeGroupRef.current.rotation.y += dt * 0.012; });
 
   const visibleLines = useMemo(() => {
     if (globeMode === "lines") return lines.filter(l => activeAngles.has(l.angle));
     return lines.filter(l => activePlanets.has(l.planet) && activeAngles.has(l.angle));
   }, [lines, activePlanets, activeAngles, globeMode]);
+
+  // Clicking a curated hot point (within nearestCitySpot's hit radius) triggers
+  // a cinematic camera fly-to plus a planet-themed flourish, on top of the
+  // normal lat/lon location-panel behavior (onLocationClick, unchanged).
+  // Clicking elsewhere releases any active zoom.
+  const handleGlobeClick = useCallback((lat: number, lon: number) => {
+    onLocationClick(lat, lon);
+    const spot = nearestCitySpot(topSpots, lat, lon);
+    if (!spot) { setFlyTarget(null); return; }
+
+    const angle = globeGroupRef.current?.rotation.y ?? 0;
+    const localPos = ll2xyz(spot.lat, spot.lon, GLOBE_R * 1.004);
+    const worldPos = localPos.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), angle);
+    const dir = worldPos.clone().normalize();
+    setFlyTarget({ camPos: dir.clone().multiplyScalar(3.1), target: worldPos });
+
+    const id = ++flourishIdRef.current;
+    const dominant = spot.scores?.[0]?.planet;
+    setFlourish({ pos: localPos, color: dominant ? PLANET_COLORS[dominant] : "#4488FF", key: id });
+    setTimeout(() => { setFlourish(f => (f?.key === id ? null : f)); }, 1300);
+  }, [onLocationClick, topSpots]);
 
   const lineOpacity    = showCities ? 0.62 : 0.90;
   const bloomIntensity = globeMode === "energy" ? 3.2 : globeMode === "lines" ? 2.8 : globeMode === "cities" ? 2.5 : 2.0;
@@ -702,13 +805,17 @@ function Scene({
         {showCities && topSpots.map((spot, i) => (
           <HoloCity key={spot.city} spot={spot} index={i} />
         ))}
+        {flourish && <ZoomFlourish pos={flourish.pos} color={flourish.color} />}
       </group>
 
-      <GlobeClickHandler onGlobeClick={onLocationClick} globeGroupRef={globeGroupRef} />
+      <GlobeClickHandler onGlobeClick={handleGlobeClick} globeGroupRef={globeGroupRef} />
+      <CameraRig flyTarget={flyTarget} controlsRef={controlsRef} />
 
       <OrbitControls
+        ref={controlsRef}
         enablePan={false} minDistance={2.8} maxDistance={9.5}
         rotateSpeed={0.4} autoRotate={false} enableDamping dampingFactor={0.05}
+        onStart={() => setFlyTarget(null)}
       />
 
       <EffectComposer>

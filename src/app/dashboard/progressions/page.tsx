@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { DashboardBg } from "@/components/ui/DashboardBg";
 import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
+import type { ChartData } from "@/lib/astrology/types";
+import { FullReportCard } from "@/components/reports/FullReportCard";
 import type { ProgressionResult, ProgPlacement, DirectedPlacement } from "@/lib/astrology/progressions";
 
 const PLANET_COLORS: Record<string, string> = {
@@ -72,6 +74,8 @@ export default function ProgressionsPage() {
   const [noProfile, setNoProfile] = useState(false);
   const [fetchError, setFetchError] = useState(false);
   const [tab, setTab]             = useState<"prog" | "arcs">("prog");
+  const [natalChart, setNatalChart] = useState<ChartData | null>(null);
+  const [profileId, setProfileId]   = useState<string | null>(null);
 
   useEffect(() => {
     const id = getActiveProfileId();
@@ -84,6 +88,8 @@ export default function ProgressionsPage() {
     if (!profile || !chart) { setNoProfile(true); setLoading(false); return; }
 
     const birthDatetime = `${profile.birthDate}T${profile.birthTime}Z`;
+    setNatalChart(chart);
+    setProfileId(id);
     fetch("/api/progressions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -149,6 +155,10 @@ export default function ProgressionsPage() {
               Secondary progressions + solar arc directions — symbolic timing: 1 day = 1 year
             </p>
           </div>
+
+          {natalChart && profileId && (
+            <FullReportCard reportTypeId="progressed_planets" chart={natalChart} profileId={profileId} />
+          )}
 
           {/* Key metrics */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14, marginBottom: 24 }}>

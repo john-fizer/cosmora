@@ -14,6 +14,7 @@ import type {
 } from "@/lib/astrology/sidereal";
 import type { ChartData } from "@/lib/astrology/types";
 import { useClientSnapshot } from "@/lib/useClientSnapshot";
+import { FullReportCard } from "@/components/reports/FullReportCard";
 
 const KEY_DIVISIONALS = [1, 2, 3, 4, 7, 9, 10, 12, 16, 20, 24, 27, 30, 40, 45, 60];
 
@@ -121,11 +122,12 @@ interface VedicPageData {
   noProfile: boolean;
   vedicCtx: string;
   profileName: string;
+  profileId: string | null;
 }
 
 const EMPTY_VEDIC_DATA: VedicPageData = {
   sidereal: null, rawChart: null, ayanamsa: 0, dasha: null, karakas: null,
-  noProfile: false, vedicCtx: "", profileName: "Native",
+  noProfile: false, vedicCtx: "", profileName: "Native", profileId: null,
 };
 
 function readVedicData(): VedicPageData {
@@ -151,12 +153,13 @@ function readVedicData(): VedicPageData {
     noProfile: false,
     vedicCtx: buildVedicContext(chart, birthDatetime),
     profileName: profile.name ?? "Native",
+    profileId: id,
   };
 }
 
 export default function VedicPage() {
   const { value: data } = useClientSnapshot(readVedicData, EMPTY_VEDIC_DATA);
-  const { sidereal, rawChart, ayanamsa, dasha, karakas, noProfile, vedicCtx, profileName } = data;
+  const { sidereal, rawChart, ayanamsa, dasha, karakas, noProfile, vedicCtx, profileName, profileId } = data;
   const [tab, setTab]             = useState<TabKey>("placements");
   const [selectedD, setSelectedD] = useState(9);
 
@@ -343,6 +346,9 @@ export default function VedicPage() {
           {/* PLACEMENTS */}
           {tab === "placements" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+              {rawChart && profileId && (
+                <FullReportCard reportTypeId="dual_zodiac" chart={rawChart} profileId={profileId} />
+              )}
               {sidereal.placements.map((p, i) => {
                 const col = PLANET_COLORS[p.name] ?? "#8899BB";
                 return (

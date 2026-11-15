@@ -9,6 +9,7 @@ import { SIGN_SYMBOLS, PLANET_SYMBOLS, ZODIAC_SIGNS, TRADITIONAL_RULERS } from "
 import type { ChartData, ZodiacSign, PlanetName } from "@/lib/astrology/types";
 import { getActiveProfileId, getProfile, getCachedChart } from "@/lib/storage";
 import type { StoredProfile } from "@/lib/storage";
+import { FullReportCard } from "@/components/reports/FullReportCard";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -525,6 +526,10 @@ export default function SolarReturnPage() {
                   {/* ─── OVERVIEW TAB ──────────────────────────────────────── */}
                   {activeTab === "overview" && (
                     <div className="space-y-5">
+                      {profile && (
+                        <FullReportCard reportTypeId="solar_return" chart={natalChart} profileId={profile.id} />
+                      )}
+
                       {/* SR Ascendant + key placements */}
                       <div className="rounded-2xl p-5"
                         style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.18)", boxShadow: "0 0 40px rgba(245,158,11,0.06)" }}>

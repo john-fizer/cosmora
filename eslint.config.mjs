@@ -29,6 +29,7 @@ const eslintConfig = defineConfig([
     files: [
       "src/components/landing/CosmicJourney.tsx",
       "src/components/landing/GlassHero.tsx",
+      "src/components/landing/LivingEarthHero.tsx",
       "src/components/layout/CosmicShell.tsx",
       "src/components/three/PhotorealSaturn.tsx",
       "src/components/three/SolarSystemOrrery.tsx",

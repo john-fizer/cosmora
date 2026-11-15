@@ -68,11 +68,11 @@ export const ORACLE_MODELS: OracleModel[] = [
     envKey: "OPENAI_API_KEY",
   },
   {
-    id: "gemini-2.0-flash",
+    id: "gemini-3.5-flash-lite",
     provider: "google",
     name: "Gemini Oracle",
     tagline: "Google · Free tier available",
-    description: "Gemini 2.0 Flash via Google AI Studio. Free API key at aistudio.google.com — no credit card needed.",
+    description: "Gemini 3.5 Flash-Lite via Google AI Studio. Free API key at aistudio.google.com — no credit card needed.",
     speed: "fast",
     tokens: 1200,
     icon: "◑",

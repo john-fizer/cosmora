@@ -9,48 +9,6 @@ import { REPORT_TYPES } from "@/lib/reports/types";
 import type { Report, ReportSection, ReportTypeMeta, SectionFeedback } from "@/lib/reports/types";
 import { getReport, saveFeedback, updateReportStatus } from "@/lib/reports/storage";
 
-// ─── Confidence gauge (detailed) ───────────────────────────────────────────────
-
-function ConfidenceMeter({ value, color, label }: { value: number; color: string; label?: string }) {
-  const pct = Math.round(value * 100);
-  const ticks = 20;
-  const filled = Math.round(value * ticks);
-
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <div style={{ display: "flex", gap: 1.5, alignItems: "flex-end" }}>
-        {Array.from({ length: ticks }, (_, i) => {
-          const h = 4 + (i / ticks) * 10;
-          return (
-            <motion.div
-              key={i}
-              initial={{ scaleY: 0 }}
-              animate={{ scaleY: 1 }}
-              transition={{ delay: i * 0.02, duration: 0.3 }}
-              style={{
-                width: 2, height: h,
-                borderRadius: 1,
-                background: i < filled ? color : "rgba(255,255,255,0.07)",
-                transformOrigin: "bottom",
-              }}
-            />
-          );
-        })}
-      </div>
-      <div>
-        <span style={{ color, fontSize: 13, fontFamily: "'Fragment Mono', monospace", fontWeight: "bold" }}>
-          {pct}%
-        </span>
-        {label && (
-          <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 13, fontFamily: "'Fragment Mono', monospace", marginLeft: 4 }}>
-            {label}
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
-
 // ─── Section card ──────────────────────────────────────────────────────────────
 
 function SectionCard({
@@ -73,28 +31,23 @@ function SectionCard({
           }}
         >
           {/* Section header */}
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20 }}>
-            <div>
-              {section.subheading && (
-                <p style={{
-                  color: color + "99", fontSize: 13, letterSpacing: "0.2em",
-                  fontFamily: "'Fragment Mono', monospace", marginBottom: 5,
-                  textTransform: "uppercase",
-                }}>
-                  {section.subheading}
-                </p>
-              )}
-              <h3 style={{
-                color: "#EDE8DC", fontSize: 26,
-                fontFamily: "'Cormorant Garamond', serif",
-                fontWeight: 600, lineHeight: 1.15,
+          <div style={{ marginBottom: 20 }}>
+            {section.subheading && (
+              <p style={{
+                color: color + "99", fontSize: 13, letterSpacing: "0.2em",
+                fontFamily: "'Fragment Mono', monospace", marginBottom: 5,
+                textTransform: "uppercase",
               }}>
-                {section.heading}
-              </h3>
-            </div>
-            <div style={{ flexShrink: 0, marginLeft: 20 }}>
-              <ConfidenceMeter value={section.confidence} color={color} label="confidence" />
-            </div>
+                {section.subheading}
+              </p>
+            )}
+            <h3 style={{
+              color: "#EDE8DC", fontSize: 26,
+              fontFamily: "'Cormorant Garamond', serif",
+              fontWeight: 600, lineHeight: 1.15,
+            }}>
+              {section.heading}
+            </h3>
           </div>
 
           {/* Time window */}
@@ -430,51 +383,35 @@ export default function ReportPage() {
               ← REPORTS
             </button>
 
-            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 20 }}>
-              <div>
-                <p style={{
-                  color: meta.color, fontSize: 13, letterSpacing: "0.24em",
-                  fontFamily: "'Fragment Mono', monospace", marginBottom: 8,
-                  textTransform: "uppercase",
-                }}>
-                  {meta.subtitle}
-                </p>
-                <h1 style={{
-                  color: "#F0EDE8", fontSize: 40,
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontWeight: 600, lineHeight: 1.1, marginBottom: 10,
-                }}>
-                  {meta.title}
-                </h1>
-                <p style={{
-                  color: "rgba(255,255,255,0.22)", fontSize: 13,
-                  fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
-                }}>
-                  Generated {new Date(report.generatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                  {" · "}
-                  {isExpired ? (
-                    <span style={{ color: "#FF8060" }}>Expired {expiryFormatted}</span>
-                  ) : (
-                    <span>Valid until {expiryFormatted}</span>
-                  )}
-                </p>
-              </div>
-
-              {/* Overall confidence */}
-              <div style={{
-                padding: "16px 22px",
-                background: `${meta.color}0E`,
-                border: `1px solid ${meta.color}25`,
-                borderRadius: 12,
+            <div>
+              <p style={{
+                color: meta.color, fontSize: 13, letterSpacing: "0.24em",
+                fontFamily: "'Fragment Mono', monospace", marginBottom: 8,
+                textTransform: "uppercase",
               }}>
-                <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.12em", marginBottom: 8 }}>
-                  OVERALL CONFIDENCE
-                </p>
-                <ConfidenceMeter value={report.overallConfidence} color={meta.color} />
-                <p style={{ color: "rgba(255,255,255,0.2)", fontSize: 13, fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.08em", marginTop: 8 }}>
-                  {report.sections.length} technique agents
-                </p>
-              </div>
+                {meta.subtitle}
+              </p>
+              <h1 style={{
+                color: "#F0EDE8", fontSize: 40,
+                fontFamily: "'Cormorant Garamond', serif",
+                fontWeight: 600, lineHeight: 1.1, marginBottom: 10,
+              }}>
+                {meta.title}
+              </h1>
+              <p style={{
+                color: "rgba(255,255,255,0.22)", fontSize: 13,
+                fontFamily: "'Fragment Mono', monospace", letterSpacing: "0.1em",
+              }}>
+                Generated {new Date(report.generatedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                {" · "}
+                {isExpired ? (
+                  <span style={{ color: "#FF8060" }}>Expired {expiryFormatted}</span>
+                ) : (
+                  <span>Valid until {expiryFormatted}</span>
+                )}
+                {" · "}
+                <span>{report.sections.length} technique agents</span>
+              </p>
             </div>
 
             {/* Headline */}

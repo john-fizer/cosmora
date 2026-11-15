@@ -186,6 +186,7 @@ function MorningReport({ chart, transitsData, profile }: {
   const [text, setText] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [started, setStarted] = useState(false);
+  const [shareStatus, setShareStatus] = useState<"idle" | "copied">("idle");
   const abortRef = useRef<AbortController | null>(null);
   // Synchronous re-entrancy lock. `streaming`/`text` state alone can't gate
   // generate() against React Strict Mode's dev-only double-invoke of mount
@@ -282,6 +283,30 @@ Be specific, poetic but grounded. Max 200 words total. Avoid generic phrases. Pl
     });
   }, [chart, transitsData, profile, streaming, text]);
 
+  // Native share sheet on mobile (where sharing actually happens); desktop/
+  // unsupported browsers fall back to copying the text so there's always a
+  // working path, not just a button that silently does nothing.
+  const shareBriefing = useCallback(async () => {
+    const dateStr = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+    const shareText = `${profile.name}'s Cosmic Briefing — ${dateStr}\n\n${text}\n\n— via Cosmora`;
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({ title: "My Cosmic Briefing", text: shareText });
+        return;
+      } catch (err) {
+        // The user dismissing the share sheet is expected and not an error —
+        // anything else (permission denied, no gesture, etc.) falls through
+        // to the clipboard copy below instead of the button doing nothing.
+        if ((err as Error)?.name === "AbortError") return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setShareStatus("copied");
+      setTimeout(() => setShareStatus("idle"), 2000);
+    } catch { /* clipboard unavailable — nothing more we can do */ }
+  }, [profile.name, text]);
+
   // Auto-generate on mount. Cleanup aborts the in-flight stream AND resets
   // inFlightRef so the effect is properly idempotent: React Strict Mode's
   // dev-only double-invoke (mount → cleanup → mount) cancels the phantom
@@ -348,15 +373,26 @@ Be specific, poetic but grounded. Max 200 words total. Avoid generic phrases. Pl
               </p>
             ))}
             {!streaming && text && (
-              <motion.button
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                onClick={() => { setText(""); generate(); }}
-                className="text-[13px] font-bold tracking-widest cursor-pointer px-3 py-1.5 rounded-lg mt-1"
-                style={{ background: "rgba(245,158,11,0.08)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.2)" }}
-              >
-                REGENERATE
-              </motion.button>
+              <div className="flex items-center gap-2 mt-1">
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  onClick={() => { setText(""); generate(); }}
+                  className="text-[13px] font-bold tracking-widest cursor-pointer px-3 py-1.5 rounded-lg"
+                  style={{ background: "rgba(245,158,11,0.08)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.2)" }}
+                >
+                  REGENERATE
+                </motion.button>
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  onClick={shareBriefing}
+                  className="text-[13px] font-bold tracking-widest cursor-pointer px-3 py-1.5 rounded-lg"
+                  style={{ background: "rgba(245,158,11,0.08)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.2)" }}
+                >
+                  {shareStatus === "copied" ? "COPIED ✓" : "SHARE ↗"}
+                </motion.button>
+              </div>
             )}
           </div>
         )}

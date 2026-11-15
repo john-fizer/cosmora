@@ -1027,7 +1027,7 @@ export default function OraclePage() {
                 color: dualMode ? "#a78bfa" : "#475569",
                 boxShadow: dualMode ? "0 0 12px rgba(123,111,212,0.3)" : "none",
               }}
-              title="Run Claude + Llama in parallel, synthesize results"
+              title="Run Claude + an open-source model in parallel, synthesize results"
             >
               <span style={{ fontSize: 14 }}>⚡</span>
               <span className="hidden sm:inline">DUAL ORACLE</span>
@@ -1173,7 +1173,7 @@ export default function OraclePage() {
                             {(["claude", "llama"] as const).map(agent => {
                               const status = agent === "claude" ? dualAgents.claudeStatus : dualAgents.llamaStatus;
                               const color = agent === "claude" ? "#a78bfa" : "#f97316";
-                              const label = agent === "claude" ? "✦ CLAUDE · Hellenistic" : "⬡ LLAMA · Psychological";
+                              const label = agent === "claude" ? "✦ CLAUDE · Hellenistic" : "⬡ GPT-OSS · Psychological";
                               return (
                                 <motion.div
                                   key={agent}

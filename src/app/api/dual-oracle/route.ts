@@ -46,7 +46,7 @@ Give your full independent analysis. Do not hedge or be vague. Commit to specifi
 }
 
 function llamaSystemPrompt(chartCtx: string): string {
-  return `You are Cosmora's Llama agent — a modern psychological astrology intelligence.
+  return `You are Cosmora's second-opinion agent — a modern psychological astrology intelligence.
 
 Your approach: psychological archetypes, developmental themes, house as life domain rather than fortune, aspects as inner dynamics, Chiron wounds, evolutionary soul purpose. You weight modern/humanistic factors. Reference the chart specifically. Be thorough — your response will be compared with another model's analysis.
 
@@ -117,7 +117,7 @@ async function runLlama(
   const system = llamaSystemPrompt(chartCtx);
 
   const response = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: "openai/gpt-oss-120b",
     max_tokens: 1200,
     stream: false,
     messages: [
